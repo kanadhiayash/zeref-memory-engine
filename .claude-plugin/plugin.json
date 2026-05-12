@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "zeref-skills-fleet",
+  "version": "1.1.2",
+  "description": "AI Product, Design, Development, Marketing & Operations Skills for Claude",
+  "author": {
+    "name": "Yash Kanadhia",
+    "url": "https://github.com/kanadhiayash"
+  },
+  "homepage": "https://copper-tv-288.notion.site/Zeref-Skills-Fleet-Command-Center-358d695d836a81af9f6adf30770217c3",
+  "repository": "https://github.com/kanadhiayash/zeref-skills-fleet",
+  "license": "MIT",
+  "keywords": [
+    "zeref",
+    "claude-code",
+    "skills",
+    "product",
+    "ux",
+    "development",
+    "qa",
+    "marketing",
+    "operations"
+  ],
+  "skills": "./skills",
+  "commands": "./commands",
+  "outputStyles": "./output-styles"
+}

@@ -1,0 +1,22 @@
+[command]
+name = "zeref-validate"
+description = "Runs the skill registry validator. Checks all skill files for required frontmatter fields, valid layer/role values, non-empty sections, and route integrity (routes_to skills exist)."
+invoke = "/zeref-validate"
+
+[behavior]
+skill_invoked = "ZEREFOS"
+auto_classify = false
+auto_caveman = false
+memory_update = false
+
+[inputs]
+required = []
+optional = ["target_skill", "strict_mode", "output_format"]
+
+[outputs]
+format = "Validation report with sections: Pass, Warn, Fail. Each entry lists: skill file, field checked, status, and remediation note. Ends with a summary count and recommended fixes."
+saves_to = "none"
+
+[examples]
+example_1 = "/zeref-validate"
+example_2 = "/zeref-validate target_skill='zeref-dev-fullstack-engineer' strict_mode='true'"

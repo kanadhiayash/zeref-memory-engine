@@ -1,0 +1,22 @@
+[command]
+name = "zeref-save"
+description = "Saves current session state to memory. Writes hot.md update, log.md entry, and flags index.md delta. Use at the end of any work session to preserve state."
+invoke = "/zeref-save"
+
+[behavior]
+skill_invoked = "zeref-system-memory-ingest"
+auto_classify = false
+auto_caveman = true
+memory_update = true
+
+[inputs]
+required = ["session_summary"]
+optional = ["project_tag", "decision_log_entry", "next_priority"]
+
+[outputs]
+format = "Confirmation block listing: what was written to hot.md, what was appended to log.md, and whether index.md was flagged for delta update."
+saves_to = "wiki/hot.md, wiki/log.md, wiki/index.md"
+
+[examples]
+example_1 = "/zeref-save session_summary='Completed Graphify deep analysis. Produced 3 deliverables. Next: UX flows.'"
+example_2 = "/zeref-save session_summary='Zeref Skills Fleet V2 Phase 1 complete.' project_tag='zeref-fleet' next_priority='Phase 2 skill files'"

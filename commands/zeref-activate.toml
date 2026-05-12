@@ -1,0 +1,22 @@
+[command]
+name = "zeref-activate"
+description = "Activates Zeref OS for a session. Reads hot.md, states current context, active projects, and pending decisions. Sets the working register and task type for the session."
+invoke = "/zeref-activate"
+
+[behavior]
+skill_invoked = "ZEREFOS"
+auto_classify = true
+auto_caveman = false
+memory_update = false
+
+[inputs]
+required = []
+optional = ["task_override", "project_filter"]
+
+[outputs]
+format = "Session brief: active context, current projects, pending decisions, top priority from hot.md. Ends with task prompt or proceeds with top-priority item."
+saves_to = "none"
+
+[examples]
+example_1 = "/zeref-activate"
+example_2 = "/zeref-activate task_override='Begin Graphify UX audit'"

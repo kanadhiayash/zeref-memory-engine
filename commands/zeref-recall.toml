@@ -1,0 +1,22 @@
+[command]
+name = "zeref-recall"
+description = "Recalls specific memory from the wiki layer. Takes a topic or keyword and returns relevant hot.md, index.md, concept page, or project page entries ranked by relevance."
+invoke = "/zeref-recall"
+
+[behavior]
+skill_invoked = "zeref-system-memory-ingest"
+auto_classify = false
+auto_caveman = false
+memory_update = false
+
+[inputs]
+required = ["topic"]
+optional = ["source_filter", "max_results"]
+
+[outputs]
+format = "Ranked recall results with: match snippet, source file path, relevance note. Grouped by source type (hot.md, index.md, concept page, project page)."
+saves_to = "none"
+
+[examples]
+example_1 = "/zeref-recall topic='Graphify'"
+example_2 = "/zeref-recall topic='UX audit' source_filter='project_pages' max_results='5'"
