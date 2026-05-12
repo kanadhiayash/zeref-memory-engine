@@ -1,0 +1,22 @@
+[command]
+name = "zeref-install-web-stack"
+description = "Scaffolds a new web project with Zeref's recommended stack. Outputs folder structure, boilerplate files, README, and first-run instructions. Use at project kickoff."
+invoke = "/zeref-install-web-stack"
+
+[behavior]
+skill_invoked = "zeref-dev-fullstack-engineer"
+auto_classify = true
+auto_caveman = false
+memory_update = false
+
+[inputs]
+required = ["project_name"]
+optional = ["stack_preset", "include_auth", "include_db", "mobile_first", "output_path"]
+
+[outputs]
+format = "Scaffolded project package: folder tree, boilerplate files (index, config, README, .env.example), stack rationale note, and first-run instructions with copy-paste commands."
+saves_to = "projects/[project_name]/"
+
+[examples]
+example_1 = "/zeref-install-web-stack project_name='graphify-web'"
+example_2 = "/zeref-install-web-stack project_name='portfolio-v3' stack_preset='next-tailwind' include_auth='false' mobile_first='true'"

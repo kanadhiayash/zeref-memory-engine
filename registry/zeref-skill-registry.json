@@ -1,0 +1,461 @@
+{
+  "_meta": {
+    "file": "zeref-skill-registry.json",
+    "version": "2.0.0",
+    "owner": "Yash Kanadhia",
+    "description": "Machine-readable registry of all 18 Zeref Skills Fleet V2 skills (12 upgraded + 6 new)",
+    "last_updated": "2026-05-12",
+    "total_skills": 18,
+    "upgraded_count": 12,
+    "new_count": 6,
+    "valid_layers": [1, 2, 3, 4, 5, 6, 7, 8],
+    "valid_roles": ["lead", "support", "qa-gate", "executive"],
+    "layer_map": {
+      "1": "UX",
+      "2": "Development",
+      "3": "Content",
+      "4": "Business",
+      "5": "System",
+      "6": "QA / Final",
+      "7": "HQ / Executive",
+      "8": "Memory / Infrastructure"
+    }
+  },
+
+  "skills": [
+    {
+      "id": "zeref-system-caveman-compressor",
+      "name": "Caveman Compressor",
+      "version": "2.0",
+      "layer": 5,
+      "layer_name": "System",
+      "role": "support",
+      "file": "skills/zeref-system-caveman-compressor.md",
+      "status": "active",
+      "upgrade_status": "upgraded",
+      "trigger_keywords": [
+        "compress", "compress context", "handoff", "context is long",
+        "caveman", "moving environments", "session summary",
+        "context brief", "constraint log", "compress and hand off"
+      ],
+      "routes_to": ["zeref-system-memory-ingest", "zeref-final-executive-reviewer"],
+      "receives_from": ["ZEREFOS", "zeref-hq-chief-product-officer", "zeref-final-executive-reviewer"],
+      "deliverables": ["Compressed_Context_Brief.md", "Constraint_Preservation_Log.md"],
+      "token_tier": "M",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "Compresses long or messy context into a portable handoff brief. Triggers automatically when context exceeds 60% of window, when moving between environments, or when a session produces decisions worth preserving. Never compresses code, commands, paths, URLs, or exact errors."
+    },
+
+    {
+      "id": "zeref-ux-design-qa-auditor",
+      "name": "UX Design QA Auditor",
+      "version": "2.0",
+      "layer": 1,
+      "layer_name": "UX",
+      "role": "qa-gate",
+      "file": "skills/zeref-ux-design-qa-auditor.md",
+      "status": "active",
+      "upgrade_status": "upgraded",
+      "trigger_keywords": [
+        "audit design", "design QA", "review screens", "design review",
+        "check UI", "design inconsistency", "visual QA", "design critique",
+        "pixel review", "design pass", "QA the design"
+      ],
+      "routes_to": ["zeref-ux-accessibility-specialist", "zeref-ux-interaction-designer", "zeref-final-executive-reviewer"],
+      "receives_from": ["ZEREFOS", "zeref-ux-product-designer", "zeref-ux-design-systems-architect"],
+      "deliverables": ["Design QA Report", "Issue Log", "Severity-Ranked Finding List"],
+      "token_tier": "M",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "Audits UI/UX designs for visual inconsistency, spacing errors, component violations, interaction gaps, and accessibility failures. Acts as QA gate before developer handoff. Requires Figma links, design screenshots, or detailed design descriptions."
+    },
+
+    {
+      "id": "zeref-ux-accessibility-specialist",
+      "name": "UX Accessibility Specialist",
+      "version": "2.0",
+      "layer": 1,
+      "layer_name": "UX",
+      "role": "support",
+      "file": "skills/zeref-ux-accessibility-specialist.md",
+      "status": "active",
+      "upgrade_status": "upgraded",
+      "trigger_keywords": [
+        "accessibility", "a11y", "WCAG", "screen reader", "contrast ratio",
+        "accessible design", "keyboard navigation", "aria labels",
+        "inclusive design", "color contrast", "tap target", "focus state"
+      ],
+      "routes_to": ["zeref-ux-design-qa-auditor", "zeref-dev-ui-quality-enforcer"],
+      "receives_from": ["ZEREFOS", "zeref-ux-design-qa-auditor", "zeref-ux-product-designer"],
+      "deliverables": ["Accessibility Audit Report", "WCAG Checklist", "Remediation Recommendations"],
+      "token_tier": "M",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "Audits designs and implementations against WCAG 2.1 AA/AAA. Checks contrast ratios, tap target sizes, keyboard navigation, screen reader compatibility, ARIA usage, and inclusive design patterns. Produces prioritized remediation recommendations."
+    },
+
+    {
+      "id": "zeref-ux-interaction-designer",
+      "name": "UX Interaction Designer",
+      "version": "2.0",
+      "layer": 1,
+      "layer_name": "UX",
+      "role": "lead",
+      "file": "skills/zeref-ux-interaction-designer.md",
+      "status": "active",
+      "upgrade_status": "upgraded",
+      "trigger_keywords": [
+        "interaction design", "micro-interactions", "transitions", "animations",
+        "gestures", "user flows", "state design", "hover states",
+        "feedback patterns", "prototype interactions", "motion design",
+        "tap interactions", "swipe", "drag", "touch patterns"
+      ],
+      "routes_to": ["zeref-ux-motion-designer", "zeref-ux-design-qa-auditor", "zeref-dev-ui-quality-enforcer"],
+      "receives_from": ["ZEREFOS", "zeref-ux-product-designer", "zeref-ux-design-systems-architect"],
+      "deliverables": ["Interaction Spec", "State Map", "Motion Principles", "Prototype Notes"],
+      "token_tier": "M",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "Designs interaction patterns, micro-interactions, gesture systems, state transitions, and feedback loops. Lead skill for any task involving how a user physically interacts with a product. Works in partnership with the Motion Designer for animation specs."
+    },
+
+    {
+      "id": "zeref-ux-product-designer",
+      "name": "UX Product Designer",
+      "version": "2.0",
+      "layer": 1,
+      "layer_name": "UX",
+      "role": "lead",
+      "file": "skills/zeref-ux-product-designer.md",
+      "status": "active",
+      "upgrade_status": "upgraded",
+      "trigger_keywords": [
+        "product design", "design a feature", "design the screen", "UX design",
+        "wireframe", "mockup", "design system", "user experience",
+        "design flow", "design the app", "end-to-end design",
+        "design phase", "design sprint", "design brief", "design direction"
+      ],
+      "routes_to": ["zeref-ux-design-qa-auditor", "zeref-ux-interaction-designer", "zeref-ux-accessibility-specialist", "zeref-ux-design-systems-architect"],
+      "receives_from": ["ZEREFOS", "zeref-hq-chief-product-officer", "zeref-biz-opportunity-solution-analyst"],
+      "deliverables": ["UX Brief", "Flow Diagrams", "Wireframe Specs", "Design Rationale"],
+      "token_tier": "L",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "Lead UX/Product Design skill. Takes a product objective and produces end-to-end design output: brief, user flows, wireframe specs, design rationale, and handoff notes. Most product design tasks route through this skill first."
+    },
+
+    {
+      "id": "zeref-cnt-copywriter",
+      "name": "Copywriter",
+      "version": "2.0",
+      "layer": 3,
+      "layer_name": "Content",
+      "role": "lead",
+      "file": "skills/zeref-cnt-copywriter.md",
+      "status": "active",
+      "upgrade_status": "upgraded",
+      "trigger_keywords": [
+        "write copy", "copywriting", "marketing copy", "landing page copy",
+        "headline", "tagline", "product description", "value proposition",
+        "ad copy", "CTA", "onboarding copy", "email subject line",
+        "brand voice", "conversion copy", "persuasive writing"
+      ],
+      "routes_to": ["zeref-cnt-linkedin-ghostwriter", "zeref-final-executive-reviewer"],
+      "receives_from": ["ZEREFOS", "zeref-hq-chief-product-officer", "zeref-biz-opportunity-solution-analyst"],
+      "deliverables": ["Copy Deck", "Headline Variants", "CTA Options", "Brand Voice Notes"],
+      "token_tier": "M",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "Produces persuasive, on-brand copy for landing pages, product descriptions, onboarding flows, marketing campaigns, and ad creative. Applies brand voice discipline, conversion principles, and headline testing frameworks."
+    },
+
+    {
+      "id": "zeref-cnt-linkedin-ghostwriter",
+      "name": "LinkedIn Ghostwriter",
+      "version": "2.0",
+      "layer": 3,
+      "layer_name": "Content",
+      "role": "support",
+      "file": "skills/zeref-cnt-linkedin-ghostwriter.md",
+      "status": "active",
+      "upgrade_status": "upgraded",
+      "trigger_keywords": [
+        "linkedin post", "ghostwrite", "linkedin content", "professional post",
+        "thought leadership", "write linkedin", "career post",
+        "portfolio post", "linkedin draft", "personal brand content",
+        "linkedin hook", "engagement post", "founder content"
+      ],
+      "routes_to": ["zeref-final-executive-reviewer"],
+      "receives_from": ["ZEREFOS", "zeref-cnt-copywriter", "zeref-hq-chief-product-officer"],
+      "deliverables": ["LinkedIn Post Draft", "Hook Options", "Hashtag Set", "Engagement Strategy"],
+      "token_tier": "S-M",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "Ghostwrites LinkedIn posts for Yash Kanadhia. Produces hooks, body copy, and CTAs in Yash's professional voice. Targets recruiter visibility, portfolio proof, and career positioning. Never inflates claims or invents engagement data."
+    },
+
+    {
+      "id": "zeref-dev-code-quality-reviewer",
+      "name": "Code Quality Reviewer",
+      "version": "2.0",
+      "layer": 2,
+      "layer_name": "Development",
+      "role": "qa-gate",
+      "file": "skills/zeref-dev-code-quality-reviewer.md",
+      "status": "active",
+      "upgrade_status": "upgraded",
+      "trigger_keywords": [
+        "code review", "review code", "code quality", "code audit",
+        "refactor", "clean up code", "check the code", "code critique",
+        "code smell", "technical debt", "code standards", "lint",
+        "best practices", "code feedback"
+      ],
+      "routes_to": ["zeref-dev-ui-quality-enforcer", "zeref-final-executive-reviewer"],
+      "receives_from": ["ZEREFOS", "zeref-dev-ui-quality-enforcer", "zeref-ux-interaction-designer"],
+      "deliverables": ["Code Review Report", "Issue List", "Refactor Recommendations"],
+      "token_tier": "M",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "Reviews code for quality, maintainability, performance, security hygiene, and standards compliance. Acts as QA gate before code is committed to main. Flags issues by severity. Never rewrites code without explicit request."
+    },
+
+    {
+      "id": "zeref-hq-chief-product-officer",
+      "name": "Chief Product Officer",
+      "version": "2.0",
+      "layer": 7,
+      "layer_name": "HQ / Executive",
+      "role": "executive",
+      "file": "skills/zeref-hq-chief-product-officer.md",
+      "status": "active",
+      "upgrade_status": "upgraded",
+      "trigger_keywords": [
+        "product strategy", "product vision", "product roadmap", "product prioritization",
+        "CPO", "product leadership", "feature prioritization", "product direction",
+        "build vs buy", "product decision", "go to market", "product positioning",
+        "product north star", "OKRs", "product principles"
+      ],
+      "routes_to": ["zeref-ux-product-designer", "zeref-biz-opportunity-solution-analyst", "zeref-biz-kpi-analyst"],
+      "receives_from": ["ZEREFOS", "zeref-final-executive-reviewer"],
+      "deliverables": ["Product Strategy Brief", "Prioritization Framework", "Roadmap Skeleton", "Decision Log Entry"],
+      "token_tier": "L",
+      "model_preference": "claude-3-opus-20240229",
+      "description": "Executive product leadership skill. Sets product vision, prioritization logic, and strategic direction. Activates for high-stakes product decisions, roadmap sessions, and go-to-market strategy. One of the highest-weight skills in the fleet — use only when strategic direction is genuinely needed."
+    },
+
+    {
+      "id": "zeref-biz-kpi-analyst",
+      "name": "KPI Analyst",
+      "version": "2.0",
+      "layer": 4,
+      "layer_name": "Business",
+      "role": "support",
+      "file": "skills/zeref-biz-kpi-analyst.md",
+      "status": "active",
+      "upgrade_status": "upgraded",
+      "trigger_keywords": [
+        "KPI", "metrics", "key performance indicators", "measure success",
+        "define metrics", "success metrics", "analytics framework",
+        "dashboard metrics", "north star metric", "retention metric",
+        "conversion rate", "engagement metric", "metric design",
+        "OKR metrics", "business metrics"
+      ],
+      "routes_to": ["zeref-final-executive-reviewer", "zeref-hq-chief-product-officer"],
+      "receives_from": ["ZEREFOS", "zeref-hq-chief-product-officer", "zeref-biz-opportunity-solution-analyst"],
+      "deliverables": ["KPI Framework", "Metric Definitions", "Dashboard Outline", "Success Criteria"],
+      "token_tier": "M",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "Designs KPI frameworks, metric hierarchies, and measurement systems. Produces north star metric, primary KPIs, secondary KPIs, and guardrail metrics. Works with CPO and Opportunity-Solution Analyst to align metrics to strategy."
+    },
+
+    {
+      "id": "zeref-final-executive-reviewer",
+      "name": "Final Executive Reviewer",
+      "version": "2.0",
+      "layer": 6,
+      "layer_name": "QA / Final",
+      "role": "qa-gate",
+      "file": "skills/zeref-final-executive-reviewer.md",
+      "status": "active",
+      "upgrade_status": "upgraded",
+      "trigger_keywords": [
+        "final review", "executive review", "final check", "release ready",
+        "QA pass", "final gate", "approve output", "sign off",
+        "last review", "pre-release check", "output QA",
+        "final quality check", "polish", "ready to ship"
+      ],
+      "routes_to": [],
+      "receives_from": ["ZEREFOS", "zeref-cnt-copywriter", "zeref-ux-design-qa-auditor", "zeref-dev-code-quality-reviewer", "zeref-hq-chief-product-officer"],
+      "deliverables": ["Executive Review Report", "Go/No-Go Decision", "Final Issue List"],
+      "token_tier": "M",
+      "model_preference": "claude-3-opus-20240229",
+      "description": "Terminal QA gate for all major Zeref outputs. Reviews for clarity, accuracy, completeness, professional quality, and portfolio readiness. Issues a Go / No-Go decision. If No-Go, returns a prioritized fix list. This is the last skill in any pipeline."
+    },
+
+    {
+      "id": "zeref-ux-design-systems-architect",
+      "name": "UX Design Systems Architect",
+      "version": "2.0",
+      "layer": 1,
+      "layer_name": "UX",
+      "role": "lead",
+      "file": "skills/zeref-ux-design-systems-architect.md",
+      "status": "active",
+      "upgrade_status": "upgraded",
+      "trigger_keywords": [
+        "design system", "component library", "design tokens", "style guide",
+        "atomic design", "design architecture", "design standards",
+        "component spec", "token system", "brand system",
+        "figma library", "design consistency", "UI system",
+        "design infrastructure", "design ops"
+      ],
+      "routes_to": ["zeref-ux-design-qa-auditor", "zeref-dev-ui-quality-enforcer", "zeref-ux-accessibility-specialist"],
+      "receives_from": ["ZEREFOS", "zeref-ux-product-designer", "zeref-hq-chief-product-officer"],
+      "deliverables": ["Design System Spec", "Token Dictionary", "Component Catalog", "Usage Guidelines"],
+      "token_tier": "L",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "Architects design systems, component libraries, and token hierarchies. Produces spec-grade documentation for Figma libraries and code implementations. Lead skill for any task involving design infrastructure, system consistency, or design ops."
+    },
+
+    {
+      "id": "zeref-ux-motion-designer",
+      "name": "UX Motion Designer",
+      "version": "2.0",
+      "layer": 1,
+      "layer_name": "UX",
+      "role": "support",
+      "file": "skills/zeref-ux-motion-designer.md",
+      "status": "active",
+      "upgrade_status": "new",
+      "trigger_keywords": [
+        "motion design", "animation", "transitions", "micro-animation",
+        "spring physics", "easing curves", "motion principles",
+        "lottie", "framer motion", "animated UI", "motion spec",
+        "page transitions", "loading animation", "gesture animation",
+        "motion language", "animation system"
+      ],
+      "routes_to": ["zeref-ux-interaction-designer", "zeref-ux-design-qa-auditor"],
+      "receives_from": ["ZEREFOS", "zeref-ux-interaction-designer", "zeref-ux-design-systems-architect"],
+      "deliverables": ["Motion Principles Doc", "Animation Spec", "Easing Curve Definitions", "Lottie/Framer Notes"],
+      "token_tier": "M",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "New skill. Designs motion systems, animation principles, easing curves, and transition specs for mobile and web products. Works downstream of the Interaction Designer to produce implementation-ready motion specs. Covers Lottie, Framer Motion, CSS animations, and spring physics."
+    },
+
+    {
+      "id": "zeref-ux-register-classifier",
+      "name": "UX Register Classifier",
+      "version": "2.0",
+      "layer": 1,
+      "layer_name": "UX",
+      "role": "support",
+      "file": "skills/zeref-ux-register-classifier.md",
+      "status": "active",
+      "upgrade_status": "new",
+      "trigger_keywords": [
+        "classify task", "skill routing", "which skill", "select skill",
+        "route this task", "skill selection", "identify skill",
+        "task classification", "what skill should I use",
+        "skill picker", "register task", "classify UX task"
+      ],
+      "routes_to": ["zeref-ux-product-designer", "zeref-ux-interaction-designer", "zeref-ux-design-systems-architect", "zeref-ux-motion-designer", "zeref-ux-accessibility-specialist"],
+      "receives_from": ["ZEREFOS"],
+      "deliverables": ["Skill Routing Decision", "Recommended Stack", "Reasoning Note"],
+      "token_tier": "S",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "New skill. Classifies incoming UX tasks and routes them to the correct UX skill or skill stack. Reads the task description, identifies the design domain, and outputs a recommended lead skill + support skills. Prevents over-activation of the full UX fleet for simple tasks."
+    },
+
+    {
+      "id": "zeref-system-memory-ingest",
+      "name": "System Memory Ingest",
+      "version": "2.0",
+      "layer": 8,
+      "layer_name": "Memory / Infrastructure",
+      "role": "support",
+      "file": "skills/zeref-system-memory-ingest.md",
+      "status": "active",
+      "upgrade_status": "new",
+      "trigger_keywords": [
+        "ingest memory", "save to memory", "update memory",
+        "write to brain", "memory update", "save context",
+        "log decision", "memory file", "update brain",
+        "save this", "record decision", "document this",
+        "hot.md update", "session memory"
+      ],
+      "routes_to": ["zeref-system-memory-lint"],
+      "receives_from": ["ZEREFOS", "zeref-system-caveman-compressor", "zeref-final-executive-reviewer"],
+      "deliverables": ["Memory Write Block", "Updated Memory File", "Ingest Confirmation"],
+      "token_tier": "S",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "New skill. Handles structured ingestion of decisions, research, outputs, and context into the Zeref memory file system. Writes to the appropriate memory file (00–14), produces an ingest confirmation, and routes to the Memory Lint skill for validation."
+    },
+
+    {
+      "id": "zeref-system-memory-lint",
+      "name": "System Memory Lint",
+      "version": "2.0",
+      "layer": 8,
+      "layer_name": "Memory / Infrastructure",
+      "role": "qa-gate",
+      "file": "skills/zeref-system-memory-lint.md",
+      "status": "active",
+      "upgrade_status": "new",
+      "trigger_keywords": [
+        "lint memory", "validate memory", "check memory files",
+        "memory QA", "memory audit", "clean memory",
+        "memory consistency", "memory errors", "review memory",
+        "memory health check", "stale memory", "outdated memory"
+      ],
+      "routes_to": [],
+      "receives_from": ["ZEREFOS", "zeref-system-memory-ingest"],
+      "deliverables": ["Memory Lint Report", "Stale Entry List", "Consistency Warnings"],
+      "token_tier": "S-M",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "New skill. QA gate for the Zeref memory file system. Validates memory files for stale entries, contradictions, missing sections, and broken cross-references. Produces a lint report and flags issues for human review before memory is trusted for future sessions."
+    },
+
+    {
+      "id": "zeref-biz-opportunity-solution-analyst",
+      "name": "Opportunity-Solution Analyst",
+      "version": "2.0",
+      "layer": 4,
+      "layer_name": "Business",
+      "role": "support",
+      "file": "skills/zeref-biz-opportunity-solution-analyst.md",
+      "status": "active",
+      "upgrade_status": "new",
+      "trigger_keywords": [
+        "opportunity solution tree", "OST", "opportunity mapping",
+        "problem solution fit", "solution mapping", "opportunity analysis",
+        "problem space", "solution space", "user needs tree",
+        "outcome driven", "opportunity identification", "solution alternatives",
+        "jobs to be done", "JTBD", "opportunity framing"
+      ],
+      "routes_to": ["zeref-hq-chief-product-officer", "zeref-biz-kpi-analyst", "zeref-ux-product-designer"],
+      "receives_from": ["ZEREFOS", "zeref-hq-chief-product-officer"],
+      "deliverables": ["Opportunity-Solution Tree", "Problem Space Map", "Solution Alternatives", "Prioritization Input"],
+      "token_tier": "M",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "New skill. Applies the Opportunity-Solution Tree (Teresa Torres) and Jobs-To-Be-Done frameworks to map product opportunities to solution alternatives. Feeds into CPO strategy and KPI design. Prevents solution-first thinking by forcing outcome-driven problem framing."
+    },
+
+    {
+      "id": "zeref-dev-ui-quality-enforcer",
+      "name": "Dev UI Quality Enforcer",
+      "version": "2.0",
+      "layer": 2,
+      "layer_name": "Development",
+      "role": "qa-gate",
+      "file": "skills/zeref-dev-ui-quality-enforcer.md",
+      "status": "active",
+      "upgrade_status": "new",
+      "trigger_keywords": [
+        "UI implementation quality", "pixel perfect", "implementation QA",
+        "UI code review", "component consistency", "CSS review",
+        "design-to-code gap", "implementation accuracy",
+        "UI regression", "component quality", "frontend quality",
+        "design spec vs implementation", "UI polish", "production UI check"
+      ],
+      "routes_to": ["zeref-dev-code-quality-reviewer", "zeref-ux-design-qa-auditor"],
+      "receives_from": ["ZEREFOS", "zeref-ux-accessibility-specialist", "zeref-ux-design-systems-architect", "zeref-ux-interaction-designer"],
+      "deliverables": ["UI Quality Report", "Design-to-Code Gap Analysis", "Implementation Fix List"],
+      "token_tier": "M",
+      "model_preference": "claude-3-5-sonnet-20241022",
+      "description": "New skill. QA gate between design and production UI. Validates that implemented UI matches design specs at the component, spacing, typography, color, and interaction level. Catches design-to-code gaps before release. Works in tandem with the Code Quality Reviewer and Accessibility Specialist."
+    }
+  ]
+}
