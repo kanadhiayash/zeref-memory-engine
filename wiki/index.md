@@ -26,8 +26,7 @@ Pages for active and completed projects. One page per project. Contains objectiv
 | Page | Description | Last Updated | Status |
 |------|-------------|-------------|--------|
 | `wiki/projects/zeref-v2-rebuild.md` | Full rebuild of Zeref OS from V1 skill fleet to 5-layer execution OS | 2026-05-12 | Active |
-| `wiki/projects/[project-slug].md` | [One-line description of project] | [YYYY-MM-DD] | [Active / Paused / Complete] |
-| `wiki/projects/[project-slug].md` | [One-line description of project] | [YYYY-MM-DD] | [Active / Paused / Complete] |
+| `wiki/projects/zeref-portfolio-content.md` | Portfolio positioning + LinkedIn/Substack content strategy for Zeref V2 | 2026-05-12 | Planned |
 
 ---
 
@@ -39,7 +38,8 @@ Durable, canonical documentation of Zeref rules, models, protocols, and decision
 |------|-------------|-------------|--------|
 | `wiki/concepts/zeref-routing-model.md` | Canonical routing model: smallest-stack, task types, registers, routing table, Caveman triggers | 2026-05-12 | Stable |
 | `wiki/concepts/zeref-memory-protocol.md` | Canonical memory protocol: hot.md read-first, log rules, index maintenance, lint triggers | 2026-05-12 | Stable |
-| `wiki/concepts/[concept-slug].md` | [One-line description of concept or decision] | [YYYY-MM-DD] | [Stable / Draft / Deprecated] |
+| `wiki/concepts/zeref-ux-and-ui.md` | UX flows (session start, routing, memory, handoff, register) + UI design principles | 2026-05-12 | Stable |
+| `wiki/concepts/zeref-data-model.md` | Core entities (Skill, Agent, Command, Memory Page, Graph Node) + planned scripts | 2026-05-12 | Draft |
 
 ---
 
@@ -50,8 +50,7 @@ Curated references, guides, URLs, and repos that inform Zeref's architecture or 
 | Page | Description | Last Updated | Status |
 |------|-------------|-------------|--------|
 | `wiki/sources/zeref-reference-links.md` | Karpathy LLM Wiki, claude-obsidian, Graphify, Tenfold guides, Zeref repo — with summaries | 2026-05-12 | Current |
-| `wiki/sources/[source-slug].md` | [One-line description of source or reference] | [YYYY-MM-DD] | [Current / Archived] |
-| `wiki/sources/[source-slug].md` | [One-line description of source or reference] | [YYYY-MM-DD] | [Current / Archived] |
+| `wiki/sources/zeref-obsidian-package.md` | 16-file Obsidian package — canonical Zeref V1/V2 ingest source with file map and key extractions | 2026-05-12 | Ingested |
 
 ---
 
