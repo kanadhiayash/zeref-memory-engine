@@ -22,13 +22,13 @@
 ## Current Session
 
 ```
-Date:        [YYYY-MM-DD]
-Session #:   [N]
-Status:      [Active / Handoff / Idle]
-Working on:  [Brief description of active task]
-Environment: [Claude Chat / Claude Code / Claude Cowork / Perplexity Computer / Other]
-Skill stack: [Lead skill — support skills — QA gate]
-Caveman:     [Needed / Not needed]
+Date:        2026-05-12
+Session #:   3
+Status:      Handoff
+Working on:  Batch ingest — 16-file Zeref Obsidian package into wiki
+Environment: Claude Code
+Skill stack: claude-obsidian:wiki-ingest — no support skills
+Caveman:     Active (full)
 ```
 
 ---
@@ -38,8 +38,7 @@ Caveman:     [Needed / Not needed]
 | Project | Status | Priority | Last Touched | Wiki Page |
 |---------|--------|----------|-------------|-----------|
 | Zeref V2 Rebuild | In Progress | P0 | 2026-05-12 | `wiki/projects/zeref-v2-rebuild.md` |
-| [Project Name] | [Status] | [P0–P3] | [YYYY-MM-DD] | `wiki/projects/[slug].md` |
-| [Project Name] | [Status] | [P0–P3] | [YYYY-MM-DD] | `wiki/projects/[slug].md` |
+| Zeref Portfolio + Content | Planned | P3 | 2026-05-12 | `wiki/projects/zeref-portfolio-content.md` |
 
 **Priority scale:** P0 = active/blocking · P1 = this week · P2 = this month · P3 = backlog
 
@@ -49,19 +48,19 @@ Caveman:     [Needed / Not needed]
 
 ```
 Date:          2026-05-12
-Session title: Zeref V2 Rebuild — Phase 4 Memory Layer
-Output:        Generated 7 wiki memory layer files (hot, index, log, projects, concepts, sources)
-Decisions:     Memory layer follows Karpathy LLM Wiki pattern — hot.md read first
-Next session:  Begin Phase 1 integration testing — validate ZEREFOS.md kernel with live skill routing
+Session title: Zeref Obsidian Package — Batch Ingest (16 sources)
+Output:        4 new wiki pages + updated index, log, hot.md
+Decisions:     UX flows, UI principles, data model, portfolio strategy now have dedicated wiki pages
+Next session:  Phase 1 integration testing — validate ZEREFOS.md kernel with live skill routing
 Open risk:     hot.md will go stale if not updated each session — enforce read-first discipline
 Files changed:
-  - wiki/hot.md (created)
-  - wiki/index.md (created)
-  - wiki/log.md (created)
-  - wiki/projects/zeref-v2-rebuild.md (created)
-  - wiki/concepts/zeref-routing-model.md (created)
-  - wiki/concepts/zeref-memory-protocol.md (created)
-  - wiki/sources/zeref-reference-links.md (created)
+  - wiki/sources/zeref-obsidian-package.md (created)
+  - wiki/concepts/zeref-ux-and-ui.md (created)
+  - wiki/concepts/zeref-data-model.md (created)
+  - wiki/projects/zeref-portfolio-content.md (created)
+  - wiki/index.md (updated — 4 new rows)
+  - wiki/log.md (updated — new entry)
+  - wiki/hot.md (updated — this file)
 ```
 
 ---
