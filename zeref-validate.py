@@ -38,29 +38,22 @@ def banner():
     print()
 
 # ─── Constants ───────────────────────────────────────────────────────────────
-VALID_LAYERS = {1, 2, 3, 4, 5, 6, 7, 8}
-VALID_ROLES  = {"lead", "support", "qa-gate", "executive"}
-
+# V2 schema: skills have name + description frontmatter only
+# Section names differ from V1 — using substring matching (see section_present)
 REQUIRED_FRONTMATTER_FIELDS = [
-    "id",
     "name",
-    "version",
-    "layer",
-    "role",
-    "routes_to",
-    "receives_from",
+    "description",
 ]
 
 REQUIRED_SECTIONS = [
     "Mission",
-    "When To Use",
-    "When NOT To Use",
+    "When",          # matches "Use This Skill When"
+    "Do Not",        # matches "Do Not Use This Skill When"
     "Required Inputs",
-    "Deliverables",
-    "Workflow",
-    "Output Format",
-    "Token Discipline",
-    "Handoff Protocol",
+    "Deliverables",  # matches "Primary Deliverables"
+    "Workflow",      # matches "Execution Workflow"
+    "Token Discipline",   # matches "Token Discipline Rules"
+    "Anti-Hallucination", # matches "Anti-Hallucination Rules"
 ]
 
 # ─── Frontmatter Parser ───────────────────────────────────────────────────────
@@ -172,45 +165,7 @@ def validate_skill(filepath, all_skill_ids):
             passes += 1
             messages.append((GREEN, "PASS", f"Field '{field}' = {repr(fm[field])}"))
 
-    # ── 3. Valid layer value ────────────────────────────────────────────────
-    if "layer" in fm:
-        try:
-            layer_val = int(fm["layer"])
-            if layer_val not in VALID_LAYERS:
-                fails += 1
-                messages.append((RED, "FAIL", f"Invalid layer value '{fm['layer']}'. Must be one of {sorted(VALID_LAYERS)}"))
-            else:
-                passes += 1
-                messages.append((GREEN, "PASS", f"Layer {layer_val} is valid"))
-        except (ValueError, TypeError):
-            # Try parsing "1/UX" style layer values
-            try:
-                layer_str = str(fm.get('layer', '')).split('/')[0].strip()
-                layer_int = int(layer_str)
-                if layer_int not in VALID_LAYERS:
-                    fails += 1
-                    messages.append((RED, "FAIL", f"Layer value '{fm.get('layer')}' not in {sorted(VALID_LAYERS)}"))
-                else:
-                    passes += 1
-                    messages.append((GREEN, "PASS", f"Layer {fm.get('layer')} is valid (extended format)"))
-            except (ValueError, TypeError):
-                fails += 1
-                messages.append((RED, "FAIL", f"Layer value '{fm.get('layer')}' is not a valid layer"))
-
-    # ── 4. Valid role value ─────────────────────────────────────────────────
-    if "role" in fm:
-        role_val = str(fm["role"]).strip().lower()
-        # Accept composite roles like "support/lead", "qa-gate/executive"
-        role_parts = [r.strip() for r in role_val.split('/')]
-        role_valid = all(r in VALID_ROLES for r in role_parts)
-        if not role_valid:
-            fails += 1
-            messages.append((RED, "FAIL", f"Invalid role '{role_val}'. Must be one of {sorted(VALID_ROLES)}"))
-        else:
-            passes += 1
-            messages.append((GREEN, "PASS", f"Role '{role_val}' is valid"))
-
-    # ── 5. Required sections ────────────────────────────────────────────────
+    # ── 3. Required sections ────────────────────────────────────────────────
     sections = find_sections(body)
 
     for req_section in REQUIRED_SECTIONS:
@@ -226,43 +181,6 @@ def validate_skill(filepath, all_skill_ids):
             else:
                 passes += 1
                 messages.append((GREEN, "PASS", f"Section '## {found_key}' present and non-empty"))
-
-    # ── 6. routes_to reference check ───────────────────────────────────────
-    routes_to = fm.get("routes_to", [])
-    if isinstance(routes_to, str):
-        # Split comma-separated string into individual IDs
-        routes_to = [r.strip() for r in routes_to.split(",") if r.strip()] if routes_to else []
-
-    for ref_id in routes_to:
-        ref_id_clean = ref_id.strip().lower()
-        # Skip special values
-        if ref_id_clean in ("none", "n/a", ""):
-            continue
-        if ref_id_clean and ref_id_clean not in all_skill_ids:
-            warns += 1
-            messages.append((YELLOW, "WARN", f"routes_to references '{ref_id_clean}' but no matching skill file found"))
-        elif ref_id_clean:
-            passes += 1
-            messages.append((GREEN, "PASS", f"routes_to reference '{ref_id_clean}' resolved"))
-
-    # ── 7. receives_from reference check ───────────────────────────────────
-    receives_from = fm.get("receives_from", [])
-    if isinstance(receives_from, str):
-        # Split comma-separated string into individual IDs
-        receives_from = [r.strip() for r in receives_from.split(",") if r.strip()] if receives_from else []
-
-    for ref_id in receives_from:
-        ref_id_clean = ref_id.strip()
-        # ZEREFOS is a valid system sender, skip file check for it
-        if ref_id_clean.upper() == "ZEREFOS":
-            passes += 1
-            messages.append((GREEN, "PASS", f"receives_from 'ZEREFOS' (system sender, no file required)"))
-        elif ref_id_clean and ref_id_clean not in all_skill_ids:
-            warns += 1
-            messages.append((YELLOW, "WARN", f"receives_from references '{ref_id_clean}' but no matching skill file found"))
-        elif ref_id_clean:
-            passes += 1
-            messages.append((GREEN, "PASS", f"receives_from reference '{ref_id_clean}' resolved"))
 
     return passes, warns, fails, messages
 
