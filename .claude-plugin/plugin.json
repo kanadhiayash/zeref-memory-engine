@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "zeref-skills-fleet",
-  "version": "1.1.2",
-  "description": "AI Product, Design, Development, Marketing & Operations Skills for Claude",
+  "version": "2.1.0",
+  "description": "102-skill AI execution OS — Product, UX, Dev, QA, Marketing, Content, Business, and Systems skills for Claude",
   "author": {
     "name": "Yash Kanadhia",
     "url": "https://github.com/kanadhiayash"
