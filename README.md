@@ -1,11 +1,11 @@
 # Zeref OS — Agent Operating System for Claude
 
-**Version:** 2.0.0 | **License:** MIT | **Skills:** 112 | **Commands:** 9 | **Agents:** 2
+**Version:** 2.1.0 | **License:** MIT | **Skills:** 102 | **Commands:** 9 | **Agents:** 2
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange.svg)](https://github.com/kanadhiayash/zeref-agent-os)
-[![Skills](https://img.shields.io/badge/skills-112-green.svg)](skills/)
-[![Version](https://img.shields.io/badge/version-2.0.0-purple.svg)](.claude-plugin/plugin.json)
+[![Skills](https://img.shields.io/badge/skills-102-green.svg)](skills/)
+[![Version](https://img.shields.io/badge/version-2.1.0-purple.svg)](.claude-plugin/plugin.json)
 
 Built by [Yash Kanadhia](https://github.com/kanadhiayash) · Toronto · 2026
 
@@ -13,7 +13,7 @@ Built by [Yash Kanadhia](https://github.com/kanadhiayash) · Toronto · 2026
 
 ## What is Zeref OS?
 
-Zeref is a **112-skill AI execution operating system** built on top of Claude. It is not a chatbot configuration or a simple prompt template — it is a structured fleet of specialist AI skills that transforms Claude from a generic assistant into a coordinated team of experts.
+Zeref is a **102-skill AI execution operating system** built on top of Claude. It is not a chatbot configuration or a simple prompt template — it is a structured fleet of specialist AI skills that transforms Claude from a generic assistant into a coordinated team of experts.
 
 **Zeref is not a tool you use. It is an OS you run.**
 
@@ -45,7 +45,7 @@ This OS was built with AI at every layer — and that is intentional and documen
 | Layer | AI Involvement |
 |-------|---------------|
 | **Architecture design** | Claude (Sonnet) designed the 9-layer skill architecture, routing model, and anti-hallucination framework through iterative conversation |
-| **Skill generation** | 112 skill files were scaffolded, reviewed, and refined using Claude with structured prompts and YAML frontmatter templates |
+| **Skill generation** | 102 skill files in active fleet (18 legacy skills retired in v2.1.0), reviewed, and refined using Claude with structured prompts and YAML frontmatter templates |
 | **Routing logic** | ZEREFOS routing table was built by analyzing task taxonomies and testing routing decisions across real work sessions |
 | **Wiki brain** | Obsidian wiki structure, brain folder, and domain pages were generated and organized with Claude Code using the `wiki-ingest` skill |
 | **Registry generation** | `zeref-skill-registry.json` is auto-generated from skill file frontmatter using a Python script |
@@ -76,10 +76,10 @@ This OS was built with AI at every layer — and that is intentional and documen
 │  │  Stack: 1 Lead + 0–3 Support + 0–1 QA Gate                       │  │
 │  └───────────────────────────────────────────────────────────────────┘  │
 │                              ↓                                           │
-│  Layer 2 — Skill Fleet (112 skills)                                     │
+│  Layer 2 — Skill Fleet (102 active skills)                                     │
 │  ┌────────────┬─────────────┬─────────────┬─────────────────────────┐  │
-│  │ HQ (8)     │ UX (16)     │ Dev (17)    │ Biz (14)                │  │
-│  │ Mkt (16)   │ Cnt (16)    │ QA (15)     │ Final (4) · System (6)  │  │
+│  │ HQ (5)     │ UX (17)     │ Dev (15)    │ Biz (14)                │  │
+│  │ Mkt (15)   │ Cnt (14)    │ QA (11)     │ Final (4) · System (7)  │  │
 │  └────────────┴─────────────┴─────────────┴─────────────────────────┘  │
 │                                                                         │
 │  Layer 3 — Shared References                                            │
@@ -196,7 +196,7 @@ Claude → Project Instructions → Paste contents of ZEREFOS.md
 
 ---
 
-## Skill Fleet — All 112 Skills
+## Skill Fleet — All 102 Active Skills
 
 ### HQ — Executive (8)
 
@@ -368,12 +368,12 @@ wiki/
 ├── brain/              ← Master knowledge hub (start here)
 │   ├── 00_master.md   ← Entry point — links to everything
 │   ├── 01_zeref_os.md ← OS kernel, routing, Karpathy principles
-│   ├── 02_fleet_map.md← All 112 skills catalogued
+│   ├── 02_fleet_map.md← All 102 active skills catalogued
 │   ├── 03_architecture.md ← System design and data flow
 │   ├── 04_memory_protocol.md ← Memory rules and read order
 │   ├── 05_commands.md ← All 9 commands documented
 │   └── 06_agents.md   ← Fleet router + executive QA agent
-├── fleet/              ← 9 domain pages covering all 112 skills
+├── fleet/              ← 9 domain pages covering all 102 active skills
 ├── projects/           ← Active builds and initiatives
 ├── concepts/           ← Architecture, routing, data model
 ├── decisions/          ← Decision log with rationale
@@ -396,7 +396,7 @@ Session end:    /zeref-save → Caveman compresses → hot.md updated
 ## Validation
 
 ```bash
-# Validate all 112 skills
+# Validate all 102 active skills
 python3 zeref-validate.py
 
 # Verbose output
@@ -428,7 +428,7 @@ zeref-agent-os/
 ├── .claude-plugin/
 │   └── plugin.json                    ← Claude Code plugin manifest
 ├── .gitignore
-├── skills/                            ← 112 skill directories
+├── skills/                            ← 102 active skill directories
 │   └── <skill-id>/
 │       └── SKILL.md
 ├── commands/                          ← 9 slash commands
@@ -441,7 +441,7 @@ zeref-agent-os/
 ├── themes/
 │   └── zeref-dark.json
 ├── registry/
-│   └── zeref-skill-registry.json      ← Machine-readable index (112 skills)
+│   └── zeref-skill-registry.json      ← Machine-readable index (102 active skills)
 ├── wiki/                              ← Obsidian vault (ships with package)
 │   ├── brain/                         ← Master knowledge hub
 │   ├── fleet/                         ← 9 skill domain pages
@@ -479,5 +479,5 @@ If you want to build your own version, fork the repo and adapt the architecture 
 
 ---
 
-*Zeref OS v2.0.0 — Built by Yash Kanadhia | Toronto | 2026*
-*112 skills. 9 commands. 2 agents. One operating system.*
+*Zeref OS v2.1.0 — Built by Yash Kanadhia | Toronto | 2026*
+*102 active skills. 9 commands. 2 agents. One operating system.*
