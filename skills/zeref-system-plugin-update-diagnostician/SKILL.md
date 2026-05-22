@@ -1,7 +1,20 @@
 ---
-name: zeref-system-plugin-update-diagnostician
-description: >
-  Operates as the Plugin Update Diagnostician for Zeref Skills Fleet work. Use when the project requires plugin update diagnostician judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-system-plugin-update-diagnostician
+title: Plugin Update Diagnostician
+category: system
+model: claude-haiku-4-5-20251001
+effort: low
+max_turns: 10
+trigger_phrases:
+  - "plugin update"
+  - "diagnose plugin"
+  - "plugin issue"
+  - "update diagnostic"
+model_preference: haiku
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Plugin Update Diagnostician

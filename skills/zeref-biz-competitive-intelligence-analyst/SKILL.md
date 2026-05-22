@@ -1,7 +1,20 @@
 ---
-name: zeref-biz-competitive-intelligence-analyst
-description: >
-  Operates as the Competitive Intelligence Analyst for Zeref Skills Fleet work. Use when the project requires competitive intelligence analyst judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-biz-competitive-intelligence-analyst
+title: Competitive Intelligence Analyst
+category: biz
+model: claude-sonnet-4-6
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "competitor analysis"
+  - "competitive landscape"
+  - "market positioning"
+  - "benchmark competitors"
+model_preference: sonnet
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Competitive Intelligence Analyst

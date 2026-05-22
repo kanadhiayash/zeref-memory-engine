@@ -1,7 +1,21 @@
 ---
-name: zeref-dev-cloud-infrastructure-engineer
-description: >
-  Operates as the Cloud Infrastructure Engineer for Zeref Skills Fleet work. Covers BaaS (Firebase, Supabase), serverless, hosting (Vercel, Netlify, Railway), containers (Docker, Cloud Run), and major cloud platforms (AWS, GCP, Azure). Absorbs former firebase-specialist skill. Use when designing, implementing, or troubleshooting cloud infrastructure.
+skill: zeref-dev-cloud-infrastructure-engineer
+title: Cloud Infrastructure Engineer
+category: dev
+model: claude-sonnet-4-6
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "cloud infrastructure"
+  - "Firebase"
+  - "Supabase"
+  - "serverless"
+  - "deployment"
+model_preference: sonnet
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Cloud Infrastructure Engineer

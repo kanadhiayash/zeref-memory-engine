@@ -1,7 +1,22 @@
 ---
-name: zeref-dev-mobile-engineer
-description: >
-  Operates as the Mobile Engineer for Zeref Skills Fleet work. Covers iOS (SwiftUI/UIKit), Android (Jetpack Compose/XML), and cross-platform (Flutter/React Native). Merges former ios-engineer and android-engineer skills. Use when building, debugging, or architecting mobile apps on any platform.
+skill: zeref-dev-mobile-engineer
+title: Mobile Engineer
+category: dev
+model: claude-sonnet-4-6
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "mobile app"
+  - "React Native"
+  - "Expo"
+  - "iOS"
+  - "Android"
+  - "SwiftUI"
+model_preference: sonnet
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Mobile Engineer

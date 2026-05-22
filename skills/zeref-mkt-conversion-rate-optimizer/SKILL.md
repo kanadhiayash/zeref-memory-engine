@@ -1,7 +1,20 @@
 ---
-name: zeref-mkt-conversion-rate-optimizer
-description: >
-  Operates as the Conversion Rate Optimizer for Zeref Skills Fleet work. Use when the project requires conversion rate optimizer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-conversion-rate-optimizer
+title: Conversion Rate Optimizer
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "CRO"
+  - "conversion rate"
+  - "optimize landing page"
+  - "A/B test copy"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Conversion Rate Optimizer

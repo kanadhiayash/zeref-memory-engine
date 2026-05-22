@@ -1,7 +1,20 @@
 ---
-name: zeref-dev-fullstack-engineer
-description: >
-  Operates as the Full-Stack Engineer for Zeref Skills Fleet work. Use when the project requires full-stack engineer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-dev-fullstack-engineer
+title: Fullstack Engineer
+category: dev
+model: claude-sonnet-4-6
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "fullstack"
+  - "build this feature"
+  - "full stack"
+  - "end to end"
+model_preference: sonnet
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Full-Stack Engineer

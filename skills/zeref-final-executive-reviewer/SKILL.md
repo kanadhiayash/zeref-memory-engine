@@ -1,10 +1,36 @@
 ---
-name: zeref-final-executive-reviewer
-description: >
-  Operates as the Executive Reviewer for Zeref Skills Fleet work. Use when the project requires executive reviewer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-final-executive-reviewer
+title: Executive Reviewer
+category: final
+model: claude-opus-4-7
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "final review"
+  - "executive review"
+  - "approve this"
+  - "ready to ship"
+  - "QA gate"
+model_preference: opus
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Executive Reviewer
+
+## Step 0: Register-Aware Review Gate (MANDATORY before any other review)
+
+Before reviewing content, classify the register:
+
+1. Is this BRAND or PRODUCT register content?
+2. Apply the appropriate quality bar:
+   - **BRAND:** Would a creative director approve this? Is there one distinctive choice only this brand would make?
+   - **PRODUCT:** Does every word reduce cognitive load? Are all labels verb-first? Are all errors actionable?
+3. If the register is wrong for the surface: STOP. Return to the responsible skill for revision before proceeding.
+
+Register mismatch is a blocking QA failure. Aspirational brand copy in a product error message, or bland product copy in a marketing headline — both are failures that must be corrected before delivery.
 
 ## Mission
 

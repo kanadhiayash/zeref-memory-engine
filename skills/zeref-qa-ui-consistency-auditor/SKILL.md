@@ -1,7 +1,19 @@
 ---
-name: zeref-qa-ui-consistency-auditor
-description: >
-  Operates as the UI Consistency Auditor for Zeref Skills Fleet work. Use when the project requires ui consistency auditor judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-qa-ui-consistency-auditor
+title: Ui Consistency Auditor
+category: qa
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "UI consistency"
+  - "design consistency audit"
+  - "visual QA"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # UI Consistency Auditor

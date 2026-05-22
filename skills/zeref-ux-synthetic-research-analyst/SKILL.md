@@ -1,7 +1,19 @@
 ---
-name: zeref-ux-synthetic-research-analyst
-description: >
-  Operates as the Synthetic Research Analyst for Zeref Skills Fleet work. Use when the project requires synthetic research analyst judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-ux-synthetic-research-analyst
+title: Synthetic Research Analyst
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "synthetic research"
+  - "simulate users"
+  - "synthetic personas"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Synthetic Research Analyst

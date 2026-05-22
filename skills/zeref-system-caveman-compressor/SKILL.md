@@ -1,7 +1,21 @@
 ---
-name: zeref-system-caveman-compressor
-description: >
-  Operates as the Caveman Compressor for Zeref Skills Fleet work. Use when the project requires caveman compressor judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-system-caveman-compressor
+title: Caveman Compressor
+category: system
+model: claude-haiku-4-5-20251001
+effort: low
+max_turns: 10
+trigger_phrases:
+  - "compress this"
+  - "caveman"
+  - "shorten context"
+  - "handoff"
+  - "save session"
+model_preference: haiku
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Caveman Compressor
@@ -165,6 +179,36 @@ Open Risks:
 Next Recommended Skill:
 Status:
 ```
+
+## Intensity Levels
+
+### Lite Mode (default for short outputs <500 words)
+- Compress obvious padding only
+- Keep all technical terms intact
+- Preserve numbered lists and code blocks verbatim
+
+### Full Mode (default for 500–2000 words)
+- Apply core Caveman: remove articles, simplify verbs, compress pronouns
+- Abbreviation table for repeated domain terms
+- Target: 40–60% compression
+
+### Ultra Mode (for handoffs, wiki entries, cross-session saves)
+- Maximum compression — structural logic only
+- Drop all prose connectives ("however", "therefore", "in conclusion")
+- Target: 70–80% compression
+
+### Wenyan Mode (for ultra-compressed archive entries)
+- Classical compression — subject-verb-object only
+- No qualifiers, no hedges, no transitional phrases
+- Use only for wiki/log.md archive entries
+
+## Auto-Clarity Rule (MANDATORY — never compress these)
+NEVER compress:
+- Security warnings or vulnerability notifications
+- Irreversible action descriptions (what will be permanently changed)
+- Ambiguous sequences where compression could change meaning
+- Explicit user approvals ("approved: true" logic)
+- Error messages that identify what went wrong and what to do
 
 ## Token Discipline Rules
 

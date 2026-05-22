@@ -1,7 +1,20 @@
 ---
-name: zeref-mkt-brand-strategist
-description: >
-  Operates as the Brand Strategist for Zeref Skills Fleet work. Use when the project requires brand strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-brand-strategist
+title: Brand Strategist
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "brand strategy"
+  - "brand positioning"
+  - "brand identity"
+  - "brand direction"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Brand Strategist

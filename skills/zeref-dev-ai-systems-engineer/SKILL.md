@@ -1,7 +1,20 @@
 ---
-name: zeref-dev-ai-systems-engineer
-description: >
-  Operates as the AI Systems Engineer for Zeref Skills Fleet work. Use when the project requires ai systems engineer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-dev-ai-systems-engineer
+title: Ai Systems Engineer
+category: dev
+model: claude-opus-4-7
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "AI system"
+  - "ML pipeline"
+  - "model integration"
+  - "AI architecture"
+model_preference: opus
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # AI Systems Engineer

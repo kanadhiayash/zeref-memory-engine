@@ -1,7 +1,21 @@
 ---
-name: zeref-cnt-long-form-writer
-description: >
-  Operates as the Long-Form Writer for Zeref Skills Fleet work. Use when the project requires long-form writer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-cnt-long-form-writer
+title: Long Form Writer
+category: cnt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "blog post"
+  - "article"
+  - "long form"
+  - "essay"
+  - "Substack"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Long-Form Writer

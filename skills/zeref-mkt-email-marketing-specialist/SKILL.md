@@ -1,7 +1,20 @@
 ---
-name: zeref-mkt-email-marketing-specialist
-description: >
-  Operates as the Email Marketing Specialist for Zeref Skills Fleet work. Use when the project requires email marketing specialist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-email-marketing-specialist
+title: Email Marketing Specialist
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "email marketing"
+  - "email campaign"
+  - "newsletter"
+  - "drip sequence"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Email Marketing Specialist

@@ -1,0 +1,18 @@
+[command]
+name = "zeref-save"
+description = "Save current session context to wiki memory. Run after any major task."
+agent = "zeref-memory-keeper"
+model = "claude-haiku-4-5"
+max_turns = 10
+
+[prompt]
+content = """
+Save this session to the Zeref wiki.
+
+1. Summarize the session: date, project, 3-5 key decisions or findings
+2. Write to wiki/hot.md (keep total under 500 words, max 3 sessions)
+3. Archive oldest session to wiki/log.md if hot.md has 3+ sessions
+4. Update wiki/index.md if new domains were covered
+5. Append to wiki/log.md: ISO timestamp | zeref-memory-keeper | wiki-write | hot.md | [1-line summary]
+6. Confirm: "Session saved to wiki/hot.md. [N] sessions in hot cache."
+"""

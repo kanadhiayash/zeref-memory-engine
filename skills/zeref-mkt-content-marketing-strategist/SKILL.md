@@ -1,7 +1,20 @@
 ---
-name: zeref-mkt-content-marketing-strategist
-description: >
-  Operates as the Content Marketing Strategist for Zeref Skills Fleet work. Use when the project requires content marketing strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-content-marketing-strategist
+title: Content Marketing Strategist
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "content marketing"
+  - "content strategy"
+  - "content plan"
+  - "editorial calendar"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Content Marketing Strategist

@@ -1,7 +1,20 @@
 ---
-name: zeref-qa-ux-usability-tester
-description: >
-  Operates as the UX Usability Tester for Zeref Skills Fleet work. Use when the project requires ux usability tester judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-qa-ux-usability-tester
+title: Ux Usability Tester
+category: qa
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "usability test"
+  - "user test"
+  - "task analysis"
+  - "UX audit"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # UX Usability Tester

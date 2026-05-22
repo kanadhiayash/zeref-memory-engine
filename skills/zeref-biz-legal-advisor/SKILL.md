@@ -1,7 +1,21 @@
 ---
-name: zeref-biz-legal-advisor
-description: >
-  Operates as the Legal Advisor for Zeref Skills Fleet work. Use when the project requires legal advisor judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-biz-legal-advisor
+title: Legal Advisor
+category: biz
+model: claude-sonnet-4-6
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "legal review"
+  - "contract"
+  - "terms of service"
+  - "compliance"
+  - "legal risk"
+model_preference: sonnet
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Legal Advisor

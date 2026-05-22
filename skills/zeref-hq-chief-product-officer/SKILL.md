@@ -1,7 +1,21 @@
 ---
-name: zeref-hq-chief-product-officer
-description: >
-  Operates as the Chief Product Officer for Zeref Skills Fleet work. Use when the project requires chief product officer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-hq-chief-product-officer
+title: Chief Product Officer
+category: hq
+model: claude-opus-4-7
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "product direction"
+  - "CPO"
+  - "product strategy"
+  - "roadmap"
+  - "product decision"
+model_preference: opus
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Chief Product Officer
@@ -168,6 +182,23 @@ Open Risks:
 Next Recommended Skill:
 Status:
 ```
+
+## Opportunity-Solution Tree Integration
+
+For any product direction question, chain with `zeref-biz-opportunity-solution-analyst`:
+
+1. **Outcome first:** What is the one metric that matters most right now?
+2. **Opportunity mapping:** What customer needs drive that metric?
+3. **Solution space:** For each need, generate 3 solutions (resist the first idea)
+4. **Experiment design:** What is the smallest test that validates the top assumption?
+
+**Next-step suggestion protocol:**
+After every product strategy output, suggest the next logical action:
+- "Next: Run zeref-biz-opportunity-solution-analyst to map the opportunity space"
+- "Next: Run zeref-biz-kpi-analyst to define the North Star metric"
+- "Next: Run zeref-ux-research-lead to validate with user interviews"
+
+Do not wait for the user to ask what comes next — suggest it.
 
 ## Token Discipline Rules
 

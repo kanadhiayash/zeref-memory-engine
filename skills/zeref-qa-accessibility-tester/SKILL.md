@@ -1,7 +1,20 @@
 ---
-name: zeref-qa-accessibility-tester
-description: >
-  Operates as the Accessibility Tester for Zeref Skills Fleet work. Use when the project requires accessibility tester judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-qa-accessibility-tester
+title: Accessibility Tester
+category: qa
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "accessibility test"
+  - "WCAG"
+  - "screen reader"
+  - "a11y audit"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Accessibility Tester

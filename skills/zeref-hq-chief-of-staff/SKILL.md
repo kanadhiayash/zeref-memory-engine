@@ -1,7 +1,20 @@
 ---
-name: zeref-hq-chief-of-staff
-description: >
-  Operates as the Chief of Staff for Zeref Skills Fleet work. Use when the project requires chief of staff judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-hq-chief-of-staff
+title: Chief Of Staff
+category: hq
+model: claude-opus-4-7
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "chief of staff"
+  - "cross-functional"
+  - "priorities"
+  - "weekly agenda"
+model_preference: opus
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Chief of Staff

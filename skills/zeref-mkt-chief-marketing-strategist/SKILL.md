@@ -1,7 +1,20 @@
 ---
-name: zeref-mkt-chief-marketing-strategist
-description: >
-  Operates as the Chief Marketing Strategist for Zeref Skills Fleet work. Use when the project requires chief marketing strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-chief-marketing-strategist
+title: Chief Marketing Strategist
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "marketing strategy"
+  - "CMO"
+  - "marketing plan"
+  - "growth marketing"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Chief Marketing Strategist

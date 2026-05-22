@@ -1,7 +1,20 @@
 ---
-name: zeref-ux-design-systems-architect
-description: >
-  Operates as the Design Systems Architect for Zeref Skills Fleet work. Use when the project requires design systems architect judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-ux-design-systems-architect
+title: Design Systems Architect
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "design system"
+  - "component library"
+  - "design tokens"
+  - "style guide"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Design Systems Architect

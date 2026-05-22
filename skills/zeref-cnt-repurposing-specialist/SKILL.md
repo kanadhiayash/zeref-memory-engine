@@ -1,7 +1,20 @@
 ---
-name: zeref-cnt-repurposing-specialist
-description: >
-  Operates as the Content Repurposing Specialist for Zeref Skills Fleet work. Use when the project requires content repurposing specialist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-cnt-repurposing-specialist
+title: Repurposing Specialist
+category: cnt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "repurpose content"
+  - "turn this into"
+  - "adapt for"
+  - "content repurposing"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Content Repurposing Specialist

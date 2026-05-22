@@ -1,7 +1,20 @@
 ---
-name: zeref-biz-monetization-strategist
-description: >
-  Operates as the Monetization Strategist for Zeref Skills Fleet work. Use when the project requires monetization strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-biz-monetization-strategist
+title: Monetization Strategist
+category: biz
+model: claude-sonnet-4-6
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "monetization"
+  - "pricing model"
+  - "revenue streams"
+  - "how to charge"
+model_preference: sonnet
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Monetization Strategist

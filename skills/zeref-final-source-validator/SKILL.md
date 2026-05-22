@@ -1,7 +1,20 @@
 ---
-name: zeref-final-source-validator
-description: >
-  Operates as the Source Validator for Zeref Skills Fleet work. Use when the project requires source validator judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-final-source-validator
+title: Source Validator
+category: final
+model: claude-opus-4-7
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "validate sources"
+  - "check citations"
+  - "source verification"
+  - "fact check"
+model_preference: opus
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Source Validator

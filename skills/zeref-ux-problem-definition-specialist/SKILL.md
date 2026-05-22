@@ -1,7 +1,20 @@
 ---
-name: zeref-ux-problem-definition-specialist
-description: >
-  Operates as the Problem Definition Specialist for Zeref Skills Fleet work. Use when the project requires problem definition specialist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-ux-problem-definition-specialist
+title: Problem Definition Specialist
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "define the problem"
+  - "problem statement"
+  - "HMW"
+  - "user pain points"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Problem Definition Specialist

@@ -1,7 +1,21 @@
 ---
-name: zeref-mkt-pr-communications-specialist
-description: >
-  Operates as the PR & Communications Specialist for Zeref Skills Fleet work. Use when the project requires pr & communications specialist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-pr-communications-specialist
+title: Pr Communications Specialist
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "PR"
+  - "press release"
+  - "media relations"
+  - "communications"
+  - "public relations"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # PR & Communications Specialist

@@ -14,7 +14,7 @@ Claude Code → Plugins → Add Plugin
 → Confirm install
 ```
 
-All 112 skills, 9 commands, and 2 agents install automatically.
+All 104 active skills, 9 commands, and 2 agents install automatically.
 
 ---
 
@@ -83,18 +83,18 @@ The repo ships with a pre-configured Obsidian vault at `wiki/`:
 ## Validate the Install
 
 ```bash
-python3 zeref-validate.py             # validates all 112 skills
+python3 zeref-validate.py             # validates all 104 skills
 python3 zeref-validate.py --verbose   # shows PASS for each skill
 ```
 
-Expected output: `112 skills validated. 0 failures.`
+Expected output: `104 skills validated. 0 failures.`
 
 ---
 
 ## Troubleshooting
 
 **Skills not showing up after install:**
-- Verify `skills/` folder has 112 subdirectories
+- Verify `skills/` folder has 104 subdirectories
 - Each subdirectory must contain `SKILL.md`
 - Run `zeref-validate.py` to check for file issues
 
@@ -123,16 +123,16 @@ zeref-agent-os/
 ├── README.md                    ← Full documentation
 ├── zeref-validate.py            ← Skill validator
 ├── zeref-settings-recommended.json
-├── skills/                      ← 112 skills (skills/<id>/SKILL.md)
+├── skills/                      ← 104 skills (skills/<id>/SKILL.md)
 ├── commands/                    ← 9 slash commands
 ├── agents/                      ← 2 subagents
 ├── references/                  ← Shared rules (anti-hallucination, token discipline)
 ├── output-styles/               ← zeref-executive output style
 ├── themes/                      ← zeref-dark Obsidian theme
-├── registry/                    ← Machine-readable skill index (112 skills)
+├── registry/                    ← Machine-readable skill index (104 skills)
 ├── wiki/                        ← Obsidian brain (ships with vault)
 │   ├── brain/                   ← Master knowledge hub (start here)
-│   ├── fleet/                   ← 9 domain pages for all 112 skills
+│   ├── fleet/                   ← 9 domain pages for all 104 skills
 │   ├── projects/                ← Active project pages
 │   ├── concepts/                ← Architecture and concept docs
 │   └── ...

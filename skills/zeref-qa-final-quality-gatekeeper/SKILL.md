@@ -1,7 +1,19 @@
 ---
-name: zeref-qa-final-quality-gatekeeper
-description: >
-  Operates as the unified Final Quality Gatekeeper for Zeref Skills Fleet work. This is Tier 1 of the 2-tier QA gate system (QA team gate → Executive gate). Absorbs the retired hq-quality-gatekeeper (middle tier). Runs the 8-point QA checklist on any deliverable before it proceeds to zeref-final-executive-reviewer or ships. Auto-triggers on portfolio, recruiter, shipping, public, or client-facing work.
+skill: zeref-qa-final-quality-gatekeeper
+title: Final Quality Gatekeeper
+category: qa
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "quality gate"
+  - "final QA"
+  - "approve before shipping"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Final Quality Gatekeeper

@@ -1,0 +1,26 @@
+[command]
+name = "zeref-weekly-report"
+description = "Generate the weekly self-improvement report. Runs self_eval.py and presents the results for user approval."
+agent = "zeref-evaluator"
+model = "claude-sonnet-4-6"
+max_turns = 15
+
+[prompt]
+content = """
+Generate this week's Zeref upgrade report.
+
+1. Run: python3 scripts/self_eval.py
+2. Read the generated report from docs/weekly-reports/
+3. Present the findings clearly:
+   - Sessions reviewed this week
+   - Average output quality score
+   - Top 3 most-used skills
+   - Failure patterns detected (if any)
+   - Proposed skill upgrades (if any)
+4. For each proposed upgrade, explain:
+   - What problem it fixes
+   - What the benefit will be
+   - What the risk of this change is
+   - CLEARLY LABEL: "This change is proposed — not applied. You must approve before anything changes."
+5. End with: "To approve changes, edit the report file and set approved: true for each change you want applied. Then run: python3 scripts/skill_updater.py"
+"""

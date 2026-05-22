@@ -1,7 +1,20 @@
 ---
-name: zeref-system-evidence-memory-keeper
-description: >
-  Operates as the Evidence Memory Keeper for Zeref Skills Fleet work. Use when the project requires evidence memory keeper judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-system-evidence-memory-keeper
+title: Evidence Memory Keeper
+category: system
+model: claude-haiku-4-5-20251001
+effort: low
+max_turns: 10
+trigger_phrases:
+  - "save evidence"
+  - "log finding"
+  - "record this decision"
+  - "evidence map"
+model_preference: haiku
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Evidence Memory Keeper

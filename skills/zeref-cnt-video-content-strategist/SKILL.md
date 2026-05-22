@@ -1,7 +1,20 @@
 ---
-name: zeref-cnt-video-content-strategist
-description: >
-  Operates as the Video Content Strategist for Zeref Skills Fleet work. Use when the project requires video content strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-cnt-video-content-strategist
+title: Video Content Strategist
+category: cnt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "video strategy"
+  - "YouTube"
+  - "content strategy"
+  - "video marketing"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Video Content Strategist

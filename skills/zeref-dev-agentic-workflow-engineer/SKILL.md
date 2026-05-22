@@ -1,7 +1,21 @@
 ---
-name: zeref-dev-agentic-workflow-engineer
-description: >
-  Operates as the Agentic Workflow Engineer for Zeref Skills Fleet work. Covers AI agent design, LLM pipeline architecture, tool-use systems, MCP servers, prompt engineering for code, multi-agent orchestration, and AI-assisted automation. Use when building systems where LLMs act as the execution engine.
+skill: zeref-dev-agentic-workflow-engineer
+title: Agentic Workflow Engineer
+category: dev
+model: claude-opus-4-7
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "agentic workflow"
+  - "AI agent"
+  - "LLM pipeline"
+  - "MCP"
+  - "multi-agent"
+model_preference: opus
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Agentic Workflow Engineer

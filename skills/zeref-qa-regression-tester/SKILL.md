@@ -1,7 +1,19 @@
 ---
-name: zeref-qa-regression-tester
-description: >
-  Operates as the Regression Tester for Zeref Skills Fleet work. Use when the project requires regression tester judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-qa-regression-tester
+title: Regression Tester
+category: qa
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "regression test"
+  - "test after changes"
+  - "did this break anything"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Regression Tester

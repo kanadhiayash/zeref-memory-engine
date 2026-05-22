@@ -1,7 +1,20 @@
 ---
-name: zeref-cnt-presentation-designer
-description: >
-  Operates as the Presentation Designer for Zeref Skills Fleet work. Use when the project requires presentation designer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-cnt-presentation-designer
+title: Presentation Designer
+category: cnt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "presentation"
+  - "slide deck"
+  - "pitch deck structure"
+  - "keynote outline"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Presentation Designer

@@ -1,7 +1,22 @@
 ---
-name: zeref-dev-frontend-engineer
-description: >
-  Operates as the Frontend Engineer for Zeref Skills Fleet work. Use when the project requires frontend engineer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-dev-frontend-engineer
+title: Frontend Engineer
+category: dev
+model: claude-sonnet-4-6
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "frontend"
+  - "React"
+  - "Vue"
+  - "CSS"
+  - "UI component"
+  - "frontend code"
+model_preference: sonnet
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Frontend Engineer

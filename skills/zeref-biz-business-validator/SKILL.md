@@ -1,7 +1,20 @@
 ---
-name: zeref-biz-business-validator
-description: >
-  Operates as the Business Validator for Zeref Skills Fleet work. Use when the project requires business validator judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-biz-business-validator
+title: Business Validator
+category: biz
+model: claude-sonnet-4-6
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "validate business"
+  - "is this viable"
+  - "business case"
+  - "feasibility"
+model_preference: sonnet
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Business Validator

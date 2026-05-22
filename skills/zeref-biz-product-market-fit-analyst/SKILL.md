@@ -1,7 +1,21 @@
 ---
-name: zeref-biz-product-market-fit-analyst
-description: >
-  Operates as the Product-Market Fit Analyst for Zeref Skills Fleet work. Use when the project requires product-market fit analyst judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-biz-product-market-fit-analyst
+title: Product Market Fit Analyst
+category: biz
+model: claude-sonnet-4-6
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "product market fit"
+  - "PMF"
+  - "retention"
+  - "churn"
+  - "user engagement"
+model_preference: sonnet
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Product-Market Fit Analyst

@@ -1,7 +1,21 @@
 ---
-name: zeref-system-live-researcher
-description: >
-  Operates as the Live Researcher for Zeref Skills Fleet work. Performs real-time web research, competitive intelligence gathering, trend analysis, and source synthesis. Use when current data is required and training knowledge is insufficient or potentially stale.
+skill: zeref-system-live-researcher
+title: Live Researcher
+category: system
+model: claude-haiku-4-5-20251001
+effort: low
+max_turns: 10
+trigger_phrases:
+  - "research this"
+  - "find information"
+  - "web research"
+  - "look up"
+  - "investigate"
+model_preference: haiku
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Live Researcher

@@ -1,27 +1,33 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
-  "name": "zeref-skills-fleet",
-  "version": "2.1.0",
-  "description": "102-skill AI execution OS — Product, UX, Dev, QA, Marketing, Content, Business, and Systems skills for Claude",
+  "name": "zeref-agent-os",
+  "version": "3.0.0",
+  "description": "Context Engine + Agent Harness OS — 109 skills across 9 guilds, 8 privilege-scoped agents, self-improving wiki memory, cross-agent portability (Claude Code, Codex, Gemini CLI). Agent = Model + Harness. The model is a commodity. The harness is the moat.",
   "author": {
     "name": "Yash Kanadhia",
     "url": "https://github.com/kanadhiayash"
   },
-  "homepage": "https://copper-tv-288.notion.site/Zeref-Skills-Fleet-Command-Center-358d695d836a81af9f6adf30770217c3",
+  "homepage": "https://github.com/kanadhiayash/zeref-agent-os",
   "repository": "https://github.com/kanadhiayash/zeref-agent-os",
   "license": "MIT",
   "keywords": [
     "zeref",
     "claude-code",
+    "harness",
+    "context-engine",
+    "agent-os",
     "skills",
     "product",
     "ux",
     "development",
     "qa",
     "marketing",
-    "operations"
+    "operations",
+    "self-improving"
   ],
   "skills": "./skills",
   "commands": "./commands",
+  "agents": "./agents",
+  "references": "./references",
   "outputStyles": "./output-styles"
 }

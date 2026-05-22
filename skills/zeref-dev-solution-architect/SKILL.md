@@ -1,7 +1,20 @@
 ---
-name: zeref-dev-solution-architect
-description: >
-  Operates as the Solution Architect for Zeref Skills Fleet work. Use when the project requires solution architect judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-dev-solution-architect
+title: Solution Architect
+category: dev
+model: claude-opus-4-7
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "solution architecture"
+  - "system design"
+  - "architecture decision"
+  - "tech stack"
+model_preference: opus
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Solution Architect

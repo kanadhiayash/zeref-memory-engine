@@ -1,7 +1,20 @@
 ---
-name: zeref-cnt-content-qa-editor
-description: >
-  Operates as the Content QA Editor for Zeref Skills Fleet work. Use when the project requires content qa editor judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-cnt-content-qa-editor
+title: Content Qa Editor
+category: cnt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "proofread"
+  - "copy edit"
+  - "review this content"
+  - "check grammar"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Content QA Editor

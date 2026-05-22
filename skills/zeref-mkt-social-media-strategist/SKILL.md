@@ -1,7 +1,21 @@
 ---
-name: zeref-mkt-social-media-strategist
-description: >
-  Operates as the Social Media Strategist for Zeref Skills Fleet work. Use when the project requires social media strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-social-media-strategist
+title: Social Media Strategist
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "social media"
+  - "Instagram"
+  - "Twitter"
+  - "TikTok"
+  - "social strategy"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Social Media Strategist

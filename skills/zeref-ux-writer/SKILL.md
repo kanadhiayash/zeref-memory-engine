@@ -1,7 +1,21 @@
 ---
-name: zeref-ux-writer
-description: >
-  Operates as the UX Writer for Zeref Skills Fleet work. Use when the project requires ux writer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-ux-writer
+title: Writer
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "UX writing"
+  - "microcopy"
+  - "UI copy"
+  - "error messages"
+  - "button labels"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # UX Writer

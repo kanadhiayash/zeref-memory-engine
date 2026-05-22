@@ -1,7 +1,20 @@
 ---
-name: zeref-ux-information-architect
-description: >
-  Operates as the Information Architect for Zeref Skills Fleet work. Use when the project requires information architect judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-ux-information-architect
+title: Information Architect
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "information architecture"
+  - "IA"
+  - "navigation structure"
+  - "site map"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Information Architect

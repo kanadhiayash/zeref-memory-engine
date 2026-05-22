@@ -1,7 +1,20 @@
 ---
-name: zeref-mkt-growth-marketer
-description: >
-  Operates as the Growth Marketer for Zeref Skills Fleet work. Use when the project requires growth marketer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-growth-marketer
+title: Growth Marketer
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "growth hacking"
+  - "growth experiment"
+  - "user acquisition"
+  - "growth loop"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Growth Marketer

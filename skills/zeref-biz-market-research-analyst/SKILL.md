@@ -1,7 +1,20 @@
 ---
-name: zeref-biz-market-research-analyst
-description: >
-  Operates as the Market Research Analyst for Zeref Skills Fleet work. Use when the project requires market research analyst judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-biz-market-research-analyst
+title: Market Research Analyst
+category: biz
+model: claude-sonnet-4-6
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "market research"
+  - "market size"
+  - "TAM SAM SOM"
+  - "industry analysis"
+model_preference: sonnet
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Market Research Analyst

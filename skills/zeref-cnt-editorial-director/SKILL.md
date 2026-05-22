@@ -1,7 +1,20 @@
 ---
-name: zeref-cnt-editorial-director
-description: >
-  Operates as the Editorial Director for Zeref Skills Fleet work. Use when the project requires editorial director judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-cnt-editorial-director
+title: Editorial Director
+category: cnt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "editorial strategy"
+  - "content calendar"
+  - "publishing plan"
+  - "content direction"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Editorial Director

@@ -9,8 +9,19 @@ Thumbs.db
 # Obsidian
 .obsidian/
 
-# Wiki (local knowledge base — not part of skills fleet)
-wiki/
+# Wiki — dynamic content not committed; seed files force-tracked
+wiki/hot.md
+wiki/log.md
+
+# Ruflo / RuVector databases (local runtime state)
+*.rvf
+*.rvf.lock
+ruvector.db
+agentdb.rvf
+agentdb.rvf.lock
+
+# Zeref trace logs (local runtime)
+zeref-trace.jsonl
 
 # Python
 __pycache__/

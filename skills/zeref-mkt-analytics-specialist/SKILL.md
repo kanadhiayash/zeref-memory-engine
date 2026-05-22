@@ -1,7 +1,20 @@
 ---
-name: zeref-mkt-analytics-specialist
-description: >
-  Operates as the Marketing Analytics Specialist for Zeref Skills Fleet work. Use when the project requires marketing analytics specialist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-analytics-specialist
+title: Analytics Specialist
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "marketing analytics"
+  - "attribution"
+  - "campaign performance"
+  - "conversion"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Marketing Analytics Specialist

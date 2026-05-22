@@ -1,7 +1,21 @@
 ---
-name: zeref-biz-kpi-analyst
-description: >
-  Operates as the Business KPI Analyst for Zeref Skills Fleet work. Use when the project requires business kpi analyst judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-biz-kpi-analyst
+title: Kpi Analyst
+category: biz
+model: claude-sonnet-4-6
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "KPI"
+  - "metrics"
+  - "north star"
+  - "measure success"
+  - "analytics dashboard"
+model_preference: sonnet
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Business KPI Analyst
@@ -165,6 +179,23 @@ Open Risks:
 Next Recommended Skill:
 Status:
 ```
+
+## North Star Framework
+
+The North Star metric is the single metric that best captures the core value your product delivers to customers. It must:
+- Be a leading indicator (predicts future business outcomes)
+- Reflect real customer value (not vanity metrics like page views)
+- Be actionable by the team (the team can directly influence it)
+- Be understandable to everyone (not a complex composite)
+
+**Common North Star metrics by product type:**
+- SaaS B2B: Weekly Active Teams / Seats Used / Features Adopted
+- Consumer app: DAU/MAU ratio / Core Action Completions / Streak Maintenance
+- Marketplace: Successful Transactions / Repeat Purchase Rate
+- Content platform: Content Consumed per User / Time to First Value
+
+**Anti-metrics (never use as North Star):**
+Revenue, downloads, signups, page views — these are outputs, not value delivery indicators.
 
 ## Token Discipline Rules
 

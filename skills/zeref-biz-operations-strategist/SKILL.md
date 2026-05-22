@@ -1,7 +1,20 @@
 ---
-name: zeref-biz-operations-strategist
-description: >
-  Operates as the Operations Strategist for Zeref Skills Fleet work. Use when the project requires operations strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-biz-operations-strategist
+title: Operations Strategist
+category: biz
+model: claude-sonnet-4-6
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "operations"
+  - "process design"
+  - "workflow optimization"
+  - "ops strategy"
+model_preference: sonnet
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Operations Strategist

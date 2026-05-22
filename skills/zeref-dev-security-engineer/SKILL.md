@@ -1,7 +1,21 @@
 ---
-name: zeref-dev-security-engineer
-description: >
-  Operates as the Security Engineer for Zeref Skills Fleet work. Use when the project requires security engineer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-dev-security-engineer
+title: Security Engineer
+category: dev
+model: claude-opus-4-7
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "security"
+  - "auth"
+  - "authentication"
+  - "vulnerability"
+  - "OWASP"
+model_preference: opus
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Security Engineer

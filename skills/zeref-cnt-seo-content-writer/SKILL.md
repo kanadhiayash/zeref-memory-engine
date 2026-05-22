@@ -1,7 +1,20 @@
 ---
-name: zeref-cnt-seo-content-writer
-description: >
-  Operates as the SEO Content Writer for Zeref Skills Fleet work. Use when the project requires seo content writer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-cnt-seo-content-writer
+title: Seo Content Writer
+category: cnt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "SEO content"
+  - "keyword-optimized"
+  - "search traffic"
+  - "organic content"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # SEO Content Writer

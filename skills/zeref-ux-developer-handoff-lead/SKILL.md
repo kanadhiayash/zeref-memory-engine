@@ -1,7 +1,20 @@
 ---
-name: zeref-ux-developer-handoff-lead
-description: >
-  Operates as the Developer Handoff Lead for Zeref Skills Fleet work. Use when the project requires developer handoff lead judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-ux-developer-handoff-lead
+title: Developer Handoff Lead
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "developer handoff"
+  - "design specs"
+  - "Figma handoff"
+  - "implementation notes"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Developer Handoff Lead

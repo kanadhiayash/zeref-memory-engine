@@ -1,7 +1,21 @@
 ---
-name: zeref-ux-motion-designer
-description: >
-  Operates as the Motion Designer for Zeref Skills Fleet work. Covers UI animation design, microinteraction specification, Lottie animation, transition design, motion principles, and animation handoff specs for mobile and web. Use when motion and animation are part of the product experience.
+skill: zeref-ux-motion-designer
+title: Motion Designer
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "motion design"
+  - "animation spec"
+  - "Lottie"
+  - "Framer motion"
+  - "transitions"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Motion Designer

@@ -1,7 +1,19 @@
 ---
-name: zeref-ux-figma-architecture-specialist
-description: >
-  Operates as the Figma Architecture Specialist for Zeref Skills Fleet work. Use when the project requires figma architecture specialist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-ux-figma-architecture-specialist
+title: Figma Architecture Specialist
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "Figma architecture"
+  - "component structure"
+  - "Figma organization"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Figma Architecture Specialist

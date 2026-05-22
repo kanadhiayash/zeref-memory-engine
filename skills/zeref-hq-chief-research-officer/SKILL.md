@@ -1,7 +1,19 @@
 ---
-name: zeref-hq-chief-research-officer
-description: >
-  Operates as the Chief Research Officer for Zeref Skills Fleet work. Use when the project requires chief research officer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-hq-chief-research-officer
+title: Chief Research Officer
+category: hq
+model: claude-opus-4-7
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "research strategy"
+  - "synthesize research"
+  - "research direction"
+model_preference: opus
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Chief Research Officer

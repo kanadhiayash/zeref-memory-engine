@@ -1,7 +1,20 @@
 ---
-name: zeref-biz-business-strategist
-description: >
-  Operates as the Business Strategist for Zeref Skills Fleet work. Use when the project requires business strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-biz-business-strategist
+title: Business Strategist
+category: biz
+model: claude-sonnet-4-6
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "business strategy"
+  - "strategic plan"
+  - "go to market"
+  - "business model"
+model_preference: sonnet
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Business Strategist
