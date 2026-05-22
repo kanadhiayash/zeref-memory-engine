@@ -831,7 +831,11 @@
         "Vue",
         "CSS",
         "UI component",
-        "frontend code"
+        "frontend code",
+        "landing page",
+        "build a website",
+        "web app",
+        "Next.js"
       ],
       "dependencies": [
         "references/zeref-qa-gate.md",
