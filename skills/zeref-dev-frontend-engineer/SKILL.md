@@ -12,6 +12,10 @@ trigger_phrases:
   - "CSS"
   - "UI component"
   - "frontend code"
+  - "landing page"
+  - "build a website"
+  - "web app"
+  - "Next.js"
 model_preference: sonnet
 risk_level: high
 dependencies:

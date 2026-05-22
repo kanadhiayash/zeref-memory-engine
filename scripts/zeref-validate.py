@@ -122,6 +122,17 @@ def check_skill_format():
     if not missing_skill_id and not missing_triggers:
         passes.append(f"✅ All skill files have v3 frontmatter (skill id + trigger_phrases)")
 
+def check_command_count():
+    if COMMANDS_DIR.exists():
+        command_files = list(COMMANDS_DIR.glob("*.md")) + list(COMMANDS_DIR.glob("*.toml"))
+        count = len(command_files)
+        if count >= EXPECTED_COMMAND_COUNT:
+            passes.append(f"✅ Command count: {count} (expected ≥{EXPECTED_COMMAND_COUNT})")
+        else:
+            errors.append(f"❌ Command count: {count} (expected ≥{EXPECTED_COMMAND_COUNT})")
+    else:
+        errors.append(f"❌ commands/ directory missing")
+
 def check_experience_log():
     # experience.jsonl lives at repo root
     log_path = FLEET_ROOT / "experience.jsonl"
@@ -130,14 +141,31 @@ def check_experience_log():
     else:
         warnings.append(f"⚠️  experience.jsonl not yet created — log your first session after v3.0 launch")
 
+def check_scripts():
+    """Verify all automation scripts exist."""
+    required = [
+        "scripts/zeref-validate.py",
+        "scripts/self_eval.py",
+        "scripts/skill_updater.py",
+        "scripts/rebuild_registry.py",
+    ]
+    for script in required:
+        path = FLEET_ROOT / script
+        if path.exists():
+            passes.append(f"✅ Script exists: {script}")
+        else:
+            errors.append(f"❌ Missing script: {script}")
+
 # ─── Run All Checks ───────────────────────────────────────────────────────────
 
 check_root_files()
 check_skill_count()
 check_agent_count()
+check_command_count()
 check_registry()
 check_references()
 check_skill_format()
+check_scripts()
 check_experience_log()
 
 # ─── Report ───────────────────────────────────────────────────────────────────

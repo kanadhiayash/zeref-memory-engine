@@ -12,6 +12,7 @@ Thumbs.db
 # Wiki — dynamic content not committed; seed files force-tracked
 wiki/hot.md
 wiki/log.md
+wiki/upgrade-reports/
 
 # Ruflo / RuVector databases (local runtime state)
 *.rvf
