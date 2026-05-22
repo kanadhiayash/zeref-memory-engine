@@ -1,11 +1,11 @@
 # Zeref OS — Agent Operating System for Claude
 
-**Version:** 2.1.0 | **License:** MIT | **Skills:** 102 | **Commands:** 9 | **Agents:** 2
+**Version:** 3.0.0 | **License:** MIT | **Skills:** 109 | **Commands:** 11 | **Agents:** 8
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange.svg)](https://github.com/kanadhiayash/zeref-agent-os)
-[![Skills](https://img.shields.io/badge/skills-102-green.svg)](skills/)
-[![Version](https://img.shields.io/badge/version-2.1.0-purple.svg)](.claude-plugin/plugin.json)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange.svg)](https://github.com/kanadhiayash/zeref-os)
+[![Skills](https://img.shields.io/badge/skills-109-green.svg)](skills/)
+[![Version](https://img.shields.io/badge/version-3.0.0-purple.svg)](.claude-plugin/plugin.json)
 
 Built by [Yash Kanadhia](https://github.com/kanadhiayash) · Toronto · 2026
 
@@ -60,7 +60,7 @@ This OS was built with AI at every layer — and that is intentional and documen
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                         ZEREF OS v2.0                                   │
+│                         ZEREF OS v3.0                                   │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │  Layer 0 — ZEREFOS.md (Kernel)                                          │
@@ -76,10 +76,10 @@ This OS was built with AI at every layer — and that is intentional and documen
 │  │  Stack: 1 Lead + 0–3 Support + 0–1 QA Gate                       │  │
 │  └───────────────────────────────────────────────────────────────────┘  │
 │                              ↓                                           │
-│  Layer 2 — Skill Fleet (102 active skills)                                     │
+│  Layer 2 — Skill Fleet (109 active skills)                                     │
 │  ┌────────────┬─────────────┬─────────────┬─────────────────────────┐  │
-│  │ HQ (5)     │ UX (17)     │ Dev (15)    │ Biz (14)                │  │
-│  │ Mkt (15)   │ Cnt (14)    │ QA (11)     │ Final (4) · System (7)  │  │
+│  │ HQ (5)     │ UX (19)     │ Dev (16)    │ Biz (15)                │  │
+│  │ Mkt (15)   │ Cnt (15)    │ QA (11)     │ Final (4) · System (9)  │  │
 │  └────────────┴─────────────┴─────────────┴─────────────────────────┘  │
 │                                                                         │
 │  Layer 3 — Shared References                                            │
@@ -95,7 +95,7 @@ This OS was built with AI at every layer — and that is intentional and documen
 │  Layer 5 — Infrastructure                                               │
 │  ┌───────────────────────────────────────────────────────────────────┐  │
 │  │  zeref-validate.py · registry/ · .github/workflows/ · commands/  │  │
-│  │  agents/fleet-router · agents/executive-qa                        │  │
+│  │  agents/ (8 privilege-scoped agents)                              │  │
 │  └───────────────────────────────────────────────────────────────────┘  │
 │                                                                         │
 └─────────────────────────────────────────────────────────────────────────┘
@@ -163,8 +163,9 @@ Applied to every code and system task:
 **1. Install the plugin**
 ```
 Claude Code → Plugins → Add Plugin
-→ https://github.com/kanadhiayash/zeref-agent-os
+→ https://github.com/kanadhiayash/zeref-os
 ```
+Or: download the repo ZIP → Claude Code → Plugins → Import from ZIP
 
 **2. Activate the kernel**
 ```
@@ -357,30 +358,20 @@ Claude → Project Instructions → Paste contents of ZEREFOS.md
 
 ---
 
-## Wiki / Second Brain
+## Wiki / Memory Layer
 
-The repo ships with a fully configured Obsidian vault at `wiki/`. Open the entire `zeref-agent-os/` folder in Obsidian and it works immediately — theme, config, and CSS snippet are pre-applied.
+The repo ships with a seed wiki structure at `wiki/`. It starts minimal and grows as you work — each session appends context, each `/zeref-save` compresses the session into `hot.md`.
 
-### Brain Structure
+### Wiki Structure
 
 ```
 wiki/
-├── brain/              ← Master knowledge hub (start here)
-│   ├── 00_master.md   ← Entry point — links to everything
-│   ├── 01_zeref_os.md ← OS kernel, routing, Karpathy principles
-│   ├── 02_fleet_map.md← All 102 active skills catalogued
-│   ├── 03_architecture.md ← System design and data flow
-│   ├── 04_memory_protocol.md ← Memory rules and read order
-│   ├── 05_commands.md ← All 9 commands documented
-│   └── 06_agents.md   ← Fleet router + executive QA agent
-├── fleet/              ← 9 domain pages covering all 102 active skills
-├── projects/           ← Active builds and initiatives
-├── concepts/           ← Architecture, routing, data model
-├── decisions/          ← Decision log with rationale
-├── sources/            ← Ingested reference documents
-├── hot.md              ← Current session context (read first)
-├── index.md            ← Master page catalog
-└── log.md              ← Append-only operation log
+├── hot.md              ← Current session context (read first, max 500 words)
+├── index.md            ← Domain knowledge map (updated as domains are covered)
+├── log.md              ← Append-only operation log
+├── concepts/           ← Architecture decisions, routing rules, data model
+├── projects/           ← One page per active project
+└── sources/            ← Reference links, ingested documents
 ```
 
 ### Memory Workflow
@@ -418,7 +409,7 @@ The validator checks:
 ## Folder Structure
 
 ```
-zeref-agent-os/
+zeref-os/
 ├── README.md                          ← You are here
 ├── INSTALL.md                         ← Installation guide
 ├── ZEREFOS.md                         ← OS kernel (paste into Project Instructions)
@@ -479,5 +470,5 @@ If you want to build your own version, fork the repo and adapt the architecture 
 
 ---
 
-*Zeref OS v2.1.0 — Built by Yash Kanadhia | Toronto | 2026*
-*102 active skills. 9 commands. 2 agents. One operating system.*
+*Zeref OS v3.0.0 — Built by Yash Kanadhia | Toronto | 2026*
+*109 active skills. 11 commands. 8 agents. One operating system.*

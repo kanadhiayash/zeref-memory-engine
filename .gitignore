@@ -41,3 +41,6 @@ npm-debug.log
 .vscode/
 *.swp
 *.swo
+
+# Claude Code local settings (user-specific, not part of plugin)
+.claude/settings.local.json

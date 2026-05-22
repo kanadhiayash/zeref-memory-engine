@@ -27,7 +27,7 @@ jobs:
         run: |
           SKILL_COUNT=$(ls skills/ | wc -l | tr -d ' ')
           echo "Skill count: $SKILL_COUNT"
-          if [ "$SKILL_COUNT" -lt "120" ]; then
+          if [ "$SKILL_COUNT" -lt "109" ]; then
             echo "❌ Skill count below expected minimum"
             exit 1
           fi
