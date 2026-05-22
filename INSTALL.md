@@ -1,42 +1,32 @@
 # Install Zeref OS
 
-Three ways to install. Pick one.
+Two ways to install. Pick one.
+
+> **Warning:** Do NOT use "Add marketplace" in Claude Code — that is for multi-plugin registries, not individual plugins. It will fail with "no manifest found". Use the paths below.
 
 ---
 
-## Option 1 — GitHub (Recommended)
+## Path A — GitHub Download ZIP (Recommended)
 
-**Requirement:** Claude Code CLI or Desktop App
+**Requirements:** Claude Code CLI or Desktop App (v1.x+)
 
-```
-Claude Code → Plugins → Add Plugin
-→ Enter: https://github.com/kanadhiayash/zeref-agent-os
-→ Confirm install
-```
+1. Go to [github.com/kanadhiayash/zeref-os](https://github.com/kanadhiayash/zeref-os)
+2. Click **Code → Download ZIP**
+3. In Claude Code: **Settings → Plugins → Local uploads → +**
+4. Select the downloaded `zeref-os-main.zip`
+5. Click **Install**
 
-All 104 active skills, 9 commands, and 2 agents install automatically.
+All 109 active skills, 11 commands, and 8 agents install automatically.
 
----
-
-## Option 2 — Local ZIP
-
-1. Download ZIP from GitHub: `Code → Download ZIP`
-2. Unzip to any directory (e.g. `~/Documents/zeref-agent-os/`)
-3. In Claude Code:
-```
-Claude Code → Plugins → Add Plugin (Local)
-→ Browse to unzipped folder
-→ Select zeref-agent-os/
-→ Confirm install
-```
+> **Always use GitHub Download ZIP — do not zip the local repo folder.** Local zips include runtime database files (`ruvector.db`, `agentdb.rvf`) that trigger Claude Code's compression security scanner. The GitHub ZIP excludes them automatically.
 
 ---
 
-## Option 3 — Git Clone + CLI
+## Path B — Git Clone
 
 ```bash
-git clone https://github.com/kanadhiayash/zeref-agent-os.git
-cd zeref-agent-os
+git clone https://github.com/kanadhiayash/zeref-os.git
+cd zeref-os
 claude plugin install .
 ```
 
@@ -44,13 +34,13 @@ claude plugin install .
 
 ## Step 2 — Activate the OS Kernel
 
-After installing the plugin, activate ZEREFOS:
+After installing the plugin, load the OS kernel:
 
 1. Open Claude → **Project** (or create one for Zeref)
 2. Go to **Project Instructions**
 3. Paste the full contents of `ZEREFOS.md`
 
-This loads the OS kernel — identity, routing rules, Karpathy principles, Caveman triggers.
+This loads the routing kernel, identity rules, Karpathy principles, and Caveman triggers.
 
 **Without this step, skills install but routing and discipline rules don't apply.**
 
@@ -68,46 +58,37 @@ Zeref reads `wiki/hot.md`, reports current context, and asks what to work on.
 
 ---
 
-## Step 4 — Use the Obsidian Vault (Optional but Recommended)
-
-The repo ships with a pre-configured Obsidian vault at `wiki/`:
-
-1. Download and install [Obsidian](https://obsidian.md) (free)
-2. Open Obsidian → **Open folder as vault**
-3. Select the `zeref-agent-os/` folder (the whole repo root)
-4. Obsidian reads `.obsidian/` config automatically — vault opens with theme and settings applied
-5. Start at `wiki/brain/00_master.md`
-
----
-
 ## Validate the Install
 
 ```bash
-python3 zeref-validate.py             # validates all 104 skills
-python3 zeref-validate.py --verbose   # shows PASS for each skill
+python3 scripts/zeref-validate.py             # validates full fleet
+python3 scripts/zeref-validate.py --verbose   # shows PASS for each skill
 ```
 
-Expected output: `104 skills validated. 0 failures.`
+Expected output: `🟢 VALIDATION PASSED — 109 skills, 8 agents, 11 commands`
 
 ---
 
 ## Troubleshooting
 
+**"This repository isn't a marketplace" error:**
+- You used "Add marketplace" — that's the wrong dialog. Use **Local uploads** (Path A above).
+
 **Skills not showing up after install:**
-- Verify `skills/` folder has 104 subdirectories
+- Verify `skills/` folder has 109 subdirectories
 - Each subdirectory must contain `SKILL.md`
-- Run `zeref-validate.py` to check for file issues
+- Run `python3 scripts/zeref-validate.py` to check for file issues
+
+**Compression warning on ZIP upload:**
+- You zipped the local repo folder instead of using GitHub Download ZIP
+- Delete the local zip, download fresh from GitHub (`Code → Download ZIP`), re-upload
 
 **ZEREFOS not routing correctly:**
-- Confirm ZEREFOS.md content is in Claude Project Instructions (not just uploaded as a file)
+- Confirm `ZEREFOS.md` content is in Claude Project Instructions (not just uploaded as a file)
 - The kernel must be in the system prompt layer, not the conversation
 
-**Obsidian vault not loading:**
-- Make sure you opened the repo root folder, not the `wiki/` subfolder
-- `.obsidian/` must be at the root of the vault folder
-
 **Plugin.json schema errors:**
-- Check `.claude-plugin/plugin.json` matches the installed Claude Code version
+- Check `.claude-plugin/plugin.json` matches your installed Claude Code version
 - Run `/zeref-audit` to diagnose
 
 ---
@@ -115,26 +96,31 @@ Expected output: `104 skills validated. 0 failures.`
 ## Directory Structure After Install
 
 ```
-zeref-agent-os/
+zeref-os/
 ├── .claude-plugin/plugin.json   ← Claude Code plugin manifest
+├── ZEREF.md                     ← OS identity and routing kernel
 ├── ZEREFOS.md                   ← Paste into Project Instructions
-├── CLAUDE.md                    ← Vault structure reference
+├── AGENTS.md                    ← Agent harness definitions (Codex compatible)
+├── GEMINI.md                    ← Gemini agent harness definitions
+├── CLAUDE.md                    ← Session start protocol
 ├── INSTALL.md                   ← This file
 ├── README.md                    ← Full documentation
-├── zeref-validate.py            ← Skill validator
-├── zeref-settings-recommended.json
-├── skills/                      ← 104 skills (skills/<id>/SKILL.md)
-├── commands/                    ← 9 slash commands
-├── agents/                      ← 2 subagents
-├── references/                  ← Shared rules (anti-hallucination, token discipline)
-├── output-styles/               ← zeref-executive output style
-├── themes/                      ← zeref-dark Obsidian theme
-├── registry/                    ← Machine-readable skill index (104 skills)
-├── wiki/                        ← Obsidian brain (ships with vault)
-│   ├── brain/                   ← Master knowledge hub (start here)
-│   ├── fleet/                   ← 9 domain pages for all 104 skills
-│   ├── projects/                ← Active project pages
-│   ├── concepts/                ← Architecture and concept docs
-│   └── ...
-└── .obsidian/                   ← Vault config (opens instantly in Obsidian)
+├── CHANGELOG.md                 ← Version history
+├── LICENSE                      ← MIT
+├── skills/                      ← 109 skills across 9 guilds
+├── commands/                    ← 11 slash commands
+├── agents/                      ← 8 privilege-scoped agents
+├── references/                  ← Shared rules (QA gate, safety, anti-hallucination)
+├── output-styles/               ← Output style definitions
+├── registry/                    ← Machine-readable skill index
+├── scripts/                     ← Validation and upgrade tools
+│   └── zeref-validate.py        ← Run to validate fleet
+├── experience.jsonl             ← Self-improvement log
+└── wiki/                        ← Session memory (hot.md, log.md, index.md)
+    ├── hot.md                   ← Last 3 sessions context
+    ├── log.md                   ← Append-only operation history
+    ├── index.md                 ← Domain knowledge map
+    ├── concepts/
+    ├── projects/
+    └── sources/
 ```

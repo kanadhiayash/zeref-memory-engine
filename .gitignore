@@ -15,6 +15,9 @@ wiki/log.md
 wiki/upgrade-reports/
 
 # Ruflo / RuVector databases (local runtime state)
+# IMPORTANT: Never include these in a ZIP upload to Claude Code.
+# ruvector.db compresses 580:1 and triggers the security scanner.
+# Always use GitHub "Download ZIP" — it excludes gitignored files automatically.
 *.rvf
 *.rvf.lock
 ruvector.db
