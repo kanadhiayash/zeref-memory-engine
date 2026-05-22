@@ -1,7 +1,20 @@
 ---
-name: zeref-cnt-documentation-writer
-description: >
-  Operates as the Documentation Writer for Zeref Skills Fleet work. Use when the project requires documentation writer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-cnt-documentation-writer
+title: Documentation Writer
+category: cnt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "write documentation"
+  - "README"
+  - "technical docs"
+  - "user guide"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Documentation Writer

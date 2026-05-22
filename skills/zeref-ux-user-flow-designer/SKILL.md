@@ -1,7 +1,20 @@
 ---
-name: zeref-ux-user-flow-designer
-description: >
-  Operates as the User Flow Designer for Zeref Skills Fleet work. Use when the project requires user flow designer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-ux-user-flow-designer
+title: User Flow Designer
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "user flow"
+  - "task flow"
+  - "user journey map"
+  - "flow diagram"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # User Flow Designer

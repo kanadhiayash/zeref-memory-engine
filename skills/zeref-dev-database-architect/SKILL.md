@@ -1,7 +1,22 @@
 ---
-name: zeref-dev-database-architect
-description: >
-  Operates as the Database Architect for Zeref Skills Fleet work. Covers relational (PostgreSQL, SQLite, MySQL), document (Firestore, MongoDB-compatible patterns), key-value, and time-series databases. Schema design, data modeling, indexing, query optimization, and migration planning. Use when the project requires database architect judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-dev-database-architect
+title: Database Architect
+category: dev
+model: claude-opus-4-7
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "database design"
+  - "schema"
+  - "data model"
+  - "SQL"
+  - "NoSQL"
+  - "query"
+model_preference: opus
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Database Architect

@@ -1,7 +1,20 @@
 ---
-name: zeref-final-project-compiler
-description: >
-  Operates as the Project Compiler for Zeref Skills Fleet work. Use when the project requires project compiler judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-final-project-compiler
+title: Project Compiler
+category: final
+model: claude-opus-4-7
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "compile project"
+  - "project summary"
+  - "final compilation"
+  - "wrap up"
+model_preference: opus
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Project Compiler

@@ -1,7 +1,20 @@
 ---
-name: zeref-biz-risk-analyst
-description: >
-  Operates as the Risk Analyst for Zeref Skills Fleet work. Use when the project requires risk analyst judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-biz-risk-analyst
+title: Risk Analyst
+category: biz
+model: claude-sonnet-4-6
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "risk assessment"
+  - "risk mitigation"
+  - "SWOT"
+  - "identify risks"
+model_preference: sonnet
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Risk Analyst

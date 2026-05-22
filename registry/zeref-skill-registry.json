@@ -1,619 +1,2320 @@
 {
-  "version": "2.1.0",
-  "updated": "2026-05-18",
-  "total": 102,
+  "version": "3.0.0",
+  "updated": "2026-05-22",
+  "total": 109,
   "skills": [
     {
       "id": "zeref-biz-business-strategist",
-      "name": "zeref-biz-business-strategist",
-      "description": "Operates as the Business Strategist for Zeref Skills Fleet work. Use when the project requires business strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "biz"
+      "title": "Business Strategist",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "business strategy",
+        "strategic plan",
+        "go to market",
+        "business model"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-business-strategist/SKILL.md"
     },
     {
       "id": "zeref-biz-business-validator",
-      "name": "zeref-biz-business-validator",
-      "description": "Operates as the Business Validator for Zeref Skills Fleet work. Use when the project requires business validator judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "biz"
+      "title": "Business Validator",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "validate business",
+        "is this viable",
+        "business case",
+        "feasibility"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-business-validator/SKILL.md"
     },
     {
       "id": "zeref-biz-competitive-intelligence-analyst",
-      "name": "zeref-biz-competitive-intelligence-analyst",
-      "description": "Operates as the Competitive Intelligence Analyst for Zeref Skills Fleet work. Use when the project requires competitive intelligence analyst judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "biz"
+      "title": "Competitive Intelligence Analyst",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "competitor analysis",
+        "competitive landscape",
+        "market positioning",
+        "benchmark competitors"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-competitive-intelligence-analyst/SKILL.md"
     },
     {
       "id": "zeref-biz-financial-analyst",
-      "name": "zeref-biz-financial-analyst",
-      "description": "Operates as the Financial Analyst for Zeref Skills Fleet work. Use when the project requires financial analyst judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "biz"
+      "title": "Financial Analyst",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "financial model",
+        "unit economics",
+        "revenue forecast",
+        "P&L",
+        "budget"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-financial-analyst/SKILL.md"
     },
     {
       "id": "zeref-biz-investor-pitch-strategist",
-      "name": "zeref-biz-investor-pitch-strategist",
-      "description": "Operates as the Investor Pitch Strategist for Zeref Skills Fleet work. Use when the project requires investor pitch strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "biz"
+      "title": "Investor Pitch Strategist",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "investor pitch",
+        "fundraising deck",
+        "pitch strategy",
+        "raise capital"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-investor-pitch-strategist/SKILL.md"
     },
     {
       "id": "zeref-biz-kpi-analyst",
-      "name": "zeref-biz-kpi-analyst",
-      "description": "Operates as the Business KPI Analyst for Zeref Skills Fleet work. Use when the project requires business kpi analyst judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "biz"
+      "title": "Kpi Analyst",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "KPI",
+        "metrics",
+        "north star",
+        "measure success",
+        "analytics dashboard"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-kpi-analyst/SKILL.md"
     },
     {
       "id": "zeref-biz-legal-advisor",
-      "name": "zeref-biz-legal-advisor",
-      "description": "Operates as the Legal Advisor for Zeref Skills Fleet work. Use when the project requires legal advisor judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "biz"
+      "title": "Legal Advisor",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "legal review",
+        "contract",
+        "terms of service",
+        "compliance",
+        "legal risk"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-legal-advisor/SKILL.md"
     },
     {
       "id": "zeref-biz-market-research-analyst",
-      "name": "zeref-biz-market-research-analyst",
-      "description": "Operates as the Market Research Analyst for Zeref Skills Fleet work. Use when the project requires market research analyst judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "biz"
+      "title": "Market Research Analyst",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "market research",
+        "market size",
+        "TAM SAM SOM",
+        "industry analysis"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-market-research-analyst/SKILL.md"
     },
     {
       "id": "zeref-biz-monetization-strategist",
-      "name": "zeref-biz-monetization-strategist",
-      "description": "Operates as the Monetization Strategist for Zeref Skills Fleet work. Use when the project requires monetization strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "biz"
+      "title": "Monetization Strategist",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "monetization",
+        "pricing model",
+        "revenue streams",
+        "how to charge"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-monetization-strategist/SKILL.md"
     },
     {
       "id": "zeref-biz-operations-strategist",
-      "name": "zeref-biz-operations-strategist",
-      "description": "Operates as the Operations Strategist for Zeref Skills Fleet work. Use when the project requires operations strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "biz"
+      "title": "Operations Strategist",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "operations",
+        "process design",
+        "workflow optimization",
+        "ops strategy"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-operations-strategist/SKILL.md"
+    },
+    {
+      "id": "zeref-biz-opportunity-solution-analyst",
+      "title": "Opportunity Solution Analyst",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "opportunity-solution tree",
+        "discovery",
+        "what should we build",
+        "prioritize features"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-opportunity-solution-analyst/SKILL.md"
     },
     {
       "id": "zeref-biz-partnership-strategist",
-      "name": "zeref-biz-partnership-strategist",
-      "description": "Operates as the Partnership Strategist for Zeref Skills Fleet work. Use when the project requires partnership strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "biz"
+      "title": "Partnership Strategist",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "partnerships",
+        "business development",
+        "BD strategy",
+        "strategic alliances"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-partnership-strategist/SKILL.md"
     },
     {
       "id": "zeref-biz-product-market-fit-analyst",
-      "name": "zeref-biz-product-market-fit-analyst",
-      "description": "Operates as the Product-Market Fit Analyst for Zeref Skills Fleet work. Use when the project requires product-market fit analyst judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "biz"
+      "title": "Product Market Fit Analyst",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "product market fit",
+        "PMF",
+        "retention",
+        "churn",
+        "user engagement"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-product-market-fit-analyst/SKILL.md"
     },
     {
       "id": "zeref-biz-risk-analyst",
-      "name": "zeref-biz-risk-analyst",
-      "description": "Operates as the Risk Analyst for Zeref Skills Fleet work. Use when the project requires risk analyst judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "biz"
+      "title": "Risk Analyst",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "risk assessment",
+        "risk mitigation",
+        "SWOT",
+        "identify risks"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-risk-analyst/SKILL.md"
     },
     {
       "id": "zeref-biz-startup-operator",
-      "name": "zeref-biz-startup-operator",
-      "description": "Operates as the Startup Operator for Zeref Skills Fleet work. Covers zero-to-one product execution, product-market fit validation, early-stage operations, founding team dynamics, MVP scoping, and startup strategy. Use when the project is pre-PMF, early-stage, or requires zero-to-one operational thinking.",
-      "domain": "biz"
+      "title": "Startup Operator",
+      "category": "biz",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "startup",
+        "zero to one",
+        "early stage",
+        "MVP launch",
+        "founder"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-biz-startup-operator/SKILL.md"
     },
     {
       "id": "zeref-cnt-brand-voice-editor",
-      "name": "zeref-cnt-brand-voice-editor",
-      "description": "Operates as the Brand Voice Editor for Zeref Skills Fleet work. Use when the project requires brand voice editor judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "cnt"
+      "title": "Brand Voice Editor",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "brand voice",
+        "tone of voice",
+        "editorial guidelines",
+        "rewrite in brand voice"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-brand-voice-editor/SKILL.md"
     },
     {
       "id": "zeref-cnt-case-study-writer",
-      "name": "zeref-cnt-case-study-writer",
-      "description": "Operates as the Case Study Writer for Zeref Skills Fleet work. Merges UX case study writing and technical case study writing into one unified skill. Covers portfolio case studies, client-facing case studies, and technical writeups for GitHub/portfolio. Use when a project needs to be packaged as proof of work.",
-      "domain": "cnt"
+      "title": "Case Study Writer",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "case study",
+        "portfolio piece",
+        "project writeup",
+        "document this project"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-case-study-writer/SKILL.md"
     },
     {
       "id": "zeref-cnt-content-qa-editor",
-      "name": "zeref-cnt-content-qa-editor",
-      "description": "Operates as the Content QA Editor for Zeref Skills Fleet work. Use when the project requires content qa editor judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "cnt"
+      "title": "Content Qa Editor",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "proofread",
+        "copy edit",
+        "review this content",
+        "check grammar"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-content-qa-editor/SKILL.md"
     },
     {
       "id": "zeref-cnt-copywriter",
-      "name": "zeref-cnt-copywriter",
-      "description": "Operates as the Copywriter for Zeref Skills Fleet work. Use when the project requires copywriter judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "cnt"
+      "title": "Copywriter",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "write copy",
+        "marketing copy",
+        "headline",
+        "landing page copy",
+        "ad copy"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-copywriter/SKILL.md"
     },
     {
       "id": "zeref-cnt-documentation-writer",
-      "name": "zeref-cnt-documentation-writer",
-      "description": "Operates as the Documentation Writer for Zeref Skills Fleet work. Use when the project requires documentation writer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "cnt"
+      "title": "Documentation Writer",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "write documentation",
+        "README",
+        "technical docs",
+        "user guide"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-documentation-writer/SKILL.md"
     },
     {
       "id": "zeref-cnt-editorial-director",
-      "name": "zeref-cnt-editorial-director",
-      "description": "Operates as the Editorial Director for Zeref Skills Fleet work. Use when the project requires editorial director judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "cnt"
+      "title": "Editorial Director",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "editorial strategy",
+        "content calendar",
+        "publishing plan",
+        "content direction"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-editorial-director/SKILL.md"
     },
     {
       "id": "zeref-cnt-linkedin-ghostwriter",
-      "name": "zeref-cnt-linkedin-ghostwriter",
-      "description": "Operates as the LinkedIn Ghostwriter for Zeref Skills Fleet work. Use when the project requires linkedin ghostwriter judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "cnt"
+      "title": "Linkedin Ghostwriter",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "LinkedIn post",
+        "LinkedIn content",
+        "thought leadership post",
+        "write for LinkedIn"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-linkedin-ghostwriter/SKILL.md"
     },
     {
       "id": "zeref-cnt-long-form-writer",
-      "name": "zeref-cnt-long-form-writer",
-      "description": "Operates as the Long-Form Writer for Zeref Skills Fleet work. Use when the project requires long-form writer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "cnt"
+      "title": "Long Form Writer",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "blog post",
+        "article",
+        "long form",
+        "essay",
+        "Substack"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-long-form-writer/SKILL.md"
     },
     {
       "id": "zeref-cnt-presentation-designer",
-      "name": "zeref-cnt-presentation-designer",
-      "description": "Operates as the Presentation Designer for Zeref Skills Fleet work. Use when the project requires presentation designer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "cnt"
+      "title": "Presentation Designer",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "presentation",
+        "slide deck",
+        "pitch deck structure",
+        "keynote outline"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-presentation-designer/SKILL.md"
     },
     {
       "id": "zeref-cnt-repurposing-specialist",
-      "name": "zeref-cnt-repurposing-specialist",
-      "description": "Operates as the Content Repurposing Specialist for Zeref Skills Fleet work. Use when the project requires content repurposing specialist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "cnt"
+      "title": "Repurposing Specialist",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "repurpose content",
+        "turn this into",
+        "adapt for",
+        "content repurposing"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-repurposing-specialist/SKILL.md"
     },
     {
       "id": "zeref-cnt-resume-career-writer",
-      "name": "zeref-cnt-resume-career-writer",
-      "description": "Operates as the Resume & Career Writer for Zeref Skills Fleet work. Use when the project requires resume & career writer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "cnt"
+      "title": "Resume Career Writer",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "resume",
+        "CV",
+        "cover letter",
+        "job application",
+        "career document"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-resume-career-writer/SKILL.md"
     },
     {
       "id": "zeref-cnt-scriptwriter",
-      "name": "zeref-cnt-scriptwriter",
-      "description": "Operates as the Scriptwriter for Zeref Skills Fleet work. Use when the project requires scriptwriter judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "cnt"
+      "title": "Scriptwriter",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "script",
+        "video script",
+        "podcast script",
+        "explainer video"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-scriptwriter/SKILL.md"
     },
     {
       "id": "zeref-cnt-seo-content-writer",
-      "name": "zeref-cnt-seo-content-writer",
-      "description": "Operates as the SEO Content Writer for Zeref Skills Fleet work. Use when the project requires seo content writer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "cnt"
+      "title": "Seo Content Writer",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "SEO content",
+        "keyword-optimized",
+        "search traffic",
+        "organic content"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-seo-content-writer/SKILL.md"
+    },
+    {
+      "id": "zeref-cnt-ux-case-study-writer",
+      "title": "Ux Case Study Writer",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "UX case study",
+        "design case study",
+        "portfolio case study"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-ux-case-study-writer/SKILL.md"
     },
     {
       "id": "zeref-cnt-video-content-strategist",
-      "name": "zeref-cnt-video-content-strategist",
-      "description": "Operates as the Video Content Strategist for Zeref Skills Fleet work. Use when the project requires video content strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "cnt"
+      "title": "Video Content Strategist",
+      "category": "cnt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "video strategy",
+        "YouTube",
+        "content strategy",
+        "video marketing"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-cnt-video-content-strategist/SKILL.md"
     },
     {
       "id": "zeref-dev-agentic-workflow-engineer",
-      "name": "zeref-dev-agentic-workflow-engineer",
-      "description": "Operates as the Agentic Workflow Engineer for Zeref Skills Fleet work. Covers AI agent design, LLM pipeline architecture, tool-use systems, MCP servers, prompt engineering for code, multi-agent orchestration, and AI-assisted automation. Use when building systems where LLMs act as the execution engine.",
-      "domain": "dev"
+      "title": "Agentic Workflow Engineer",
+      "category": "dev",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "agentic workflow",
+        "AI agent",
+        "LLM pipeline",
+        "MCP",
+        "multi-agent"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-agentic-workflow-engineer/SKILL.md"
     },
     {
       "id": "zeref-dev-ai-systems-engineer",
-      "name": "zeref-dev-ai-systems-engineer",
-      "description": "Operates as the AI Systems Engineer for Zeref Skills Fleet work. Use when the project requires ai systems engineer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "dev"
+      "title": "Ai Systems Engineer",
+      "category": "dev",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "AI system",
+        "ML pipeline",
+        "model integration",
+        "AI architecture"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-ai-systems-engineer/SKILL.md"
     },
     {
       "id": "zeref-dev-api-integration-engineer",
-      "name": "zeref-dev-api-integration-engineer",
-      "description": "Operates as the API Integration Engineer for Zeref Skills Fleet work. Use when the project requires api integration engineer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "dev"
+      "title": "Api Integration Engineer",
+      "category": "dev",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "API integration",
+        "REST API",
+        "webhook",
+        "third-party API",
+        "connect services"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-api-integration-engineer/SKILL.md"
     },
     {
       "id": "zeref-dev-backend-engineer",
-      "name": "zeref-dev-backend-engineer",
-      "description": "Operates as the Backend Engineer for Zeref Skills Fleet work. Covers API design, server-side logic, authentication, database integration, and BaaS application logic (Firebase, Supabase). Use when the project requires backend engineer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "dev"
+      "title": "Backend Engineer",
+      "category": "dev",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "backend",
+        "server-side",
+        "Node.js",
+        "Python backend",
+        "API endpoint"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-backend-engineer/SKILL.md"
     },
     {
       "id": "zeref-dev-cloud-infrastructure-engineer",
-      "name": "zeref-dev-cloud-infrastructure-engineer",
-      "description": "Operates as the Cloud Infrastructure Engineer for Zeref Skills Fleet work. Covers BaaS (Firebase, Supabase), serverless, hosting (Vercel, Netlify, Railway), containers (Docker, Cloud Run), and major cloud platforms (AWS, GCP, Azure). Absorbs former firebase-specialist skill. Use when designing, implementing, or troubleshooting cloud infrastructure.",
-      "domain": "dev"
+      "title": "Cloud Infrastructure Engineer",
+      "category": "dev",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "cloud infrastructure",
+        "Firebase",
+        "Supabase",
+        "serverless",
+        "deployment"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-cloud-infrastructure-engineer/SKILL.md"
     },
     {
       "id": "zeref-dev-code-quality-reviewer",
-      "name": "zeref-dev-code-quality-reviewer",
-      "description": "Operates as the Code Quality Reviewer for Zeref Skills Fleet work. Use when the project requires code quality reviewer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "dev"
+      "title": "Code Quality Reviewer",
+      "category": "dev",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "code review",
+        "review this code",
+        "code quality",
+        "refactor",
+        "clean code"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-code-quality-reviewer/SKILL.md"
     },
     {
       "id": "zeref-dev-database-architect",
-      "name": "zeref-dev-database-architect",
-      "description": "Operates as the Database Architect for Zeref Skills Fleet work. Covers relational (PostgreSQL, SQLite, MySQL), document (Firestore, MongoDB-compatible patterns), key-value, and time-series databases. Schema design, data modeling, indexing, query optimization, and migration planning. Use when the project requires database architect judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "dev"
+      "title": "Database Architect",
+      "category": "dev",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "database design",
+        "schema",
+        "data model",
+        "SQL",
+        "NoSQL",
+        "query"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-database-architect/SKILL.md"
     },
     {
       "id": "zeref-dev-devops-engineer",
-      "name": "zeref-dev-devops-engineer",
-      "description": "Operates as the DevOps Engineer for Zeref Skills Fleet work. Covers CI/CD pipelines, deployment automation, version control workflows (Git/GitHub branching, PR conventions, release tagging), containerization, environment management, and operational readiness. Absorbs GitHub repository management patterns from retired github-repository-manager skill. Use when the project requires devops engineer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "dev"
+      "title": "Devops Engineer",
+      "category": "dev",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "DevOps",
+        "CI/CD",
+        "GitHub Actions",
+        "deployment pipeline",
+        "Docker"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-devops-engineer/SKILL.md"
     },
     {
       "id": "zeref-dev-frontend-engineer",
-      "name": "zeref-dev-frontend-engineer",
-      "description": "Operates as the Frontend Engineer for Zeref Skills Fleet work. Use when the project requires frontend engineer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "dev"
+      "title": "Frontend Engineer",
+      "category": "dev",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "frontend",
+        "React",
+        "Vue",
+        "CSS",
+        "UI component",
+        "frontend code"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-frontend-engineer/SKILL.md"
     },
     {
       "id": "zeref-dev-fullstack-engineer",
-      "name": "zeref-dev-fullstack-engineer",
-      "description": "Operates as the Full-Stack Engineer for Zeref Skills Fleet work. Use when the project requires full-stack engineer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "dev"
+      "title": "Fullstack Engineer",
+      "category": "dev",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "fullstack",
+        "build this feature",
+        "full stack",
+        "end to end"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-fullstack-engineer/SKILL.md"
     },
     {
       "id": "zeref-dev-mobile-engineer",
-      "name": "zeref-dev-mobile-engineer",
-      "description": "Operates as the Mobile Engineer for Zeref Skills Fleet work. Covers iOS (SwiftUI/UIKit), Android (Jetpack Compose/XML), and cross-platform (Flutter/React Native). Merges former ios-engineer and android-engineer skills. Use when building, debugging, or architecting mobile apps on any platform.",
-      "domain": "dev"
+      "title": "Mobile Engineer",
+      "category": "dev",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "mobile app",
+        "React Native",
+        "Expo",
+        "iOS",
+        "Android",
+        "SwiftUI"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-mobile-engineer/SKILL.md"
     },
     {
       "id": "zeref-dev-security-engineer",
-      "name": "zeref-dev-security-engineer",
-      "description": "Operates as the Security Engineer for Zeref Skills Fleet work. Use when the project requires security engineer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "dev"
+      "title": "Security Engineer",
+      "category": "dev",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "security",
+        "auth",
+        "authentication",
+        "vulnerability",
+        "OWASP"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-security-engineer/SKILL.md"
     },
     {
       "id": "zeref-dev-solution-architect",
-      "name": "zeref-dev-solution-architect",
-      "description": "Operates as the Solution Architect for Zeref Skills Fleet work. Use when the project requires solution architect judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "dev"
+      "title": "Solution Architect",
+      "category": "dev",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "solution architecture",
+        "system design",
+        "architecture decision",
+        "tech stack"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-solution-architect/SKILL.md"
     },
     {
       "id": "zeref-dev-technical-architect",
-      "name": "zeref-dev-technical-architect",
-      "description": "Operates as the Technical Architect for Zeref Skills Fleet work. Use when the project requires technical architect judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "dev"
+      "title": "Technical Architect",
+      "category": "dev",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "technical architecture",
+        "system design",
+        "architecture review",
+        "tech strategy"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-technical-architect/SKILL.md"
     },
     {
       "id": "zeref-dev-test-engineer",
-      "name": "zeref-dev-test-engineer",
-      "description": "Operates as the Test Engineer for Zeref Skills Fleet work. Covers unit testing, integration testing, end-to-end testing, TDD, and testing strategy across web, mobile, and backend. Use when designing test suites, writing tests, or auditing test coverage.",
-      "domain": "dev"
+      "title": "Test Engineer",
+      "category": "dev",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "testing",
+        "unit tests",
+        "integration tests",
+        "test strategy",
+        "Jest",
+        "pytest"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-test-engineer/SKILL.md"
+    },
+    {
+      "id": "zeref-dev-ui-quality-enforcer",
+      "title": "Ui Quality Enforcer",
+      "category": "dev",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "high",
+      "max_turns": 30,
+      "risk_level": "high",
+      "triggers": [
+        "UI audit",
+        "review the interface",
+        "accessibility audit",
+        "touch targets",
+        "UI quality"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-dev-ui-quality-enforcer/SKILL.md"
     },
     {
       "id": "zeref-final-deliverable-packager",
-      "name": "zeref-final-deliverable-packager",
-      "description": "Operates as the Deliverable Packager for Zeref Skills Fleet work. Use when the project requires deliverable packager judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "final"
+      "title": "Deliverable Packager",
+      "category": "final",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "low",
+      "triggers": [
+        "package deliverable",
+        "compile output",
+        "final package",
+        "export ready"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-final-deliverable-packager/SKILL.md"
     },
     {
       "id": "zeref-final-executive-reviewer",
-      "name": "zeref-final-executive-reviewer",
-      "description": "Operates as the Executive Reviewer for Zeref Skills Fleet work. Use when the project requires executive reviewer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "final"
+      "title": "Executive Reviewer",
+      "category": "final",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "low",
+      "triggers": [
+        "final review",
+        "executive review",
+        "approve this",
+        "ready to ship",
+        "QA gate"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-final-executive-reviewer/SKILL.md"
     },
     {
       "id": "zeref-final-project-compiler",
-      "name": "zeref-final-project-compiler",
-      "description": "Operates as the Project Compiler for Zeref Skills Fleet work. Use when the project requires project compiler judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "final"
+      "title": "Project Compiler",
+      "category": "final",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "low",
+      "triggers": [
+        "compile project",
+        "project summary",
+        "final compilation",
+        "wrap up"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-final-project-compiler/SKILL.md"
     },
     {
       "id": "zeref-final-source-validator",
-      "name": "zeref-final-source-validator",
-      "description": "Operates as the Source Validator for Zeref Skills Fleet work. Use when the project requires source validator judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "final"
+      "title": "Source Validator",
+      "category": "final",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "low",
+      "triggers": [
+        "validate sources",
+        "check citations",
+        "source verification",
+        "fact check"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-final-source-validator/SKILL.md"
     },
     {
       "id": "zeref-hq-chief-of-staff",
-      "name": "zeref-hq-chief-of-staff",
-      "description": "Operates as the Chief of Staff for Zeref Skills Fleet work. Use when the project requires chief of staff judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "hq"
+      "title": "Chief Of Staff",
+      "category": "hq",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "chief of staff",
+        "cross-functional",
+        "priorities",
+        "weekly agenda"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-hq-chief-of-staff/SKILL.md"
     },
     {
       "id": "zeref-hq-chief-product-officer",
-      "name": "zeref-hq-chief-product-officer",
-      "description": "Operates as the Chief Product Officer for Zeref Skills Fleet work. Use when the project requires chief product officer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "hq"
+      "title": "Chief Product Officer",
+      "category": "hq",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "product direction",
+        "CPO",
+        "product strategy",
+        "roadmap",
+        "product decision"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-hq-chief-product-officer/SKILL.md"
     },
     {
       "id": "zeref-hq-chief-research-officer",
-      "name": "zeref-hq-chief-research-officer",
-      "description": "Operates as the Chief Research Officer for Zeref Skills Fleet work. Use when the project requires chief research officer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "hq"
+      "title": "Chief Research Officer",
+      "category": "hq",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "research strategy",
+        "synthesize research",
+        "research direction"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-hq-chief-research-officer/SKILL.md"
     },
     {
       "id": "zeref-hq-chief-strategy-officer",
-      "name": "zeref-hq-chief-strategy-officer",
-      "description": "Operates as the Chief Strategy Officer for Zeref Skills Fleet work. Use when the project requires chief strategy officer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "hq"
+      "title": "Chief Strategy Officer",
+      "category": "hq",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "strategy",
+        "CSO",
+        "strategic direction",
+        "long-term strategy"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-hq-chief-strategy-officer/SKILL.md"
     },
     {
       "id": "zeref-hq-documentation-architect",
-      "name": "zeref-hq-documentation-architect",
-      "description": "Operates as the Documentation Architect for Zeref Skills Fleet work. Use when the project requires documentation architect judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "hq"
+      "title": "Documentation Architect",
+      "category": "hq",
+      "model": "claude-opus-4-7",
+      "model_preference": "opus",
+      "effort": "high",
+      "max_turns": 25,
+      "risk_level": "medium",
+      "triggers": [
+        "documentation architecture",
+        "docs structure",
+        "knowledge base design"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-hq-documentation-architect/SKILL.md"
     },
     {
       "id": "zeref-mkt-analytics-specialist",
-      "name": "zeref-mkt-analytics-specialist",
-      "description": "Operates as the Marketing Analytics Specialist for Zeref Skills Fleet work. Use when the project requires marketing analytics specialist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Analytics Specialist",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "marketing analytics",
+        "attribution",
+        "campaign performance",
+        "conversion"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-analytics-specialist/SKILL.md"
     },
     {
       "id": "zeref-mkt-brand-strategist",
-      "name": "zeref-mkt-brand-strategist",
-      "description": "Operates as the Brand Strategist for Zeref Skills Fleet work. Use when the project requires brand strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Brand Strategist",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "brand strategy",
+        "brand positioning",
+        "brand identity",
+        "brand direction"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-brand-strategist/SKILL.md"
     },
     {
       "id": "zeref-mkt-chief-marketing-strategist",
-      "name": "zeref-mkt-chief-marketing-strategist",
-      "description": "Operates as the Chief Marketing Strategist for Zeref Skills Fleet work. Use when the project requires chief marketing strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Chief Marketing Strategist",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "marketing strategy",
+        "CMO",
+        "marketing plan",
+        "growth marketing"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-chief-marketing-strategist/SKILL.md"
     },
     {
       "id": "zeref-mkt-community-strategist",
-      "name": "zeref-mkt-community-strategist",
-      "description": "Operates as the Community Strategist for Zeref Skills Fleet work. Use when the project requires community strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Community Strategist",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "community building",
+        "Discord",
+        "community strategy",
+        "user community"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-community-strategist/SKILL.md"
     },
     {
       "id": "zeref-mkt-content-marketing-strategist",
-      "name": "zeref-mkt-content-marketing-strategist",
-      "description": "Operates as the Content Marketing Strategist for Zeref Skills Fleet work. Use when the project requires content marketing strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Content Marketing Strategist",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "content marketing",
+        "content strategy",
+        "content plan",
+        "editorial calendar"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-content-marketing-strategist/SKILL.md"
     },
     {
       "id": "zeref-mkt-conversion-rate-optimizer",
-      "name": "zeref-mkt-conversion-rate-optimizer",
-      "description": "Operates as the Conversion Rate Optimizer for Zeref Skills Fleet work. Use when the project requires conversion rate optimizer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Conversion Rate Optimizer",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "CRO",
+        "conversion rate",
+        "optimize landing page",
+        "A/B test copy"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-conversion-rate-optimizer/SKILL.md"
     },
     {
       "id": "zeref-mkt-email-marketing-specialist",
-      "name": "zeref-mkt-email-marketing-specialist",
-      "description": "Operates as the Email Marketing Specialist for Zeref Skills Fleet work. Use when the project requires email marketing specialist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Email Marketing Specialist",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "email marketing",
+        "email campaign",
+        "newsletter",
+        "drip sequence"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-email-marketing-specialist/SKILL.md"
     },
     {
       "id": "zeref-mkt-growth-marketer",
-      "name": "zeref-mkt-growth-marketer",
-      "description": "Operates as the Growth Marketer for Zeref Skills Fleet work. Use when the project requires growth marketer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Growth Marketer",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "growth hacking",
+        "growth experiment",
+        "user acquisition",
+        "growth loop"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-growth-marketer/SKILL.md"
     },
     {
       "id": "zeref-mkt-gtm-strategist",
-      "name": "zeref-mkt-gtm-strategist",
-      "description": "Operates as the GTM Strategist for Zeref Skills Fleet work. Use when the project requires gtm strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Gtm Strategist",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "go to market",
+        "GTM",
+        "launch strategy",
+        "product launch"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-gtm-strategist/SKILL.md"
     },
     {
       "id": "zeref-mkt-performance-marketing-specialist",
-      "name": "zeref-mkt-performance-marketing-specialist",
-      "description": "Operates as the Performance Marketing Specialist for Zeref Skills Fleet work. Use when the project requires performance marketing specialist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Performance Marketing Specialist",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "paid ads",
+        "Google Ads",
+        "Meta Ads",
+        "performance marketing",
+        "ROAS"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-performance-marketing-specialist/SKILL.md"
     },
     {
       "id": "zeref-mkt-personal-branding-strategist",
-      "name": "zeref-mkt-personal-branding-strategist",
-      "description": "Operates as the Personal Branding Strategist for Zeref Skills Fleet work. Use when the project requires personal branding strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Personal Branding Strategist",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "personal brand",
+        "thought leadership",
+        "online presence",
+        "personal branding"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-personal-branding-strategist/SKILL.md"
     },
     {
       "id": "zeref-mkt-positioning-strategist",
-      "name": "zeref-mkt-positioning-strategist",
-      "description": "Operates as the Positioning Strategist for Zeref Skills Fleet work. Use when the project requires positioning strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Positioning Strategist",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "positioning",
+        "differentiation",
+        "competitive positioning",
+        "value prop"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-positioning-strategist/SKILL.md"
     },
     {
       "id": "zeref-mkt-pr-communications-specialist",
-      "name": "zeref-mkt-pr-communications-specialist",
-      "description": "Operates as the PR & Communications Specialist for Zeref Skills Fleet work. Use when the project requires pr & communications specialist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Pr Communications Specialist",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "PR",
+        "press release",
+        "media relations",
+        "communications",
+        "public relations"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-pr-communications-specialist/SKILL.md"
     },
     {
       "id": "zeref-mkt-seo-strategist",
-      "name": "zeref-mkt-seo-strategist",
-      "description": "Operates as the SEO Strategist for Zeref Skills Fleet work. Use when the project requires seo strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Seo Strategist",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "SEO",
+        "keyword research",
+        "search ranking",
+        "organic traffic",
+        "on-page SEO"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-seo-strategist/SKILL.md"
     },
     {
       "id": "zeref-mkt-social-media-strategist",
-      "name": "zeref-mkt-social-media-strategist",
-      "description": "Operates as the Social Media Strategist for Zeref Skills Fleet work. Use when the project requires social media strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "mkt"
+      "title": "Social Media Strategist",
+      "category": "mkt",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "social media",
+        "Instagram",
+        "Twitter",
+        "TikTok",
+        "social strategy"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-mkt-social-media-strategist/SKILL.md"
     },
     {
       "id": "zeref-qa-ab-testing-strategist",
-      "name": "zeref-qa-ab-testing-strategist",
-      "description": "Operates as the A/B Testing Strategist for Zeref Skills Fleet work. Use when the project requires a/b testing strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "qa"
+      "title": "Ab Testing Strategist",
+      "category": "qa",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "A/B test",
+        "experiment design",
+        "hypothesis",
+        "split test"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-qa-ab-testing-strategist/SKILL.md"
     },
     {
       "id": "zeref-qa-accessibility-tester",
-      "name": "zeref-qa-accessibility-tester",
-      "description": "Operates as the Accessibility Tester for Zeref Skills Fleet work. Use when the project requires accessibility tester judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "qa"
+      "title": "Accessibility Tester",
+      "category": "qa",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "accessibility test",
+        "WCAG",
+        "screen reader",
+        "a11y audit"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-qa-accessibility-tester/SKILL.md"
     },
     {
       "id": "zeref-qa-edge-case-tester",
-      "name": "zeref-qa-edge-case-tester",
-      "description": "Operates as the Edge Case Tester for Zeref Skills Fleet work. Use when the project requires edge case tester judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "qa"
+      "title": "Edge Case Tester",
+      "category": "qa",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "edge cases",
+        "what could go wrong",
+        "boundary testing"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-qa-edge-case-tester/SKILL.md"
     },
     {
       "id": "zeref-qa-final-quality-gatekeeper",
-      "name": "zeref-qa-final-quality-gatekeeper",
-      "description": "Operates as the unified Final Quality Gatekeeper for Zeref Skills Fleet work. This is Tier 1 of the 2-tier QA gate system (QA team gate \u2192 Executive gate). Absorbs the retired hq-quality-gatekeeper (middle tier). Runs the 8-point QA checklist on any deliverable before it proceeds to zeref-final-executive-reviewer or ships. Auto-triggers on portfolio, recruiter, shipping, public, or client-facing work.",
-      "domain": "qa"
+      "title": "Final Quality Gatekeeper",
+      "category": "qa",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "quality gate",
+        "final QA",
+        "approve before shipping"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-qa-final-quality-gatekeeper/SKILL.md"
     },
     {
       "id": "zeref-qa-functional-tester",
-      "name": "zeref-qa-functional-tester",
-      "description": "Operates as the Functional QA Tester for Zeref Skills Fleet work. Use when the project requires functional qa tester judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "qa"
+      "title": "Functional Tester",
+      "category": "qa",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "functional testing",
+        "test this feature",
+        "manual QA"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-qa-functional-tester/SKILL.md"
     },
     {
       "id": "zeref-qa-launch-readiness-manager",
-      "name": "zeref-qa-launch-readiness-manager",
-      "description": "Operates as the Launch Readiness Manager for Zeref Skills Fleet work. Use when the project requires launch readiness manager judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "qa"
+      "title": "Launch Readiness Manager",
+      "category": "qa",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "launch readiness",
+        "pre-launch checklist",
+        "ready to launch"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-qa-launch-readiness-manager/SKILL.md"
     },
     {
       "id": "zeref-qa-performance-tester",
-      "name": "zeref-qa-performance-tester",
-      "description": "Operates as the Performance Tester for Zeref Skills Fleet work. Use when the project requires performance tester judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "qa"
+      "title": "Performance Tester",
+      "category": "qa",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "performance test",
+        "load test",
+        "lighthouse",
+        "speed audit"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-qa-performance-tester/SKILL.md"
     },
     {
       "id": "zeref-qa-regression-tester",
-      "name": "zeref-qa-regression-tester",
-      "description": "Operates as the Regression Tester for Zeref Skills Fleet work. Use when the project requires regression tester judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "qa"
+      "title": "Regression Tester",
+      "category": "qa",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "regression test",
+        "test after changes",
+        "did this break anything"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-qa-regression-tester/SKILL.md"
     },
     {
       "id": "zeref-qa-security-tester",
-      "name": "zeref-qa-security-tester",
-      "description": "Operates as the Security QA Tester for Zeref Skills Fleet work. Use when the project requires security qa tester judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "qa"
+      "title": "Security Tester",
+      "category": "qa",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "security test",
+        "penetration test",
+        "vulnerability scan"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-qa-security-tester/SKILL.md"
     },
     {
       "id": "zeref-qa-ui-consistency-auditor",
-      "name": "zeref-qa-ui-consistency-auditor",
-      "description": "Operates as the UI Consistency Auditor for Zeref Skills Fleet work. Use when the project requires ui consistency auditor judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "qa"
+      "title": "Ui Consistency Auditor",
+      "category": "qa",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "UI consistency",
+        "design consistency audit",
+        "visual QA"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-qa-ui-consistency-auditor/SKILL.md"
     },
     {
       "id": "zeref-qa-ux-usability-tester",
-      "name": "zeref-qa-ux-usability-tester",
-      "description": "Operates as the UX Usability Tester for Zeref Skills Fleet work. Use when the project requires ux usability tester judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "qa"
+      "title": "Ux Usability Tester",
+      "category": "qa",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "usability test",
+        "user test",
+        "task analysis",
+        "UX audit"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-qa-ux-usability-tester/SKILL.md"
     },
     {
       "id": "zeref-system-caveman-compressor",
-      "name": "zeref-system-caveman-compressor",
-      "description": "Operates as the Caveman Compressor for Zeref Skills Fleet work. Use when the project requires caveman compressor judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "system"
+      "title": "Caveman Compressor",
+      "category": "system",
+      "model": "claude-haiku-4-5-20251001",
+      "model_preference": "haiku",
+      "effort": "low",
+      "max_turns": 10,
+      "risk_level": "low",
+      "triggers": [
+        "compress this",
+        "caveman",
+        "shorten context",
+        "handoff",
+        "save session"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-system-caveman-compressor/SKILL.md"
     },
     {
       "id": "zeref-system-evidence-memory-keeper",
-      "name": "zeref-system-evidence-memory-keeper",
-      "description": "Operates as the Evidence Memory Keeper for Zeref Skills Fleet work. Use when the project requires evidence memory keeper judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "system"
+      "title": "Evidence Memory Keeper",
+      "category": "system",
+      "model": "claude-haiku-4-5-20251001",
+      "model_preference": "haiku",
+      "effort": "low",
+      "max_turns": 10,
+      "risk_level": "low",
+      "triggers": [
+        "save evidence",
+        "log finding",
+        "record this decision",
+        "evidence map"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-system-evidence-memory-keeper/SKILL.md"
     },
     {
       "id": "zeref-system-live-researcher",
-      "name": "zeref-system-live-researcher",
-      "description": "Operates as the Live Researcher for Zeref Skills Fleet work. Performs real-time web research, competitive intelligence gathering, trend analysis, and source synthesis. Use when current data is required and training knowledge is insufficient or potentially stale.",
-      "domain": "system"
+      "title": "Live Researcher",
+      "category": "system",
+      "model": "claude-haiku-4-5-20251001",
+      "model_preference": "haiku",
+      "effort": "low",
+      "max_turns": 10,
+      "risk_level": "low",
+      "triggers": [
+        "research this",
+        "find information",
+        "web research",
+        "look up",
+        "investigate"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-system-live-researcher/SKILL.md"
     },
     {
       "id": "zeref-system-marketplace-packager",
-      "name": "zeref-system-marketplace-packager",
-      "description": "Operates as the Marketplace Packager for Zeref Skills Fleet work. Use when the project requires marketplace packager judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "system"
+      "title": "Marketplace Packager",
+      "category": "system",
+      "model": "claude-haiku-4-5-20251001",
+      "model_preference": "haiku",
+      "effort": "low",
+      "max_turns": 10,
+      "risk_level": "low",
+      "triggers": [
+        "marketplace listing",
+        "package for marketplace",
+        "publish plugin"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-system-marketplace-packager/SKILL.md"
+    },
+    {
+      "id": "zeref-system-memory-ingest",
+      "title": "Memory Ingest",
+      "category": "system",
+      "model": "claude-haiku-4-5-20251001",
+      "model_preference": "haiku",
+      "effort": "low",
+      "max_turns": 10,
+      "risk_level": "low",
+      "triggers": [
+        "save to wiki",
+        "save session",
+        "log this",
+        "remember this",
+        "update wiki"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-system-memory-ingest/SKILL.md"
+    },
+    {
+      "id": "zeref-system-memory-lint",
+      "title": "Memory Lint",
+      "category": "system",
+      "model": "claude-haiku-4-5-20251001",
+      "model_preference": "haiku",
+      "effort": "low",
+      "max_turns": 10,
+      "risk_level": "low",
+      "triggers": [
+        "clean up wiki",
+        "lint memory",
+        "check wiki health",
+        "wiki audit"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-system-memory-lint/SKILL.md"
     },
     {
       "id": "zeref-system-plugin-update-diagnostician",
-      "name": "zeref-system-plugin-update-diagnostician",
-      "description": "Operates as the Plugin Update Diagnostician for Zeref Skills Fleet work. Use when the project requires plugin update diagnostician judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "system"
+      "title": "Plugin Update Diagnostician",
+      "category": "system",
+      "model": "claude-haiku-4-5-20251001",
+      "model_preference": "haiku",
+      "effort": "low",
+      "max_turns": 10,
+      "risk_level": "low",
+      "triggers": [
+        "plugin update",
+        "diagnose plugin",
+        "plugin issue",
+        "update diagnostic"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-system-plugin-update-diagnostician/SKILL.md"
     },
     {
       "id": "zeref-system-skill-router",
-      "name": "zeref-system-skill-router",
-      "description": "Operates as the System Skill Router for Zeref Skills Fleet work. Use when the project requires system skill router judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "system"
+      "title": "Skill Router",
+      "category": "system",
+      "model": "claude-haiku-4-5-20251001",
+      "model_preference": "haiku",
+      "effort": "low",
+      "max_turns": 10,
+      "risk_level": "low",
+      "triggers": [
+        "route this task",
+        "which skill",
+        "what skill should"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-system-skill-router/SKILL.md"
     },
     {
       "id": "zeref-system-token-budget-controller",
-      "name": "zeref-system-token-budget-controller",
-      "description": "Operates as the Token Budget Controller for Zeref Skills Fleet work. Use when the project requires token budget controller judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "system"
+      "title": "Token Budget Controller",
+      "category": "system",
+      "model": "claude-haiku-4-5-20251001",
+      "model_preference": "haiku",
+      "effort": "low",
+      "max_turns": 10,
+      "risk_level": "low",
+      "triggers": [
+        "token budget",
+        "reduce tokens",
+        "context length",
+        "slim down"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-system-token-budget-controller/SKILL.md"
     },
     {
       "id": "zeref-ux-accessibility-specialist",
-      "name": "zeref-ux-accessibility-specialist",
-      "description": "Operates as the Accessibility Specialist for Zeref Skills Fleet work. Use when the project requires accessibility specialist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Accessibility Specialist",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "accessibility",
+        "a11y",
+        "WCAG",
+        "screen reader",
+        "accessible design"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-accessibility-specialist/SKILL.md"
     },
     {
       "id": "zeref-ux-design-qa-auditor",
-      "name": "zeref-ux-design-qa-auditor",
-      "description": "Operates as the Design QA Auditor for Zeref Skills Fleet work. Use when the project requires design qa auditor judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Design Qa Auditor",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "design QA",
+        "audit this design",
+        "design review",
+        "design issues"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-design-qa-auditor/SKILL.md"
     },
     {
       "id": "zeref-ux-design-systems-architect",
-      "name": "zeref-ux-design-systems-architect",
-      "description": "Operates as the Design Systems Architect for Zeref Skills Fleet work. Use when the project requires design systems architect judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Design Systems Architect",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "design system",
+        "component library",
+        "design tokens",
+        "style guide"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-design-systems-architect/SKILL.md"
     },
     {
       "id": "zeref-ux-developer-handoff-lead",
-      "name": "zeref-ux-developer-handoff-lead",
-      "description": "Operates as the Developer Handoff Lead for Zeref Skills Fleet work. Use when the project requires developer handoff lead judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Developer Handoff Lead",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "developer handoff",
+        "design specs",
+        "Figma handoff",
+        "implementation notes"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-developer-handoff-lead/SKILL.md"
     },
     {
       "id": "zeref-ux-figma-architecture-specialist",
-      "name": "zeref-ux-figma-architecture-specialist",
-      "description": "Operates as the Figma Architecture Specialist for Zeref Skills Fleet work. Use when the project requires figma architecture specialist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Figma Architecture Specialist",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "Figma architecture",
+        "component structure",
+        "Figma organization"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-figma-architecture-specialist/SKILL.md"
     },
     {
       "id": "zeref-ux-information-architect",
-      "name": "zeref-ux-information-architect",
-      "description": "Operates as the Information Architect for Zeref Skills Fleet work. Use when the project requires information architect judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Information Architect",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "information architecture",
+        "IA",
+        "navigation structure",
+        "site map"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-information-architect/SKILL.md"
     },
     {
       "id": "zeref-ux-interaction-designer",
-      "name": "zeref-ux-interaction-designer",
-      "description": "Operates as the Interaction Designer for Zeref Skills Fleet work. Use when the project requires interaction designer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Interaction Designer",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "interaction design",
+        "micro-interactions",
+        "animation",
+        "motion design"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-interaction-designer/SKILL.md"
+    },
+    {
+      "id": "zeref-ux-live-researcher",
+      "title": "Live Researcher",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "live research",
+        "user research now",
+        "research this",
+        "find user insights"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-live-researcher/SKILL.md"
     },
     {
       "id": "zeref-ux-motion-designer",
-      "name": "zeref-ux-motion-designer",
-      "description": "Operates as the Motion Designer for Zeref Skills Fleet work. Covers UI animation design, microinteraction specification, Lottie animation, transition design, motion principles, and animation handoff specs for mobile and web. Use when motion and animation are part of the product experience.",
-      "domain": "ux"
+      "title": "Motion Designer",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "motion design",
+        "animation spec",
+        "Lottie",
+        "Framer motion",
+        "transitions"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-motion-designer/SKILL.md"
     },
     {
       "id": "zeref-ux-persona-strategist",
-      "name": "zeref-ux-persona-strategist",
-      "description": "Operates as the User Persona Strategist for Zeref Skills Fleet work. Use when the project requires user persona strategist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Persona Strategist",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "user personas",
+        "persona development",
+        "user profiles",
+        "who are our users"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-persona-strategist/SKILL.md"
     },
     {
       "id": "zeref-ux-problem-definition-specialist",
-      "name": "zeref-ux-problem-definition-specialist",
-      "description": "Operates as the Problem Definition Specialist for Zeref Skills Fleet work. Use when the project requires problem definition specialist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Problem Definition Specialist",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "define the problem",
+        "problem statement",
+        "HMW",
+        "user pain points"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-problem-definition-specialist/SKILL.md"
     },
     {
       "id": "zeref-ux-product-designer",
-      "name": "zeref-ux-product-designer",
-      "description": "Operates as the Product Designer for Zeref Skills Fleet work. Use when the project requires product designer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Product Designer",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "product design",
+        "design this screen",
+        "wireframe",
+        "UI design",
+        "app design"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-product-designer/SKILL.md"
     },
     {
       "id": "zeref-ux-prototype-specialist",
-      "name": "zeref-ux-prototype-specialist",
-      "description": "Operates as the Prototype Specialist for Zeref Skills Fleet work. Use when the project requires prototype specialist judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Prototype Specialist",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "prototype",
+        "interactive prototype",
+        "clickable mockup",
+        "test prototype"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-prototype-specialist/SKILL.md"
+    },
+    {
+      "id": "zeref-ux-register-classifier",
+      "title": "Register Classifier",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "what tone",
+        "brand voice or product",
+        "classify this design",
+        "register check"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-register-classifier/SKILL.md"
     },
     {
       "id": "zeref-ux-research-lead",
-      "name": "zeref-ux-research-lead",
-      "description": "Operates as the UX Research Lead for Zeref Skills Fleet work. Use when the project requires ux research lead judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Research Lead",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "user research",
+        "interview plan",
+        "research strategy",
+        "user insights"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-research-lead/SKILL.md"
     },
     {
       "id": "zeref-ux-synthetic-research-analyst",
-      "name": "zeref-ux-synthetic-research-analyst",
-      "description": "Operates as the Synthetic Research Analyst for Zeref Skills Fleet work. Use when the project requires synthetic research analyst judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Synthetic Research Analyst",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "synthetic research",
+        "simulate users",
+        "synthetic personas"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-synthetic-research-analyst/SKILL.md"
     },
     {
       "id": "zeref-ux-user-flow-designer",
-      "name": "zeref-ux-user-flow-designer",
-      "description": "Operates as the User Flow Designer for Zeref Skills Fleet work. Use when the project requires user flow designer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "User Flow Designer",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "user flow",
+        "task flow",
+        "user journey map",
+        "flow diagram"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-user-flow-designer/SKILL.md"
     },
     {
       "id": "zeref-ux-visual-designer",
-      "name": "zeref-ux-visual-designer",
-      "description": "Operates as the Visual Designer for Zeref Skills Fleet work. Use when the project requires visual designer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Visual Designer",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "visual design",
+        "colors",
+        "typography",
+        "brand aesthetics",
+        "visual style"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-visual-designer/SKILL.md"
     },
     {
       "id": "zeref-ux-writer",
-      "name": "zeref-ux-writer",
-      "description": "Operates as the UX Writer for Zeref Skills Fleet work. Use when the project requires ux writer judgment, deliverable creation, audit support, or handoff-ready documentation.",
-      "domain": "ux"
+      "title": "Writer",
+      "category": "ux",
+      "model": "claude-sonnet-4-6",
+      "model_preference": "sonnet",
+      "effort": "medium",
+      "max_turns": 20,
+      "risk_level": "low",
+      "triggers": [
+        "UX writing",
+        "microcopy",
+        "UI copy",
+        "error messages",
+        "button labels"
+      ],
+      "dependencies": [
+        "references/zeref-qa-gate.md",
+        "references/zeref-safety-principles.md"
+      ],
+      "path": "skills/zeref-ux-writer/SKILL.md"
     }
   ]
 }

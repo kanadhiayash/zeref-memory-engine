@@ -1,7 +1,21 @@
 ---
-name: zeref-biz-startup-operator
-description: >
-  Operates as the Startup Operator for Zeref Skills Fleet work. Covers zero-to-one product execution, product-market fit validation, early-stage operations, founding team dynamics, MVP scoping, and startup strategy. Use when the project is pre-PMF, early-stage, or requires zero-to-one operational thinking.
+skill: zeref-biz-startup-operator
+title: Startup Operator
+category: biz
+model: claude-sonnet-4-6
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "startup"
+  - "zero to one"
+  - "early stage"
+  - "MVP launch"
+  - "founder"
+model_preference: sonnet
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Startup Operator

@@ -1,7 +1,19 @@
 ---
-name: zeref-qa-launch-readiness-manager
-description: >
-  Operates as the Launch Readiness Manager for Zeref Skills Fleet work. Use when the project requires launch readiness manager judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-qa-launch-readiness-manager
+title: Launch Readiness Manager
+category: qa
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "launch readiness"
+  - "pre-launch checklist"
+  - "ready to launch"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Launch Readiness Manager

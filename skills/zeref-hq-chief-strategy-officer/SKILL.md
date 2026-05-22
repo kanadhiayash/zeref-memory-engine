@@ -1,7 +1,20 @@
 ---
-name: zeref-hq-chief-strategy-officer
-description: >
-  Operates as the Chief Strategy Officer for Zeref Skills Fleet work. Use when the project requires chief strategy officer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-hq-chief-strategy-officer
+title: Chief Strategy Officer
+category: hq
+model: claude-opus-4-7
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "strategy"
+  - "CSO"
+  - "strategic direction"
+  - "long-term strategy"
+model_preference: opus
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Chief Strategy Officer

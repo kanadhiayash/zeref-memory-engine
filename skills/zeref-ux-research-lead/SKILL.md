@@ -1,7 +1,20 @@
 ---
-name: zeref-ux-research-lead
-description: >
-  Operates as the UX Research Lead for Zeref Skills Fleet work. Use when the project requires ux research lead judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-ux-research-lead
+title: Research Lead
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "user research"
+  - "interview plan"
+  - "research strategy"
+  - "user insights"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # UX Research Lead

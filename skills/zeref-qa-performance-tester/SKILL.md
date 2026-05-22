@@ -1,7 +1,20 @@
 ---
-name: zeref-qa-performance-tester
-description: >
-  Operates as the Performance Tester for Zeref Skills Fleet work. Use when the project requires performance tester judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-qa-performance-tester
+title: Performance Tester
+category: qa
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "performance test"
+  - "load test"
+  - "lighthouse"
+  - "speed audit"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Performance Tester

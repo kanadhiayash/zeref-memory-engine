@@ -1,7 +1,20 @@
 ---
-name: zeref-mkt-personal-branding-strategist
-description: >
-  Operates as the Personal Branding Strategist for Zeref Skills Fleet work. Use when the project requires personal branding strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-personal-branding-strategist
+title: Personal Branding Strategist
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "personal brand"
+  - "thought leadership"
+  - "online presence"
+  - "personal branding"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Personal Branding Strategist

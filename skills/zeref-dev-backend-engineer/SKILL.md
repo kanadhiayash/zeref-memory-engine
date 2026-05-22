@@ -1,7 +1,21 @@
 ---
-name: zeref-dev-backend-engineer
-description: >
-  Operates as the Backend Engineer for Zeref Skills Fleet work. Covers API design, server-side logic, authentication, database integration, and BaaS application logic (Firebase, Supabase). Use when the project requires backend engineer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-dev-backend-engineer
+title: Backend Engineer
+category: dev
+model: claude-sonnet-4-6
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "backend"
+  - "server-side"
+  - "Node.js"
+  - "Python backend"
+  - "API endpoint"
+model_preference: sonnet
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Backend Engineer

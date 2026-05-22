@@ -1,7 +1,21 @@
 ---
-name: zeref-dev-code-quality-reviewer
-description: >
-  Operates as the Code Quality Reviewer for Zeref Skills Fleet work. Use when the project requires code quality reviewer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-dev-code-quality-reviewer
+title: Code Quality Reviewer
+category: dev
+model: claude-sonnet-4-6
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "code review"
+  - "review this code"
+  - "code quality"
+  - "refactor"
+  - "clean code"
+model_preference: sonnet
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Code Quality Reviewer
@@ -165,6 +179,22 @@ Open Risks:
 Next Recommended Skill:
 Status:
 ```
+
+## Karpathy Senior Engineer Overcomplicate Test
+
+For every piece of code reviewed, ask:
+> "Would a senior engineer say this is overcomplicated?"
+
+Signs of over-engineering to flag:
+- Abstraction introduced before it's needed (premature generalization)
+- Design pattern applied where none was necessary
+- Function names longer than 40 characters
+- More than 3 levels of nesting (refactor to early return or helper function)
+- Comments that explain WHAT the code does (should explain WHY instead)
+- Config files for things that never change
+
+The test question: "Could a mid-level engineer understand this in 5 minutes without explanation?"
+If no: flag for simplification, not for more documentation.
 
 ## Token Discipline Rules
 

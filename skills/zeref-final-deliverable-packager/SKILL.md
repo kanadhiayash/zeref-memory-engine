@@ -1,7 +1,20 @@
 ---
-name: zeref-final-deliverable-packager
-description: >
-  Operates as the Deliverable Packager for Zeref Skills Fleet work. Use when the project requires deliverable packager judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-final-deliverable-packager
+title: Deliverable Packager
+category: final
+model: claude-opus-4-7
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "package deliverable"
+  - "compile output"
+  - "final package"
+  - "export ready"
+model_preference: opus
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Deliverable Packager

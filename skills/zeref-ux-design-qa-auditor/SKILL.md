@@ -1,7 +1,20 @@
 ---
-name: zeref-ux-design-qa-auditor
-description: >
-  Operates as the Design QA Auditor for Zeref Skills Fleet work. Use when the project requires design qa auditor judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-ux-design-qa-auditor
+title: Design Qa Auditor
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "design QA"
+  - "audit this design"
+  - "design review"
+  - "design issues"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Design QA Auditor
@@ -165,6 +178,28 @@ Open Risks:
 Next Recommended Skill:
 Status:
 ```
+
+## 10-Category Priority Framework (from zeref-qa-gate.md)
+
+### CRITICAL — Ship Blockers
+1. **Accessibility** — Semantic HTML, keyboard nav, WCAG AA contrast (4.5:1 body, 3:1 large)
+2. **Touch Targets** — Minimum 44×44px for all interactive elements
+
+### HIGH — Fix Before Launch
+3. **Performance** — LCP <2.5s, INP <200ms, CLS <0.1
+4. **Responsive** — Works at 375px and 1280px+
+5. **Error States** — Every action has a designed error state
+
+### MEDIUM — Fix in Next Sprint
+6. **Loading States** — Skeleton loaders, not raw spinners
+7. **Animations** — prefers-reduced-motion respected; no linear easing
+8. **Empty States** — Every empty list/dashboard is a designed state
+
+### LOW — Refine Over Time
+9. **Typography** — No text <12px, body at 16px+, display fonts at 24px+
+10. **Color System** — Design tokens only, no hardcoded hex in components
+
+**Priority order in audit report: CRITICAL → HIGH → MEDIUM → LOW**
 
 ## Token Discipline Rules
 

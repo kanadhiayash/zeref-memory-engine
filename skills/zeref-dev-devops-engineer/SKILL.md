@@ -1,7 +1,21 @@
 ---
-name: zeref-dev-devops-engineer
-description: >
-  Operates as the DevOps Engineer for Zeref Skills Fleet work. Covers CI/CD pipelines, deployment automation, version control workflows (Git/GitHub branching, PR conventions, release tagging), containerization, environment management, and operational readiness. Absorbs GitHub repository management patterns from retired github-repository-manager skill. Use when the project requires devops engineer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-dev-devops-engineer
+title: Devops Engineer
+category: dev
+model: claude-sonnet-4-6
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "DevOps"
+  - "CI/CD"
+  - "GitHub Actions"
+  - "deployment pipeline"
+  - "Docker"
+model_preference: sonnet
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # DevOps Engineer

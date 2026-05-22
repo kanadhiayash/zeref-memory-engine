@@ -1,0 +1,17 @@
+[command]
+name = "zeref-recall"
+description = "Query the Zeref wiki for specific knowledge. Pass your query after the command."
+agent = "zeref-memory-keeper"
+model = "claude-haiku-4-5"
+max_turns = 10
+
+[prompt]
+content = """
+Recall specific knowledge from the Zeref wiki.
+
+1. Read wiki/index.md to find the relevant domain
+2. Read only the relevant wiki section (do not load full pages unnecessarily)
+3. Return the specific knowledge requested
+4. If not found: "This knowledge is not in the wiki yet. Want me to add it now?"
+5. Log: append to wiki/log.md — ISO timestamp | zeref-memory-keeper | recall | [domain] | [query]
+"""

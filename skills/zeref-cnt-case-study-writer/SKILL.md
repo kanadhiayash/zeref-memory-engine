@@ -1,7 +1,20 @@
 ---
-name: zeref-cnt-case-study-writer
-description: >
-  Operates as the Case Study Writer for Zeref Skills Fleet work. Merges UX case study writing and technical case study writing into one unified skill. Covers portfolio case studies, client-facing case studies, and technical writeups for GitHub/portfolio. Use when a project needs to be packaged as proof of work.
+skill: zeref-cnt-case-study-writer
+title: Case Study Writer
+category: cnt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "case study"
+  - "portfolio piece"
+  - "project writeup"
+  - "document this project"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Case Study Writer

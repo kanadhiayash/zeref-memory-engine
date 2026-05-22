@@ -1,7 +1,20 @@
 ---
-name: zeref-biz-investor-pitch-strategist
-description: >
-  Operates as the Investor Pitch Strategist for Zeref Skills Fleet work. Use when the project requires investor pitch strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-biz-investor-pitch-strategist
+title: Investor Pitch Strategist
+category: biz
+model: claude-sonnet-4-6
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "investor pitch"
+  - "fundraising deck"
+  - "pitch strategy"
+  - "raise capital"
+model_preference: sonnet
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Investor Pitch Strategist

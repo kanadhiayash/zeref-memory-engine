@@ -1,7 +1,22 @@
 ---
-name: zeref-dev-test-engineer
-description: >
-  Operates as the Test Engineer for Zeref Skills Fleet work. Covers unit testing, integration testing, end-to-end testing, TDD, and testing strategy across web, mobile, and backend. Use when designing test suites, writing tests, or auditing test coverage.
+skill: zeref-dev-test-engineer
+title: Test Engineer
+category: dev
+model: claude-sonnet-4-6
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "testing"
+  - "unit tests"
+  - "integration tests"
+  - "test strategy"
+  - "Jest"
+  - "pytest"
+model_preference: sonnet
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Test Engineer

@@ -1,7 +1,20 @@
 ---
-name: zeref-mkt-positioning-strategist
-description: >
-  Operates as the Positioning Strategist for Zeref Skills Fleet work. Use when the project requires positioning strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-positioning-strategist
+title: Positioning Strategist
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "positioning"
+  - "differentiation"
+  - "competitive positioning"
+  - "value prop"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Positioning Strategist

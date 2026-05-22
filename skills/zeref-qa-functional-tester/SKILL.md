@@ -1,7 +1,19 @@
 ---
-name: zeref-qa-functional-tester
-description: >
-  Operates as the Functional QA Tester for Zeref Skills Fleet work. Use when the project requires functional qa tester judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-qa-functional-tester
+title: Functional Tester
+category: qa
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "functional testing"
+  - "test this feature"
+  - "manual QA"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Functional QA Tester

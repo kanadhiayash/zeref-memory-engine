@@ -1,0 +1,44 @@
+name: Zeref Fleet Validation
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    name: Validate Zeref Skill Fleet
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Zeref validation
+        run: python3 scripts/zeref-validate.py
+
+      - name: Check skill count
+        run: |
+          SKILL_COUNT=$(ls skills/ | wc -l | tr -d ' ')
+          echo "Skill count: $SKILL_COUNT"
+          if [ "$SKILL_COUNT" -lt "120" ]; then
+            echo "❌ Skill count below expected minimum"
+            exit 1
+          fi
+          echo "✅ Skill count acceptable: $SKILL_COUNT"
+
+      - name: Check required files
+        run: |
+          for f in ZEREF.md AGENTS.md GEMINI.md ZEREFPROJECT.md LICENSE CHANGELOG.md; do
+            if [ ! -f "$f" ]; then
+              echo "❌ Missing required file: $f"
+              exit 1
+            fi
+          done
+          echo "✅ All required root files present"

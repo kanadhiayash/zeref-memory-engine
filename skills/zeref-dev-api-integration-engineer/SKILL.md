@@ -1,7 +1,21 @@
 ---
-name: zeref-dev-api-integration-engineer
-description: >
-  Operates as the API Integration Engineer for Zeref Skills Fleet work. Use when the project requires api integration engineer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-dev-api-integration-engineer
+title: Api Integration Engineer
+category: dev
+model: claude-sonnet-4-6
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "API integration"
+  - "REST API"
+  - "webhook"
+  - "third-party API"
+  - "connect services"
+model_preference: sonnet
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # API Integration Engineer

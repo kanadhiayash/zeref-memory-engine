@@ -1,7 +1,20 @@
 ---
-name: zeref-mkt-gtm-strategist
-description: >
-  Operates as the GTM Strategist for Zeref Skills Fleet work. Use when the project requires gtm strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-gtm-strategist
+title: Gtm Strategist
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "go to market"
+  - "GTM"
+  - "launch strategy"
+  - "product launch"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # GTM Strategist

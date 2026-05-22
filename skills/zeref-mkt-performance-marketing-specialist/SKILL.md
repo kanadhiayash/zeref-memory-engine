@@ -1,7 +1,21 @@
 ---
-name: zeref-mkt-performance-marketing-specialist
-description: >
-  Operates as the Performance Marketing Specialist for Zeref Skills Fleet work. Use when the project requires performance marketing specialist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-performance-marketing-specialist
+title: Performance Marketing Specialist
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "paid ads"
+  - "Google Ads"
+  - "Meta Ads"
+  - "performance marketing"
+  - "ROAS"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Performance Marketing Specialist

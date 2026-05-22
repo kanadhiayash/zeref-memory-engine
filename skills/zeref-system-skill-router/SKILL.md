@@ -1,7 +1,19 @@
 ---
-name: zeref-system-skill-router
-description: >
-  Operates as the System Skill Router for Zeref Skills Fleet work. Use when the project requires system skill router judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-system-skill-router
+title: Skill Router
+category: system
+model: claude-haiku-4-5-20251001
+effort: low
+max_turns: 10
+trigger_phrases:
+  - "route this task"
+  - "which skill"
+  - "what skill should"
+model_preference: haiku
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # System Skill Router

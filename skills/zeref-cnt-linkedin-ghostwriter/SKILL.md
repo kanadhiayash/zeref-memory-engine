@@ -1,7 +1,20 @@
 ---
-name: zeref-cnt-linkedin-ghostwriter
-description: >
-  Operates as the LinkedIn Ghostwriter for Zeref Skills Fleet work. Use when the project requires linkedin ghostwriter judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-cnt-linkedin-ghostwriter
+title: Linkedin Ghostwriter
+category: cnt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "LinkedIn post"
+  - "LinkedIn content"
+  - "thought leadership post"
+  - "write for LinkedIn"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # LinkedIn Ghostwriter
@@ -165,6 +178,16 @@ Open Risks:
 Next Recommended Skill:
 Status:
 ```
+
+## validateProse Discipline
+
+Apply before every LinkedIn post delivery:
+
+1. **Opening line test:** Would a human professional open with this? Delete opener if it starts with "I'm excited to...", "Thrilled to share...", or "Big news:"
+2. **AI tell scan:** No "dive", "delve", "leverage", "it's worth noting" — these are immediately recognizable
+3. **Specificity test:** Replace any generic claim with the specific version ("increased conversion" → "went from 2.3% to 4.1% conversion")
+4. **Read-aloud test:** Read the post aloud. If any sentence sounds robotic, rewrite in spoken English
+5. **Length discipline:** LinkedIn posts perform best at 150–300 words for thought leadership, 50–100 for announcements. Never pad to fill space.
 
 ## Token Discipline Rules
 

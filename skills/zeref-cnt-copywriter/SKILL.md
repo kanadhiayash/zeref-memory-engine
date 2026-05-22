@@ -1,7 +1,21 @@
 ---
-name: zeref-cnt-copywriter
-description: >
-  Operates as the Copywriter for Zeref Skills Fleet work. Use when the project requires copywriter judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-cnt-copywriter
+title: Copywriter
+category: cnt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "write copy"
+  - "marketing copy"
+  - "headline"
+  - "landing page copy"
+  - "ad copy"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Copywriter
@@ -165,6 +179,30 @@ Open Risks:
 Next Recommended Skill:
 Status:
 ```
+
+## AI Prose Anti-Patterns (from impeccable STYLE.md)
+
+Never use these in any deliverable:
+
+### Filler Openers (delete entirely)
+- "In today's fast-paced world..."
+- "It's important to note that..."
+- "It's worth mentioning that..."
+- "Dive into..." / "Delve into..."
+- "Leverage" as a verb (use "use" instead)
+
+### Passive Inflation (convert to active)
+- "is designed to" → say what it does directly
+- "aims to" → say what it does
+- "seeks to" → say what it does
+- "is intended to" → say what it does
+
+### Hedging Pile-Ups (maximum one hedge per sentence)
+- "sort of", "kind of", "a bit", "somewhat" — one maximum per sentence
+- "I think", "perhaps", "maybe", "possibly" — pick one per claim
+
+### validateProse Check
+Before delivering any copy: read it aloud. If it sounds like it was written by a language model rather than a human professional, revise.
 
 ## Token Discipline Rules
 

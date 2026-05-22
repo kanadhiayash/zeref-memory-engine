@@ -1,7 +1,20 @@
 ---
-name: zeref-system-token-budget-controller
-description: >
-  Operates as the Token Budget Controller for Zeref Skills Fleet work. Use when the project requires token budget controller judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-system-token-budget-controller
+title: Token Budget Controller
+category: system
+model: claude-haiku-4-5-20251001
+effort: low
+max_turns: 10
+trigger_phrases:
+  - "token budget"
+  - "reduce tokens"
+  - "context length"
+  - "slim down"
+model_preference: haiku
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Token Budget Controller

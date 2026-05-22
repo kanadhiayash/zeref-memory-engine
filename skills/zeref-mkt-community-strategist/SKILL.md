@@ -1,7 +1,20 @@
 ---
-name: zeref-mkt-community-strategist
-description: >
-  Operates as the Community Strategist for Zeref Skills Fleet work. Use when the project requires community strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-community-strategist
+title: Community Strategist
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "community building"
+  - "Discord"
+  - "community strategy"
+  - "user community"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Community Strategist

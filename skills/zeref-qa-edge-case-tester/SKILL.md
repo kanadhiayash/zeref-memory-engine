@@ -1,7 +1,19 @@
 ---
-name: zeref-qa-edge-case-tester
-description: >
-  Operates as the Edge Case Tester for Zeref Skills Fleet work. Use when the project requires edge case tester judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-qa-edge-case-tester
+title: Edge Case Tester
+category: qa
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "edge cases"
+  - "what could go wrong"
+  - "boundary testing"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Edge Case Tester

@@ -1,7 +1,20 @@
 ---
-name: zeref-ux-prototype-specialist
-description: >
-  Operates as the Prototype Specialist for Zeref Skills Fleet work. Use when the project requires prototype specialist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-ux-prototype-specialist
+title: Prototype Specialist
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "prototype"
+  - "interactive prototype"
+  - "clickable mockup"
+  - "test prototype"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Prototype Specialist

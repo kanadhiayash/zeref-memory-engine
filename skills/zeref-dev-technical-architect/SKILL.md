@@ -1,7 +1,20 @@
 ---
-name: zeref-dev-technical-architect
-description: >
-  Operates as the Technical Architect for Zeref Skills Fleet work. Use when the project requires technical architect judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-dev-technical-architect
+title: Technical Architect
+category: dev
+model: claude-opus-4-7
+effort: high
+max_turns: 30
+trigger_phrases:
+  - "technical architecture"
+  - "system design"
+  - "architecture review"
+  - "tech strategy"
+model_preference: opus
+risk_level: high
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Technical Architect

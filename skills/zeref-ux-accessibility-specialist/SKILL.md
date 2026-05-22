@@ -1,7 +1,21 @@
 ---
-name: zeref-ux-accessibility-specialist
-description: >
-  Operates as the Accessibility Specialist for Zeref Skills Fleet work. Use when the project requires accessibility specialist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-ux-accessibility-specialist
+title: Accessibility Specialist
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "accessibility"
+  - "a11y"
+  - "WCAG"
+  - "screen reader"
+  - "accessible design"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Accessibility Specialist
@@ -165,6 +179,26 @@ Open Risks:
 Next Recommended Skill:
 Status:
 ```
+
+## Priority 1 and 2 Critical Checks
+
+### Priority 1 — Must Pass Before Any Deliverable Ships
+- [ ] All interactive elements have accessible names (aria-label or visible label)
+- [ ] Color is never the only means of conveying information
+- [ ] All non-text content has text alternatives (alt text, aria-label)
+- [ ] Keyboard navigation works for all interactive elements (Tab, Enter, Space, Escape)
+- [ ] Focus indicators are visible on all interactive elements
+
+### Priority 2 — Must Pass Before Launch
+- [ ] Touch targets ≥44×44px on all mobile interactive elements
+- [ ] Body text contrast ≥4.5:1 (WCAG AA)
+- [ ] Large text (24px+) contrast ≥3:1
+- [ ] No content flashes more than 3 times per second (seizure safety)
+
+## Motion Accessibility (add to every animation review)
+- prefers-reduced-motion must be respected for ALL animations
+- The reduced-motion version must still communicate the state change
+- Static fallback ≠ removing all motion — use opacity instead of transform when motion is reduced
 
 ## Token Discipline Rules
 

@@ -1,7 +1,19 @@
 ---
-name: zeref-qa-security-tester
-description: >
-  Operates as the Security QA Tester for Zeref Skills Fleet work. Use when the project requires security qa tester judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-qa-security-tester
+title: Security Tester
+category: qa
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "security test"
+  - "penetration test"
+  - "vulnerability scan"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Security QA Tester

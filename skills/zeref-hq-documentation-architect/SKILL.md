@@ -1,7 +1,19 @@
 ---
-name: zeref-hq-documentation-architect
-description: >
-  Operates as the Documentation Architect for Zeref Skills Fleet work. Use when the project requires documentation architect judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-hq-documentation-architect
+title: Documentation Architect
+category: hq
+model: claude-opus-4-7
+effort: high
+max_turns: 25
+trigger_phrases:
+  - "documentation architecture"
+  - "docs structure"
+  - "knowledge base design"
+model_preference: opus
+risk_level: medium
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Documentation Architect

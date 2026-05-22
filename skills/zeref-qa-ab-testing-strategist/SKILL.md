@@ -1,7 +1,20 @@
 ---
-name: zeref-qa-ab-testing-strategist
-description: >
-  Operates as the A/B Testing Strategist for Zeref Skills Fleet work. Use when the project requires a/b testing strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-qa-ab-testing-strategist
+title: Ab Testing Strategist
+category: qa
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "A/B test"
+  - "experiment design"
+  - "hypothesis"
+  - "split test"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # A/B Testing Strategist

@@ -1,7 +1,21 @@
 ---
-name: zeref-cnt-resume-career-writer
-description: >
-  Operates as the Resume & Career Writer for Zeref Skills Fleet work. Use when the project requires resume & career writer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-cnt-resume-career-writer
+title: Resume Career Writer
+category: cnt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "resume"
+  - "CV"
+  - "cover letter"
+  - "job application"
+  - "career document"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Resume & Career Writer

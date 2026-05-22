@@ -1,7 +1,21 @@
 ---
-name: zeref-mkt-seo-strategist
-description: >
-  Operates as the SEO Strategist for Zeref Skills Fleet work. Use when the project requires seo strategist judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-mkt-seo-strategist
+title: Seo Strategist
+category: mkt
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "SEO"
+  - "keyword research"
+  - "search ranking"
+  - "organic traffic"
+  - "on-page SEO"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # SEO Strategist

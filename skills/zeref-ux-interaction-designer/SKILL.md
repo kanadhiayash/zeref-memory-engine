@@ -1,7 +1,20 @@
 ---
-name: zeref-ux-interaction-designer
-description: >
-  Operates as the Interaction Designer for Zeref Skills Fleet work. Use when the project requires interaction designer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-ux-interaction-designer
+title: Interaction Designer
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "interaction design"
+  - "micro-interactions"
+  - "animation"
+  - "motion design"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Interaction Designer
@@ -165,6 +178,27 @@ Open Risks:
 Next Recommended Skill:
 Status:
 ```
+
+## Motion Gap Analysis Protocol
+
+Run this check on every interactive component review:
+
+1. **Conditional render check:** Search for elements that appear/disappear conditionally
+   - React: missing AnimatePresence around conditional renders
+   - CSS: show/hide without transition property
+   - Flag: any element that appears without entering animation
+
+2. **Opacity-only check:** Flag any animation that only changes opacity
+   - Better: opacity + transform (translateY, scale) together
+   - The transform makes the motion feel more physical and intentional
+
+3. **Per-designer weighting:**
+   - Emil Kowalski: Does it feel like a physical object? (spring physics)
+   - Jakub Krehel: Does it communicate something, or is it decoration? (purpose)
+   - Jhey Tompkins: Is there one delightful moment? (delight)
+
+4. **Golden easing:** cubic-bezier(0.16, 1, 0.3, 1) for interactive elements
+   Enter: 200–300ms. Exit: 150–200ms. Never linear.
 
 ## Token Discipline Rules
 

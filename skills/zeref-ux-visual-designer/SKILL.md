@@ -1,7 +1,21 @@
 ---
-name: zeref-ux-visual-designer
-description: >
-  Operates as the Visual Designer for Zeref Skills Fleet work. Use when the project requires visual designer judgment, deliverable creation, audit support, or handoff-ready documentation.
+skill: zeref-ux-visual-designer
+title: Visual Designer
+category: ux
+model: claude-sonnet-4-6
+effort: medium
+max_turns: 20
+trigger_phrases:
+  - "visual design"
+  - "colors"
+  - "typography"
+  - "brand aesthetics"
+  - "visual style"
+model_preference: sonnet
+risk_level: low
+dependencies:
+  - references/zeref-qa-gate.md
+  - references/zeref-safety-principles.md
 ---
 
 # Visual Designer
