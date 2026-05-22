@@ -2,7 +2,7 @@
 **Version:** 3.0.0
 **Identity:** Context Engine + Agent Harness OS
 **Author:** Yash Kanadhia
-**Repo:** zeref-agent-os
+**Repo:** zeref-os
 
 ---
 
