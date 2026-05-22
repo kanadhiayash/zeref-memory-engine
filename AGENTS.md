@@ -15,7 +15,7 @@ Read wiki/hot.md and any ZEREFPROJECT.md in the current directory before doing a
 - Irreversible actions require explicit user confirmation
 
 ## Skill Fleet
-127 skills in 9 categories: dev, ux, mkt, cnt, qa, biz, hq, system, final
+109 skills in 9 categories: dev, ux, mkt, cnt, qa, biz, hq, system, final
 Registry: registry/zeref-skill-registry.json
 
 ## Memory
