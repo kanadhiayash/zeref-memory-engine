@@ -4,6 +4,5 @@
   "description": "Context Engine + Agent Harness OS — 109 skills across 9 guilds, 8 privilege-scoped agents, self-improving wiki memory, cross-agent portability (Claude Code, Codex, Gemini CLI). Agent = Model + Harness. The model is a commodity. The harness is the moat.",
   "author": {
     "name": "Yash Kanadhia"
-  },
-  "agents": "./agents"
+  }
 }
