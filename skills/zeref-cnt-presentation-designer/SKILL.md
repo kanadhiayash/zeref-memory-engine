@@ -1,5 +1,5 @@
 ---
-skill: zeref-cnt-presentation-designer
+name: zeref-cnt-presentation-designer
 title: Presentation Designer
 description: "Presentation Designer. Use for: presentation, slide deck, pitch deck structure, keynote outline."
 category: cnt

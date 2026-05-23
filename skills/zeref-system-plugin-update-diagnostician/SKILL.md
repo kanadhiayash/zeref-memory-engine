@@ -1,5 +1,5 @@
 ---
-skill: zeref-system-plugin-update-diagnostician
+name: zeref-system-plugin-update-diagnostician
 title: Plugin Update Diagnostician
 description: "Plugin Update Diagnostician. Use for: plugin update, diagnose plugin, plugin issue, update diagnostic."
 category: system

@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-developer-handoff-lead
+name: zeref-ux-developer-handoff-lead
 title: Developer Handoff Lead
 description: "Developer Handoff Lead. Use for: developer handoff, design specs, Figma handoff, implementation notes."
 category: ux

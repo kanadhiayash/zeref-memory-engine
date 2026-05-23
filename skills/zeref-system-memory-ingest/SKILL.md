@@ -1,5 +1,5 @@
 ---
-skill: zeref-system-memory-ingest
+name: zeref-system-memory-ingest
 title: Memory Ingest
 description: "Memory Ingest. Use for: save to wiki, save session, log this, remember this, update wiki."
 category: system

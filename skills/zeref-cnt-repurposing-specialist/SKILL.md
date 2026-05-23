@@ -1,5 +1,5 @@
 ---
-skill: zeref-cnt-repurposing-specialist
+name: zeref-cnt-repurposing-specialist
 title: Repurposing Specialist
 description: "Repurposing Specialist. Use for: repurpose content, turn this into, adapt for, content repurposing."
 category: cnt

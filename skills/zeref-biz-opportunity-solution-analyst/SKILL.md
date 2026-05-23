@@ -1,5 +1,5 @@
 ---
-skill: zeref-biz-opportunity-solution-analyst
+name: zeref-biz-opportunity-solution-analyst
 title: Opportunity Solution Analyst
 description: "Opportunity Solution Analyst. Use for: opportunity-solution tree, discovery, what should we build, prioritize features."
 category: biz

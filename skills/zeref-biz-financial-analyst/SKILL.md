@@ -1,5 +1,5 @@
 ---
-skill: zeref-biz-financial-analyst
+name: zeref-biz-financial-analyst
 title: Financial Analyst
 description: "Financial Analyst. Use for: financial model, unit economics, revenue forecast, P&L, budget."
 category: biz

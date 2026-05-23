@@ -1,5 +1,5 @@
 ---
-skill: zeref-dev-api-integration-engineer
+name: zeref-dev-api-integration-engineer
 title: Api Integration Engineer
 description: "Api Integration Engineer. Use for: API integration, REST API, webhook, third-party API, connect services."
 category: dev

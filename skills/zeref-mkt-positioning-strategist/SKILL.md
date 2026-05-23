@@ -1,5 +1,5 @@
 ---
-skill: zeref-mkt-positioning-strategist
+name: zeref-mkt-positioning-strategist
 title: Positioning Strategist
 description: "Positioning Strategist. Use for: positioning, differentiation, competitive positioning, value prop."
 category: mkt

@@ -1,5 +1,5 @@
 ---
-skill: zeref-mkt-analytics-specialist
+name: zeref-mkt-analytics-specialist
 title: Analytics Specialist
 description: "Analytics Specialist. Use for: marketing analytics, attribution, campaign performance, conversion."
 category: mkt

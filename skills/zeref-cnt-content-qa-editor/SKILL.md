@@ -1,5 +1,5 @@
 ---
-skill: zeref-cnt-content-qa-editor
+name: zeref-cnt-content-qa-editor
 title: Content Qa Editor
 description: "Content Qa Editor. Use for: proofread, copy edit, review this content, check grammar."
 category: cnt

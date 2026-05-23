@@ -1,5 +1,5 @@
 ---
-skill: zeref-system-memory-lint
+name: zeref-system-memory-lint
 title: Memory Lint
 description: "Memory Lint. Use for: clean up wiki, lint memory, check wiki health, wiki audit."
 category: system

@@ -1,5 +1,5 @@
 ---
-skill: zeref-biz-product-market-fit-analyst
+name: zeref-biz-product-market-fit-analyst
 title: Product Market Fit Analyst
 description: "Product Market Fit Analyst. Use for: product market fit, PMF, retention, churn, user engagement."
 category: biz

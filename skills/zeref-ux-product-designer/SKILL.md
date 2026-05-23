@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-product-designer
+name: zeref-ux-product-designer
 title: Product Designer
 description: "Product Designer. Use for: product design, design this screen, wireframe, UI design, app design."
 category: ux

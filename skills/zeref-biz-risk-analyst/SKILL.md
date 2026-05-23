@@ -1,5 +1,5 @@
 ---
-skill: zeref-biz-risk-analyst
+name: zeref-biz-risk-analyst
 title: Risk Analyst
 description: "Risk Analyst. Use for: risk assessment, risk mitigation, SWOT, identify risks."
 category: biz

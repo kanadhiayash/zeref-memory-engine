@@ -1,5 +1,5 @@
 ---
-skill: zeref-mkt-chief-marketing-strategist
+name: zeref-mkt-chief-marketing-strategist
 title: Chief Marketing Strategist
 description: "Chief Marketing Strategist. Use for: marketing strategy, CMO, marketing plan, growth marketing."
 category: mkt

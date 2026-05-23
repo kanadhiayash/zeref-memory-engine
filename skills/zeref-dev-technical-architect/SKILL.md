@@ -1,5 +1,5 @@
 ---
-skill: zeref-dev-technical-architect
+name: zeref-dev-technical-architect
 title: Technical Architect
 description: "Technical Architect. Use for: technical architecture, system design, architecture review, tech strategy."
 category: dev

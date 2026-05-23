@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-design-qa-auditor
+name: zeref-ux-design-qa-auditor
 title: Design Qa Auditor
 description: "Design Qa Auditor. Use for: design QA, audit this design, design review, design issues."
 category: ux

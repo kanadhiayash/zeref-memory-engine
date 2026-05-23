@@ -1,5 +1,5 @@
 ---
-skill: zeref-system-caveman-compressor
+name: zeref-system-caveman-compressor
 title: Caveman Compressor
 description: "Caveman Compressor. Use for: compress this, caveman, shorten context, handoff, save session."
 category: system

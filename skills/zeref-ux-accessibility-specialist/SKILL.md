@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-accessibility-specialist
+name: zeref-ux-accessibility-specialist
 title: Accessibility Specialist
 description: "Accessibility Specialist. Use for: accessibility, a11y, WCAG, screen reader, accessible design."
 category: ux

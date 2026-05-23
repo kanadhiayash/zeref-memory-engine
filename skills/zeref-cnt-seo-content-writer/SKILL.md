@@ -1,5 +1,5 @@
 ---
-skill: zeref-cnt-seo-content-writer
+name: zeref-cnt-seo-content-writer
 title: Seo Content Writer
 description: "Seo Content Writer. Use for: SEO content, keyword-optimized, search traffic, organic content."
 category: cnt

@@ -1,5 +1,5 @@
 ---
-skill: zeref-qa-accessibility-tester
+name: zeref-qa-accessibility-tester
 title: Accessibility Tester
 description: "Accessibility Tester. Use for: accessibility test, WCAG, screen reader, a11y audit."
 category: qa

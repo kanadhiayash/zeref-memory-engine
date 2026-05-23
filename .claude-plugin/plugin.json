@@ -1,33 +1,9 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "zeref-os",
   "version": "3.0.0",
   "description": "Context Engine + Agent Harness OS — 109 skills across 9 guilds, 8 privilege-scoped agents, self-improving wiki memory, cross-agent portability (Claude Code, Codex, Gemini CLI). Agent = Model + Harness. The model is a commodity. The harness is the moat.",
   "author": {
-    "name": "Yash Kanadhia",
-    "url": "https://github.com/kanadhiayash"
+    "name": "Yash Kanadhia"
   },
-  "homepage": "https://github.com/kanadhiayash/zeref-os",
-  "repository": "https://github.com/kanadhiayash/zeref-os",
-  "license": "MIT",
-  "keywords": [
-    "zeref",
-    "claude-code",
-    "harness",
-    "context-engine",
-    "agent-os",
-    "skills",
-    "product",
-    "ux",
-    "development",
-    "qa",
-    "marketing",
-    "operations",
-    "self-improving"
-  ],
-  "skills": "./skills",
-  "commands": "./commands",
-  "agents": "./agents",
-  "references": "./references",
-  "outputStyles": "./output-styles"
+  "agents": "./agents"
 }

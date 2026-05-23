@@ -1,5 +1,5 @@
 ---
-skill: zeref-system-evidence-memory-keeper
+name: zeref-system-evidence-memory-keeper
 title: Evidence Memory Keeper
 description: "Evidence Memory Keeper. Use for: save evidence, log finding, record this decision, evidence map."
 category: system

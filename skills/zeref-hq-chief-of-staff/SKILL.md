@@ -1,5 +1,5 @@
 ---
-skill: zeref-hq-chief-of-staff
+name: zeref-hq-chief-of-staff
 title: Chief Of Staff
 description: "Chief Of Staff. Use for: chief of staff, cross-functional, priorities, weekly agenda."
 category: hq

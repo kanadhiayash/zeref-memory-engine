@@ -1,5 +1,5 @@
 ---
-skill: zeref-dev-devops-engineer
+name: zeref-dev-devops-engineer
 title: Devops Engineer
 description: "Devops Engineer. Use for: DevOps, CI/CD, GitHub Actions, deployment pipeline, Docker."
 category: dev

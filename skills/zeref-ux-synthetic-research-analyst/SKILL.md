@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-synthetic-research-analyst
+name: zeref-ux-synthetic-research-analyst
 title: Synthetic Research Analyst
 description: "Synthetic Research Analyst. Use for: synthetic research, simulate users, synthetic personas."
 category: ux

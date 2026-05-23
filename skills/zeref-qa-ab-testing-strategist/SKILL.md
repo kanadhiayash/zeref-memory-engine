@@ -1,5 +1,5 @@
 ---
-skill: zeref-qa-ab-testing-strategist
+name: zeref-qa-ab-testing-strategist
 title: Ab Testing Strategist
 description: "Ab Testing Strategist. Use for: A/B test, experiment design, hypothesis, split test."
 category: qa

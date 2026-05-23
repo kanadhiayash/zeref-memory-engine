@@ -1,5 +1,5 @@
 ---
-skill: zeref-dev-mobile-engineer
+name: zeref-dev-mobile-engineer
 title: Mobile Engineer
 description: "Mobile Engineer. Use for: mobile app, React Native, Expo, iOS, Android, SwiftUI."
 category: dev

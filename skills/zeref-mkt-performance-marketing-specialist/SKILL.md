@@ -1,5 +1,5 @@
 ---
-skill: zeref-mkt-performance-marketing-specialist
+name: zeref-mkt-performance-marketing-specialist
 title: Performance Marketing Specialist
 description: "Performance Marketing Specialist. Use for: paid ads, Google Ads, Meta Ads, performance marketing, ROAS."
 category: mkt

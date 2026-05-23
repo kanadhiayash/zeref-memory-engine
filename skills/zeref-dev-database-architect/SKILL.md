@@ -1,5 +1,5 @@
 ---
-skill: zeref-dev-database-architect
+name: zeref-dev-database-architect
 title: Database Architect
 description: "Database Architect. Use for: database design, schema, data model, SQL, NoSQL, query."
 category: dev

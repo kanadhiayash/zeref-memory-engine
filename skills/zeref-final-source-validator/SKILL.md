@@ -1,5 +1,5 @@
 ---
-skill: zeref-final-source-validator
+name: zeref-final-source-validator
 title: Source Validator
 description: "Source Validator. Use for: validate sources, check citations, source verification, fact check."
 category: final

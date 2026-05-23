@@ -1,5 +1,5 @@
 ---
-skill: zeref-dev-solution-architect
+name: zeref-dev-solution-architect
 title: Solution Architect
 description: "Solution Architect. Use for: solution architecture, system design, architecture decision, tech stack."
 category: dev

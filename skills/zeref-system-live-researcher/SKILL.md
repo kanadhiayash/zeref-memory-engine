@@ -1,5 +1,5 @@
 ---
-skill: zeref-system-live-researcher
+name: zeref-system-live-researcher
 title: Live Researcher
 description: "Live Researcher. Use for: research this, find information, web research, look up, investigate."
 category: system

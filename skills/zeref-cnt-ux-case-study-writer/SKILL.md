@@ -1,5 +1,5 @@
 ---
-skill: zeref-cnt-ux-case-study-writer
+name: zeref-cnt-ux-case-study-writer
 title: Ux Case Study Writer
 description: "Ux Case Study Writer. Use for: UX case study, design case study, portfolio case study."
 category: cnt

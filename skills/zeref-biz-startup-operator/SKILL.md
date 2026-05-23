@@ -1,5 +1,5 @@
 ---
-skill: zeref-biz-startup-operator
+name: zeref-biz-startup-operator
 title: Startup Operator
 description: "Startup Operator. Use for: startup, zero to one, early stage, MVP launch, founder."
 category: biz

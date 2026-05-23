@@ -1,5 +1,5 @@
 ---
-skill: zeref-hq-chief-product-officer
+name: zeref-hq-chief-product-officer
 title: Chief Product Officer
 description: "Chief Product Officer. Use for: product direction, CPO, product strategy, roadmap, product decision."
 category: hq

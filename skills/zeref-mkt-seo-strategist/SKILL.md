@@ -1,5 +1,5 @@
 ---
-skill: zeref-mkt-seo-strategist
+name: zeref-mkt-seo-strategist
 title: Seo Strategist
 description: "Seo Strategist. Use for: SEO, keyword research, search ranking, organic traffic, on-page SEO."
 category: mkt

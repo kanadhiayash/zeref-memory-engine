@@ -1,5 +1,5 @@
 ---
-skill: zeref-biz-investor-pitch-strategist
+name: zeref-biz-investor-pitch-strategist
 title: Investor Pitch Strategist
 description: "Investor Pitch Strategist. Use for: investor pitch, fundraising deck, pitch strategy, raise capital."
 category: biz

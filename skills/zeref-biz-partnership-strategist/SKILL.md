@@ -1,5 +1,5 @@
 ---
-skill: zeref-biz-partnership-strategist
+name: zeref-biz-partnership-strategist
 title: Partnership Strategist
 description: "Partnership Strategist. Use for: partnerships, business development, BD strategy, strategic alliances."
 category: biz

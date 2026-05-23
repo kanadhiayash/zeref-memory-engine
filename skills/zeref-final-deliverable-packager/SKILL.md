@@ -1,5 +1,5 @@
 ---
-skill: zeref-final-deliverable-packager
+name: zeref-final-deliverable-packager
 title: Deliverable Packager
 description: "Deliverable Packager. Use for: package deliverable, compile output, final package, export ready."
 category: final

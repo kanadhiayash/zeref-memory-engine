@@ -1,5 +1,5 @@
 ---
-skill: zeref-mkt-conversion-rate-optimizer
+name: zeref-mkt-conversion-rate-optimizer
 title: Conversion Rate Optimizer
 description: "Conversion Rate Optimizer. Use for: CRO, conversion rate, optimize landing page, A/B test copy."
 category: mkt

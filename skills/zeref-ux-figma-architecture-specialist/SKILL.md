@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-figma-architecture-specialist
+name: zeref-ux-figma-architecture-specialist
 title: Figma Architecture Specialist
 description: "Figma Architecture Specialist. Use for: Figma architecture, component structure, Figma organization."
 category: ux

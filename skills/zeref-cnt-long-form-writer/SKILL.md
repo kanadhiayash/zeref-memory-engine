@@ -1,5 +1,5 @@
 ---
-skill: zeref-cnt-long-form-writer
+name: zeref-cnt-long-form-writer
 title: Long Form Writer
 description: "Long Form Writer. Use for: blog post, article, long form, essay, Substack."
 category: cnt

@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-writer
+name: zeref-ux-writer
 title: Writer
 description: "Writer. Use for: UX writing, microcopy, UI copy, error messages, button labels."
 category: ux
