@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-research-lead
+name: zeref-ux-research-lead
 title: Research Lead
 description: "Research Lead. Use for: user research, interview plan, research strategy, user insights."
 category: ux

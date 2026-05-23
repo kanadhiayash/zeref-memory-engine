@@ -1,5 +1,5 @@
 ---
-skill: zeref-qa-ui-consistency-auditor
+name: zeref-qa-ui-consistency-auditor
 title: Ui Consistency Auditor
 description: "Ui Consistency Auditor. Use for: UI consistency, design consistency audit, visual QA."
 category: qa

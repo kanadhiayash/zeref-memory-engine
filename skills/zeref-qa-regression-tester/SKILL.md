@@ -1,5 +1,5 @@
 ---
-skill: zeref-qa-regression-tester
+name: zeref-qa-regression-tester
 title: Regression Tester
 description: "Regression Tester. Use for: regression test, test after changes, did this break anything."
 category: qa

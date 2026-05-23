@@ -1,5 +1,5 @@
 ---
-skill: zeref-qa-performance-tester
+name: zeref-qa-performance-tester
 title: Performance Tester
 description: "Performance Tester. Use for: performance test, load test, lighthouse, speed audit."
 category: qa

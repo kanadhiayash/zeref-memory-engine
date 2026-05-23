@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-interaction-designer
+name: zeref-ux-interaction-designer
 title: Interaction Designer
 description: "Interaction Designer. Use for: interaction design, micro-interactions, animation, motion design."
 category: ux

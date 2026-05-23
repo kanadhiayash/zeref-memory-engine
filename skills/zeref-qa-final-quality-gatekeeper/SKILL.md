@@ -1,5 +1,5 @@
 ---
-skill: zeref-qa-final-quality-gatekeeper
+name: zeref-qa-final-quality-gatekeeper
 title: Final Quality Gatekeeper
 description: "Final Quality Gatekeeper. Use for: quality gate, final QA, approve before shipping."
 category: qa

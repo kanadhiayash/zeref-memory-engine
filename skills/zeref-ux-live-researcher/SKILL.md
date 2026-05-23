@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-live-researcher
+name: zeref-ux-live-researcher
 title: Live Researcher
 description: "Live Researcher. Use for: live research, user research now, research this, find user insights."
 category: ux

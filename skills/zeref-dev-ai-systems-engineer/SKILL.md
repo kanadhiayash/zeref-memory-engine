@@ -1,5 +1,5 @@
 ---
-skill: zeref-dev-ai-systems-engineer
+name: zeref-dev-ai-systems-engineer
 title: Ai Systems Engineer
 description: "Ai Systems Engineer. Use for: AI system, ML pipeline, model integration, AI architecture."
 category: dev

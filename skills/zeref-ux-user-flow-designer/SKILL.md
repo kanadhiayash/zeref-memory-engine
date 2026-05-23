@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-user-flow-designer
+name: zeref-ux-user-flow-designer
 title: User Flow Designer
 description: "User Flow Designer. Use for: user flow, task flow, user journey map, flow diagram."
 category: ux

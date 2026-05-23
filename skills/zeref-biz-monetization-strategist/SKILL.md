@@ -1,5 +1,5 @@
 ---
-skill: zeref-biz-monetization-strategist
+name: zeref-biz-monetization-strategist
 title: Monetization Strategist
 description: "Monetization Strategist. Use for: monetization, pricing model, revenue streams, how to charge."
 category: biz

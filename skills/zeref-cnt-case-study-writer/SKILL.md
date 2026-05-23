@@ -1,5 +1,5 @@
 ---
-skill: zeref-cnt-case-study-writer
+name: zeref-cnt-case-study-writer
 title: Case Study Writer
 description: "Case Study Writer. Use for: case study, portfolio piece, project writeup, document this project."
 category: cnt

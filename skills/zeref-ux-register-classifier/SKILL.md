@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-register-classifier
+name: zeref-ux-register-classifier
 title: Register Classifier
 description: "Register Classifier. Use for: what tone, brand voice or product, classify this design, register check."
 category: ux

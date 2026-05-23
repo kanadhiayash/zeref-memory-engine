@@ -1,5 +1,5 @@
 ---
-skill: zeref-cnt-documentation-writer
+name: zeref-cnt-documentation-writer
 title: Documentation Writer
 description: "Documentation Writer. Use for: write documentation, README, technical docs, user guide."
 category: cnt

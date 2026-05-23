@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-prototype-specialist
+name: zeref-ux-prototype-specialist
 title: Prototype Specialist
 description: "Prototype Specialist. Use for: prototype, interactive prototype, clickable mockup, test prototype."
 category: ux

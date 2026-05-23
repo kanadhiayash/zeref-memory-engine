@@ -1,5 +1,5 @@
 ---
-skill: zeref-system-marketplace-packager
+name: zeref-system-marketplace-packager
 title: Marketplace Packager
 description: "Marketplace Packager. Use for: marketplace listing, package for marketplace, publish plugin."
 category: system

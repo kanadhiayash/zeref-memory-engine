@@ -1,5 +1,5 @@
 ---
-skill: zeref-cnt-scriptwriter
+name: zeref-cnt-scriptwriter
 title: Scriptwriter
 description: "Scriptwriter. Use for: script, video script, podcast script, explainer video."
 category: cnt

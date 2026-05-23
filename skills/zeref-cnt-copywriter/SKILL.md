@@ -1,5 +1,5 @@
 ---
-skill: zeref-cnt-copywriter
+name: zeref-cnt-copywriter
 title: Copywriter
 description: "Copywriter. Use for: write copy, marketing copy, headline, landing page copy, ad copy."
 category: cnt

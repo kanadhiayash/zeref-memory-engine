@@ -1,5 +1,5 @@
 ---
-skill: zeref-qa-ux-usability-tester
+name: zeref-qa-ux-usability-tester
 title: Ux Usability Tester
 description: "Ux Usability Tester. Use for: usability test, user test, task analysis, UX audit."
 category: qa

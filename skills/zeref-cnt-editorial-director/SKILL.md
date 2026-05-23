@@ -1,5 +1,5 @@
 ---
-skill: zeref-cnt-editorial-director
+name: zeref-cnt-editorial-director
 title: Editorial Director
 description: "Editorial Director. Use for: editorial strategy, content calendar, publishing plan, content direction."
 category: cnt

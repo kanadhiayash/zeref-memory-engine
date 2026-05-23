@@ -1,5 +1,5 @@
 ---
-skill: zeref-hq-chief-research-officer
+name: zeref-hq-chief-research-officer
 title: Chief Research Officer
 description: "Chief Research Officer. Use for: research strategy, synthesize research, research direction."
 category: hq

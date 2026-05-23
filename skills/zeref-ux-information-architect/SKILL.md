@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-information-architect
+name: zeref-ux-information-architect
 title: Information Architect
 description: "Information Architect. Use for: information architecture, IA, navigation structure, site map."
 category: ux

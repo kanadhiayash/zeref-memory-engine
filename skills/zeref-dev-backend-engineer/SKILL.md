@@ -1,5 +1,5 @@
 ---
-skill: zeref-dev-backend-engineer
+name: zeref-dev-backend-engineer
 title: Backend Engineer
 description: "Backend Engineer. Use for: backend, server-side, Node.js, Python backend, API endpoint."
 category: dev

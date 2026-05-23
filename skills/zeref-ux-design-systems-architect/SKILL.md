@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-design-systems-architect
+name: zeref-ux-design-systems-architect
 title: Design Systems Architect
 description: "Design Systems Architect. Use for: design system, component library, design tokens, style guide."
 category: ux

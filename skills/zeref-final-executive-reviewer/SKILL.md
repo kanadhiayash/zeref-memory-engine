@@ -1,5 +1,5 @@
 ---
-skill: zeref-final-executive-reviewer
+name: zeref-final-executive-reviewer
 title: Executive Reviewer
 description: "Executive Reviewer. Use for: final review, executive review, approve this, ready to ship, QA gate."
 category: final

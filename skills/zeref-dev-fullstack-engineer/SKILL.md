@@ -1,5 +1,5 @@
 ---
-skill: zeref-dev-fullstack-engineer
+name: zeref-dev-fullstack-engineer
 title: Fullstack Engineer
 description: "Fullstack Engineer. Use for: fullstack, build this feature, full stack, end to end."
 category: dev

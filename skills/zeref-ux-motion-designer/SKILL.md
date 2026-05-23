@@ -1,5 +1,5 @@
 ---
-skill: zeref-ux-motion-designer
+name: zeref-ux-motion-designer
 title: Motion Designer
 description: "Motion Designer. Use for: motion design, animation spec, Lottie, Framer motion, transitions."
 category: ux

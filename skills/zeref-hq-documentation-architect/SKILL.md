@@ -1,5 +1,5 @@
 ---
-skill: zeref-hq-documentation-architect
+name: zeref-hq-documentation-architect
 title: Documentation Architect
 description: "Documentation Architect. Use for: documentation architecture, docs structure, knowledge base design."
 category: hq

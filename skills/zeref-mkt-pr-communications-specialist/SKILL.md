@@ -1,5 +1,5 @@
 ---
-skill: zeref-mkt-pr-communications-specialist
+name: zeref-mkt-pr-communications-specialist
 title: Pr Communications Specialist
 description: "Pr Communications Specialist. Use for: PR, press release, media relations, communications, public relations."
 category: mkt

@@ -1,5 +1,5 @@
 ---
-skill: zeref-biz-business-strategist
+name: zeref-biz-business-strategist
 title: Business Strategist
 description: "Business Strategist. Use for: business strategy, strategic plan, go to market, business model."
 category: biz

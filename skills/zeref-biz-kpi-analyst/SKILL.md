@@ -1,5 +1,5 @@
 ---
-skill: zeref-biz-kpi-analyst
+name: zeref-biz-kpi-analyst
 title: Kpi Analyst
 description: "Kpi Analyst. Use for: KPI, metrics, north star, measure success, analytics dashboard."
 category: biz

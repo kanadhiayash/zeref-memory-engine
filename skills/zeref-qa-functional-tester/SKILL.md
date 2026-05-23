@@ -1,5 +1,5 @@
 ---
-skill: zeref-qa-functional-tester
+name: zeref-qa-functional-tester
 title: Functional Tester
 description: "Functional Tester. Use for: functional testing, test this feature, manual QA."
 category: qa

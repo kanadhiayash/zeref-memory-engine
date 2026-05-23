@@ -1,5 +1,5 @@
 ---
-skill: zeref-dev-frontend-engineer
+name: zeref-dev-frontend-engineer
 title: Frontend Engineer
 description: "Frontend Engineer. Use for: frontend, React, Vue, CSS, UI component, frontend code, landing page, build a website, web app, Next.js."
 category: dev

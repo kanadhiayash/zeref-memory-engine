@@ -1,5 +1,5 @@
 ---
-skill: zeref-mkt-social-media-strategist
+name: zeref-mkt-social-media-strategist
 title: Social Media Strategist
 description: "Social Media Strategist. Use for: social media, Instagram, Twitter, TikTok, social strategy."
 category: mkt

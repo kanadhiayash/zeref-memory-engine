@@ -1,5 +1,5 @@
 ---
-skill: zeref-dev-cloud-infrastructure-engineer
+name: zeref-dev-cloud-infrastructure-engineer
 title: Cloud Infrastructure Engineer
 description: "Cloud Infrastructure Engineer. Use for: cloud infrastructure, Firebase, Supabase, serverless, deployment."
 category: dev

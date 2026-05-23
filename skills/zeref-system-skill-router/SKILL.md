@@ -1,5 +1,5 @@
 ---
-skill: zeref-system-skill-router
+name: zeref-system-skill-router
 title: Skill Router
 description: "Skill Router. Use for: route this task, which skill, what skill should."
 category: system
