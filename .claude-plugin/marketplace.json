@@ -1,10 +1,16 @@
 {
-  "name": "Zeref OS",
-  "description": "Context Engine + Agent Harness OS — 109 skills across 9 guilds, 8 privilege-scoped agents, self-improving wiki memory.",
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "zeref-os",
+  "description": "Context Engine + Agent Harness OS — 109 skills across 9 guilds, 8 privilege-scoped agents, self-improving wiki memory, cross-agent portability.",
+  "owner": {
+    "name": "Yash Kanadhia",
+    "url": "https://github.com/kanadhiayash"
+  },
   "plugins": [
     {
       "name": "zeref-os",
-      "path": "."
+      "source": "./",
+      "description": "Context Engine + Agent Harness OS"
     }
   ]
 }
