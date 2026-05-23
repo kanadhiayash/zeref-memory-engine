@@ -1,6 +1,7 @@
 ---
 skill: zeref-mkt-brand-strategist
 title: Brand Strategist
+description: "Brand Strategist. Use for: brand strategy, brand positioning, brand identity, brand direction."
 category: mkt
 model: claude-sonnet-4-6
 effort: medium

@@ -1,6 +1,7 @@
 ---
 skill: zeref-biz-market-research-analyst
 title: Market Research Analyst
+description: "Market Research Analyst. Use for: market research, market size, TAM SAM SOM, industry analysis."
 category: biz
 model: claude-sonnet-4-6
 effort: high

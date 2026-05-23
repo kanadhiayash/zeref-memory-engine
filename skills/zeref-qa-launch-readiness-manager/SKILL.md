@@ -1,6 +1,7 @@
 ---
 skill: zeref-qa-launch-readiness-manager
 title: Launch Readiness Manager
+description: "Launch Readiness Manager. Use for: launch readiness, pre-launch checklist, ready to launch."
 category: qa
 model: claude-sonnet-4-6
 effort: medium

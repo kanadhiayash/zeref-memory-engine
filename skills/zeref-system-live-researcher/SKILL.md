@@ -1,6 +1,7 @@
 ---
 skill: zeref-system-live-researcher
 title: Live Researcher
+description: "Live Researcher. Use for: research this, find information, web research, look up, investigate."
 category: system
 model: claude-haiku-4-5-20251001
 effort: low

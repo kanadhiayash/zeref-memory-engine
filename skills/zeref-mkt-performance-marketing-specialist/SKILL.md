@@ -1,6 +1,7 @@
 ---
 skill: zeref-mkt-performance-marketing-specialist
 title: Performance Marketing Specialist
+description: "Performance Marketing Specialist. Use for: paid ads, Google Ads, Meta Ads, performance marketing, ROAS."
 category: mkt
 model: claude-sonnet-4-6
 effort: medium

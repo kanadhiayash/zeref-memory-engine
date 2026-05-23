@@ -1,6 +1,7 @@
 ---
 skill: zeref-dev-devops-engineer
 title: Devops Engineer
+description: "Devops Engineer. Use for: DevOps, CI/CD, GitHub Actions, deployment pipeline, Docker."
 category: dev
 model: claude-sonnet-4-6
 effort: high

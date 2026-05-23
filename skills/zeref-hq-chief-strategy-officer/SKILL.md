@@ -1,6 +1,7 @@
 ---
 skill: zeref-hq-chief-strategy-officer
 title: Chief Strategy Officer
+description: "Chief Strategy Officer. Use for: strategy, CSO, strategic direction, long-term strategy."
 category: hq
 model: claude-opus-4-7
 effort: high

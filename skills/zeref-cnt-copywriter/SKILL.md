@@ -1,6 +1,7 @@
 ---
 skill: zeref-cnt-copywriter
 title: Copywriter
+description: "Copywriter. Use for: write copy, marketing copy, headline, landing page copy, ad copy."
 category: cnt
 model: claude-sonnet-4-6
 effort: medium

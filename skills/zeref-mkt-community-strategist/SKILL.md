@@ -1,6 +1,7 @@
 ---
 skill: zeref-mkt-community-strategist
 title: Community Strategist
+description: "Community Strategist. Use for: community building, Discord, community strategy, user community."
 category: mkt
 model: claude-sonnet-4-6
 effort: medium

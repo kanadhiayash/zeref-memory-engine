@@ -1,6 +1,7 @@
 ---
 skill: zeref-biz-competitive-intelligence-analyst
 title: Competitive Intelligence Analyst
+description: "Competitive Intelligence Analyst. Use for: competitor analysis, competitive landscape, market positioning, benchmark competitors."
 category: biz
 model: claude-sonnet-4-6
 effort: high

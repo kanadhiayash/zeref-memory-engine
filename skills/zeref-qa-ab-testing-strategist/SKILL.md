@@ -1,6 +1,7 @@
 ---
 skill: zeref-qa-ab-testing-strategist
 title: Ab Testing Strategist
+description: "Ab Testing Strategist. Use for: A/B test, experiment design, hypothesis, split test."
 category: qa
 model: claude-sonnet-4-6
 effort: medium

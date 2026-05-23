@@ -1,6 +1,7 @@
 ---
 skill: zeref-dev-technical-architect
 title: Technical Architect
+description: "Technical Architect. Use for: technical architecture, system design, architecture review, tech strategy."
 category: dev
 model: claude-opus-4-7
 effort: high

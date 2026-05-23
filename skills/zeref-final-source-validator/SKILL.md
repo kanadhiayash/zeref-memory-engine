@@ -1,6 +1,7 @@
 ---
 skill: zeref-final-source-validator
 title: Source Validator
+description: "Source Validator. Use for: validate sources, check citations, source verification, fact check."
 category: final
 model: claude-opus-4-7
 effort: high

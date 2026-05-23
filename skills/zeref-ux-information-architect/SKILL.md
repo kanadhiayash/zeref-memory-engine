@@ -1,6 +1,7 @@
 ---
 skill: zeref-ux-information-architect
 title: Information Architect
+description: "Information Architect. Use for: information architecture, IA, navigation structure, site map."
 category: ux
 model: claude-sonnet-4-6
 effort: medium

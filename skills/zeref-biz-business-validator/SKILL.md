@@ -1,6 +1,7 @@
 ---
 skill: zeref-biz-business-validator
 title: Business Validator
+description: "Business Validator. Use for: validate business, is this viable, business case, feasibility."
 category: biz
 model: claude-sonnet-4-6
 effort: high

@@ -1,6 +1,7 @@
 ---
 skill: zeref-mkt-social-media-strategist
 title: Social Media Strategist
+description: "Social Media Strategist. Use for: social media, Instagram, Twitter, TikTok, social strategy."
 category: mkt
 model: claude-sonnet-4-6
 effort: medium

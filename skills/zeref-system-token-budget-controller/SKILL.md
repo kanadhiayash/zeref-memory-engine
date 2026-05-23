@@ -1,6 +1,7 @@
 ---
 skill: zeref-system-token-budget-controller
 title: Token Budget Controller
+description: "Token Budget Controller. Use for: token budget, reduce tokens, context length, slim down."
 category: system
 model: claude-haiku-4-5-20251001
 effort: low

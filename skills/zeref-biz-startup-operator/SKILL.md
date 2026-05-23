@@ -1,6 +1,7 @@
 ---
 skill: zeref-biz-startup-operator
 title: Startup Operator
+description: "Startup Operator. Use for: startup, zero to one, early stage, MVP launch, founder."
 category: biz
 model: claude-sonnet-4-6
 effort: high

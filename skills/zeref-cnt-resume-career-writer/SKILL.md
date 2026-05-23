@@ -1,6 +1,7 @@
 ---
 skill: zeref-cnt-resume-career-writer
 title: Resume Career Writer
+description: "Resume Career Writer. Use for: resume, CV, cover letter, job application, career document."
 category: cnt
 model: claude-sonnet-4-6
 effort: medium

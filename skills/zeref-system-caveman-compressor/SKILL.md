@@ -1,6 +1,7 @@
 ---
 skill: zeref-system-caveman-compressor
 title: Caveman Compressor
+description: "Caveman Compressor. Use for: compress this, caveman, shorten context, handoff, save session."
 category: system
 model: claude-haiku-4-5-20251001
 effort: low

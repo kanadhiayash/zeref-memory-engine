@@ -1,6 +1,7 @@
 ---
 skill: zeref-dev-test-engineer
 title: Test Engineer
+description: "Test Engineer. Use for: testing, unit tests, integration tests, test strategy, Jest, pytest."
 category: dev
 model: claude-sonnet-4-6
 effort: high

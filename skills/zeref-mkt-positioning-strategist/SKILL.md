@@ -1,6 +1,7 @@
 ---
 skill: zeref-mkt-positioning-strategist
 title: Positioning Strategist
+description: "Positioning Strategist. Use for: positioning, differentiation, competitive positioning, value prop."
 category: mkt
 model: claude-sonnet-4-6
 effort: medium

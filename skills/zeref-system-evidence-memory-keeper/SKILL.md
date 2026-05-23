@@ -1,6 +1,7 @@
 ---
 skill: zeref-system-evidence-memory-keeper
 title: Evidence Memory Keeper
+description: "Evidence Memory Keeper. Use for: save evidence, log finding, record this decision, evidence map."
 category: system
 model: claude-haiku-4-5-20251001
 effort: low

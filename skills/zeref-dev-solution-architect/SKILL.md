@@ -1,6 +1,7 @@
 ---
 skill: zeref-dev-solution-architect
 title: Solution Architect
+description: "Solution Architect. Use for: solution architecture, system design, architecture decision, tech stack."
 category: dev
 model: claude-opus-4-7
 effort: high

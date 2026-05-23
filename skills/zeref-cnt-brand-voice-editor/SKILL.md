@@ -1,6 +1,7 @@
 ---
 skill: zeref-cnt-brand-voice-editor
 title: Brand Voice Editor
+description: "Brand Voice Editor. Use for: brand voice, tone of voice, editorial guidelines, rewrite in brand voice."
 category: cnt
 model: claude-sonnet-4-6
 effort: medium

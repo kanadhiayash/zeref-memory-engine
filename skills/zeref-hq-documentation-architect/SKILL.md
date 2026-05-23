@@ -1,6 +1,7 @@
 ---
 skill: zeref-hq-documentation-architect
 title: Documentation Architect
+description: "Documentation Architect. Use for: documentation architecture, docs structure, knowledge base design."
 category: hq
 model: claude-opus-4-7
 effort: high

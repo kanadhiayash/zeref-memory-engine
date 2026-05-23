@@ -1,6 +1,7 @@
 ---
 skill: zeref-final-project-compiler
 title: Project Compiler
+description: "Project Compiler. Use for: compile project, project summary, final compilation, wrap up."
 category: final
 model: claude-opus-4-7
 effort: high

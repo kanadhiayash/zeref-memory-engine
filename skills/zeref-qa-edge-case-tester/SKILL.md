@@ -1,6 +1,7 @@
 ---
 skill: zeref-qa-edge-case-tester
 title: Edge Case Tester
+description: "Edge Case Tester. Use for: edge cases, what could go wrong, boundary testing."
 category: qa
 model: claude-sonnet-4-6
 effort: medium

@@ -1,6 +1,7 @@
 ---
 skill: zeref-cnt-presentation-designer
 title: Presentation Designer
+description: "Presentation Designer. Use for: presentation, slide deck, pitch deck structure, keynote outline."
 category: cnt
 model: claude-sonnet-4-6
 effort: medium

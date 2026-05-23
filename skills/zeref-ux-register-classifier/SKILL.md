@@ -1,6 +1,7 @@
 ---
 skill: zeref-ux-register-classifier
 title: Register Classifier
+description: "Register Classifier. Use for: what tone, brand voice or product, classify this design, register check."
 category: ux
 model: claude-sonnet-4-6
 effort: medium

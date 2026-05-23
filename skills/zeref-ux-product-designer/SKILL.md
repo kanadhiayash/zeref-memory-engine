@@ -1,6 +1,7 @@
 ---
 skill: zeref-ux-product-designer
 title: Product Designer
+description: "Product Designer. Use for: product design, design this screen, wireframe, UI design, app design."
 category: ux
 model: claude-sonnet-4-6
 effort: medium

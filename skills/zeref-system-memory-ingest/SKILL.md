@@ -1,6 +1,7 @@
 ---
 skill: zeref-system-memory-ingest
 title: Memory Ingest
+description: "Memory Ingest. Use for: save to wiki, save session, log this, remember this, update wiki."
 category: system
 model: claude-haiku-4-5-20251001
 effort: low

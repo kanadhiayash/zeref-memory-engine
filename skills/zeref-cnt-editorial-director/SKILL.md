@@ -1,6 +1,7 @@
 ---
 skill: zeref-cnt-editorial-director
 title: Editorial Director
+description: "Editorial Director. Use for: editorial strategy, content calendar, publishing plan, content direction."
 category: cnt
 model: claude-sonnet-4-6
 effort: medium

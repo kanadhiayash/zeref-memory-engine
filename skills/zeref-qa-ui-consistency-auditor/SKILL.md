@@ -1,6 +1,7 @@
 ---
 skill: zeref-qa-ui-consistency-auditor
 title: Ui Consistency Auditor
+description: "Ui Consistency Auditor. Use for: UI consistency, design consistency audit, visual QA."
 category: qa
 model: claude-sonnet-4-6
 effort: medium

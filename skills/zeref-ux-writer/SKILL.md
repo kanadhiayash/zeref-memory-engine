@@ -1,6 +1,7 @@
 ---
 skill: zeref-ux-writer
 title: Writer
+description: "Writer. Use for: UX writing, microcopy, UI copy, error messages, button labels."
 category: ux
 model: claude-sonnet-4-6
 effort: medium

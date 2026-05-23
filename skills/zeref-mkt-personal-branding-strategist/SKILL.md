@@ -1,6 +1,7 @@
 ---
 skill: zeref-mkt-personal-branding-strategist
 title: Personal Branding Strategist
+description: "Personal Branding Strategist. Use for: personal brand, thought leadership, online presence, personal branding."
 category: mkt
 model: claude-sonnet-4-6
 effort: medium

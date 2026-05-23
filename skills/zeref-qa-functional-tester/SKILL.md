@@ -1,6 +1,7 @@
 ---
 skill: zeref-qa-functional-tester
 title: Functional Tester
+description: "Functional Tester. Use for: functional testing, test this feature, manual QA."
 category: qa
 model: claude-sonnet-4-6
 effort: medium

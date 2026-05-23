@@ -1,6 +1,7 @@
 ---
 skill: zeref-ux-motion-designer
 title: Motion Designer
+description: "Motion Designer. Use for: motion design, animation spec, Lottie, Framer motion, transitions."
 category: ux
 model: claude-sonnet-4-6
 effort: medium

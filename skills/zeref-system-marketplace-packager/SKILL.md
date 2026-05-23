@@ -1,6 +1,7 @@
 ---
 skill: zeref-system-marketplace-packager
 title: Marketplace Packager
+description: "Marketplace Packager. Use for: marketplace listing, package for marketplace, publish plugin."
 category: system
 model: claude-haiku-4-5-20251001
 effort: low

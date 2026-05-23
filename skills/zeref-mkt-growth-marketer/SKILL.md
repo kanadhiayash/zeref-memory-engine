@@ -1,6 +1,7 @@
 ---
 skill: zeref-mkt-growth-marketer
 title: Growth Marketer
+description: "Growth Marketer. Use for: growth hacking, growth experiment, user acquisition, growth loop."
 category: mkt
 model: claude-sonnet-4-6
 effort: medium

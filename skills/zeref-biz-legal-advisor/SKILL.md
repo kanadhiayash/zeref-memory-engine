@@ -1,6 +1,7 @@
 ---
 skill: zeref-biz-legal-advisor
 title: Legal Advisor
+description: "Legal Advisor. Use for: legal review, contract, terms of service, compliance, legal risk."
 category: biz
 model: claude-sonnet-4-6
 effort: high
