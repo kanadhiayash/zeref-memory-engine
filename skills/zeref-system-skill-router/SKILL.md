@@ -1,6 +1,7 @@
 ---
 skill: zeref-system-skill-router
 title: Skill Router
+description: "Skill Router. Use for: route this task, which skill, what skill should."
 category: system
 model: claude-haiku-4-5-20251001
 effort: low

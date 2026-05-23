@@ -1,6 +1,7 @@
 ---
 skill: zeref-system-memory-lint
 title: Memory Lint
+description: "Memory Lint. Use for: clean up wiki, lint memory, check wiki health, wiki audit."
 category: system
 model: claude-haiku-4-5-20251001
 effort: low

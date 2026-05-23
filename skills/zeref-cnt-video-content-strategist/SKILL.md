@@ -1,6 +1,7 @@
 ---
 skill: zeref-cnt-video-content-strategist
 title: Video Content Strategist
+description: "Video Content Strategist. Use for: video strategy, YouTube, content strategy, video marketing."
 category: cnt
 model: claude-sonnet-4-6
 effort: medium

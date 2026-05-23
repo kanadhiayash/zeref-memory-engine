@@ -1,6 +1,7 @@
 ---
 skill: zeref-dev-ai-systems-engineer
 title: Ai Systems Engineer
+description: "Ai Systems Engineer. Use for: AI system, ML pipeline, model integration, AI architecture."
 category: dev
 model: claude-opus-4-7
 effort: high

@@ -1,6 +1,7 @@
 ---
 skill: zeref-ux-live-researcher
 title: Live Researcher
+description: "Live Researcher. Use for: live research, user research now, research this, find user insights."
 category: ux
 model: claude-sonnet-4-6
 effort: medium

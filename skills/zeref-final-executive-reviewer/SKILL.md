@@ -1,6 +1,7 @@
 ---
 skill: zeref-final-executive-reviewer
 title: Executive Reviewer
+description: "Executive Reviewer. Use for: final review, executive review, approve this, ready to ship, QA gate."
 category: final
 model: claude-opus-4-7
 effort: high

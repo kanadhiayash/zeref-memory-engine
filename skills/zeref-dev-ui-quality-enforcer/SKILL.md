@@ -1,6 +1,7 @@
 ---
 skill: zeref-dev-ui-quality-enforcer
 title: Ui Quality Enforcer
+description: "Ui Quality Enforcer. Use for: UI audit, review the interface, accessibility audit, touch targets, UI quality."
 category: dev
 model: claude-sonnet-4-6
 effort: high

@@ -22,8 +22,8 @@ def parse_frontmatter(content: str) -> dict:
     fm_text = match.group(1)
     result = {}
 
-    # skill / name / title / category / model / effort / max_turns
-    for field in ["skill", "title", "category", "model", "effort", "model_preference", "risk_level"]:
+    # skill / name / title / description / category / model / effort / max_turns
+    for field in ["skill", "title", "description", "category", "model", "effort", "model_preference", "risk_level"]:
         m = re.search(rf'^{field}:\s*(.+)$', fm_text, re.MULTILINE)
         if m:
             result[field] = m.group(1).strip()
@@ -77,6 +77,7 @@ def build_registry():
         entry = {
             "id": skill_id,
             "title": fm.get("title", skill_id.replace("zeref-", "").replace("-", " ").title()),
+            "description": fm.get("description", ""),
             "category": category,
             "model": fm.get("model", "claude-sonnet-4-6"),
             "model_preference": fm.get("model_preference", "sonnet"),

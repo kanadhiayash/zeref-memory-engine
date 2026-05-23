@@ -1,6 +1,7 @@
 ---
 skill: zeref-ux-prototype-specialist
 title: Prototype Specialist
+description: "Prototype Specialist. Use for: prototype, interactive prototype, clickable mockup, test prototype."
 category: ux
 model: claude-sonnet-4-6
 effort: medium

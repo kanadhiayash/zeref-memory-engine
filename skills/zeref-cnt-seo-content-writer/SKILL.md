@@ -1,6 +1,7 @@
 ---
 skill: zeref-cnt-seo-content-writer
 title: Seo Content Writer
+description: "Seo Content Writer. Use for: SEO content, keyword-optimized, search traffic, organic content."
 category: cnt
 model: claude-sonnet-4-6
 effort: medium

@@ -1,6 +1,7 @@
 ---
 skill: zeref-qa-security-tester
 title: Security Tester
+description: "Security Tester. Use for: security test, penetration test, vulnerability scan."
 category: qa
 model: claude-sonnet-4-6
 effort: medium

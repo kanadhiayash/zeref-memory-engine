@@ -1,6 +1,7 @@
 ---
 skill: zeref-biz-operations-strategist
 title: Operations Strategist
+description: "Operations Strategist. Use for: operations, process design, workflow optimization, ops strategy."
 category: biz
 model: claude-sonnet-4-6
 effort: high

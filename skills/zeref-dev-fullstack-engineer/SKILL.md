@@ -1,6 +1,7 @@
 ---
 skill: zeref-dev-fullstack-engineer
 title: Fullstack Engineer
+description: "Fullstack Engineer. Use for: fullstack, build this feature, full stack, end to end."
 category: dev
 model: claude-sonnet-4-6
 effort: high

@@ -1,6 +1,7 @@
 ---
 skill: zeref-mkt-email-marketing-specialist
 title: Email Marketing Specialist
+description: "Email Marketing Specialist. Use for: email marketing, email campaign, newsletter, drip sequence."
 category: mkt
 model: claude-sonnet-4-6
 effort: medium

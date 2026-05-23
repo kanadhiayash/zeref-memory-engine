@@ -1,6 +1,7 @@
 ---
 skill: zeref-mkt-content-marketing-strategist
 title: Content Marketing Strategist
+description: "Content Marketing Strategist. Use for: content marketing, content strategy, content plan, editorial calendar."
 category: mkt
 model: claude-sonnet-4-6
 effort: medium

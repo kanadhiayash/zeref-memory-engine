@@ -1,6 +1,7 @@
 ---
 skill: zeref-dev-code-quality-reviewer
 title: Code Quality Reviewer
+description: "Code Quality Reviewer. Use for: code review, review this code, code quality, refactor, clean code."
 category: dev
 model: claude-sonnet-4-6
 effort: high

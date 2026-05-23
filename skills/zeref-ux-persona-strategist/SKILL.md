@@ -1,6 +1,7 @@
 ---
 skill: zeref-ux-persona-strategist
 title: Persona Strategist
+description: "Persona Strategist. Use for: user personas, persona development, user profiles, who are our users."
 category: ux
 model: claude-sonnet-4-6
 effort: medium

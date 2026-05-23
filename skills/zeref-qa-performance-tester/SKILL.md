@@ -1,6 +1,7 @@
 ---
 skill: zeref-qa-performance-tester
 title: Performance Tester
+description: "Performance Tester. Use for: performance test, load test, lighthouse, speed audit."
 category: qa
 model: claude-sonnet-4-6
 effort: medium

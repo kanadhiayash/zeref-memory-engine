@@ -1,6 +1,7 @@
 ---
 skill: zeref-ux-research-lead
 title: Research Lead
+description: "Research Lead. Use for: user research, interview plan, research strategy, user insights."
 category: ux
 model: claude-sonnet-4-6
 effort: medium

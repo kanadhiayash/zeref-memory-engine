@@ -1,0 +1,10 @@
+{
+  "name": "Zeref OS",
+  "description": "Context Engine + Agent Harness OS — 109 skills across 9 guilds, 8 privilege-scoped agents, self-improving wiki memory.",
+  "plugins": [
+    {
+      "name": "zeref-os",
+      "path": "."
+    }
+  ]
+}

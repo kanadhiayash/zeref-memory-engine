@@ -1,6 +1,7 @@
 ---
 skill: zeref-biz-kpi-analyst
 title: Kpi Analyst
+description: "Kpi Analyst. Use for: KPI, metrics, north star, measure success, analytics dashboard."
 category: biz
 model: claude-sonnet-4-6
 effort: high

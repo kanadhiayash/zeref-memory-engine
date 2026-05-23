@@ -1,6 +1,7 @@
 ---
 skill: zeref-cnt-documentation-writer
 title: Documentation Writer
+description: "Documentation Writer. Use for: write documentation, README, technical docs, user guide."
 category: cnt
 model: claude-sonnet-4-6
 effort: medium

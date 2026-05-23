@@ -1,6 +1,7 @@
 ---
 skill: zeref-mkt-gtm-strategist
 title: Gtm Strategist
+description: "Gtm Strategist. Use for: go to market, GTM, launch strategy, product launch."
 category: mkt
 model: claude-sonnet-4-6
 effort: medium

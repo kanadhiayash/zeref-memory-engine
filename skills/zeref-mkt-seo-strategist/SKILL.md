@@ -1,6 +1,7 @@
 ---
 skill: zeref-mkt-seo-strategist
 title: Seo Strategist
+description: "Seo Strategist. Use for: SEO, keyword research, search ranking, organic traffic, on-page SEO."
 category: mkt
 model: claude-sonnet-4-6
 effort: medium

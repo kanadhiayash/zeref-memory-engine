@@ -1,6 +1,7 @@
 ---
 skill: zeref-cnt-scriptwriter
 title: Scriptwriter
+description: "Scriptwriter. Use for: script, video script, podcast script, explainer video."
 category: cnt
 model: claude-sonnet-4-6
 effort: medium

@@ -1,6 +1,7 @@
 ---
 skill: zeref-ux-interaction-designer
 title: Interaction Designer
+description: "Interaction Designer. Use for: interaction design, micro-interactions, animation, motion design."
 category: ux
 model: claude-sonnet-4-6
 effort: medium

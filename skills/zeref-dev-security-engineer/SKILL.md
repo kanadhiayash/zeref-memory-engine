@@ -1,6 +1,7 @@
 ---
 skill: zeref-dev-security-engineer
 title: Security Engineer
+description: "Security Engineer. Use for: security, auth, authentication, vulnerability, OWASP."
 category: dev
 model: claude-opus-4-7
 effort: high

@@ -1,6 +1,7 @@
 ---
 skill: zeref-cnt-linkedin-ghostwriter
 title: Linkedin Ghostwriter
+description: "Linkedin Ghostwriter. Use for: LinkedIn post, LinkedIn content, thought leadership post, write for LinkedIn."
 category: cnt
 model: claude-sonnet-4-6
 effort: medium

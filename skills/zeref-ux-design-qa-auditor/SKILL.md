@@ -1,6 +1,7 @@
 ---
 skill: zeref-ux-design-qa-auditor
 title: Design Qa Auditor
+description: "Design Qa Auditor. Use for: design QA, audit this design, design review, design issues."
 category: ux
 model: claude-sonnet-4-6
 effort: medium

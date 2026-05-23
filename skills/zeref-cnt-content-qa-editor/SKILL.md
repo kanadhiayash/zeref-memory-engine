@@ -1,6 +1,7 @@
 ---
 skill: zeref-cnt-content-qa-editor
 title: Content Qa Editor
+description: "Content Qa Editor. Use for: proofread, copy edit, review this content, check grammar."
 category: cnt
 model: claude-sonnet-4-6
 effort: medium

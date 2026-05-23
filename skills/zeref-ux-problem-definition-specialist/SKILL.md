@@ -1,6 +1,7 @@
 ---
 skill: zeref-ux-problem-definition-specialist
 title: Problem Definition Specialist
+description: "Problem Definition Specialist. Use for: define the problem, problem statement, HMW, user pain points."
 category: ux
 model: claude-sonnet-4-6
 effort: medium

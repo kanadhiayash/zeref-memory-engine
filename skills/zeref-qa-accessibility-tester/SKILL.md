@@ -1,6 +1,7 @@
 ---
 skill: zeref-qa-accessibility-tester
 title: Accessibility Tester
+description: "Accessibility Tester. Use for: accessibility test, WCAG, screen reader, a11y audit."
 category: qa
 model: claude-sonnet-4-6
 effort: medium

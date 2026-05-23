@@ -1,6 +1,7 @@
 ---
 skill: zeref-dev-agentic-workflow-engineer
 title: Agentic Workflow Engineer
+description: "Agentic Workflow Engineer. Use for: agentic workflow, AI agent, LLM pipeline, MCP, multi-agent."
 category: dev
 model: claude-opus-4-7
 effort: high

@@ -1,11 +1,12 @@
 {
   "version": "3.0.0",
-  "updated": "2026-05-22",
+  "updated": "2026-05-23",
   "total": 109,
   "skills": [
     {
       "id": "zeref-biz-business-strategist",
       "title": "Business Strategist",
+      "description": "\"Business Strategist. Use for: business strategy, strategic plan, go to market, business model.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -27,6 +28,7 @@
     {
       "id": "zeref-biz-business-validator",
       "title": "Business Validator",
+      "description": "\"Business Validator. Use for: validate business, is this viable, business case, feasibility.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -48,6 +50,7 @@
     {
       "id": "zeref-biz-competitive-intelligence-analyst",
       "title": "Competitive Intelligence Analyst",
+      "description": "\"Competitive Intelligence Analyst. Use for: competitor analysis, competitive landscape, market positioning, benchmark competitors.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -69,6 +72,7 @@
     {
       "id": "zeref-biz-financial-analyst",
       "title": "Financial Analyst",
+      "description": "\"Financial Analyst. Use for: financial model, unit economics, revenue forecast, P&L, budget.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -91,6 +95,7 @@
     {
       "id": "zeref-biz-investor-pitch-strategist",
       "title": "Investor Pitch Strategist",
+      "description": "\"Investor Pitch Strategist. Use for: investor pitch, fundraising deck, pitch strategy, raise capital.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -112,6 +117,7 @@
     {
       "id": "zeref-biz-kpi-analyst",
       "title": "Kpi Analyst",
+      "description": "\"Kpi Analyst. Use for: KPI, metrics, north star, measure success, analytics dashboard.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -134,6 +140,7 @@
     {
       "id": "zeref-biz-legal-advisor",
       "title": "Legal Advisor",
+      "description": "\"Legal Advisor. Use for: legal review, contract, terms of service, compliance, legal risk.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -156,6 +163,7 @@
     {
       "id": "zeref-biz-market-research-analyst",
       "title": "Market Research Analyst",
+      "description": "\"Market Research Analyst. Use for: market research, market size, TAM SAM SOM, industry analysis.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -177,6 +185,7 @@
     {
       "id": "zeref-biz-monetization-strategist",
       "title": "Monetization Strategist",
+      "description": "\"Monetization Strategist. Use for: monetization, pricing model, revenue streams, how to charge.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -198,6 +207,7 @@
     {
       "id": "zeref-biz-operations-strategist",
       "title": "Operations Strategist",
+      "description": "\"Operations Strategist. Use for: operations, process design, workflow optimization, ops strategy.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -219,6 +229,7 @@
     {
       "id": "zeref-biz-opportunity-solution-analyst",
       "title": "Opportunity Solution Analyst",
+      "description": "\"Opportunity Solution Analyst. Use for: opportunity-solution tree, discovery, what should we build, prioritize features.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -240,6 +251,7 @@
     {
       "id": "zeref-biz-partnership-strategist",
       "title": "Partnership Strategist",
+      "description": "\"Partnership Strategist. Use for: partnerships, business development, BD strategy, strategic alliances.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -261,6 +273,7 @@
     {
       "id": "zeref-biz-product-market-fit-analyst",
       "title": "Product Market Fit Analyst",
+      "description": "\"Product Market Fit Analyst. Use for: product market fit, PMF, retention, churn, user engagement.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -283,6 +296,7 @@
     {
       "id": "zeref-biz-risk-analyst",
       "title": "Risk Analyst",
+      "description": "\"Risk Analyst. Use for: risk assessment, risk mitigation, SWOT, identify risks.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -304,6 +318,7 @@
     {
       "id": "zeref-biz-startup-operator",
       "title": "Startup Operator",
+      "description": "\"Startup Operator. Use for: startup, zero to one, early stage, MVP launch, founder.\"",
       "category": "biz",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -326,6 +341,7 @@
     {
       "id": "zeref-cnt-brand-voice-editor",
       "title": "Brand Voice Editor",
+      "description": "\"Brand Voice Editor. Use for: brand voice, tone of voice, editorial guidelines, rewrite in brand voice.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -347,6 +363,7 @@
     {
       "id": "zeref-cnt-case-study-writer",
       "title": "Case Study Writer",
+      "description": "\"Case Study Writer. Use for: case study, portfolio piece, project writeup, document this project.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -368,6 +385,7 @@
     {
       "id": "zeref-cnt-content-qa-editor",
       "title": "Content Qa Editor",
+      "description": "\"Content Qa Editor. Use for: proofread, copy edit, review this content, check grammar.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -389,6 +407,7 @@
     {
       "id": "zeref-cnt-copywriter",
       "title": "Copywriter",
+      "description": "\"Copywriter. Use for: write copy, marketing copy, headline, landing page copy, ad copy.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -411,6 +430,7 @@
     {
       "id": "zeref-cnt-documentation-writer",
       "title": "Documentation Writer",
+      "description": "\"Documentation Writer. Use for: write documentation, README, technical docs, user guide.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -432,6 +452,7 @@
     {
       "id": "zeref-cnt-editorial-director",
       "title": "Editorial Director",
+      "description": "\"Editorial Director. Use for: editorial strategy, content calendar, publishing plan, content direction.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -453,6 +474,7 @@
     {
       "id": "zeref-cnt-linkedin-ghostwriter",
       "title": "Linkedin Ghostwriter",
+      "description": "\"Linkedin Ghostwriter. Use for: LinkedIn post, LinkedIn content, thought leadership post, write for LinkedIn.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -474,6 +496,7 @@
     {
       "id": "zeref-cnt-long-form-writer",
       "title": "Long Form Writer",
+      "description": "\"Long Form Writer. Use for: blog post, article, long form, essay, Substack.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -496,6 +519,7 @@
     {
       "id": "zeref-cnt-presentation-designer",
       "title": "Presentation Designer",
+      "description": "\"Presentation Designer. Use for: presentation, slide deck, pitch deck structure, keynote outline.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -517,6 +541,7 @@
     {
       "id": "zeref-cnt-repurposing-specialist",
       "title": "Repurposing Specialist",
+      "description": "\"Repurposing Specialist. Use for: repurpose content, turn this into, adapt for, content repurposing.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -538,6 +563,7 @@
     {
       "id": "zeref-cnt-resume-career-writer",
       "title": "Resume Career Writer",
+      "description": "\"Resume Career Writer. Use for: resume, CV, cover letter, job application, career document.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -560,6 +586,7 @@
     {
       "id": "zeref-cnt-scriptwriter",
       "title": "Scriptwriter",
+      "description": "\"Scriptwriter. Use for: script, video script, podcast script, explainer video.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -581,6 +608,7 @@
     {
       "id": "zeref-cnt-seo-content-writer",
       "title": "Seo Content Writer",
+      "description": "\"Seo Content Writer. Use for: SEO content, keyword-optimized, search traffic, organic content.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -602,6 +630,7 @@
     {
       "id": "zeref-cnt-ux-case-study-writer",
       "title": "Ux Case Study Writer",
+      "description": "\"Ux Case Study Writer. Use for: UX case study, design case study, portfolio case study.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -622,6 +651,7 @@
     {
       "id": "zeref-cnt-video-content-strategist",
       "title": "Video Content Strategist",
+      "description": "\"Video Content Strategist. Use for: video strategy, YouTube, content strategy, video marketing.\"",
       "category": "cnt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -643,6 +673,7 @@
     {
       "id": "zeref-dev-agentic-workflow-engineer",
       "title": "Agentic Workflow Engineer",
+      "description": "\"Agentic Workflow Engineer. Use for: agentic workflow, AI agent, LLM pipeline, MCP, multi-agent.\"",
       "category": "dev",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -665,6 +696,7 @@
     {
       "id": "zeref-dev-ai-systems-engineer",
       "title": "Ai Systems Engineer",
+      "description": "\"Ai Systems Engineer. Use for: AI system, ML pipeline, model integration, AI architecture.\"",
       "category": "dev",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -686,6 +718,7 @@
     {
       "id": "zeref-dev-api-integration-engineer",
       "title": "Api Integration Engineer",
+      "description": "\"Api Integration Engineer. Use for: API integration, REST API, webhook, third-party API, connect services.\"",
       "category": "dev",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -708,6 +741,7 @@
     {
       "id": "zeref-dev-backend-engineer",
       "title": "Backend Engineer",
+      "description": "\"Backend Engineer. Use for: backend, server-side, Node.js, Python backend, API endpoint.\"",
       "category": "dev",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -730,6 +764,7 @@
     {
       "id": "zeref-dev-cloud-infrastructure-engineer",
       "title": "Cloud Infrastructure Engineer",
+      "description": "\"Cloud Infrastructure Engineer. Use for: cloud infrastructure, Firebase, Supabase, serverless, deployment.\"",
       "category": "dev",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -752,6 +787,7 @@
     {
       "id": "zeref-dev-code-quality-reviewer",
       "title": "Code Quality Reviewer",
+      "description": "\"Code Quality Reviewer. Use for: code review, review this code, code quality, refactor, clean code.\"",
       "category": "dev",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -774,6 +810,7 @@
     {
       "id": "zeref-dev-database-architect",
       "title": "Database Architect",
+      "description": "\"Database Architect. Use for: database design, schema, data model, SQL, NoSQL, query.\"",
       "category": "dev",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -797,6 +834,7 @@
     {
       "id": "zeref-dev-devops-engineer",
       "title": "Devops Engineer",
+      "description": "\"Devops Engineer. Use for: DevOps, CI/CD, GitHub Actions, deployment pipeline, Docker.\"",
       "category": "dev",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -819,6 +857,7 @@
     {
       "id": "zeref-dev-frontend-engineer",
       "title": "Frontend Engineer",
+      "description": "\"Frontend Engineer. Use for: frontend, React, Vue, CSS, UI component, frontend code, landing page, build a website, web app, Next.js.\"",
       "category": "dev",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -846,6 +885,7 @@
     {
       "id": "zeref-dev-fullstack-engineer",
       "title": "Fullstack Engineer",
+      "description": "\"Fullstack Engineer. Use for: fullstack, build this feature, full stack, end to end.\"",
       "category": "dev",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -867,6 +907,7 @@
     {
       "id": "zeref-dev-mobile-engineer",
       "title": "Mobile Engineer",
+      "description": "\"Mobile Engineer. Use for: mobile app, React Native, Expo, iOS, Android, SwiftUI.\"",
       "category": "dev",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -890,6 +931,7 @@
     {
       "id": "zeref-dev-security-engineer",
       "title": "Security Engineer",
+      "description": "\"Security Engineer. Use for: security, auth, authentication, vulnerability, OWASP.\"",
       "category": "dev",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -912,6 +954,7 @@
     {
       "id": "zeref-dev-solution-architect",
       "title": "Solution Architect",
+      "description": "\"Solution Architect. Use for: solution architecture, system design, architecture decision, tech stack.\"",
       "category": "dev",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -933,6 +976,7 @@
     {
       "id": "zeref-dev-technical-architect",
       "title": "Technical Architect",
+      "description": "\"Technical Architect. Use for: technical architecture, system design, architecture review, tech strategy.\"",
       "category": "dev",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -954,6 +998,7 @@
     {
       "id": "zeref-dev-test-engineer",
       "title": "Test Engineer",
+      "description": "\"Test Engineer. Use for: testing, unit tests, integration tests, test strategy, Jest, pytest.\"",
       "category": "dev",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -977,6 +1022,7 @@
     {
       "id": "zeref-dev-ui-quality-enforcer",
       "title": "Ui Quality Enforcer",
+      "description": "\"Ui Quality Enforcer. Use for: UI audit, review the interface, accessibility audit, touch targets, UI quality.\"",
       "category": "dev",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -999,6 +1045,7 @@
     {
       "id": "zeref-final-deliverable-packager",
       "title": "Deliverable Packager",
+      "description": "\"Deliverable Packager. Use for: package deliverable, compile output, final package, export ready.\"",
       "category": "final",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -1020,6 +1067,7 @@
     {
       "id": "zeref-final-executive-reviewer",
       "title": "Executive Reviewer",
+      "description": "\"Executive Reviewer. Use for: final review, executive review, approve this, ready to ship, QA gate.\"",
       "category": "final",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -1042,6 +1090,7 @@
     {
       "id": "zeref-final-project-compiler",
       "title": "Project Compiler",
+      "description": "\"Project Compiler. Use for: compile project, project summary, final compilation, wrap up.\"",
       "category": "final",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -1063,6 +1112,7 @@
     {
       "id": "zeref-final-source-validator",
       "title": "Source Validator",
+      "description": "\"Source Validator. Use for: validate sources, check citations, source verification, fact check.\"",
       "category": "final",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -1084,6 +1134,7 @@
     {
       "id": "zeref-hq-chief-of-staff",
       "title": "Chief Of Staff",
+      "description": "\"Chief Of Staff. Use for: chief of staff, cross-functional, priorities, weekly agenda.\"",
       "category": "hq",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -1105,6 +1156,7 @@
     {
       "id": "zeref-hq-chief-product-officer",
       "title": "Chief Product Officer",
+      "description": "\"Chief Product Officer. Use for: product direction, CPO, product strategy, roadmap, product decision.\"",
       "category": "hq",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -1127,6 +1179,7 @@
     {
       "id": "zeref-hq-chief-research-officer",
       "title": "Chief Research Officer",
+      "description": "\"Chief Research Officer. Use for: research strategy, synthesize research, research direction.\"",
       "category": "hq",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -1147,6 +1200,7 @@
     {
       "id": "zeref-hq-chief-strategy-officer",
       "title": "Chief Strategy Officer",
+      "description": "\"Chief Strategy Officer. Use for: strategy, CSO, strategic direction, long-term strategy.\"",
       "category": "hq",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -1168,6 +1222,7 @@
     {
       "id": "zeref-hq-documentation-architect",
       "title": "Documentation Architect",
+      "description": "\"Documentation Architect. Use for: documentation architecture, docs structure, knowledge base design.\"",
       "category": "hq",
       "model": "claude-opus-4-7",
       "model_preference": "opus",
@@ -1188,6 +1243,7 @@
     {
       "id": "zeref-mkt-analytics-specialist",
       "title": "Analytics Specialist",
+      "description": "\"Analytics Specialist. Use for: marketing analytics, attribution, campaign performance, conversion.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1209,6 +1265,7 @@
     {
       "id": "zeref-mkt-brand-strategist",
       "title": "Brand Strategist",
+      "description": "\"Brand Strategist. Use for: brand strategy, brand positioning, brand identity, brand direction.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1230,6 +1287,7 @@
     {
       "id": "zeref-mkt-chief-marketing-strategist",
       "title": "Chief Marketing Strategist",
+      "description": "\"Chief Marketing Strategist. Use for: marketing strategy, CMO, marketing plan, growth marketing.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1251,6 +1309,7 @@
     {
       "id": "zeref-mkt-community-strategist",
       "title": "Community Strategist",
+      "description": "\"Community Strategist. Use for: community building, Discord, community strategy, user community.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1272,6 +1331,7 @@
     {
       "id": "zeref-mkt-content-marketing-strategist",
       "title": "Content Marketing Strategist",
+      "description": "\"Content Marketing Strategist. Use for: content marketing, content strategy, content plan, editorial calendar.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1293,6 +1353,7 @@
     {
       "id": "zeref-mkt-conversion-rate-optimizer",
       "title": "Conversion Rate Optimizer",
+      "description": "\"Conversion Rate Optimizer. Use for: CRO, conversion rate, optimize landing page, A/B test copy.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1314,6 +1375,7 @@
     {
       "id": "zeref-mkt-email-marketing-specialist",
       "title": "Email Marketing Specialist",
+      "description": "\"Email Marketing Specialist. Use for: email marketing, email campaign, newsletter, drip sequence.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1335,6 +1397,7 @@
     {
       "id": "zeref-mkt-growth-marketer",
       "title": "Growth Marketer",
+      "description": "\"Growth Marketer. Use for: growth hacking, growth experiment, user acquisition, growth loop.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1356,6 +1419,7 @@
     {
       "id": "zeref-mkt-gtm-strategist",
       "title": "Gtm Strategist",
+      "description": "\"Gtm Strategist. Use for: go to market, GTM, launch strategy, product launch.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1377,6 +1441,7 @@
     {
       "id": "zeref-mkt-performance-marketing-specialist",
       "title": "Performance Marketing Specialist",
+      "description": "\"Performance Marketing Specialist. Use for: paid ads, Google Ads, Meta Ads, performance marketing, ROAS.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1399,6 +1464,7 @@
     {
       "id": "zeref-mkt-personal-branding-strategist",
       "title": "Personal Branding Strategist",
+      "description": "\"Personal Branding Strategist. Use for: personal brand, thought leadership, online presence, personal branding.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1420,6 +1486,7 @@
     {
       "id": "zeref-mkt-positioning-strategist",
       "title": "Positioning Strategist",
+      "description": "\"Positioning Strategist. Use for: positioning, differentiation, competitive positioning, value prop.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1441,6 +1508,7 @@
     {
       "id": "zeref-mkt-pr-communications-specialist",
       "title": "Pr Communications Specialist",
+      "description": "\"Pr Communications Specialist. Use for: PR, press release, media relations, communications, public relations.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1463,6 +1531,7 @@
     {
       "id": "zeref-mkt-seo-strategist",
       "title": "Seo Strategist",
+      "description": "\"Seo Strategist. Use for: SEO, keyword research, search ranking, organic traffic, on-page SEO.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1485,6 +1554,7 @@
     {
       "id": "zeref-mkt-social-media-strategist",
       "title": "Social Media Strategist",
+      "description": "\"Social Media Strategist. Use for: social media, Instagram, Twitter, TikTok, social strategy.\"",
       "category": "mkt",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1507,6 +1577,7 @@
     {
       "id": "zeref-qa-ab-testing-strategist",
       "title": "Ab Testing Strategist",
+      "description": "\"Ab Testing Strategist. Use for: A/B test, experiment design, hypothesis, split test.\"",
       "category": "qa",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1528,6 +1599,7 @@
     {
       "id": "zeref-qa-accessibility-tester",
       "title": "Accessibility Tester",
+      "description": "\"Accessibility Tester. Use for: accessibility test, WCAG, screen reader, a11y audit.\"",
       "category": "qa",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1549,6 +1621,7 @@
     {
       "id": "zeref-qa-edge-case-tester",
       "title": "Edge Case Tester",
+      "description": "\"Edge Case Tester. Use for: edge cases, what could go wrong, boundary testing.\"",
       "category": "qa",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1569,6 +1642,7 @@
     {
       "id": "zeref-qa-final-quality-gatekeeper",
       "title": "Final Quality Gatekeeper",
+      "description": "\"Final Quality Gatekeeper. Use for: quality gate, final QA, approve before shipping.\"",
       "category": "qa",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1589,6 +1663,7 @@
     {
       "id": "zeref-qa-functional-tester",
       "title": "Functional Tester",
+      "description": "\"Functional Tester. Use for: functional testing, test this feature, manual QA.\"",
       "category": "qa",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1609,6 +1684,7 @@
     {
       "id": "zeref-qa-launch-readiness-manager",
       "title": "Launch Readiness Manager",
+      "description": "\"Launch Readiness Manager. Use for: launch readiness, pre-launch checklist, ready to launch.\"",
       "category": "qa",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1629,6 +1705,7 @@
     {
       "id": "zeref-qa-performance-tester",
       "title": "Performance Tester",
+      "description": "\"Performance Tester. Use for: performance test, load test, lighthouse, speed audit.\"",
       "category": "qa",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1650,6 +1727,7 @@
     {
       "id": "zeref-qa-regression-tester",
       "title": "Regression Tester",
+      "description": "\"Regression Tester. Use for: regression test, test after changes, did this break anything.\"",
       "category": "qa",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1670,6 +1748,7 @@
     {
       "id": "zeref-qa-security-tester",
       "title": "Security Tester",
+      "description": "\"Security Tester. Use for: security test, penetration test, vulnerability scan.\"",
       "category": "qa",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1690,6 +1769,7 @@
     {
       "id": "zeref-qa-ui-consistency-auditor",
       "title": "Ui Consistency Auditor",
+      "description": "\"Ui Consistency Auditor. Use for: UI consistency, design consistency audit, visual QA.\"",
       "category": "qa",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1710,6 +1790,7 @@
     {
       "id": "zeref-qa-ux-usability-tester",
       "title": "Ux Usability Tester",
+      "description": "\"Ux Usability Tester. Use for: usability test, user test, task analysis, UX audit.\"",
       "category": "qa",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1731,6 +1812,7 @@
     {
       "id": "zeref-system-caveman-compressor",
       "title": "Caveman Compressor",
+      "description": "\"Caveman Compressor. Use for: compress this, caveman, shorten context, handoff, save session.\"",
       "category": "system",
       "model": "claude-haiku-4-5-20251001",
       "model_preference": "haiku",
@@ -1753,6 +1835,7 @@
     {
       "id": "zeref-system-evidence-memory-keeper",
       "title": "Evidence Memory Keeper",
+      "description": "\"Evidence Memory Keeper. Use for: save evidence, log finding, record this decision, evidence map.\"",
       "category": "system",
       "model": "claude-haiku-4-5-20251001",
       "model_preference": "haiku",
@@ -1774,6 +1857,7 @@
     {
       "id": "zeref-system-live-researcher",
       "title": "Live Researcher",
+      "description": "\"Live Researcher. Use for: research this, find information, web research, look up, investigate.\"",
       "category": "system",
       "model": "claude-haiku-4-5-20251001",
       "model_preference": "haiku",
@@ -1796,6 +1880,7 @@
     {
       "id": "zeref-system-marketplace-packager",
       "title": "Marketplace Packager",
+      "description": "\"Marketplace Packager. Use for: marketplace listing, package for marketplace, publish plugin.\"",
       "category": "system",
       "model": "claude-haiku-4-5-20251001",
       "model_preference": "haiku",
@@ -1816,6 +1901,7 @@
     {
       "id": "zeref-system-memory-ingest",
       "title": "Memory Ingest",
+      "description": "\"Memory Ingest. Use for: save to wiki, save session, log this, remember this, update wiki.\"",
       "category": "system",
       "model": "claude-haiku-4-5-20251001",
       "model_preference": "haiku",
@@ -1838,6 +1924,7 @@
     {
       "id": "zeref-system-memory-lint",
       "title": "Memory Lint",
+      "description": "\"Memory Lint. Use for: clean up wiki, lint memory, check wiki health, wiki audit.\"",
       "category": "system",
       "model": "claude-haiku-4-5-20251001",
       "model_preference": "haiku",
@@ -1859,6 +1946,7 @@
     {
       "id": "zeref-system-plugin-update-diagnostician",
       "title": "Plugin Update Diagnostician",
+      "description": "\"Plugin Update Diagnostician. Use for: plugin update, diagnose plugin, plugin issue, update diagnostic.\"",
       "category": "system",
       "model": "claude-haiku-4-5-20251001",
       "model_preference": "haiku",
@@ -1880,6 +1968,7 @@
     {
       "id": "zeref-system-skill-router",
       "title": "Skill Router",
+      "description": "\"Skill Router. Use for: route this task, which skill, what skill should.\"",
       "category": "system",
       "model": "claude-haiku-4-5-20251001",
       "model_preference": "haiku",
@@ -1900,6 +1989,7 @@
     {
       "id": "zeref-system-token-budget-controller",
       "title": "Token Budget Controller",
+      "description": "\"Token Budget Controller. Use for: token budget, reduce tokens, context length, slim down.\"",
       "category": "system",
       "model": "claude-haiku-4-5-20251001",
       "model_preference": "haiku",
@@ -1921,6 +2011,7 @@
     {
       "id": "zeref-ux-accessibility-specialist",
       "title": "Accessibility Specialist",
+      "description": "\"Accessibility Specialist. Use for: accessibility, a11y, WCAG, screen reader, accessible design.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1943,6 +2034,7 @@
     {
       "id": "zeref-ux-design-qa-auditor",
       "title": "Design Qa Auditor",
+      "description": "\"Design Qa Auditor. Use for: design QA, audit this design, design review, design issues.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1964,6 +2056,7 @@
     {
       "id": "zeref-ux-design-systems-architect",
       "title": "Design Systems Architect",
+      "description": "\"Design Systems Architect. Use for: design system, component library, design tokens, style guide.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -1985,6 +2078,7 @@
     {
       "id": "zeref-ux-developer-handoff-lead",
       "title": "Developer Handoff Lead",
+      "description": "\"Developer Handoff Lead. Use for: developer handoff, design specs, Figma handoff, implementation notes.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2006,6 +2100,7 @@
     {
       "id": "zeref-ux-figma-architecture-specialist",
       "title": "Figma Architecture Specialist",
+      "description": "\"Figma Architecture Specialist. Use for: Figma architecture, component structure, Figma organization.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2026,6 +2121,7 @@
     {
       "id": "zeref-ux-information-architect",
       "title": "Information Architect",
+      "description": "\"Information Architect. Use for: information architecture, IA, navigation structure, site map.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2047,6 +2143,7 @@
     {
       "id": "zeref-ux-interaction-designer",
       "title": "Interaction Designer",
+      "description": "\"Interaction Designer. Use for: interaction design, micro-interactions, animation, motion design.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2068,6 +2165,7 @@
     {
       "id": "zeref-ux-live-researcher",
       "title": "Live Researcher",
+      "description": "\"Live Researcher. Use for: live research, user research now, research this, find user insights.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2089,6 +2187,7 @@
     {
       "id": "zeref-ux-motion-designer",
       "title": "Motion Designer",
+      "description": "\"Motion Designer. Use for: motion design, animation spec, Lottie, Framer motion, transitions.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2111,6 +2210,7 @@
     {
       "id": "zeref-ux-persona-strategist",
       "title": "Persona Strategist",
+      "description": "\"Persona Strategist. Use for: user personas, persona development, user profiles, who are our users.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2132,6 +2232,7 @@
     {
       "id": "zeref-ux-problem-definition-specialist",
       "title": "Problem Definition Specialist",
+      "description": "\"Problem Definition Specialist. Use for: define the problem, problem statement, HMW, user pain points.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2153,6 +2254,7 @@
     {
       "id": "zeref-ux-product-designer",
       "title": "Product Designer",
+      "description": "\"Product Designer. Use for: product design, design this screen, wireframe, UI design, app design.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2175,6 +2277,7 @@
     {
       "id": "zeref-ux-prototype-specialist",
       "title": "Prototype Specialist",
+      "description": "\"Prototype Specialist. Use for: prototype, interactive prototype, clickable mockup, test prototype.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2196,6 +2299,7 @@
     {
       "id": "zeref-ux-register-classifier",
       "title": "Register Classifier",
+      "description": "\"Register Classifier. Use for: what tone, brand voice or product, classify this design, register check.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2217,6 +2321,7 @@
     {
       "id": "zeref-ux-research-lead",
       "title": "Research Lead",
+      "description": "\"Research Lead. Use for: user research, interview plan, research strategy, user insights.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2238,6 +2343,7 @@
     {
       "id": "zeref-ux-synthetic-research-analyst",
       "title": "Synthetic Research Analyst",
+      "description": "\"Synthetic Research Analyst. Use for: synthetic research, simulate users, synthetic personas.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2258,6 +2364,7 @@
     {
       "id": "zeref-ux-user-flow-designer",
       "title": "User Flow Designer",
+      "description": "\"User Flow Designer. Use for: user flow, task flow, user journey map, flow diagram.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2279,6 +2386,7 @@
     {
       "id": "zeref-ux-visual-designer",
       "title": "Visual Designer",
+      "description": "\"Visual Designer. Use for: visual design, colors, typography, brand aesthetics, visual style.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",
@@ -2301,6 +2409,7 @@
     {
       "id": "zeref-ux-writer",
       "title": "Writer",
+      "description": "\"Writer. Use for: UX writing, microcopy, UI copy, error messages, button labels.\"",
       "category": "ux",
       "model": "claude-sonnet-4-6",
       "model_preference": "sonnet",

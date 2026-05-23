@@ -1,6 +1,7 @@
 ---
 skill: zeref-ux-visual-designer
 title: Visual Designer
+description: "Visual Designer. Use for: visual design, colors, typography, brand aesthetics, visual style."
 category: ux
 model: claude-sonnet-4-6
 effort: medium

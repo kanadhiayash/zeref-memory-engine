@@ -1,6 +1,7 @@
 ---
 skill: zeref-dev-database-architect
 title: Database Architect
+description: "Database Architect. Use for: database design, schema, data model, SQL, NoSQL, query."
 category: dev
 model: claude-opus-4-7
 effort: high
