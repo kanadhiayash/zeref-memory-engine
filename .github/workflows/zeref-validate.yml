@@ -1,15 +1,15 @@
-name: Zeref Fleet Validation
+name: Zeref 4.0 Validation
 
 on:
   push:
-    branches: [main, staging]
+    branches: [main, "release/**"]
   pull_request:
     branches: [main]
 
 jobs:
   validate:
     runs-on: ubuntu-latest
-    name: Validate Zeref Skill Fleet
+    name: Validate Zeref 4.0 structure
 
     steps:
       - name: Checkout
@@ -20,25 +20,39 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Run Zeref validation
-        run: python3 scripts/zeref-validate.py
+      - name: Run v4 validator
+        run: python3 scripts/zeref-validate-v4.py
 
-      - name: Check skill count
+      - name: Check skill count (exactly 10)
         run: |
           SKILL_COUNT=$(ls skills/ | wc -l | tr -d ' ')
           echo "Skill count: $SKILL_COUNT"
-          if [ "$SKILL_COUNT" -lt "109" ]; then
-            echo "❌ Skill count below expected minimum"
+          if [ "$SKILL_COUNT" -ne "10" ]; then
+            echo "ERROR: expected 10 skills, found $SKILL_COUNT"
             exit 1
           fi
-          echo "✅ Skill count acceptable: $SKILL_COUNT"
 
-      - name: Check required files
+      - name: Check agent count (exactly 6)
         run: |
-          for f in ZEREF.md AGENTS.md GEMINI.md ZEREFPROJECT.md LICENSE CHANGELOG.md; do
-            if [ ! -f "$f" ]; then
-              echo "❌ Missing required file: $f"
-              exit 1
-            fi
-          done
-          echo "✅ All required root files present"
+          AGENT_COUNT=$(ls agents/*.md | wc -l | tr -d ' ')
+          echo "Agent count: $AGENT_COUNT"
+          if [ "$AGENT_COUNT" -ne "6" ]; then
+            echo "ERROR: expected 6 agents, found $AGENT_COUNT"
+            exit 1
+          fi
+
+      - name: Check command count (exactly 7)
+        run: |
+          CMD_COUNT=$(ls commands/*.md | wc -l | tr -d ' ')
+          echo "Command count: $CMD_COUNT"
+          if [ "$CMD_COUNT" -ne "7" ]; then
+            echo "ERROR: expected 7 commands, found $CMD_COUNT"
+            exit 1
+          fi
+
+      - name: Check LICENSE exists
+        run: |
+          if [ ! -f LICENSE ]; then
+            echo "ERROR: LICENSE file missing"
+            exit 1
+          fi
