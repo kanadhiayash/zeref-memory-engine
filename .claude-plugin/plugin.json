@@ -1,7 +1,7 @@
 {
-  "name": "zeref-os",
-  "version": "3.0.0",
-  "description": "Context Engine + Agent Harness OS — 109 skills across 9 guilds, 8 privilege-scoped agents, self-improving wiki memory, cross-agent portability (Claude Code, Codex, Gemini CLI). Agent = Model + Harness. The model is a commodity. The harness is the moat.",
+  "name": "zeref",
+  "version": "4.0.0",
+  "description": "Local-first context and memory engine for AI-assisted work. Harness-agnostic, model-agnostic, privacy-first. Per-project wiki + append-only event log + snapshots. Makes AI work cumulative instead of stateless.",
   "author": {
     "name": "Yash Kanadhia"
   }
