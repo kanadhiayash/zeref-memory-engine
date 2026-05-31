@@ -8,14 +8,18 @@
 - Slash commands resolve under `/zeref:<command>` namespace.
 - Sub-agents (Task tool) are not required — Zeref uses lightweight markdown agents.
 - Prefer Haiku for `memory-keeper` writes; Sonnet for `project-setup` interview; Opus only for `pattern-to-skill` draft generation.
+- Per-harness quirks live in `config/claude-overrides.md`.
 
 ## First action every session
 
-Identical to AGENTS.md §"First action every session":
+Identical to AGENTS.md §"First action every session" (reading order per ZEREF_OS §0):
 1. Read `config/PROJECT.md`
-2. Read `memory/wiki/INDEX.md` (boundary-first)
-3. Tail last 3 entries of `memory/logs/session-events.jsonl`
-4. Report state
+2. Read `memory/hot.md` (≤500 words)
+3. Read `memory/index.md` if hot insufficient
+4. Read `PRIVACY.md` (root) — before any write or tool use
+5. Read `REDACT.md` (root) — before any external output
+6. Tail last 3 entries of `memory/patterns/PATTERNS.jsonl`
+7. Report state
 
 ## Safety
 

@@ -1,15 +1,20 @@
 #!/usr/bin/env python3
 """
-zeref-validate-v4.py — Validate Zeref 4.0 plugin structure.
+zeref-validate-v4.py — Validate Zeref 4.3 plugin structure.
 
 Checks:
 - Root manifests (SKILL.md, AGENTS.md, CLAUDE.md, GEMINI.md)
-- config/ has 5 required files
-- memory/ scaffold complete
-- skills/ has expected M1 inventory (10 dirs, each with SKILL.md + valid frontmatter)
+- Root privacy templates (PRIVACY.md, REDACT.md, SHARING_POLICY.md) per ZEREF_OS §4.1
+- config/ has required files
+- memory/ scaffold complete (flat layout per ZEREF_OS §12)
+- skills/ has expected inventory (10 dirs, each with SKILL.md + valid frontmatter)
 - agents/ has 6 agents with valid frontmatter
-- commands/ has 7 commands
+- commands/ has 8 commands (added /team in v4.3)
+- team-packs/ has 6 packs
+- references/v4x-canon/ has 6 design docs
+- harness stubs present (.cursor/rules/zeref.mdc, .windsurfrules, .aider.conf.yml.example)
 - plugin.json + marketplace.json present and valid JSON
+- Deprecation warning if legacy memory/wiki/ still has live content
 
 Exit 0 on pass, 1 on fail.
 """
@@ -22,9 +27,10 @@ ROOT = Path(__file__).resolve().parent.parent
 
 EXPECTED = {
     "root_manifests": ["SKILL.md", "AGENTS.md", "CLAUDE.md", "GEMINI.md"],
-    "config": ["PROJECT.md", "PRIVACY.md", "PERMISSIONS.md", "PARENT_SYNC.md", "BUDGET.md"],
-    "memory_dirs": ["raw", "wiki", "logs", "snapshots", "sync/outbound", "sync/parent"],
-    "memory_wiki": ["INDEX.md", "DECISIONS.md", "OPEN_QUESTIONS.md", "RISKS.md", "CONFLICTS.md"],
+    "root_privacy": ["PRIVACY.md", "REDACT.md", "SHARING_POLICY.md"],
+    "config": ["PROJECT.md", "PERMISSIONS.md", "PARENT_SYNC.md", "BUDGET.md", "claude-overrides.md"],
+    "memory_dirs": ["raw", "logs", "snapshots", "sync/outbound", "sync/parent", "archive", "patterns"],
+    "memory_flat": ["hot.md", "index.md", "MEMORY.md", "DECISIONS.md", "OPEN_QUESTIONS.md", "RISKS.md", "CONFLICTS.md"],
     "skills": [
         "project-setup", "wiki-maintenance", "contradiction-resolution",
         "privacy-abstraction", "parent-sync", "pattern-to-skill",
@@ -36,8 +42,14 @@ EXPECTED = {
     ],
     "commands": [
         "start.md", "done.md", "stop.md", "status.md",
-        "sync-parent.md", "reset-permissions.md", "review-skill.md",
+        "sync-parent.md", "reset-permissions.md", "review-skill.md", "team.md",
     ],
+    "team_packs": ["solo.md", "build.md", "research.md", "red.md", "audit.md", "ship.md"],
+    "v4x_canon": [
+        "ZEREF_OS.md", "DECISION_LOG.md", "MODEL_DEBATE.md",
+        "USE_CASES.md", "RESEARCH_RESOURCES.md", "PACKAGE_INDEX.md",
+    ],
+    "harness_stubs": [".cursor/rules/zeref.mdc", ".windsurfrules", ".aider.conf.yml.example"],
     "plugin_manifests": [".claude-plugin/plugin.json", ".claude-plugin/marketplace.json"],
 }
 
@@ -79,27 +91,45 @@ def main():
     for f in EXPECTED["root_manifests"]:
         check_file(f, "root manifest")
 
+    # Root privacy templates (per ZEREF_OS §4.1)
+    for f in EXPECTED["root_privacy"]:
+        check_file(f, "root privacy template")
+
     # config/
     for f in EXPECTED["config"]:
         check_file(f"config/{f}", "config")
 
-    # memory/
+    # memory/ — flat layout per ZEREF_OS §12
     for d in EXPECTED["memory_dirs"]:
         check_dir(f"memory/{d}", "memory")
-    for f in EXPECTED["memory_wiki"]:
-        check_file(f"memory/wiki/{f}", "memory/wiki")
-    check_file("memory/logs/session-events.jsonl", "session events log")
+    for f in EXPECTED["memory_flat"]:
+        check_file(f"memory/{f}", "memory (flat)")
+    check_file("memory/patterns/PATTERNS.jsonl", "patterns log")
 
-    # skills/ — validate expected dirs, allow extras under _drafts/
+    # Deprecation warning if old memory/wiki/ still has live content
+    wiki_dir = ROOT / "memory" / "wiki"
+    if wiki_dir.is_dir():
+        live = [p for p in wiki_dir.rglob("*")
+                if p.is_file() and p.name not in (".gitkeep", "README-MOVED.md")]
+        if live:
+            warnings.append(
+                f"memory/wiki/ still has {len(live)} file(s) — "
+                f"run scripts/migrate-v4.2-to-v4.3.py --apply"
+            )
+
+    # skills/ — validate expected dirs, allow extras under drafts/
     for s in EXPECTED["skills"]:
         check_dir(f"skills/{s}", "skill")
         check_yaml_frontmatter(f"skills/{s}/SKILL.md", ["name", "description"])
-    # _drafts/ is intentional — pattern-to-skill writes here; not active skills
-    drafts_dir = ROOT / "skills" / "_drafts"
+    # drafts/ is intentional — pattern-to-skill writes here; not active skills
+    drafts_dir = ROOT / "skills" / "drafts"
     if drafts_dir.is_dir():
         draft_count = sum(1 for d in drafts_dir.iterdir() if d.is_dir())
         if draft_count > 0:
-            warnings.append(f"skills/_drafts/ contains {draft_count} pending draft(s) — run /review-skill")
+            warnings.append(f"skills/drafts/ contains {draft_count} pending draft(s) — run /review-skill")
+    # Old _drafts/ path — warn if present
+    if (ROOT / "skills" / "_drafts").exists():
+        warnings.append("skills/_drafts/ present — v4.3 uses skills/drafts/ (rename or migrate)")
 
     # agents/
     for a in EXPECTED["agents"]:
@@ -108,6 +138,19 @@ def main():
     # commands/
     for c in EXPECTED["commands"]:
         check_yaml_frontmatter(f"commands/{c}", ["description"])
+
+    # team-packs/ (per ZEREF_OS §8)
+    for t in EXPECTED["team_packs"]:
+        check_yaml_frontmatter(f"team-packs/{t}", ["name", "description"])
+
+    # references/v4x-canon/ — imported design corpus
+    check_dir("references/v4x-canon", "canon")
+    for c in EXPECTED["v4x_canon"]:
+        check_file(f"references/v4x-canon/{c}", "v4x canon doc")
+
+    # Harness stubs (per ZEREF_OS §10)
+    for s in EXPECTED["harness_stubs"]:
+        check_file(s, "harness stub")
 
     # Plugin manifests
     for m in EXPECTED["plugin_manifests"]:
@@ -118,11 +161,16 @@ def main():
             errors.append(f"{m}: invalid JSON ({e})")
 
     # Output
-    print(f"Zeref 4.0 validator — {ROOT}")
-    print(f"Skills: {sum((ROOT / 'skills' / s).is_dir() for s in EXPECTED['skills'])}/10")
-    print(f"Agents: {sum((ROOT / 'agents' / a).is_file() for a in EXPECTED['agents'])}/6")
-    print(f"Commands: {sum((ROOT / 'commands' / c).is_file() for c in EXPECTED['commands'])}/7")
-    print(f"Config: {sum((ROOT / 'config' / c).is_file() for c in EXPECTED['config'])}/5")
+    print(f"Zeref 4.3 validator — {ROOT}")
+    print(f"Skills:           {sum((ROOT / 'skills' / s).is_dir() for s in EXPECTED['skills'])}/10")
+    print(f"Agents:           {sum((ROOT / 'agents' / a).is_file() for a in EXPECTED['agents'])}/6")
+    print(f"Commands:         {sum((ROOT / 'commands' / c).is_file() for c in EXPECTED['commands'])}/8")
+    print(f"Team packs:       {sum((ROOT / 'team-packs' / t).is_file() for t in EXPECTED['team_packs'])}/6")
+    print(f"Config:           {sum((ROOT / 'config' / c).is_file() for c in EXPECTED['config'])}/5")
+    print(f"Root privacy:     {sum((ROOT / f).is_file() for f in EXPECTED['root_privacy'])}/3 (PRIVACY, REDACT, SHARING_POLICY)")
+    print(f"v4x canon:        {sum((ROOT / 'references/v4x-canon' / c).is_file() for c in EXPECTED['v4x_canon'])}/6")
+    print(f"Harness stubs:    {sum((ROOT / s).is_file() for s in EXPECTED['harness_stubs'])}/3")
+    print(f"Memory layout:    flat (v4.3)")
 
     if warnings:
         print("\nWarnings:")

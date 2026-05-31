@@ -1,7 +1,7 @@
 {
   "name": "zeref",
-  "version": "4.2.0",
-  "description": "Local-first context and memory engine for AI-assisted work. Harness-agnostic, model-agnostic, privacy-first. Per-project wiki + append-only event log + snapshots. Makes AI work cumulative instead of stateless.",
+  "version": "4.3.0",
+  "description": "Local-first context and memory engine for AI-assisted work. Harness-agnostic, model-agnostic, privacy-first. Flat memory layout, per-project wiki, append-only pattern log, snapshots, on-demand team packs. Makes AI work cumulative across every harness.",
   "author": {
     "name": "Yash Kanadhia"
   }

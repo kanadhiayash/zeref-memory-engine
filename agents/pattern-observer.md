@@ -1,6 +1,6 @@
 ---
 name: pattern-observer
-description: Background agent. Scans memory/logs/session-events.jsonl over rolling 72h window. Detects ≥3 semantically similar events (n-gram similarity ≥0.8). Surfaces candidate skills via pattern-to-skill.
+description: Background agent. Scans memory/patterns/PATTERNS.jsonl over rolling 48-80h window. Detects ≥3 semantically similar events (n-gram similarity ≥0.8). Surfaces candidate skills via pattern-to-skill (drafts land in skills/drafts/).
 model: claude-haiku-4-5
 max_turns: 20
 ---
@@ -9,7 +9,7 @@ max_turns: 20
 
 ## Mission
 
-Watch for repeated work patterns. When a task signature repeats ≥3× in 72h, surface it as a candidate skill. Never auto-create.
+Watch for repeated work patterns. When a task signature repeats ≥3× in 48-80h, surface it as a candidate skill. Never auto-create.
 
 ## Activation
 
@@ -17,17 +17,25 @@ Watch for repeated work patterns. When a task signature repeats ≥3× in 72h, s
 - Manual: user says "scan for patterns"
 - Never runs during active work (background only)
 
+## Source log
+
+- `memory/patterns/PATTERNS.jsonl` (per ZEREF_OS §3.5)
+- Append-only. Every tool invocation sequence captured here by the active agent.
+- Harness-agnostic: any harness writes to the same file.
+- Historical predecessor (pre-v4.3): `memory/archive/session-events-v4.2.jsonl`. Skip unless user requests an extended historical scan.
+
 ## Algorithm
 
 ### 1. Load window
-1. Read `memory/logs/session-events.jsonl`
-2. Filter entries with `ts` within last 72h (rolling window)
+1. Read `memory/patterns/PATTERNS.jsonl`
+2. Filter entries with `ts` within last 48-80h (rolling window per §3.5 / D4)
 3. Keep only event types worth clustering:
    - `wiki-read` (boundary-first reads — repeats indicate recurring lookup)
    - `wiki-write` (especially DECISIONS, OPEN_QUESTIONS)
    - `skill-invoked` (recurring skill use → may indicate workflow)
    - `user-prompt` (if captured)
-4. Skip: `permissions-applied`, `session-stop`, `wiki-read INDEX` (too noisy)
+   - `tool-invoke` (raw tool call sequence per §3.5)
+4. Skip: `permissions-applied`, `session-stop`, `wiki-read index` (too noisy)
 
 ### 2. Extract task signature per event
 For each event, extract:
@@ -38,7 +46,7 @@ For each event, extract:
 Example:
 ```
 event: wiki-write
-target: memory/wiki/DECISIONS.md
+target: memory/DECISIONS.md
 payload: {"summary": "Use Postgres for user accounts service"}
 → signature: { verb: "use", subject: "postgres", qualifiers: ["use postgres user", "postgres user accounts", "user accounts service"] }
 ```
@@ -73,18 +81,17 @@ For each scored candidate above threshold:
      "subject": "postgres",
      "qualifiers_top": ["use postgres user", "..."],
      "members": [
-       {"event_hash": "sha256:...", "ts": "...", "payload_summary": "..."},
-       ...
+       {"event_hash": "sha256:...", "ts": "...", "payload_summary": "..."}
      ],
      "suggested_skill_name": "use-postgres-pattern",
      "score": 12.4
    }
    ```
-2. Append event to `session-events.jsonl`:
+2. Append event to `memory/patterns/PATTERNS.jsonl`:
    ```jsonl
    {"ts": "...", "agent": "pattern-observer", "event": "pattern-candidate", "target": "memory/sync/outbound/patterns/<cluster-id>.json", "payload": {"cluster_id": "...", "size": N, "score": ...}, "hash": "..."}
    ```
-3. Do NOT invoke `pattern-to-skill` automatically — user runs `/review-skill` to process candidates
+3. Do NOT invoke `pattern-to-skill` automatically — user runs `/review-skill` to process candidates. Drafts land in `skills/drafts/`.
 
 ### 6. Dedupe
 1. Before emitting, check if `cluster_id` already exists in `memory/sync/outbound/patterns/`
@@ -100,9 +107,9 @@ If candidate count > 5 in single scan → surface only top 3 by score; log the r
 - Background only — never blocks active work
 - Never auto-creates a skill
 - All candidates queue in `memory/sync/outbound/patterns/` for user review via `/review-skill`
-- Pure read on `session-events.jsonl`
-- Writes only to `memory/sync/outbound/patterns/` and (append) `session-events.jsonl`
-- No writes to `memory/wiki/`
+- Pure read on `memory/patterns/PATTERNS.jsonl`
+- Writes only to `memory/sync/outbound/patterns/` and (append) `memory/patterns/PATTERNS.jsonl`
+- No writes to flat `memory/` wiki files
 
 ## Safety
 
@@ -110,3 +117,4 @@ If candidate count > 5 in single scan → surface only top 3 by score; log the r
 - All emission is logged for audit
 - User can disable via `config/BUDGET.md` setting `pattern_detection: false`
 - Respects privacy mode: in `local-only` mode, patterns still detected locally but never pushed via parent-sync
+- Two-Strikes Rule applies to rule promotion based on patterns (see `references/two-strikes-rule.md`)

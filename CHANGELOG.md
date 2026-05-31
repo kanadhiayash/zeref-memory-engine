@@ -6,6 +6,84 @@ Format: [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.PATCH`
 
 ---
 
+## [4.3.0] — 2026-05-31
+
+### M4 — v4.x canon import + nomenclature alignment + team packs
+
+Aligns the repo with the canonical v4.x specification (`references/v4x-canon/ZEREF_OS.md` §0–§13 + `DECISION_LOG.md`). Adopts the package nomenclature wholesale: flat `memory/` layout, root privacy templates, append-only `PATTERNS.jsonl`, drafts at `skills/drafts/`. Adds team packs, harness translation map, Two-Strikes Rule, connector advisory.
+
+### Added
+
+- **`references/v4x-canon/`** — imported design corpus (read-only):
+  - `ZEREF_OS.md` (universal behavioral constitution)
+  - `DECISION_LOG.md` (D1–D11 + rejected directions)
+  - `MODEL_DEBATE.md`, `USE_CASES.md`, `RESEARCH_RESOURCES.md`, `PACKAGE_INDEX.md`
+- **Root privacy templates** (ZEREF_OS §4.1):
+  - `PRIVACY.md` — modes (default `abstract`)
+  - `REDACT.md` — sensitive classes (credentials, pii, internal_paths, client_data, financial, proprietary_code) + replacement strategies
+  - `SHARING_POLICY.md` — per-connector allowlist (all OFF by default)
+- **`memory/hot.md`** — last 3 sessions, ≤500 words, read FIRST per §0
+- **`memory/MEMORY.md`** — agent-written session notes scaffold per §3.4
+- **`memory/patterns/PATTERNS.jsonl`** — append-only tool/event log per §3.5 (replaces `memory/logs/session-events.jsonl`)
+- **`config/claude-overrides.md`** — Claude-specific harness quirks per §12
+- **Team packs** (ZEREF_OS §8 + D10):
+  - `team-packs/{solo,build,research,red,audit,ship}.md`
+  - `commands/team.md` — `/team [type]` activator
+  - `team/.gitkeep` — output directory
+- **Harness stubs** (ZEREF_OS §10 + D7):
+  - `.cursor/rules/zeref.mdc` — Cursor rules format
+  - `.windsurfrules` — Windsurf rules format
+  - `.aider.conf.yml.example` — Aider convention example
+- **Codified rules + advisories**:
+  - `references/two-strikes-rule.md` — first error log; second error promote
+  - `references/connector-advisory.md` — free MCP stack + recommendation triggers
+  - `references/harness-translation-map.md` — per-harness load instructions
+- **`scripts/migrate-v4.2-to-v4.3.py`** — idempotent migration with dry-run default, pre-migration snapshot, `git mv` for history preservation
+
+### Changed (paths — wholesale nomenclature adoption)
+
+| v4.2 | v4.3 |
+|---|---|
+| `memory/wiki/INDEX.md` | `memory/index.md` |
+| `memory/wiki/DECISIONS.md` | `memory/DECISIONS.md` |
+| `memory/wiki/OPEN_QUESTIONS.md` | `memory/OPEN_QUESTIONS.md` |
+| `memory/wiki/RISKS.md` | `memory/RISKS.md` |
+| `memory/wiki/CONFLICTS.md` | `memory/CONFLICTS.md` |
+| `memory/wiki/ARCHIVE/` | `memory/archive/` (lowercase) |
+| `memory/logs/session-events.jsonl` | `memory/archive/session-events-v4.2.jsonl` + new `memory/patterns/PATTERNS.jsonl` |
+| `config/PRIVACY.md` | root `PRIVACY.md` + archived original |
+| `skills/_drafts/` *(never created)* | `skills/drafts/` |
+
+### Changed (content)
+
+- `AGENTS.md` rewritten for v4.3: flat memory layout, 8 commands (added `/team`), 6 team packs, harness translation map, Two-Strikes Rule, connector advisory references. Kept ≤200 lines.
+- `CLAUDE.md`, `GEMINI.md` updated with new reading order (hot → index → PRIVACY → REDACT).
+- `README.md`, `INSTALL.md`, `MIGRATION.md` refreshed for v4.3 layout + multi-harness install instructions.
+- `SKILL.md` (plugin manifest) bumped to 4.3.0.
+- `.claude-plugin/plugin.json` bumped to 4.3.0.
+- `config/BUDGET.md` adds Free / Standard / God Mode tier table with auto-detection mapping (per §5 + D5).
+- `references/zeref-safety-principles.md` updated for flat paths + Rule 11 (connectors OFF) + Rule 12 (archive never hard delete).
+- All 6 agents (`memory-keeper`, `privacy-guardian`, `sync-coordinator`, `evidence-curator`, `pattern-observer`, `handoff-orchestrator`) updated for flat memory layout + PATTERNS.jsonl + root privacy templates.
+- All 10 skills updated for flat memory layout + path refs + draft path + tier names.
+- All 7 existing commands (`start`, `done`, `stop`, `status`, `sync-parent`, `reset-permissions`, `review-skill`) updated for new reading order + path refs.
+
+### Migrated
+
+- Dogfood `memory/wiki/*` → flat `memory/*` via `scripts/migrate-v4.2-to-v4.3.py --apply`. Pre-migration snapshot: `memory/snapshots/pre-v4.3-<iso>/`.
+- `config/PRIVACY.md` content moved to root `PRIVACY.md`; original archived at `memory/archive/config-PRIVACY-v4.2.md`.
+- `memory/logs/session-events.jsonl` archived at `memory/archive/session-events-v4.2.jsonl`; fresh `memory/patterns/PATTERNS.jsonl` starts with cutover marker.
+
+### Validation
+
+- `scripts/zeref-validate-v4.py` updated: 8 commands, 6 team packs, root privacy templates check, flat memory layout check.
+- All `git mv` operations preserve commit history.
+
+### Impact on existing installs
+
+Run `scripts/migrate-v4.2-to-v4.3.py --apply`. The script is idempotent — safe to re-run. Pre-migration state is preserved in `memory/snapshots/pre-v4.3-<iso>/` and historical archives in `memory/archive/`.
+
+---
+
 ## [Unreleased] — repo hygiene + history rewrite
 
 ### Repo hygiene (FAANG-level cleanup)
