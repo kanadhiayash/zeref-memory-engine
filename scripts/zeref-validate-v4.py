@@ -36,7 +36,7 @@ EXPECTED = {
     ],
     "commands": [
         "start.md", "done.md", "stop.md", "status.md",
-        "sync-parent.md", "reset-permissions.md", "skill.md",
+        "sync-parent.md", "reset-permissions.md", "review-skill.md",
     ],
     "plugin_manifests": [".claude-plugin/plugin.json", ".claude-plugin/marketplace.json"],
 }
