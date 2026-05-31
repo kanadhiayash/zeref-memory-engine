@@ -1,6 +1,6 @@
 ---
 name: contradiction-resolution
-description: Detects conflicting claims in wiki state, surfaces them via CONFLICTS.md, supports snooze-until-/done, never silent-resolves. User arbitrates every conflict.
+description: Detects conflicting claims in wiki state (flat memory/ layout), surfaces them via memory/CONFLICTS.md, supports snooze-until-/done, never silent-resolves. User arbitrates every conflict.
 trigger:
   - memory-keeper detects conflict during write
   - /done — surface snoozed conflicts
@@ -36,7 +36,7 @@ Not a conflict:
    - subject (extracted noun phrase)
    - predicate (verb + complement)
    - quantitative value (if any)
-2. Scan `memory/wiki/DECISIONS.md`, `OPEN_QUESTIONS.md`, `RISKS.md` for matching subjects
+2. Scan `memory/DECISIONS.md`, `memory/OPEN_QUESTIONS.md`, `memory/RISKS.md` for matching subjects
 3. If match found AND predicate/value conflicts per types above → CONFLICT
 4. Emit to `memory-keeper`: `{"verdict": "conflict", "side_a_id": "...", "side_a_hash": "...", "side_b_payload": {...}}`
 5. If no match → pass-through (proceed with write)
@@ -44,7 +44,7 @@ Not a conflict:
 ## QUEUE (called by memory-keeper after conflict detected)
 
 1. Halt original write
-2. Append to `memory/wiki/CONFLICTS.md`:
+2. Append to `memory/CONFLICTS.md`:
    ```
    ### C<N> — <iso-date> — <conflict-title>
    **Status**: open
@@ -53,7 +53,7 @@ Not a conflict:
    **Detected by**: memory-keeper, event-hash <hash>
    **Resolution**: <blank>
    ```
-3. Log: `{"event": "conflict-queued", "target": "memory/wiki/CONFLICTS.md", "payload": {"conflict_id": "C<N>"}}`
+3. Log: `{"event": "conflict-queued", "target": "memory/CONFLICTS.md", "payload": {"conflict_id": "C<N>"}}`
 4. Surface to user immediately:
    ```
    ⚠ CONFLICT detected: <title>
@@ -66,7 +66,7 @@ Not a conflict:
 
 User picks `snooze-until-done`:
 1. Mark conflict status → `snoozed-until-done`
-2. Append `**Snooze reason**: <user-input>` to CONFLICTS.md entry
+2. Append `**Snooze reason**: <user-input>` to `memory/CONFLICTS.md` entry
 3. Conflict re-surfaces at next `/done` automatically
 
 ## RESOLVE
@@ -74,7 +74,7 @@ User picks `snooze-until-done`:
 User picks `now` and selects winner (A / B / both / merge):
 
 ### Single winner (A or B)
-1. Move winning claim to `DECISIONS.md` with both-sides provenance:
+1. Move winning claim to `memory/DECISIONS.md` with both-sides provenance:
    ```
    ### <iso-date> — <decision-title>
    **Decided**: <winning-claim>
@@ -84,22 +84,22 @@ User picks `now` and selects winner (A / B / both / merge):
    **Supersedes**: <hash-loser>
    ```
 2. Mark loser entry in source page as `[SUPERSEDED by C<N>]` (do not delete)
-3. Update `CONFLICTS.md` entry → status `resolved`, fill `Resolution:` line
+3. Update `memory/CONFLICTS.md` entry → status `resolved`, fill `Resolution:` line
 4. Log: `{"event": "conflict-resolved", "payload": {"conflict_id": "C<N>", "winner": "A|B", "user_ts": "..."}}`
 
 ### Both valid (context-dependent)
-1. Move both to `DECISIONS.md` with discriminating context (e.g. "in dev: A; in prod: B")
-2. Update `CONFLICTS.md` entry → status `resolved` with `winner: both-context-dependent`
+1. Move both to `memory/DECISIONS.md` with discriminating context (e.g. "in dev: A; in prod: B")
+2. Update `memory/CONFLICTS.md` entry → status `resolved` with `winner: both-context-dependent`
 3. Log: `{"event": "conflict-resolved-both", ...}`
 
 ### Merge
 1. Compose synthesis claim from both sides
-2. Move to `DECISIONS.md` with both-sides provenance + `Synthesis:` marker
+2. Move to `memory/DECISIONS.md` with both-sides provenance + `Synthesis:` marker
 3. Log: `{"event": "conflict-resolved-merge", ...}`
 
 ## SNOOZED REVIEW (called by /done)
 
-1. Scan `CONFLICTS.md` for entries with status `snoozed-until-done`
+1. Scan `memory/CONFLICTS.md` for entries with status `snoozed-until-done`
 2. For each, surface to user with same prompt as DETECT
 3. Block `/done` completion until user processes each (either resolves or re-snoozes with explicit reason)
 
@@ -115,8 +115,8 @@ B: <claim> [evidence: medium — assumed from 30-day-old source]
 ## Safety
 
 - Never silent resolution
-- All resolutions logged to event log
-- Loser claims marked `[SUPERSEDED]` but never deleted (auditability)
+- All resolutions logged to event log (`memory/patterns/PATTERNS.jsonl`)
+- Loser claims marked `[SUPERSEDED]` but never deleted (auditability + D9)
 - Snoozed conflicts always re-surface at `/done` — cannot escape arbitration indefinitely
 - If user attempts to `/stop` with open conflicts, warn and require explicit acknowledgment
 

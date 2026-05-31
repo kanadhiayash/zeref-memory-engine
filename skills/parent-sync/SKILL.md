@@ -19,7 +19,7 @@ Push approved child-project state up to a parent project. Provenance preserved. 
 1. Read `config/PARENT_SYNC.md`. If `enabled: false` → exit with "Parent sync not configured".
 2. Validate `parent_path`:
    - Path exists
-   - Contains `memory/wiki/` (is a Zeref project)
+   - Contains a flat `memory/` (is a Zeref v4.3+ project)
    - Writable by current user
 3. If `child_id` is null → assign one:
    - Default: basename of current project root
@@ -30,12 +30,12 @@ Push approved child-project state up to a parent project. Provenance preserved. 
 
 1. Read `push_content:` list from `config/PARENT_SYNC.md` (default: summary, decisions, risks, open_questions)
 2. For each content type:
-   - **summary**: read `memory/wiki/INDEX.md` + last 3 events from `session-events.jsonl` → compose 1-page summary
-   - **decisions**: read recent entries (last 30 days) from `DECISIONS.md`
-   - **risks**: read open-status entries from `RISKS.md`
-   - **open_questions**: read all open from `OPEN_QUESTIONS.md`
+   - **summary**: read `memory/index.md` + last 3 events from `memory/patterns/PATTERNS.jsonl` → compose 1-page summary
+   - **decisions**: read recent entries (last 30 days) from `memory/DECISIONS.md`
+   - **risks**: read open-status entries from `memory/RISKS.md`
+   - **open_questions**: read all open from `memory/OPEN_QUESTIONS.md`
 3. Pass each through `evidence-curator` FILTER_SYNC — keep only grade ≥ medium
-4. Pass each through `privacy-guardian` per current privacy mode
+4. Pass each through `privacy-guardian` per current privacy mode (`PRIVACY.md`)
    - If mode = `local-only` → REFUSE, exit with "local-only mode blocks parent sync"
 5. Write staged content to `memory/sync/outbound/<iso>/`:
    ```
@@ -102,7 +102,7 @@ If `yes` → proceed to PUSH
 When parent's `/start` runs, parent's `memory-keeper` checks `memory/sync/parent/*/<latest-iso>/`:
 1. For each unprocessed push, read manifest
 2. For each entry (decision, risk, open question), run conflict detection against parent's wiki state
-3. Conflicting entries → append to parent's `memory/wiki/CONFLICTS.md` with provenance pointer to child
+3. Conflicting entries → append to parent's `memory/CONFLICTS.md` with provenance pointer to child
 4. Non-conflicting entries → ingest into parent's wiki with child provenance label:
    ```
    ### <ts> — <decision>
@@ -116,7 +116,7 @@ When parent's `/start` runs, parent's `memory-keeper` checks `memory/sync/parent
    ```
    Parent sync ingested from <child-id> at <push-ts>:
      <N> decisions merged
-     <N> conflicts flagged → see CONFLICTS.md
+     <N> conflicts flagged → see memory/CONFLICTS.md
    ```
 
 ## ROLLBACK

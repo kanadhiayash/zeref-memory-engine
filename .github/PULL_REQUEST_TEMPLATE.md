@@ -20,12 +20,14 @@
 
 Confirm this PR respects Zeref's core principles:
 - [ ] Local-first (no hosted dependency added)
-- [ ] Harness-agnostic (works in Claude / Codex / Gemini)
-- [ ] Privacy-first (writes pass through privacy-guardian)
-- [ ] Single-writer wiki (only memory-keeper writes to memory/wiki/)
-- [ ] Append-only event log preserved
-- [ ] Boundary-first reads (no full-page scans introduced)
+- [ ] Harness-agnostic (works in Claude / Codex / Gemini / Cursor / Windsurf / Aider / Hermes / Amp / Zed / Perplexity)
+- [ ] Privacy-first (writes pass through privacy-guardian per PRIVACY.md + REDACT.md + SHARING_POLICY.md)
+- [ ] Single-writer wiki (only memory-keeper writes to flat memory/ wiki files)
+- [ ] Append-only event log preserved (memory/patterns/PATTERNS.jsonl)
+- [ ] Boundary-first reads (hot.md → index.md → page section)
 - [ ] Human arbitration preserved (no silent conflict resolution)
+- [ ] Connectors OFF by default (no auto-enable in SHARING_POLICY.md)
+- [ ] Two-Strikes Rule respected (no new rule on first occurrence)
 
 ## Test plan
 

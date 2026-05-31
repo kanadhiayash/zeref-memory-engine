@@ -1,6 +1,6 @@
 ---
 name: pattern-to-skill
-description: Drafts new skill files from candidates emitted by pattern-observer. Drafts only — never auto-activates. User reviews via /review-skill to approve, edit, reject, or defer.
+description: Drafts new skill files from candidates emitted by pattern-observer. Drafts land in skills/drafts/ — never auto-activate. User reviews via /review-skill to approve, edit, reject, or defer.
 trigger:
   - /review-skill picks up a candidate
   - user says "draft a skill from this pattern"
@@ -14,12 +14,16 @@ max_turns: 30
 
 Turn repeated work into reusable skills. Draft from `pattern-observer` candidates. Review-first — never auto-activate.
 
+Per ZEREF_OS §3.5 + D4: drafts land in `skills/drafts/`. User approves via `/review-skill`.
+
+Two-Strikes Rule applies: do not draft a skill from a single occurrence. `pattern-observer` enforces this with its 3× clustering threshold. See `references/two-strikes-rule.md`.
+
 ## DRAFT (called by /review-skill or directly)
 
 ### 1. Load candidate
 1. Read candidate JSON from `memory/sync/outbound/patterns/<cluster-id>.json`
 2. Verify schema_version and required fields
-3. If candidate already has draft in `skills/_drafts/` (check by cluster_id provenance) → update existing, do not duplicate
+3. If candidate already has draft in `skills/drafts/` (check by cluster_id provenance) → update existing, do not duplicate
 
 ### 2. Synthesize skill metadata
 - `name`: candidate `suggested_skill_name`, kebab-case, lowercase, no `zeref-` prefix
@@ -62,9 +66,9 @@ Compose from member event patterns:
 - Note any irreversible actions seen in cluster → require explicit user confirmation
 
 ### 4. Write draft
-1. Create directory: `skills/_drafts/<name>/`
-2. Write `skills/_drafts/<name>/SKILL.md`
-3. Write `skills/_drafts/<name>/PROVENANCE.md`:
+1. Create directory: `skills/drafts/<name>/`
+2. Write `skills/drafts/<name>/SKILL.md`
+3. Write `skills/drafts/<name>/PROVENANCE.md`:
    ```markdown
    # Provenance for <name>
 
@@ -85,13 +89,13 @@ Compose from member event patterns:
 4. Mark candidate JSON as drafted: append `drafted_at` field
 5. Log event:
    ```jsonl
-   {"ts": "...", "agent": "pattern-to-skill", "event": "skill-drafted", "target": "skills/_drafts/<name>/", "payload": {"cluster_id": "...", "source_event_count": N}, "hash": "..."}
+   {"ts": "...", "agent": "pattern-to-skill", "event": "skill-drafted", "target": "skills/drafts/<name>/", "payload": {"cluster_id": "...", "source_event_count": N}, "hash": "..."}
    ```
 
 ## REVIEW QUEUE (called by /review-skill command)
 
 ### List
-1. Walk `skills/_drafts/*/SKILL.md`
+1. Walk `skills/drafts/*/SKILL.md`
 2. For each, read frontmatter + PROVENANCE.md header
 3. Display:
    ```
@@ -119,7 +123,7 @@ Action? [approve / edit / reject / defer]
 ```
 
 ### approve
-1. `git mv skills/_drafts/<name> skills/<name>` (preserves history)
+1. `git mv skills/drafts/<name> skills/<name>` (preserves history)
 2. Edit frontmatter: remove `status: draft`, keep `provenance:`
 3. Append CHANGELOG note (manual: prompt user for changelog line)
 4. Log:
@@ -129,13 +133,13 @@ Action? [approve / edit / reject / defer]
 5. Suggest: "Restart Claude Code to load the new skill, or invoke directly via Skill tool."
 
 ### edit
-1. Open `skills/_drafts/<name>/SKILL.md` for user editing
+1. Open `skills/drafts/<name>/SKILL.md` for user editing
 2. After save, re-prompt with updated draft
 3. Edits do NOT change PROVENANCE.md (provenance is immutable history)
 
 ### reject
 1. Prompt for reject reason (1 line)
-2. `rm -rf skills/_drafts/<name>/`
+2. `rm -rf skills/drafts/<name>/`
 3. Mark candidate JSON in `memory/sync/outbound/patterns/<cluster-id>.json` with `rejected_at` + reason
 4. `pattern-observer` will not re-surface this cluster_id
 5. Log:
@@ -155,8 +159,8 @@ Action? [approve / edit / reject / defer]
 ## Safety
 
 - Drafts never auto-activate (no `status: active` until approved)
-- Drafts directory `skills/_drafts/` ignored by skill loader (validator allowlists this path)
+- Drafts directory `skills/drafts/` ignored by skill loader (validator allowlists this path)
 - `git mv` preserves history on approval (do not copy+delete)
 - Rejection is reversible until cluster JSON deleted (rejected_at marker reusable)
 - PROVENANCE.md immutable — never edit after creation
-- All approve/reject/defer actions logged
+- All approve/reject/defer actions logged to `memory/patterns/PATTERNS.jsonl`

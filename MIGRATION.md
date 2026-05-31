@@ -80,3 +80,76 @@ None. v4 is a clean break. Run `/start` and re-enter project context — it take
 - **v4.0 (M1, ships now)**: core engine
 - **v4.1 (M2)**: full contradiction-resolution + parent-sync (currently stubs)
 - **v4.2 (M3)**: pattern-observer + pattern-to-skill (currently stubs)
+- **v4.3 (M4)**: v4.x canon import + flat memory layout + team packs + harness translation map + Two-Strikes Rule
+
+---
+
+# Migration: Zeref v4.2 → v4.3
+
+## TL;DR
+
+v4.3 aligns the file layout with the canonical v4.x spec (ZEREF_OS §12). Memory goes flat (no more `memory/wiki/`), privacy templates move to project root, and the event log gets renamed.
+
+Use `scripts/migrate-v4.2-to-v4.3.py`. It is idempotent and uses `git mv` to preserve history.
+
+## What's renamed (paths)
+
+| v4.2 path | v4.3 path |
+|---|---|
+| `memory/wiki/INDEX.md` | `memory/index.md` |
+| `memory/wiki/DECISIONS.md` | `memory/DECISIONS.md` |
+| `memory/wiki/OPEN_QUESTIONS.md` | `memory/OPEN_QUESTIONS.md` |
+| `memory/wiki/RISKS.md` | `memory/RISKS.md` |
+| `memory/wiki/CONFLICTS.md` | `memory/CONFLICTS.md` |
+| `memory/wiki/ARCHIVE/` | `memory/archive/` *(lowercase)* |
+| `memory/logs/session-events.jsonl` | `memory/archive/session-events-v4.2.jsonl` + new `memory/patterns/PATTERNS.jsonl` |
+| `config/PRIVACY.md` | root `PRIVACY.md` + archived original |
+| `skills/_drafts/` *(never created)* | `skills/drafts/` |
+
+## What's new
+
+- **Root privacy templates** (per ZEREF_OS §4.1):
+  - `PRIVACY.md` — modes (default `abstract`)
+  - `REDACT.md` — concrete sensitive classes
+  - `SHARING_POLICY.md` — per-connector allowlist (all OFF)
+- **`memory/hot.md`** — last 3 sessions, ≤500 words, read FIRST per §0
+- **`memory/MEMORY.md`** — agent-written session notes per §3.4
+- **`memory/patterns/PATTERNS.jsonl`** — append-only tool/event log per §3.5
+- **Team packs** (per §8) — `team-packs/{solo,build,research,red,audit,ship}.md` + `/team` command
+- **Cross-harness stubs** (per §10) — `.cursor/rules/zeref.mdc`, `.windsurfrules`, `.aider.conf.yml.example`
+- **Canon imports** — `references/v4x-canon/` (ZEREF_OS, DECISION_LOG, MODEL_DEBATE, USE_CASES, RESEARCH_RESOURCES, PACKAGE_INDEX)
+- **Codified rules** — `references/two-strikes-rule.md`, `references/connector-advisory.md`, `references/harness-translation-map.md`
+- **Claude overrides** — `config/claude-overrides.md`
+
+## How to migrate
+
+```bash
+# 1. Back up first (the script also snapshots, but belt-and-suspenders)
+cp -r memory ~/zeref-v4.2-backup-$(date +%Y%m%d)
+
+# 2. Dry-run
+python3 scripts/migrate-v4.2-to-v4.3.py
+
+# 3. Apply
+python3 scripts/migrate-v4.2-to-v4.3.py --apply
+
+# 4. Verify
+python3 scripts/zeref-validate-v4.py
+git status   # confirm git mv preserved history (look for "R" lines)
+```
+
+## Reading order changes (per ZEREF_OS §0)
+
+`/start` now loads in this order:
+1. `memory/hot.md` (≤500 words)
+2. `memory/index.md` (if hot insufficient)
+3. `PRIVACY.md` (root) before any write or tool use
+4. `REDACT.md` (root) before any external output
+5. `memory/MEMORY.md` first 200 lines
+6. Tail of `memory/patterns/PATTERNS.jsonl`
+
+## Backward compatibility
+
+The migration is one-way for path nomenclature. The pre-migration snapshot lives in `memory/snapshots/pre-v4.3-<iso>/` for rollback. Original `config/PRIVACY.md` and `memory/logs/session-events.jsonl` are archived in `memory/archive/` (never hard-deleted per D9).
+
+After migration, run `/start` to boot under the new layout. The existing wiki content carries over unchanged — only paths and reading order change.

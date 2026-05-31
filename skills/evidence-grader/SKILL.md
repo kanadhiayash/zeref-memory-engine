@@ -1,6 +1,6 @@
 ---
 name: evidence-grader
-description: Skill counterpart to evidence-curator agent. Provides on-demand grading for ad-hoc claims, source assessments, and review passes.
+description: Skill counterpart to evidence-curator agent. Provides on-demand grading for ad-hoc claims, source assessments, and review passes. Operates over flat memory/ layout.
 trigger:
   - user says "grade this claim"
   - wiki-maintenance consolidation
@@ -31,13 +31,18 @@ Assess confidence + recency + provenance of a claim or wiki entry. Returns a gra
 3. Return: `{grade, confidence_reasoning, recency_reasoning, provenance_reasoning, suggested_action}`
 
 ### REVIEW_PAGE (called by wiki-maintenance)
-1. Walk every entry on a wiki page
+1. Walk every entry on a wiki page (`memory/DECISIONS.md`, `memory/RISKS.md`, `memory/OPEN_QUESTIONS.md`)
 2. Re-grade each
 3. Report demotions, suggest re-verifications
 
 ### FILTER_SYNC (called by parent-sync)
 1. Receive list of entries staged for outbound
 2. Return only entries with grade ≥ medium
+
+### TWO_STRIKES_GRADE (called when promoting a trap to a rule)
+1. Receive the two `memory/MEMORY.md` `## Traps observed` entries
+2. Verify both occurrences are concrete and same trap class
+3. Return grade per `references/two-strikes-rule.md`
 
 ## Safety
 

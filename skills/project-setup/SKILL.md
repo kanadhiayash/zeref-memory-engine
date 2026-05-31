@@ -1,6 +1,6 @@
 ---
 name: project-setup
-description: Conversational interview to populate config/PROJECT.md, config/PRIVACY.md, config/PERMISSIONS.md, config/PARENT_SYNC.md, config/BUDGET.md. Activates on first /start or when any required config is missing.
+description: Conversational interview that populates config/PROJECT.md, root PRIVACY.md + REDACT.md + SHARING_POLICY.md, config/PERMISSIONS.md, config/PARENT_SYNC.md, config/BUDGET.md. Activates on first /start or when any required config is missing.
 trigger:
   - first /start
   - missing config/PROJECT.md
@@ -15,35 +15,52 @@ max_turns: 20
 
 Convert any user's messy project goal into structured config in one conversation. Conversational, not formal.
 
-## Interview (minimum)
+If the user cancels mid-interview, Zeref boots in READ-ONLY mode until the schema is complete (per ZEREF_OS §7).
 
-Ask these in natural language flow, not as a numbered form:
+## Interview
 
-1. What is this project? (1 sentence)
-2. What problem does it solve?
-3. What's out of scope?
-4. Who else is involved? (stakeholders + decision authority)
-5. What constraints are non-negotiable?
-6. What tools / MCP servers / repos are in play?
-7. Privacy mode? (`exact` / `abstract` / `local-only`)
-8. Is there a parent project? (for rollup)
-9. What model tier are you using? (Haiku / Sonnet / Opus)
-10. Anything else memory should hold from day one?
+Ask these in natural language flow, not as a numbered form. Order roughly project → privacy → operations.
+
+### Project (§7)
+1. What is this project trying to achieve? (1–2 sentences)
+2. What decisions will be made here that you need to remember later?
+3. Who else will read this wiki — just you, or a team?
+4. What does "done" look like for this project?
+
+### Privacy (§4.2 verbatim)
+5. Is this project personal, client, employer, or public?
+6. What categories of data are sensitive? *(see REDACT.md classes — credentials, PII, internal_paths, client_data, financial, proprietary_code)*
+7. Should Zeref store exact facts, abstractions only, or both? *(maps to PRIVACY.md mode: exact / abstract / local-only — default is **abstract**)*
+8. Can any connected MCP tool read this project context, or must this wiki remain local-only? *(maps to SHARING_POLICY.md)*
+
+On question 6, Zeref says (verbatim per §7):
+> "You can describe the shape of the decision without sharing the data. Zeref will record the structure, not the content."
+
+### Operations
+9. Is there a parent project? (for rollup → `config/PARENT_SYNC.md`)
+10. What model tier are you using? (Free / Standard / God Mode — auto-detected if possible per `config/BUDGET.md`)
+11. What tools / MCP servers are in play? (Recommend leaving OFF; enable per-connector in `SHARING_POLICY.md`.)
+12. Anything else memory should hold from day one?
 
 ## Output
 
-Write 5 config files. Each gets YAML frontmatter from the answers + a markdown body the user can hand-edit later.
+Write or update these files. Each gets YAML frontmatter from the answers + a markdown body the user can hand-edit later.
 
-- `config/PROJECT.md`
-- `config/PRIVACY.md`
-- `config/PERMISSIONS.md` (defaults; ask if user wants overrides)
-- `config/PARENT_SYNC.md` (enabled only if user said yes to Q8)
-- `config/BUDGET.md`
+| File | Source questions |
+|---|---|
+| `config/PROJECT.md` | 1–4, 12 |
+| `PRIVACY.md` (root) | 5, 7 (mode), 6 (enabled classes mapping) |
+| `REDACT.md` (root) | 6 (enable matching classes) |
+| `SHARING_POLICY.md` (root) | 8, 11 |
+| `config/PERMISSIONS.md` | defaults; ask if user wants overrides |
+| `config/PARENT_SYNC.md` | 9 (enabled only if yes) |
+| `config/BUDGET.md` | 10 |
 
 After writing, confirm:
-> "Wrote 5 config files to `config/`. Verify they exist before we proceed. Run `/start` again to boot the session."
+> "Wrote config to: `config/PROJECT.md`, root `PRIVACY.md`, `REDACT.md`, `SHARING_POLICY.md`, `config/PERMISSIONS.md`, `config/PARENT_SYNC.md`, `config/BUDGET.md`. Verify they look right. Run `/start` again to boot the session."
 
 ## Safety
 
 - All writes go through `memory-keeper` → `privacy-guardian`
 - If user declines to answer a question, leave the field empty with a `# TODO` marker — never invent
+- If user cancels before privacy questions are answered, Zeref refuses to boot until they are. Privacy is non-negotiable per §4.

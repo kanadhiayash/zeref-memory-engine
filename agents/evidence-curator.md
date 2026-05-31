@@ -1,6 +1,6 @@
 ---
 name: evidence-curator
-description: Grades confidence, recency, and provenance of wiki entries. Activates on write, review, sync, and contradiction handling.
+description: Grades confidence, recency, and provenance of wiki entries. Activates on write, review, sync, and contradiction handling. Reads flat memory/ layout.
 model: claude-haiku-4-5
 max_turns: 10
 ---
@@ -25,10 +25,10 @@ Keep evidence quality high. Stale, low-confidence, or weakly-sourced claims shou
 1. Receive payload + source provenance
 2. Apply grade per criteria above
 3. Attach grade to event log entry: `{"evidence_grade": "high"}`
-4. If writing to `DECISIONS.md`: grade must be high or medium; low → reject + ask user to confirm or upgrade source
+4. If writing to `memory/DECISIONS.md`: grade must be high or medium; low → reject + ask user to confirm or upgrade source
 
 ### REVIEW (periodic — called by wiki-maintenance)
-1. Scan `memory/wiki/DECISIONS.md` for entries > 90 days old
+1. Scan `memory/DECISIONS.md` for entries > 90 days old
 2. Demote grade to low; surface to user
 3. Suggest re-verification
 
@@ -39,6 +39,14 @@ Keep evidence quality high. Stale, low-confidence, or weakly-sourced claims shou
 ### CONFLICT (called by contradiction-resolution)
 1. Compare evidence grades of conflicting sides
 2. Surface the comparison to the user — but never auto-resolve based on grade alone
+
+### TWO-STRIKES PROMOTION (called when a trap is promoted to a rule)
+1. Reads the two `memory/MEMORY.md` `## Traps observed` entries cited by the promotion
+2. Grades the new rule:
+   - **high** if both occurrences are concrete and same trap class
+   - **medium** if one is fuzzy or trap classes differ slightly
+   - **low** if there's only one concrete occurrence — reject promotion, ask user
+3. See `references/two-strikes-rule.md`
 
 ## Safety
 
