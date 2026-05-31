@@ -1,16 +1,18 @@
-# ZEREF — Gemini CLI Configuration
-Version: 3.0.0
+# GEMINI.md — Gemini harness shim
 
-## Skill Discovery
-Skills are in .skills/ directory. Each skill has a SKILL.md with frontmatter declaring its purpose and triggers.
+**Canonical spec: `AGENTS.md`** — read it first. This file only adds Gemini-specific notes.
 
-## Session Start Protocol
-1. Read wiki/hot.md
-2. Read ZEREFPROJECT.md if present
-3. Route task to appropriate skill using registry/zeref-skill-registry.json
+## Gemini-specific
 
-## Core Identity
-Zeref is a Context Engine. First action is always context orientation, never immediate task execution.
+- Large-context-friendly: Gemini can load full `memory/wiki/` in a single call. Still prefer boundary-first (INDEX → section) for token discipline.
+- No native skill registry: invoke skills by reading the relevant `skills/<name>/SKILL.md` directly.
+- Commands map to user prompts containing `/start`, `/done`, etc. — interpret as instruction triggers.
+- Tool-state awareness: surface MCP tool availability in session boot report.
 
-## Safety
-All writes require user approval confirmation. Memory writes via zeref-memory-keeper only.
+## First action every session
+
+Identical to AGENTS.md §"First action every session":
+1. Read `config/PROJECT.md`
+2. Read `memory/wiki/INDEX.md`
+3. Tail last 3 entries of `memory/logs/session-events.jsonl`
+4. Report state

@@ -1,41 +1,53 @@
-# ZEREF UNIVERSAL QA GATE
-**Version:** 3.0.0
-**Run before every final deliverable**
+# Zeref 4.0 QA Gate
+
+**Run before every wiki write and every handoff package.**
+
+A single quality bar shared by all skills and agents.
 
 ---
 
-## Mandatory Checks (ALL must pass)
+## Gate checks
 
-### Evidence Discipline
-- [ ] Facts are labeled as facts (verified, sourced, or directly observed)
-- [ ] Assumptions are labeled as assumptions (reasonable but unverified)
-- [ ] Unknowns are labeled as unknown (not invented)
-- [ ] Risks are explicitly called out
-- [ ] No invented metrics, statistics, or research findings
+### 1. Evidence separation
+Output explicitly separates:
+- Facts (verified this session)
+- Assumptions (labeled `[ASSUMPTION: ...]`)
+- Unknowns (labeled `[UNKNOWN: not verified]`)
+- Risks (labeled `[RISK: ...]`)
 
-### Content Quality
-- [ ] Register is correct (brand voice vs. product voice per ZEREFDESIGN.md)
-- [ ] No AI prose anti-patterns: no filler openers, no passive inflation, no hedging pile-ups
-- [ ] Handoff block included (Notion/Linear/GitHub format as appropriate)
-- [ ] Next recommended action is explicit and actionable
+### 2. Provenance
+Every wiki write carries: source event hash, session ts, agent that produced it.
 
-### Technical (for code/design deliverables)
-- [ ] Accessibility Priority 1 checks passed (semantic HTML, touch targets ≥44px, color contrast ≥4.5:1)
-- [ ] No hardcoded values that belong in design tokens or config
-- [ ] Senior engineer overcomplicate test passed ("Would a senior engineer say this is overcomplicated?")
+### 3. Privacy mode applied
+Payload passed through `privacy-guardian` per current `config/PRIVACY.md` mode. Transformation logged if mode = abstract.
 
-### UX/Design (for design deliverables)
-- [ ] 10-category priority framework checked: Accessibility (CRITICAL), Touch Targets (CRITICAL), Performance (HIGH), Responsive (HIGH), Error States (HIGH), Loading States (MEDIUM), Animations (MEDIUM), Empty States (MEDIUM), Typography (MEDIUM), Color System (MEDIUM)
-- [ ] Motion: prefers-reduced-motion respected
-- [ ] Register classification confirmed (brand vs. product)
+### 4. Boundary-first compliance
+Reads happened via INDEX, not full pages. Skill outputs ≤ skill's declared `max_turns` token equivalent.
 
-### Safety
-- [ ] No irreversible actions were taken without explicit user confirmation
-- [ ] No untrusted content was routed without trust-sentinel classification
-- [ ] All workspace claims are verified (files actually exist)
+### 5. Anti-hallucination
+No invented file paths, metrics, user research, citations, repo state, or build results. Exact commands / paths / URLs / errors preserved verbatim.
+
+### 6. Single-writer compliance
+Wiki writes routed through `memory-keeper`. No skill or agent attempts direct write to `memory/wiki/`.
+
+### 7. Contradiction handling
+If conflict detected: halt write, append to `CONFLICTS.md`, surface to user. Never silent resolve.
+
+### 8. Evidence grade attached
+Every entry destined for `DECISIONS.md` carries a grade (high / medium / low) from `evidence-curator`.
+
+### 9. Irreversible action confirmation
+Any destructive op (file delete, force push, permission grant) confirmed explicitly by user in this session.
+
+### 10. Token discipline
+Output respects current model tier verbosity. No filler. No motivational text. Compact tables over prose where they reduce ambiguity.
 
 ---
 
-## If Any Check Fails
+## Fail mode
 
-Stop. Do not deliver. Fix the failure first. Document what failed and why in the session log.
+If any check fails:
+1. Halt the write or output
+2. Surface the failure reason to the user
+3. Offer corrective action (re-grade, request user confirmation, abstract more, etc.)
+4. Never silently downgrade and proceed
