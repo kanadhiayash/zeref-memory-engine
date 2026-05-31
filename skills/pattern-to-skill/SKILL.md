@@ -1,45 +1,162 @@
 ---
 name: pattern-to-skill
-description: Drafts new skill files from patterns detected by pattern-observer. Drafts only — never auto-activates. User reviews via /review-skill.
+description: Drafts new skill files from candidates emitted by pattern-observer. Drafts only — never auto-activates. User reviews via /review-skill to approve, edit, reject, or defer.
 trigger:
-  - pattern-observer emits candidate (≥3 similar events in 72h)
-  - /review-skill
+  - /review-skill picks up a candidate
+  - user says "draft a skill from this pattern"
 model: claude-opus-4-7
-max_turns: 25
-status: M3-stub
+max_turns: 30
 ---
 
 # pattern-to-skill
 
-## Status
+## Mission
 
-**M3 stub** — full implementation lands in v4.2.0.
+Turn repeated work into reusable skills. Draft from `pattern-observer` candidates. Review-first — never auto-activate.
 
-## Mission (target)
+## DRAFT (called by /review-skill or directly)
 
-Turn repeated work into reusable skills. Draft, never auto-activate.
+### 1. Load candidate
+1. Read candidate JSON from `memory/sync/outbound/patterns/<cluster-id>.json`
+2. Verify schema_version and required fields
+3. If candidate already has draft in `skills/_drafts/` (check by cluster_id provenance) → update existing, do not duplicate
 
-## Flow (target)
+### 2. Synthesize skill metadata
+- `name`: candidate `suggested_skill_name`, kebab-case, lowercase, no `zeref-` prefix
+- `description`: 1–2 sentences. Pattern: "<verb> <subject> based on <N> repeated events in <hours>h. Use when <trigger context>."
+- `trigger`: extract from member events
+  - If verb = "wiki-write" → trigger on "user produces <subject>-style content"
+  - If verb = "wiki-read" → trigger on "user asks for <subject> info"
+  - Else → trigger on "user says <verb> <subject>"
+- `model`: default sonnet; haiku if trivial; opus if pattern shows complex multi-step work
+- `max_turns`: scale with cluster size — 10 for small, 25 for large
+- `status: draft` (explicitly marked)
+- `provenance`:
+  ```yaml
+  provenance:
+    cluster_id: "<from candidate>"
+    detected_at: "<iso>"
+    source_events: ["sha256:...", "sha256:..."]
+    pattern_observer_score: <N>
+  ```
 
-1. Receive candidate cluster from `pattern-observer`
-2. Extract common task signature, inputs, outputs
-3. Generate draft `skills/_drafts/<draft-name>/SKILL.md`:
-   - YAML frontmatter (name, description, trigger, model, max_turns)
-   - Body with mission, operations, safety
-   - Source provenance (event hashes that triggered the draft)
-4. Add to `/review-skill` review queue
-5. Log `{"event": "skill-drafted", "target": "skills/_drafts/<draft-name>/"}`
+### 3. Synthesize body
+Skill body sections, derived from cluster members:
 
-## /review-skill flow (target)
+#### Mission
+Single sentence stating what the skill does. Generated from common verb + subject pattern across members.
 
-1. List all drafts in `skills/_drafts/`
-2. User picks one
-3. Show draft + provenance
-4. User: approve (move to `skills/`) / edit / reject / defer
-5. If approved → `git mv skills/_drafts/<name> skills/<name>`
+#### When to use
+- Bullet list from member contexts (deduped)
+- Include trigger phrases extracted from payload summaries
+
+#### Operations
+Compose from member event patterns:
+- If members all share same target → write a single operation for that
+- If multiple targets → multi-step operation
+- Use observed payload structures as input/output shapes
+
+#### Safety
+- Default: all writes via `memory-keeper`
+- Default: pass through `privacy-guardian`
+- Note any irreversible actions seen in cluster → require explicit user confirmation
+
+### 4. Write draft
+1. Create directory: `skills/_drafts/<name>/`
+2. Write `skills/_drafts/<name>/SKILL.md`
+3. Write `skills/_drafts/<name>/PROVENANCE.md`:
+   ```markdown
+   # Provenance for <name>
+
+   Drafted from pattern cluster <cluster_id> on <iso>.
+
+   ## Source events
+   | TS | Event | Target | Summary |
+   |---|---|---|---|
+   | <ts> | <event> | <target> | <summary> |
+   | ... |
+
+   ## Pattern observer score
+   <score>
+
+   ## How to approve
+   Run `/review-skill` and select `<name>` from the queue.
+   ```
+4. Mark candidate JSON as drafted: append `drafted_at` field
+5. Log event:
+   ```jsonl
+   {"ts": "...", "agent": "pattern-to-skill", "event": "skill-drafted", "target": "skills/_drafts/<name>/", "payload": {"cluster_id": "...", "source_event_count": N}, "hash": "..."}
+   ```
+
+## REVIEW QUEUE (called by /review-skill command)
+
+### List
+1. Walk `skills/_drafts/*/SKILL.md`
+2. For each, read frontmatter + PROVENANCE.md header
+3. Display:
+   ```
+   PENDING SKILL DRAFTS (<N>)
+
+   1. <name>            score: <N>  events: <N>  drafted: <iso>
+      <description>
+   2. <name>            score: <N>  events: <N>  drafted: <iso>
+      <description>
+
+   Pick one (1-<N>) or all/none/quit:
+   ```
+
+### Per-draft prompt
+For selected draft:
+```
+=== <name> ===
+<description>
+
+Provenance: <N> events in <hours>h, score <N>
+[show frontmatter]
+[show body]
+
+Action? [approve / edit / reject / defer]
+```
+
+### approve
+1. `git mv skills/_drafts/<name> skills/<name>` (preserves history)
+2. Edit frontmatter: remove `status: draft`, keep `provenance:`
+3. Append CHANGELOG note (manual: prompt user for changelog line)
+4. Log:
+   ```jsonl
+   {"ts": "...", "agent": "pattern-to-skill", "event": "skill-approved", "target": "skills/<name>/", "payload": {"cluster_id": "...", "approved_by": "user-confirmed", "user_ts": "..."}, "hash": "..."}
+   ```
+5. Suggest: "Restart Claude Code to load the new skill, or invoke directly via Skill tool."
+
+### edit
+1. Open `skills/_drafts/<name>/SKILL.md` for user editing
+2. After save, re-prompt with updated draft
+3. Edits do NOT change PROVENANCE.md (provenance is immutable history)
+
+### reject
+1. Prompt for reject reason (1 line)
+2. `rm -rf skills/_drafts/<name>/`
+3. Mark candidate JSON in `memory/sync/outbound/patterns/<cluster-id>.json` with `rejected_at` + reason
+4. `pattern-observer` will not re-surface this cluster_id
+5. Log:
+   ```jsonl
+   {"ts": "...", "agent": "pattern-to-skill", "event": "skill-rejected", "payload": {"cluster_id": "...", "reason": "<user>"}, "hash": "..."}
+   ```
+
+### defer
+1. Leave draft in place
+2. Re-surface at next `/review-skill` invocation
+3. After 3 defers, prompt user: "Defer again or auto-reject?"
+4. Log:
+   ```jsonl
+   {"ts": "...", "agent": "pattern-to-skill", "event": "skill-deferred", "payload": {"cluster_id": "...", "defer_count": N}, "hash": "..."}
+   ```
 
 ## Safety
 
-- Drafts never auto-activate
-- Approval is the only path from draft → active skill
-- Drafts can be edited before approval
+- Drafts never auto-activate (no `status: active` until approved)
+- Drafts directory `skills/_drafts/` ignored by skill loader (validator allowlists this path)
+- `git mv` preserves history on approval (do not copy+delete)
+- Rejection is reversible until cluster JSON deleted (rejected_at marker reusable)
+- PROVENANCE.md immutable — never edit after creation
+- All approve/reject/defer actions logged

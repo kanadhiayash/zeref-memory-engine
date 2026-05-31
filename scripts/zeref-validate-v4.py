@@ -90,10 +90,16 @@ def main():
         check_file(f"memory/wiki/{f}", "memory/wiki")
     check_file("memory/logs/session-events.jsonl", "session events log")
 
-    # skills/
+    # skills/ — validate expected dirs, allow extras under _drafts/
     for s in EXPECTED["skills"]:
         check_dir(f"skills/{s}", "skill")
         check_yaml_frontmatter(f"skills/{s}/SKILL.md", ["name", "description"])
+    # _drafts/ is intentional — pattern-to-skill writes here; not active skills
+    drafts_dir = ROOT / "skills" / "_drafts"
+    if drafts_dir.is_dir():
+        draft_count = sum(1 for d in drafts_dir.iterdir() if d.is_dir())
+        if draft_count > 0:
+            warnings.append(f"skills/_drafts/ contains {draft_count} pending draft(s) — run /review-skill")
 
     # agents/
     for a in EXPECTED["agents"]:
