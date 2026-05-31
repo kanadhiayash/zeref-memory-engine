@@ -6,6 +6,24 @@ Format: [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.PATCH`
 
 ---
 
+## [Unreleased] — repo hygiene + history rewrite
+
+### Repo hygiene (FAANG-level cleanup)
+
+- **History rewrite via `git filter-repo`**: normalized commit authorship to single canonical `Yash Kanadhia` identity across all 24 commits; dropped duplicate commit `ff846e8` (was "Fix marketplace publishing for Zeref Skills Fleet v1.1.2" duplicate of `be239fb`).
+- **Branch cleanup**: deleted all 6 redundant `release/*` branches (local + remote). Repo is now single-trunk: `main` only.
+- **Tag cleanup**: deleted `v3.0.0-frozen` (redundant alias), deleted `v1.0` (only contained dup commit). Final 7 semver tags: `v1.1`, `v2.0`, `v2.1`, `v3.0.0`, `v4.0.0`, `v4.1.0`, `v4.2.0`.
+- **Stale file removal**: removed `experience.jsonl`, `zeref-install.sh`, `zeref-mcp-stack.md`, `zeref-settings-recommended.json` from main (v3 artifacts that survived v4 reset).
+- **FAANG apparatus added**: `CODEOWNERS`, `.github/ISSUE_TEMPLATE/{bug_report,feature_request}.md`, `.github/ISSUE_TEMPLATE/config.yml`, `.github/PULL_REQUEST_TEMPLATE.md`, `.github/dependabot.yml`.
+- **README compat table**: documents v4.x as live, v1/v2/v3 as legacy archive (won't install under current Claude Code plugin schema).
+- **Sandbox test report**: all 3 live tags (v4.0.0/v4.1.0/v4.2.0) pass `claude plugin validate` + `scripts/zeref-validate-v4.py`. Legacy tags fail with documented schema-evolution errors.
+
+### Impact on collaborators
+
+All commit SHAs changed (mailmap + dup-drop). Anyone with a local clone should re-clone fresh. Existing plugin installs auto-resolve on next `claude plugin update zeref@zeref`.
+
+---
+
 ## [4.2.0] — 2026-05-30
 
 ### M3 — pattern detection + skill drafting (full impl)
