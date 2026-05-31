@@ -40,7 +40,7 @@ These rules exist not as arbitrary restrictions but because Zeref handles persis
 
 ## Rule 9 — Review-first skill extension
 **Why**: Auto-activating drafted skills creates a feedback loop where the agent invents its own scope creep.
-**What**: `pattern-to-skill` only drafts. `/skill` is the only path from `skills/_drafts/` to `skills/`.
+**What**: `pattern-to-skill` only drafts. `/review-skill` is the only path from `skills/_drafts/` to `skills/`.
 
 ## Rule 10 — Honest limits declared publicly
 **Why**: Overpromised capabilities erode trust when reality disappoints. Better to declare what Zeref doesn't do.

@@ -29,7 +29,7 @@ work    → memory-keeper writes decisions, open questions, risks to memory/wiki
 
 - **6 agents**: memory-keeper, privacy-guardian, sync-coordinator, evidence-curator, pattern-observer, handoff-orchestrator
 - **10 skills**: project-setup, wiki-maintenance, contradiction-resolution, privacy-abstraction, parent-sync, pattern-to-skill, memory-import-export, budget-governor, handoff-compiler, evidence-grader
-- **7 commands**: `/start`, `/done`, `/stop`, `/status`, `/sync-parent`, `/reset-permissions`, `/skill`
+- **7 commands**: `/start`, `/done`, `/stop`, `/status`, `/sync-parent`, `/reset-permissions`, `/review-skill`
 
 See `AGENTS.md` for the full canonical spec. `CLAUDE.md` and `GEMINI.md` are harness-specific shims.
 

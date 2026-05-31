@@ -60,7 +60,7 @@ Zeref is a local-first context and memory engine. Harness-agnostic, model-agnost
 - `/status` — current state: project, active decisions, open questions
 - `/sync-parent` — manual parent rollup
 - `/reset-permissions` — clear session overrides, restore defaults
-- `/skill` — review pattern-detected skill drafts
+- `/review-skill` — review pattern-detected skill drafts
 
 ## Memory model
 
@@ -115,7 +115,7 @@ When `memory-keeper` detects a conflict between an incoming write and existing w
 
 ## Pattern detection
 
-`pattern-observer` runs background scan of `session-events.jsonl` over rolling 72h window. If ≥3 semantically similar events (n-gram similarity ≥0.8), surface as candidate skill via `pattern-to-skill`. Draft written to `skills/_drafts/<draft-name>/SKILL.md`. User reviews via `/skill`. Never auto-activate.
+`pattern-observer` runs background scan of `session-events.jsonl` over rolling 72h window. If ≥3 semantically similar events (n-gram similarity ≥0.8), surface as candidate skill via `pattern-to-skill`. Draft written to `skills/_drafts/<draft-name>/SKILL.md`. User reviews via `/review-skill`. Never auto-activate.
 
 ## Parent sync
 
