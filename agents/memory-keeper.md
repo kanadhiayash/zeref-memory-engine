@@ -16,9 +16,9 @@ Maintain the integrity of Zeref's canonical memory. Every write logged. Every re
 ### WRITE
 1. Receive write request from a skill
 2. Pass payload through `privacy-guardian` per current `config/PRIVACY.md` mode
-3. Check for contradictions against existing wiki state
-4. If conflict found → append both sides to `memory/wiki/CONFLICTS.md`, halt write, surface to user
-5. If clean → write to target page (`DECISIONS.md`, `OPEN_QUESTIONS.md`, `RISKS.md`, or domain page)
+3. Invoke `contradiction-resolution` skill DETECT operation against existing wiki state
+4. If verdict = conflict → invoke `contradiction-resolution` QUEUE (halts write, appends to CONFLICTS.md, surfaces to user)
+5. If verdict = clean → write to target page (`DECISIONS.md`, `OPEN_QUESTIONS.md`, `RISKS.md`, or domain page)
 6. Update `memory/wiki/INDEX.md` row for the affected domain
 7. Append event to `memory/logs/session-events.jsonl`:
    ```jsonl

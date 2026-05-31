@@ -6,6 +6,52 @@ Format: [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.PATCH`
 
 ---
 
+## [4.1.0] — 2026-05-30
+
+### M2 — contradiction + parent sync (full impl)
+
+Previously stubs in v4.0.0; now production-ready:
+
+- **`skills/contradiction-resolution/SKILL.md`** — fleshed out
+  - DETECT algorithm: subject/predicate/value fingerprint match against DECISIONS/OPEN_QUESTIONS/RISKS
+  - QUEUE flow: halt write → append to CONFLICTS.md → surface to user
+  - SNOOZE: snooze-until-done with reason capture; re-surfaces at /done
+  - RESOLVE: 3 modes (single winner with [SUPERSEDED] marker, both-valid context-dependent, merge synthesis)
+  - SNOOZED REVIEW: /done blocks completion until pending conflicts processed
+  - Evidence grade comparison surfaced but never auto-resolves
+  - 4 explicit anti-patterns refused (recency-wins, grade-wins, silent-drop, indefinite-snooze)
+
+- **`skills/parent-sync/SKILL.md`** — fleshed out
+  - Pre-flight: parent_path validation, child_id assignment
+  - STAGE: read push_content per config, filter via evidence-curator (≥ medium), pass through privacy-guardian, write to `memory/sync/outbound/<iso>/` with `manifest.json` (schema_version, child_id, source_events, privacy_mode, entry_counts)
+  - APPROVE: explicit user confirmation with preview support
+  - PUSH: copy to `<parent_path>/memory/sync/parent/<child_id>/<iso>/`, set read-only, log PUSHED
+  - PARENT-SIDE INGEST: parent's `/start` runs conflict detection on incoming entries; clean entries merge with child provenance, conflicts to parent's CONFLICTS.md
+  - ROLLBACK: recover bad pushes via provenance pointers
+  - Local-only privacy mode blocks all parent sync
+
+- **`agents/sync-coordinator.md`** — wired
+  - /start: applies permissions + mounts parent + ingests pending parent pushes
+  - /stop: prompts for parent push, snapshots wiki with manifest
+  - /sync-parent: direct invocation of parent-sync skill
+  - /reset-permissions: clears overrides, restores defaults
+  - Parent ingest orchestration: walks memory/sync/parent/*/ for unprocessed pushes
+
+- **`agents/memory-keeper.md`** — WRITE flow now invokes `contradiction-resolution` DETECT/QUEUE instead of inline conflict logic
+
+### Unchanged from v4.0.0
+- 10 skills (8 fully impl, 2 still stub: pattern-to-skill → M3)
+- 6 agents (5 fully impl, 1 still stub: pattern-observer → M3)
+- 7 commands
+- 5 config files
+- Memory scaffold
+- Root manifests
+
+### Roadmap
+- v4.2 (M3): pattern-observer + pattern-to-skill (last 2 stubs)
+
+---
+
 ## [4.0.0] — 2026-05-28
 
 ### Philosophical reset
