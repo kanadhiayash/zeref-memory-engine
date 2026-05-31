@@ -29,7 +29,7 @@ Watch for repeated work patterns. When a task signature repeats, suggest turning
 
 - Background only — never blocks active work
 - Never auto-creates a skill
-- All candidates queue in `skills/_drafts/` for user review via `/skill`
+- All candidates queue in `skills/_drafts/` for user review via `/review-skill`
 
 ## Safety
 

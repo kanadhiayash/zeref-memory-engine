@@ -27,7 +27,7 @@ Zeref is no longer an agent harness OS. It is now a **local-first context and me
 - **memory/** scaffold: raw, wiki (INDEX + DECISIONS + OPEN_QUESTIONS + RISKS + CONFLICTS + ARCHIVE), logs (session-events.jsonl), snapshots, sync (outbound + parent)
 - **10 skills**: `project-setup`, `wiki-maintenance`, `contradiction-resolution` *(M2 stub)*, `privacy-abstraction`, `parent-sync` *(M2 stub)*, `pattern-to-skill` *(M3 stub)*, `memory-import-export`, `budget-governor`, `handoff-compiler`, `evidence-grader`
 - **6 agents**: `memory-keeper` (refactored), `privacy-guardian` (refactored from trust-sentinel), `sync-coordinator` (new), `evidence-curator` (refactored from evaluator), `pattern-observer` *(M3 stub)*, `handoff-orchestrator` (new)
-- **7 commands**: `/start`, `/done`, `/stop`, `/status`, `/sync-parent`, `/reset-permissions`, `/skill`
+- **7 commands**: `/start`, `/done`, `/stop`, `/status`, `/sync-parent`, `/reset-permissions`, `/review-skill`
 - **Scripts**: `zeref-validate-v4.py` (new schema validator), `migrate-v3-to-v4.py` (one-shot migration)
 - `MIGRATION.md` documenting v3 → v4 changes
 - Append-only event log + snapshot system

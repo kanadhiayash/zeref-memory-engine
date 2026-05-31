@@ -24,7 +24,7 @@ Zeref is a local-first context and memory engine. It is **not** an agent harness
 - `/stop` — end session, snapshot, optional parent push
 - `/sync-parent` — manual parent rollup
 - `/reset-permissions` — clear session overrides
-- `/skill` — review pattern-detected skill drafts
+- `/review-skill` — review pattern-detected skill drafts
 
 ## Architecture
 
