@@ -6,6 +6,57 @@ Format: [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.PATCH`
 
 ---
 
+## [4.2.0] — 2026-05-30
+
+### M3 — pattern detection + skill drafting (full impl)
+
+Closes the v4 roadmap. Final 2 stubs promoted to production:
+
+- **`agents/pattern-observer.md`** — fleshed out
+  - 72h rolling window scan of `session-events.jsonl`
+  - Task signature extraction: verb + subject + 3-gram qualifiers (stop-words stripped)
+  - Jaccard similarity (≥0.8 threshold) over qualifier 3-gram sets
+  - Union-find clustering; discard clusters < 3 members
+  - Scoring: `frequency × (1 / recency_span_hours)` (favors dense recent repetition)
+  - Emits candidates to `memory/sync/outbound/patterns/<cluster-id>.json` with full schema
+  - Dedupe by cluster_id; update existing candidates with new members
+  - Quiet hours: top-3 by score per scan; rest logged as suppressed
+  - Activation: `/done`, `/stop`, `/status`, manual
+  - Background only — never blocks active work
+  - User can disable via `config/BUDGET.md` `pattern_detection: false`
+
+- **`skills/pattern-to-skill/SKILL.md`** — fleshed out
+  - DRAFT operation: load candidate → synthesize metadata (name, description, trigger, model, max_turns) → synthesize body (mission, when-to-use, operations, safety) → write `skills/_drafts/<name>/SKILL.md` + immutable `PROVENANCE.md`
+  - REVIEW QUEUE: list pending drafts with score + event count + description
+  - Per-draft prompt: show frontmatter + body + provenance summary
+  - 4 actions: approve (git mv preserves history + strip draft markers + log), edit (open file, re-prompt), reject (prompt reason, rm dir, mark candidate JSON rejected_at), defer (leave in place, increment counter, auto-prompt after 3 defers)
+  - PROVENANCE.md immutable — never edited after creation
+
+- **`commands/review-skill.md`** — fleshed out (was placeholder)
+  - Picks up new candidates → invokes pattern-to-skill DRAFT
+  - Then invokes REVIEW QUEUE for user processing
+  - Final report: counts of approved/edited/rejected/deferred
+
+- **`scripts/zeref-validate-v4.py`** — `skills/_drafts/` allowlisted, surfaces warning if drafts pending
+
+### Unchanged from v4.1.0
+- 10 skills (all 10 fully impl now)
+- 6 agents (all 6 fully impl now)
+- 7 commands (all fully impl)
+- 5 config files
+- Memory scaffold
+- Root manifests
+- v3 → v4 migration tooling
+
+### v4 roadmap complete
+- v4.0 (M1): core engine ✅
+- v4.1 (M2): contradiction-resolution + parent-sync ✅
+- v4.2 (M3): pattern-observer + pattern-to-skill ✅
+
+No stubs remain. Plugin fully production-ready.
+
+---
+
 ## [4.1.0] — 2026-05-30
 
 ### M2 — contradiction + parent sync (full impl)
