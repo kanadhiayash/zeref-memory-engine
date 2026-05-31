@@ -64,9 +64,23 @@ See `MIGRATION.md` and `scripts/migrate-v3-to-v4.py`.
 
 ## Roadmap
 
-- **v4.0 (M1, current)**: core engine — memory + commands + privacy
-- **v4.1 (M2)**: full contradiction-resolution + parent-sync
-- **v4.2 (M3)**: pattern detection + skill drafting
+- **v4.0 (M1)**: core engine — memory + commands + privacy ✅ shipped
+- **v4.1 (M2)**: full contradiction-resolution + parent-sync ✅ shipped
+- **v4.2 (M3, current)**: pattern detection + skill drafting ✅ shipped
+
+## Version compatibility
+
+| Tag | Status | Claude Code plugin schema | Notes |
+|---|---|---|---|
+| `v4.2.0` | **live** | ✔ current | Production. `claude plugin install zeref@zeref` |
+| `v4.1.0` | live | ✔ current | M2 — adds contradiction-resolution + parent-sync |
+| `v4.0.0` | live | ✔ current | M1 — philosophical reset, core engine |
+| `v3.0.0` | legacy archive | ✘ obsolete | Pre-v4 Agent OS framing. Won't install under current schema. |
+| `v2.1` | legacy archive | ✘ obsolete | Pre-marketplace fleet consolidation snapshot. |
+| `v2.0` | legacy archive | ⚠ warning | Snapshot of v2 fleet. Loads with warnings. |
+| `v1.1` | legacy archive | ✘ no manifest | Predates `.claude-plugin/` format. |
+
+Tags `v1.x`, `v2.x`, `v3.x` are preserved as historical snapshots for archival reference only. Install only `v4.x` releases.
 
 ## License
 
