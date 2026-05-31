@@ -1,126 +1,60 @@
-# Install Zeref OS
+# Install Zeref 4.0
 
-Two ways to install. Pick one.
-
-> **Warning:** Do NOT use "Add marketplace" in Claude Code — that is for multi-plugin registries, not individual plugins. It will fail with "no manifest found". Use the paths below.
-
----
-
-## Path A — GitHub Download ZIP (Recommended)
-
-**Requirements:** Claude Code CLI or Desktop App (v1.x+)
-
-1. Go to [github.com/kanadhiayash/zeref-os](https://github.com/kanadhiayash/zeref-os)
-2. Click **Code → Download ZIP**
-3. In Claude Code: **Settings → Plugins → Local uploads → +**
-4. Select the downloaded `zeref-os-main.zip`
-5. Click **Install**
-
-All 109 active skills, 11 commands, and 8 agents install automatically.
-
-> **Always use GitHub Download ZIP — do not zip the local repo folder.** Local zips include runtime database files (`ruvector.db`, `agentdb.rvf`) that trigger Claude Code's compression security scanner. The GitHub ZIP excludes them automatically.
-
----
-
-## Path B — Git Clone
+## Claude Code (CLI)
 
 ```bash
-git clone https://github.com/kanadhiayash/zeref-os.git
-cd zeref-os
-claude plugin install .
+claude plugin marketplace add kanadhiayash/zeref-os
+claude plugin install zeref@zeref
 ```
 
----
+Restart Claude Code. Skills available as `zeref:<skill-name>`. Commands available as `/zeref:<command>`.
 
-## Step 2 — Activate the OS Kernel
+## Codex / Gemini CLI / other harnesses
 
-After installing the plugin, load the OS kernel:
+1. Clone the repo into your project:
+   ```bash
+   git clone https://github.com/kanadhiayash/zeref-os.git .zeref
+   ```
+2. Point your harness at `.zeref/AGENTS.md` as the canonical agent spec.
+3. (Optional) Symlink `.zeref/CLAUDE.md` or `.zeref/GEMINI.md` to your project root for harness auto-load.
 
-1. Open Claude → **Project** (or create one for Zeref)
-2. Go to **Project Instructions**
-3. Paste the full contents of `ZEREFOS.md`
+## First-time setup
 
-This loads the routing kernel, identity rules, Karpathy principles, and Caveman triggers.
-
-**Without this step, skills install but routing and discipline rules don't apply.**
-
----
-
-## Step 3 — Start a Session
-
-Run the activation command:
-
+In any new project:
 ```
-/zeref-activate
+/start
 ```
 
-Zeref reads `wiki/hot.md`, reports current context, and asks what to work on.
+Triggers the `project-setup` interview. ~5 min. Writes 5 config files. Re-run `/start` after to boot the session.
 
----
-
-## Validate the Install
+## Verify
 
 ```bash
-python3 scripts/zeref-validate.py             # validates full fleet
-python3 scripts/zeref-validate.py --verbose   # shows PASS for each skill
+python3 .zeref/scripts/zeref-validate-v4.py
 ```
 
-Expected output: `🟢 VALIDATION PASSED — 109 skills, 8 agents, 11 commands`
-
----
-
-## Troubleshooting
-
-**"This repository isn't a marketplace" error:**
-- You used "Add marketplace" — that's the wrong dialog. Use **Local uploads** (Path A above).
-
-**Skills not showing up after install:**
-- Verify `skills/` folder has 109 subdirectories
-- Each subdirectory must contain `SKILL.md`
-- Run `python3 scripts/zeref-validate.py` to check for file issues
-
-**Compression warning on ZIP upload:**
-- You zipped the local repo folder instead of using GitHub Download ZIP
-- Delete the local zip, download fresh from GitHub (`Code → Download ZIP`), re-upload
-
-**ZEREFOS not routing correctly:**
-- Confirm `ZEREFOS.md` content is in Claude Project Instructions (not just uploaded as a file)
-- The kernel must be in the system prompt layer, not the conversation
-
-**Plugin.json schema errors:**
-- Check `.claude-plugin/plugin.json` matches your installed Claude Code version
-- Run `/zeref-audit` to diagnose
-
----
-
-## Directory Structure After Install
-
+Expect:
 ```
-zeref-os/
-├── .claude-plugin/plugin.json   ← Claude Code plugin manifest
-├── ZEREF.md                     ← OS identity and routing kernel
-├── ZEREFOS.md                   ← Paste into Project Instructions
-├── AGENTS.md                    ← Agent harness definitions (Codex compatible)
-├── GEMINI.md                    ← Gemini agent harness definitions
-├── CLAUDE.md                    ← Session start protocol
-├── INSTALL.md                   ← This file
-├── README.md                    ← Full documentation
-├── CHANGELOG.md                 ← Version history
-├── LICENSE                      ← MIT
-├── skills/                      ← 109 skills across 9 guilds
-├── commands/                    ← 11 slash commands
-├── agents/                      ← 8 privilege-scoped agents
-├── references/                  ← Shared rules (QA gate, safety, anti-hallucination)
-├── output-styles/               ← Output style definitions
-├── registry/                    ← Machine-readable skill index
-├── scripts/                     ← Validation and upgrade tools
-│   └── zeref-validate.py        ← Run to validate fleet
-├── experience.jsonl             ← Self-improvement log
-└── wiki/                        ← Session memory (hot.md, log.md, index.md)
-    ├── hot.md                   ← Last 3 sessions context
-    ├── log.md                   ← Append-only operation history
-    ├── index.md                 ← Domain knowledge map
-    ├── concepts/
-    ├── projects/
-    └── sources/
+✔ Validation passed
+Skills: 10/10
+Agents: 6/6
+Commands: 7/7
+Config: 5/5
 ```
+
+## Migrate from v3
+
+```bash
+python3 .zeref/scripts/migrate-v3-to-v4.py --from /path/to/old/wiki --to ./memory
+```
+
+See `MIGRATION.md` for what changes.
+
+## Uninstall
+
+```bash
+claude plugin uninstall zeref@zeref
+claude plugin marketplace remove zeref
+```
+
+Your `memory/` directory is local data — preserved unless you delete it.

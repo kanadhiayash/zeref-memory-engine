@@ -1,8 +1,51 @@
 # Changelog
 
-All notable changes to Zeref Agent OS are documented here.
+All notable changes to Zeref are documented here.
 
 Format: [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.PATCH`
+
+---
+
+## [4.0.0] — 2026-05-28
+
+### Philosophical reset
+Zeref is no longer an agent harness OS. It is now a **local-first context and memory engine** — harness-agnostic, model-agnostic, privacy-first, developer-first, free.
+
+### Removed (clean break)
+- 109 specialist skills (`zeref-biz-*`, `zeref-cnt-*`, `zeref-dev-*`, `zeref-mkt-*`, `zeref-qa-*`, `zeref-ux-*`, `zeref-hq-*`, `zeref-final-*`)
+- Agents: `zeref-fleet-router`, `zeref-council-convener`, `zeref-executive-qa-agent`, `zeref-release-governor`, `zeref-context-engine`
+- Identity files: `ZEREF.md`, `ZEREFOS.md`, `ZEREFPROJECT.md`
+- All CEO / Yash-specific / Ruflo / council framing
+- `registry/zeref-skill-registry.json`
+- `output-styles/`
+- 5 v3 helper scripts (`rebuild_registry.py`, `skill_updater.py`, `self_eval.py`, `upgrade_frontmatter.py`, `add_skill_descriptions.py`)
+- v3 `wiki/` (replaced by `memory/wiki/`)
+
+### Added
+- **Root manifests**: `AGENTS.md` (canonical), `CLAUDE.md` (shim), `GEMINI.md` (shim), `SKILL.md` (entry)
+- **config/** (5 files): PROJECT, PRIVACY, PERMISSIONS, PARENT_SYNC, BUDGET
+- **memory/** scaffold: raw, wiki (INDEX + DECISIONS + OPEN_QUESTIONS + RISKS + CONFLICTS + ARCHIVE), logs (session-events.jsonl), snapshots, sync (outbound + parent)
+- **10 skills**: `project-setup`, `wiki-maintenance`, `contradiction-resolution` *(M2 stub)*, `privacy-abstraction`, `parent-sync` *(M2 stub)*, `pattern-to-skill` *(M3 stub)*, `memory-import-export`, `budget-governor`, `handoff-compiler`, `evidence-grader`
+- **6 agents**: `memory-keeper` (refactored), `privacy-guardian` (refactored from trust-sentinel), `sync-coordinator` (new), `evidence-curator` (refactored from evaluator), `pattern-observer` *(M3 stub)*, `handoff-orchestrator` (new)
+- **7 commands**: `/start`, `/done`, `/stop`, `/status`, `/sync-parent`, `/reset-permissions`, `/skill`
+- **Scripts**: `zeref-validate-v4.py` (new schema validator), `migrate-v3-to-v4.py` (one-shot migration)
+- `MIGRATION.md` documenting v3 → v4 changes
+- Append-only event log + snapshot system
+- 3 privacy modes (exact / abstract / local-only)
+- Parent sync mechanism (full impl in v4.1.0)
+
+### Renamed
+- `agents/zeref-memory-keeper.md` → `agents/memory-keeper.md`
+- `agents/zeref-trust-sentinel.md` → `agents/privacy-guardian.md`
+- `agents/zeref-evaluator.md` → `agents/evidence-curator.md`
+- Commands lost `zeref-` prefix and merged: `/zeref-activate` → `/start`, `/zeref-save` → `/done`, etc.
+
+### Migration
+v3 frozen at git tag `v3.0.0-frozen`. Use `scripts/migrate-v3-to-v4.py` for data migration. No backward compat shims — clean break.
+
+### Roadmap
+- v4.1 (M2): full `contradiction-resolution` + `parent-sync`
+- v4.2 (M3): `pattern-observer` + `pattern-to-skill` draft generation
 
 ---
 
