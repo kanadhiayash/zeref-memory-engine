@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
-zeref-validate-v4.py — Validate Zeref 4.3 plugin structure.
+zeref-validate.py — Validate Zeref OS plugin structure.
 
 Checks:
 - Root manifests (SKILL.md, AGENTS.md, CLAUDE.md, GEMINI.md)
-- Root privacy templates (PRIVACY.md, REDACT.md, SHARING_POLICY.md) per ZEREF_OS §4.1
+- Root privacy templates (PRIVACY.md, REDACT.md, SHARING_POLICY.md)
 - config/ has required files
-- memory/ scaffold complete (flat layout per ZEREF_OS §12)
+- memory/ scaffold complete (flat layout)
 - skills/ has expected inventory (10 dirs, each with SKILL.md + valid frontmatter)
 - agents/ has 6 agents with valid frontmatter
-- commands/ has 8 commands (added /team in v4.3)
+- commands/ has 8 commands (/start /done /stop /status /sync-parent /reset-permissions /review-skill /team)
 - team-packs/ has 6 packs
-- references/v4x-canon/ has 6 design docs
+- references/v4x-canon/ has 6 design docs (historical reference)
 - harness stubs present (.cursor/rules/zeref.mdc, .windsurfrules, .aider.conf.yml.example)
 - plugin.json + marketplace.json present and valid JSON
 - Deprecation warning if legacy memory/wiki/ still has live content
@@ -161,7 +161,7 @@ def main():
             errors.append(f"{m}: invalid JSON ({e})")
 
     # Output
-    print(f"Zeref 4.3 validator — {ROOT}")
+    print(f"Zeref OS validator — {ROOT}")
     print(f"Skills:           {sum((ROOT / 'skills' / s).is_dir() for s in EXPECTED['skills'])}/10")
     print(f"Agents:           {sum((ROOT / 'agents' / a).is_file() for a in EXPECTED['agents'])}/6")
     print(f"Commands:         {sum((ROOT / 'commands' / c).is_file() for c in EXPECTED['commands'])}/8")
@@ -170,7 +170,7 @@ def main():
     print(f"Root privacy:     {sum((ROOT / f).is_file() for f in EXPECTED['root_privacy'])}/3 (PRIVACY, REDACT, SHARING_POLICY)")
     print(f"v4x canon:        {sum((ROOT / 'references/v4x-canon' / c).is_file() for c in EXPECTED['v4x_canon'])}/6")
     print(f"Harness stubs:    {sum((ROOT / s).is_file() for s in EXPECTED['harness_stubs'])}/3")
-    print(f"Memory layout:    flat (v4.3)")
+    print(f"Memory layout:    flat")
 
     if warnings:
         print("\nWarnings:")

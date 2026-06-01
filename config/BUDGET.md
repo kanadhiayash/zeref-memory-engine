@@ -17,7 +17,7 @@ The `budget-governor` skill scales output verbosity and read patterns to the act
 
 ## Tier table
 
-| Tier | Model target | Zeref behavior | Per-skill cap |
+| Tier | Model target | Zeref OS behavior | Per-skill cap |
 |---|---|---|---|
 | **Free** | Gemini Flash, local Ollama, Mistral | Aggressive compaction, minimal wiki writes, short `/status` outputs | 4 000 tok |
 | **Standard** | GPT-4o mini, Claude Haiku, Gemini Flash 3.5 | Normal operation, full wiki writes, standard conflict scans | 8 000 tok |
@@ -53,4 +53,4 @@ Override above by setting `model_tier:` to `free` / `standard` / `god-mode`.
 
 ## No hardcoded limits
 
-User sets the ceiling above. Zeref warns before approaching it. Free to install; capability scales with the user's own model tier.
+User sets the ceiling above. Zeref OS warns before approaching it. Free to install; capability scales with the user's own model tier.

@@ -1,4 +1,4 @@
-# GEMINI.md — Gemini harness shim
+# GEMINI.md — Gemini harness shim (Zeref OS)
 
 **Canonical spec: `AGENTS.md`** — read it first. This file only adds Gemini-specific notes.
 

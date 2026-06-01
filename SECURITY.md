@@ -1,14 +1,14 @@
-# Security Policy — Zeref Agent OS
+# Security Policy — Zeref OS
 
 ## Reporting Vulnerabilities
 
-If you discover a security vulnerability in Zeref Agent OS, please report it by opening a GitHub Issue with the label `security`.
+If you discover a security vulnerability in Zeref OS, please report it by opening a GitHub Issue with the label `security`.
 
 Do NOT include sensitive credentials, API keys, or access tokens in issue reports.
 
 ## Scope
 
-Zeref Agent OS is a collection of AI agent skill definitions (Markdown files) and supporting scripts. Security concerns include:
+Zeref OS is a collection of AI agent skill definitions (Markdown files) and supporting scripts. Security concerns include:
 
 - Prompt injection risks in skill definitions
 - Trust sentinel bypass patterns

@@ -1,8 +1,8 @@
-# Contributing to Zeref Agent OS
+# Contributing to Zeref OS
 
 ## What This Is
 
-Zeref Agent OS is a Context Engine and Agent Harness OS. Contributions improve the harness — skills, agents, references, and scripts — not the underlying models.
+Zeref OS is a Context Engine and Agent Harness OS. Contributions improve the harness — skills, agents, references, and scripts — not the underlying models.
 
 ## How to Contribute
 

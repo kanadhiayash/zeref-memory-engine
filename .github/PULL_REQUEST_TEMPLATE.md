@@ -18,7 +18,7 @@
 
 ## Architectural fit
 
-Confirm this PR respects Zeref's core principles:
+Confirm this PR respects Zeref OS's core principles:
 - [ ] Local-first (no hosted dependency added)
 - [ ] Harness-agnostic (works in Claude / Codex / Gemini / Cursor / Windsurf / Aider / Hermes / Amp / Zed / Perplexity)
 - [ ] Privacy-first (writes pass through privacy-guardian per PRIVACY.md + REDACT.md + SHARING_POLICY.md)
