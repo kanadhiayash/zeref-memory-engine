@@ -4,7 +4,7 @@
 
 <p align="center">
   <strong>Local-first context and memory engine for AI-assisted work.</strong><br>
-  Harness-agnostic · Model-agnostic · Privacy-first · Developer-first · Free
+  Harness-agnostic · Model-agnostic · Privacy-first · Developer-first · Free to install
 </p>
 
 <p align="center">
@@ -432,15 +432,21 @@ Full inspiration table with links: [`references/v4x-canon/RESEARCH_RESOURCES.md`
 
 ---
 
-## What Zeref OS is NOT
+## What Zeref OS is NOT (and what those mean)
 
-Not an agent harness. Not a CEO persona. Not a hosted service. Not a multi-agent council. Not a skill fleet. Not bundled with any MCP tools. Not dedicated to any single user or organization.
+- **Not itself a harness.** Zeref OS plugs *into* your existing harness (Claude Code, Cursor, Codex, Gemini CLI, Windsurf, Aider, etc.). It's the memory layer they read — not a replacement for the harness itself.
+- **Not a hosted service.** No Zeref OS server, no account, no cloud. Your memory lives in local markdown files in your repo. Optional MCP connectors can talk to hosted services (GitHub, Linear, Notion, etc.) — but only after you explicitly enable them in `SHARING_POLICY.md`.
+- **Not bundled with any MCP tools.** Recommendation-only. Zeref OS never installs a connector on your behalf.
+- **Not a sprawling skill catalog.** 10 disciplined skills with strict triggers — not the v1.x "fleet of 109 specialist skills" approach.
+- **Not an always-on multi-agent council.** Team packs are on-demand only and capped at 4 agents. No background swarm.
+- **Not a CEO persona.** Zeref OS is a context + memory engine, not a leader. (Historical reject of the v3.x framing.)
+- **Not dedicated to any single user or organization.** Free to install. Use with any project, any model you bring.
 
 ---
 
 ## License
 
-MIT — Free for any user, any harness, any model.
+MIT licensed. Free to install — bring your own models, your own harness.
 
 ---
 
