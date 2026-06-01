@@ -29,7 +29,7 @@ EXPECTED = {
     "root_manifests": ["SKILL.md", "AGENTS.md", "CLAUDE.md", "GEMINI.md"],
     "root_privacy": ["PRIVACY.md", "REDACT.md", "SHARING_POLICY.md"],
     "config": ["PROJECT.md", "PERMISSIONS.md", "PARENT_SYNC.md", "BUDGET.md", "claude-overrides.md"],
-    "memory_dirs": ["raw", "logs", "snapshots", "sync/outbound", "sync/parent", "archive", "patterns"],
+    "memory_dirs": ["raw", "snapshots", "sync/outbound", "sync/parent", "archive", "patterns"],
     "memory_flat": ["hot.md", "index.md", "MEMORY.md", "DECISIONS.md", "OPEN_QUESTIONS.md", "RISKS.md", "CONFLICTS.md"],
     "skills": [
         "project-setup", "wiki-maintenance", "contradiction-resolution",
