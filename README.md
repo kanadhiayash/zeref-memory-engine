@@ -117,21 +117,21 @@ flowchart TB
   end
 
   subgraph Commands["8 commands"]
-    CMD1[/start]
-    CMD2[/done]
-    CMD3[/stop]
-    CMD4[/status]
-    CMD5[/team]
-    CMD6[/sync-parent]
-    CMD7[/reset-permissions]
-    CMD8[/review-skill]
+    CMD1["/start"]
+    CMD2["/done"]
+    CMD3["/stop"]
+    CMD4["/status"]
+    CMD5["/team"]
+    CMD6["/sync-parent"]
+    CMD7["/reset-permissions"]
+    CMD8["/review-skill"]
   end
 
   subgraph TeamPacks["6 team packs (on-demand, max 4 agents)"]
     TP1[solo]
     TP2[build]
     TP3[research]
-    TP4[red - read-only]
+    TP4["red (read-only)"]
     TP5[audit]
     TP6[ship]
   end
