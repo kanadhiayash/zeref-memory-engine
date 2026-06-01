@@ -171,12 +171,12 @@ Full table + adding-a-harness procedure: `references/harness-translation-map.md`
 
 See `MIGRATION.md`.
 
-## What Zeref OS is not
+## What Zeref OS is NOT (and what those mean)
 
-- Not an agent harness
-- Not a CEO persona
-- Not a hosted service
-- Not a multi-agent council
-- Not a skill fleet
-- Not bundled with any MCP tools
-- Not dedicated to any single user or organization
+- **Not itself a harness.** Zeref OS plugs *into* the user's harness (Claude Code, Cursor, Codex, Gemini, Windsurf, Aider). It is the memory layer they read — not a replacement for the harness.
+- **Not a hosted service.** No Zeref OS server. Memory lives in local markdown in the project repo. Optional MCP connectors talk to hosted services only after explicit enable in `SHARING_POLICY.md`.
+- **Not bundled with any MCP tools.** Recommendation-only. Never installs a connector on the user's behalf.
+- **Not a sprawling skill catalog.** 10 disciplined skills with strict triggers — not the historical v1.x "fleet of 109 specialist skills".
+- **Not an always-on multi-agent council.** Team packs are on-demand only and capped at 4 agents.
+- **Not a CEO persona.** Context + memory engine, not a leader. (Historical rejection of v3.x framing.)
+- **Not dedicated to any single user or organization.** Free to install; use any model the user brings.

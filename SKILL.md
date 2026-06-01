@@ -6,7 +6,7 @@ description: Zeref OS — local-first context and memory engine for AI-assisted 
 
 # Zeref OS
 
-Zeref OS is a local-first context and memory engine. It is **not** an agent harness, **not** a CEO persona, **not** an operating system in the kernel sense. It is the persistent memory layer your AI tools should have had from day one — named after Zeref Dragneel from *Fairy Tail*, the immortal scholar who carried ancient knowledge across forms and ages.
+Zeref OS is a local-first context and memory engine that plugs *into* your existing AI harness (Claude Code, Cursor, Codex, Gemini, Windsurf, Aider). It is **not itself a harness**, **not a CEO persona**, **not a kernel-level OS**. It is the persistent memory layer your AI tools should have had from day one — named after Zeref Dragneel from *Fairy Tail*, the immortal scholar who carried ancient knowledge across forms and ages.
 
 ## What Zeref OS does
 
