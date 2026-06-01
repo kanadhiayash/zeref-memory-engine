@@ -1,12 +1,12 @@
-# CLAUDE.md — Claude harness shim
+# CLAUDE.md — Claude harness shim (Zeref OS)
 
 **Canonical spec: `AGENTS.md`** — read it first. This file only adds Claude-specific notes.
 
 ## Claude-specific
 
-- Use Claude Code's Skill tool to invoke skills as `zeref:<skill-name>` (post-install).
-- Slash commands resolve under `/zeref:<command>` namespace.
-- Sub-agents (Task tool) are not required — Zeref uses lightweight markdown agents.
+- Use Claude Code's Skill tool to invoke skills as `zeref-os:<skill-name>` (post-install).
+- Slash commands resolve under `/zeref-os:<command>` namespace.
+- Sub-agents (Task tool) are not required — Zeref OS uses lightweight markdown agents.
 - Prefer Haiku for `memory-keeper` writes; Sonnet for `project-setup` interview; Opus only for `pattern-to-skill` draft generation.
 - Per-harness quirks live in `config/claude-overrides.md`.
 

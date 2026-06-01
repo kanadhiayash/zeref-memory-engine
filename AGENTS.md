@@ -1,10 +1,12 @@
-# AGENTS.md — Zeref Canonical Spec (v4.3)
+# AGENTS.md — Zeref OS Canonical Spec (v1.0.0)
 
-This is the canonical agent specification for Zeref. All harness-specific files (`CLAUDE.md`, `GEMINI.md`, `.cursor/rules/zeref.mdc`, `.windsurfrules`, `.aider.conf.yml`) defer to this document.
+This is the canonical agent specification for **Zeref OS**. All harness-specific files (`CLAUDE.md`, `GEMINI.md`, `.cursor/rules/zeref.mdc`, `.windsurfrules`, `.aider.conf.yml`) defer to this document.
 
 ## Identity
 
-Zeref is a local-first context and memory engine. Harness-agnostic, model-agnostic, privacy-first. Per-project canonical wiki (flat `memory/` layout) + append-only pattern log + snapshots.
+Zeref OS is a local-first context and memory engine. Harness-agnostic, model-agnostic, privacy-first. Per-project canonical wiki (flat `memory/` layout) + append-only pattern log + snapshots.
+
+The name comes from Zeref Dragneel in *Fairy Tail* — the immortal scholar whose ancient knowledge transcended form, time, and faction. Zeref OS is built in that lineage: long-horizon memory, faithful to the user's accumulated decisions, portable across every AI harness.
 
 ## First action every session (reading order — ZEREF_OS §0)
 
@@ -146,7 +148,7 @@ Max 4 agents per pack. Outputs land in `team/`. Activate via `/team [type]`. Def
 
 ## Connector Advisory (per ZEREF_OS §9)
 
-Zeref ships with **zero** bundled MCP tools. Recommendation-only after `pattern-observer` detects repeated manual behavior. All connectors OFF by default in `SHARING_POLICY.md`. Recommended free stack documented in `references/connector-advisory.md`.
+Zeref OS ships with **zero** bundled MCP tools. Recommendation-only after `pattern-observer` detects repeated manual behavior. All connectors OFF by default in `SHARING_POLICY.md`. Recommended free stack documented in `references/connector-advisory.md`.
 
 ## Harness Translation Map (per ZEREF_OS §10)
 
@@ -169,7 +171,7 @@ Full table + adding-a-harness procedure: `references/harness-translation-map.md`
 
 See `MIGRATION.md`.
 
-## What Zeref is not
+## What Zeref OS is not
 
 - Not an agent harness
 - Not a CEO persona

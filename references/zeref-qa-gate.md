@@ -1,4 +1,4 @@
-# Zeref 4.0 QA Gate
+# Zeref OS 4.0 QA Gate
 
 **Run before every wiki write and every handoff package.**
 

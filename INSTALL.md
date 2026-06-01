@@ -1,17 +1,17 @@
-# Install Zeref 4.3
+# Install Zeref OS
 
 ## Claude Code (CLI)
 
 ```bash
 claude plugin marketplace add kanadhiayash/zeref-os
-claude plugin install zeref@zeref
+claude plugin install zeref-os@zeref-os
 ```
 
-Restart Claude Code. Skills available as `zeref:<skill-name>`. Commands available as `/zeref:<command>`.
+Restart Claude Code. Skills surface as `zeref-os:<skill-name>` via the Skill tool. Commands as `/zeref-os:<command>`.
 
 ## Codex / Gemini CLI / Antigravity / Hermes / Amp / Zed / Perplexity Computer
 
-These harnesses read `AGENTS.md` natively (per ZEREF_OS §10).
+These harnesses read `AGENTS.md` natively.
 
 1. Clone the repo into your project:
    ```bash
@@ -55,10 +55,11 @@ Aider reads `AGENTS.md` natively and `.aider.conf.yml` for harness-specific beha
 
 In any new project:
 ```
-/start
+/zeref-os:start
 ```
+(or just `/start` if your harness namespaces slash commands automatically).
 
-Triggers the `project-setup` interview. ~5 min. Writes:
+This triggers the `project-setup` interview. ~5 min. Writes:
 - `config/PROJECT.md`
 - `PRIVACY.md` (root)
 - `REDACT.md` (root)
@@ -67,54 +68,42 @@ Triggers the `project-setup` interview. ~5 min. Writes:
 - `config/PARENT_SYNC.md`
 - `config/BUDGET.md`
 
-Re-run `/start` after to boot the session. Default privacy mode is **abstract**; default connectors are **all OFF**.
+Re-run `/zeref-os:start` after to boot the session. Default privacy mode is **abstract**; default connectors are **all OFF**.
 
 ## Verify
 
 ```bash
-python3 .zeref/scripts/zeref-validate-v4.py
+python3 .zeref/scripts/zeref-validate.py
 ```
 
 Expect:
 ```
+Zeref OS validator — /path/to/your/project
+Skills:           10/10
+Agents:           6/6
+Commands:         8/8
+Team packs:       6/6
+Config:           5/5
+Root privacy:     3/3 (PRIVACY, REDACT, SHARING_POLICY)
+v4x canon:        6/6
+Harness stubs:    3/3
+Memory layout:    flat
 ✔ Validation passed
-Skills: 10/10
-Agents: 6/6
-Commands: 8/8
-Team packs: 6/6
-Privacy templates: 3/3 (PRIVACY, REDACT, SHARING_POLICY)
-Memory layout: flat (v4.3)
 ```
 
-## Migrate from earlier Zeref versions
+## Migrating from an earlier local version
 
-```bash
-# From v3 (CEO persona / fleet framing)
-python3 .zeref/scripts/migrate-v3-to-v4.py --from /path/to/v3-project/wiki --to ./memory
+If you experimented with pre-1.0 Zeref OS releases (v1.x Skills Fleet, v2.x Agent OS, v3.x specialist, v4.x context-and-memory engine) locally, see `MIGRATION.md`:
 
-# From v4.0 / v4.1 / v4.2 (nested memory/wiki/ layout, config/PRIVACY.md)
-python3 .zeref/scripts/migrate-v4.2-to-v4.3.py            # dry-run
-python3 .zeref/scripts/migrate-v4.2-to-v4.3.py --apply    # actual migration
-```
-
-The v4.2 → v4.3 script:
-- Snapshots `memory/` to `memory/snapshots/pre-v4.3-<iso>/` for rollback
-- Moves `memory/wiki/*` → flat `memory/`
-- Renames `memory/wiki/ARCHIVE/` → `memory/archive/` (lowercase)
-- Archives `memory/logs/session-events.jsonl` → `memory/archive/session-events-v4.2.jsonl`
-- Creates `memory/patterns/PATTERNS.jsonl` with cutover marker
-- Creates `memory/hot.md` + `memory/MEMORY.md` scaffolds
-- Archives `config/PRIVACY.md` → `memory/archive/` (root `PRIVACY.md` is authored separately)
-- Uses `git mv` to preserve history
-- Idempotent: safe to re-run
-
-See `MIGRATION.md` for full details.
+- **Pre-v4 → v4**: `scripts/migrate-v3-to-v4.py` (preserves your v3 wiki content)
+- **v4.0–v4.2 → v4.3 (flat memory layout)**: `scripts/migrate-v4.2-to-v4.3.py`
+- **v4.3 → Zeref OS v1.0.0**: no data migration needed — reinstall the plugin under the new name (`zeref-os@zeref-os`). All `memory/`, `PRIVACY.md`, `REDACT.md`, `SHARING_POLICY.md`, `config/` files keep their paths.
 
 ## Uninstall
 
 ```bash
-claude plugin uninstall zeref@zeref
-claude plugin marketplace remove zeref
+claude plugin uninstall zeref-os@zeref-os
+claude plugin marketplace remove zeref-os
 ```
 
 Your `memory/` directory is local data — preserved unless you delete it.

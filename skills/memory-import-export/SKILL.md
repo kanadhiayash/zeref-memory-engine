@@ -19,8 +19,8 @@ Move memory between projects, tools, formats, and backups without losing provena
 
 ### IMPORT
 Sources supported:
-- v3 Zeref wiki (`wiki/hot.md`, `wiki/log.md`) → use `scripts/migrate-v3-to-v4.py`
-- v4.2 Zeref (`memory/wiki/`, `memory/logs/session-events.jsonl`) → use `scripts/migrate-v4.2-to-v4.3.py`
+- v3 Zeref OS wiki (`wiki/hot.md`, `wiki/log.md`) → use `scripts/migrate-v3-to-v4.py`
+- v4.2 Zeref OS (`memory/wiki/`, `memory/logs/session-events.jsonl`) → use `scripts/migrate-v4.2-to-v4.3.py`
 - Plain markdown directory → parse to `memory/index.md` entries
 - JSONL event log → append to `memory/patterns/PATTERNS.jsonl` (dedupe by hash)
 - Notion / Linear / GitHub export → map to `memory/DECISIONS.md` / `memory/OPEN_QUESTIONS.md` / `memory/RISKS.md`

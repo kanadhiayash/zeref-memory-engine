@@ -1,17 +1,17 @@
 ---
-name: zeref
-version: 4.3.0
-description: Local-first context and memory engine for AI-assisted work. Harness-agnostic, model-agnostic, privacy-first. Flat memory layout, per-project wiki, append-only pattern log, snapshots, on-demand team packs. Makes AI work cumulative instead of stateless across every harness.
+name: zeref-os
+version: 1.0.0
+description: Zeref OS — local-first context and memory engine for AI-assisted work. Harness-agnostic, model-agnostic, privacy-first. Flat memory layout, per-project wiki, append-only pattern log, snapshots, on-demand team packs. Makes AI work cumulative instead of stateless across every harness.
 ---
 
-# Zeref 4.3
+# Zeref OS
 
-Zeref is a local-first context and memory engine. It is **not** an agent harness, **not** a CEO persona, **not** an operating system. It is the persistent memory layer your AI tools should have had from day one.
+Zeref OS is a local-first context and memory engine. It is **not** an agent harness, **not** a CEO persona, **not** an operating system in the kernel sense. It is the persistent memory layer your AI tools should have had from day one — named after Zeref Dragneel from *Fairy Tail*, the immortal scholar who carried ancient knowledge across forms and ages.
 
-## What Zeref does
+## What Zeref OS does
 
 - **Remembers**: per-project flat `memory/` wiki + append-only `PATTERNS.jsonl` + snapshots
-- **Persists across harnesses**: works in Claude Code, Codex, Gemini CLI / Antigravity, Cursor, Windsurf, Aider, Hermes, Amp, Zed, Perplexity Computer, or any tool that reads markdown (per ZEREF_OS §10)
+- **Persists across harnesses**: works in Claude Code, Codex, Gemini CLI / Antigravity, Cursor, Windsurf, Aider, Hermes, Amp, Zed, Perplexity Computer, or any tool that reads markdown
 - **Protects**: 3 privacy modes (exact / abstract / local-only) + REDACT.md sensitive classes + SHARING_POLICY.md connector allowlist (all OFF by default)
 - **Arbitrates**: contradictions surface to the user; never silently resolved
 - **Extends itself**: detects repeated patterns (Two-Strikes Rule), drafts new skills review-first to `skills/drafts/`
@@ -19,20 +19,20 @@ Zeref is a local-first context and memory engine. It is **not** an agent harness
 
 ## Entry points
 
-- `/start` — session boot with context restored (hot.md → index.md per ZEREF_OS §0)
-- `/done` — write summary, persist decisions, refresh hot.md, conflict scan, snapshot
-- `/stop` — end session, optional parent push, optional handoff compile
-- `/status` — current session state + active team + pending drafts
-- `/team` — activate a team pack
-- `/sync-parent` — manual parent rollup
-- `/reset-permissions` — clear session overrides
-- `/review-skill` — review pattern-detected skill drafts
+- `/zeref-os:start` — session boot with context restored (hot.md → index.md)
+- `/zeref-os:done` — write summary, persist decisions, refresh hot.md, conflict scan, snapshot
+- `/zeref-os:stop` — end session, optional parent push, optional handoff compile
+- `/zeref-os:status` — current session state + active team + pending drafts
+- `/zeref-os:team` — activate a team pack
+- `/zeref-os:sync-parent` — manual parent rollup
+- `/zeref-os:reset-permissions` — clear session overrides
+- `/zeref-os:review-skill` — review pattern-detected skill drafts
 
 ## Architecture
 
 See `AGENTS.md` (canonical), `CLAUDE.md` (Claude shim), `GEMINI.md` (Gemini shim), `.cursor/rules/zeref.mdc`, `.windsurfrules`, `.aider.conf.yml.example`.
 
-## Memory layout (flat per ZEREF_OS §12)
+## Memory layout (flat)
 
 ```
 memory/
@@ -40,7 +40,7 @@ memory/
   index.md          # domain index
   MEMORY.md         # agent-written session notes
   DECISIONS.md / OPEN_QUESTIONS.md / RISKS.md / CONFLICTS.md
-  archive/          # superseded entries (never deleted per D9)
+  archive/          # superseded entries (never deleted)
   patterns/PATTERNS.jsonl  # append-only event log
   snapshots/        # point-in-time wiki state
   sync/             # outbound and parent rollup artifacts
@@ -49,4 +49,4 @@ memory/
 
 ## Promise
 
-Zeref makes AI work feel cumulative instead of stateless — in every harness, with any model, with privacy on by default.
+Zeref OS makes AI work feel cumulative instead of stateless — in every harness, with any model, with privacy on by default.

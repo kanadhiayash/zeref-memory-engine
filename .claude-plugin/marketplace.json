@@ -1,16 +1,16 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "zeref",
-  "description": "Local-first context and memory engine for AI-assisted work. Harness-agnostic, model-agnostic, privacy-first.",
+  "name": "zeref-os",
+  "description": "Zeref OS — local-first context and memory engine for AI-assisted work. Harness-agnostic, model-agnostic, privacy-first.",
   "owner": {
     "name": "Yash Kanadhia",
     "url": "https://github.com/kanadhiayash"
   },
   "plugins": [
     {
-      "name": "zeref",
+      "name": "zeref-os",
       "source": "./",
-      "description": "Local-first context and memory engine"
+      "description": "Local-first context + memory engine. Per-project flat memory, append-only pattern log, snapshots, on-demand team packs. Inspired by Zeref Dragneel — keeper of ancient knowledge across forms."
     }
   ]
 }

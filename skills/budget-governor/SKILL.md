@@ -17,13 +17,13 @@ Keep token cost in line with the active model tier. Surface budget pressure earl
 
 ## Tier table (per ZEREF_OS §5)
 
-| Tier | Model target | Zeref behavior | Per-skill cap |
+| Tier | Model target | Zeref OS behavior | Per-skill cap |
 |---|---|---|---|
 | **Free** | Gemini Flash, local Ollama, Mistral | Aggressive compaction, minimal wiki writes, short `/status` outputs | 4 000 tok |
 | **Standard** | GPT-4o mini, Claude Haiku, Gemini Flash 3.5 | Normal operation, full wiki writes, standard conflict scans | 8 000 tok |
 | **God Mode** | GPT-4o, Claude Opus / Sonnet, Gemini 3.5 Pro | Full parent-child sync, deep conflict analysis, pattern retrospectives | 16 000 tok |
 
-God Mode activates **automatically** when a high-tier model is detected. No hardcoded limits. User sets the ceiling in `config/BUDGET.md`. Zeref warns before approaching it.
+God Mode activates **automatically** when a high-tier model is detected. No hardcoded limits. User sets the ceiling in `config/BUDGET.md`. Zeref OS warns before approaching it.
 
 ## Operations
 

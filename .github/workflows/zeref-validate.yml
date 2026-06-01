@@ -1,4 +1,4 @@
-name: Zeref 4.0 Validation
+name: Zeref OS Validation
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    name: Validate Zeref 4.0 structure
+    name: Validate Zeref OS structure
 
     steps:
       - name: Checkout
@@ -20,8 +20,8 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Run v4 validator
-        run: python3 scripts/zeref-validate-v4.py
+      - name: Run validator
+        run: python3 scripts/zeref-validate.py
 
       - name: Check skill count (exactly 10)
         run: |
@@ -41,14 +41,32 @@ jobs:
             exit 1
           fi
 
-      - name: Check command count (exactly 7)
+      - name: Check command count (exactly 8)
         run: |
           CMD_COUNT=$(ls commands/*.md | wc -l | tr -d ' ')
           echo "Command count: $CMD_COUNT"
-          if [ "$CMD_COUNT" -ne "7" ]; then
-            echo "ERROR: expected 7 commands, found $CMD_COUNT"
+          if [ "$CMD_COUNT" -ne "8" ]; then
+            echo "ERROR: expected 8 commands, found $CMD_COUNT"
             exit 1
           fi
+
+      - name: Check team pack count (exactly 6)
+        run: |
+          PACK_COUNT=$(ls team-packs/*.md | wc -l | tr -d ' ')
+          echo "Team pack count: $PACK_COUNT"
+          if [ "$PACK_COUNT" -ne "6" ]; then
+            echo "ERROR: expected 6 team packs, found $PACK_COUNT"
+            exit 1
+          fi
+
+      - name: Check root privacy templates exist
+        run: |
+          for f in PRIVACY.md REDACT.md SHARING_POLICY.md; do
+            if [ ! -f "$f" ]; then
+              echo "ERROR: $f missing at root"
+              exit 1
+            fi
+          done
 
       - name: Check LICENSE exists
         run: |
