@@ -158,6 +158,7 @@ Action? [approve / edit / reject / defer]
 
 ## Safety
 
+- Per `_shared/rules.md#R6` (Zero Context Loss): draft SKILL.md must preserve every PATTERNS.jsonl entity that contributed to the pattern detection — tool names, file paths, repeated arguments. PROVENANCE.md cites each source event by hash.
 - Drafts never auto-activate (no `status: active` until approved)
 - Drafts directory `skills/drafts/` ignored by skill loader (validator allowlists this path)
 - `git mv` preserves history on approval (do not copy+delete)

@@ -8,7 +8,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kanadhiayash/zeref-os/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/version-1.0.0-blueviolet" alt="v1.0.0"></a>
+  <a href="https://github.com/kanadhiayash/zeref-os/releases"><img src="https://img.shields.io/badge/version-2.5-blueviolet" alt="v2.5"></a>
+  <a href="tests/zeref-rubric-v2.5.md"><img src="https://img.shields.io/badge/rubric-8.0%2F10-success" alt="rubric 8.0/10"></a>
+  <a href="tests/security-audit-vC.md"><img src="https://img.shields.io/badge/CRITICAL-0%20open-success" alt="0 CRITICAL"></a>
+  <a href="tests/scores-vD-live.csv"><img src="https://img.shields.io/badge/live%20tests-20%2F20-success" alt="20/20 live"></a>
+  <a href="https://github.com/kanadhiayash/zeref-os/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/source--of--truth-v1.0.0-blueviolet" alt="v1.0.0"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT"></a>
   <a href="https://agents.md"><img src="https://img.shields.io/badge/AGENTS.md-canonical-blue" alt="AGENTS.md"></a>
   <a href="https://github.com/kanadhiayash/zeref-os/actions/workflows/zeref-validate.yml"><img src="https://github.com/kanadhiayash/zeref-os/actions/workflows/zeref-validate.yml/badge.svg" alt="CI"></a>

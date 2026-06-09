@@ -8,6 +8,55 @@ Full pre-rebrand history (Skills Fleet → Agent OS → Zeref 4.x) is preserved 
 
 ---
 
+## [2.6.0] — 2026-06-08
+
+> **v2.6 Auto-Gated Execution — 4-gate chain shipped (budget → router → fleet → prompt → handoff)**
+
+Zeref shifts from reactive memory engine to proactive auto-gated execution system. Every major task passes four sequential gates — budget classification → skill-stack selection → prompt restructuring → model-tier routing — before a single execution-model token is spent. Gates declare themselves inline so the user sees and can override.
+
+### Skills (+4)
+
+- `budget-governor` — UPDATED. 2026 Anthropic pricing matrix (Haiku 4.5 / Sonnet 4.6 / Opus 4.7). New §Cost Weight Classification (CRITICAL / HIGH / MEDIUM / LOW). New §Auto-Activation Rule (6 steps). Legacy Free / Standard / God Mode aliases preserved for `tests/scores-v*.csv` back-compat.
+- `skill-router` — NEW (Gate #2). Maps task domain → smallest-useful-stack (1 lead + 2-3 support + 1 QA). Never activates all 14 skills.
+- `fleet-activator` — NEW. Live-probes ECC / claude-obsidian / Graphify / browser-harness / notebooklm / gstack reachability. Names gap + proposes emulator if unreachable.
+- `prompt-context-engine` — NEW (Gate #3). Classifies STRUCTURED / SEMI-STRUCTURED / UNSTRUCTURED. Rewrites UNSTRUCTURED into `<objective>/<deliverable>/<constraints>/<context>/<success_criteria>` brief with 30-second auto-approve. Adapted from upgrade-plan source; Notion + Linear blocks dropped (not applicable to this repo).
+- `caveman-handoff` — NEW (Session C). Compresses session handoff into caveman-grammar payload that survives cross-model switches. Companion to `handoff-compiler`.
+
+### Skills count: 10 → 14
+
+### AGENTS.md (+2 Core Principles, +2 sections, Skills table +4)
+
+- Core Principle 13: Cost-Weight Auto-Gate.
+- Core Principle 14: Task-Weight Model Routing.
+- New `## Auto-Activation Gates` section (3 gates).
+- New `## Model-Tier Routing` section (weight → model matrix + cascade pattern + hard constraints + per-skill audit).
+
+### `_shared/rules.md` (+R6)
+
+- R6 — Zero Context Loss. Every fact / named entity / constraint from raw prompt survives restructure, routing, handoff. Forward dependency: caveman-handoff carries the brief diff across model switches.
+
+### Registry
+
+- `zeref-registry.json`: 10 → 14 entries (skill-router, fleet-activator, prompt-context-engine, caveman-handoff added).
+
+### Model audit
+
+All 14 skills' `model` fields audited against weight matrix. No LOW→opus or CRITICAL→haiku mismatches. Borderline: `privacy-abstraction` (`risk_level: high`, `model: haiku`) kept on Haiku — deterministic REDACT.md rules suffice; tracked as forward signal for `pattern-observer`.
+
+### Rubric impact
+
+- Execution: cost-discipline by construction; mismatches surface before token spend.
+- Engineer Credibility: every session declares stack + weight + brief inline — grep-able evidence of professional workflow design.
+- Operational Readiness: extended-tool reachability live-probed rather than assumed.
+
+### Migration notes
+
+- Existing `tests/scores-v*.csv` referencing Free / Standard / God Mode labels continue to work via aliases mapped in `budget-governor` §Tier table.
+- No SKILL.md content changes to the original 10 skills beyond `budget-governor` rewrite.
+- No core memory / privacy / single-writer architecture touched.
+
+---
+
 ## [2.5.0] — 2026-06-05
 
 > **v2.5 Deep Audit Campaign — 6 phases shipped (A-F)**

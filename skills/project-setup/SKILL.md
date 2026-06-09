@@ -2,9 +2,14 @@
 name: project-setup
 description: Conversational interview that populates config/PROJECT.md, root PRIVACY.md + REDACT.md + SHARING_POLICY.md, config/PERMISSIONS.md, config/PARENT_SYNC.md, config/BUDGET.md. Activates on first /start or when any required config is missing.
 trigger:
-  - first /start
-  - missing config/PROJECT.md
-  - user says "set up project"
+  - first /start (config/PROJECT.md absent — NOT triggered on subsequent /start runs)
+  - any required config file missing (PRIVACY.md, REDACT.md, SHARING_POLICY.md, config/PERMISSIONS.md, config/BUDGET.md)
+  - "set up project"
+  - "initialize project"
+  - "configure this project"
+  - "missing config"
+  - "redo setup"
+  - "reset project config" (re-run of setup for existing project)
 model: claude-sonnet-4-6
 max_turns: 20
 ---
