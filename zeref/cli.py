@@ -80,7 +80,7 @@ def cmd_status(args: argparse.Namespace) -> int:
 
 
 def cmd_write_decision(args: argparse.Namespace) -> int:
-    """v2.5: L9 lock + L10 atomic + L11 scrub input before disk write."""
+    """Write a decision: hold single-writer lock, atomic append, scrub PII first."""
     from zeref.lock import MemoryLock, atomic_append, LockError
     from zeref.privacy import scrub
 
@@ -94,7 +94,7 @@ def cmd_write_decision(args: argparse.Namespace) -> int:
     grade    = args.grade    or "medium"
     today    = date.today().isoformat()
 
-    # L11: scrub PII from all user-provided fields before persisting
+    # scrub PII from all user-provided fields before persisting
     title_s,    title_r    = scrub(title, redact, provenance="write-decision/title")
     why_s,      why_r      = scrub(why, redact, provenance="write-decision/why")
     evidence_s, evidence_r = scrub(evidence, redact, provenance="write-decision/evidence")
@@ -111,7 +111,7 @@ def cmd_write_decision(args: argparse.Namespace) -> int:
         f"---\n"
     )
 
-    # L9 + L10: hold lock, atomic append
+    # hold single-writer lock, atomic append
     memory_dir = root / "memory"
     memory_dir.mkdir(parents=True, exist_ok=True)
     try:
@@ -365,7 +365,6 @@ def _build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("demo", help="Run sandbox demo (20 regression tasks)")
 
-    # v2.5 L5 — init
     init_p = sub.add_parser("init", help="Scaffold memory/ + config/ + privacy templates")
     init_p.add_argument("--directory", help="Target dir (default: cwd)")
     init_p.add_argument("--name", help="Project name (non-interactive)")
@@ -373,7 +372,6 @@ def _build_parser() -> argparse.ArgumentParser:
     init_p.add_argument("--tier", choices=["auto","free","standard","god-mode"])
     init_p.add_argument("--parent", help="Parent project path")
 
-    # v2.5 L4 — db status
     sub.add_parser("db-status", help="Report backend (sqlite/duckdb) + extras")
 
     return p

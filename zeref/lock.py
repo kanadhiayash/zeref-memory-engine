@@ -1,7 +1,5 @@
 """
-zeref.lock — Advisory single-writer lock + atomic write helpers (v2.5 L9 + L10).
-
-Closes Phase C V06/V11 (single-writer race) and Phase B Recovery gap.
+zeref.lock — Advisory single-writer lock + atomic write helpers.
 
 Two primitives:
 

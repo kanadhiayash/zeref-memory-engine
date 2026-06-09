@@ -15,9 +15,9 @@ Checks:
 - harness stubs present
 - plugin.json + marketplace.json present and valid JSON
 - Deprecation warning if legacy memory/wiki/ still has live content
-- v2.6.1: PATTERNS.jsonl event allowlist + per-event JSON-schema [L5, L15]
-- v2.6.1: skill-route stack-length lint (max 5) [L14]
-- v2.6.1: Auto-Activation Gate presence lint (warn if missing gate events in recent log) [L3 advisory]
+- PATTERNS.jsonl event allowlist + per-event JSON-schema
+- skill-route stack-length lint (max 5)
+- Auto-Activation Gate presence lint (warn if missing gate events in recent log)
 
 Exit 0 on pass, 1 on fail.
 """
@@ -51,7 +51,7 @@ EXPECTED = {
     "plugin_manifests": [".claude-plugin/plugin.json", ".claude-plugin/marketplace.json"],
 }
 
-# L5 + L15 — PATTERNS.jsonl event allowlist + per-event required payload keys
+# PATTERNS.jsonl event allowlist + per-event required payload keys
 EVENT_SCHEMA = {
     "wiki-write":       {"required": ["summary"], "optional": []},
     "session-start":    {"required": [], "optional": ["trigger", "scope", "budget_ceiling_usd", "team", "force_multipliers"]},
@@ -107,10 +107,10 @@ def check_yaml_frontmatter(path, required_keys):
 
 
 def load_skill_inventory():
-    """L1: load skill list from zeref-registry.json (no more hardcoded /10)."""
+    """Load skill list from zeref-registry.json (dynamic skill count)."""
     reg_path = ROOT / "zeref-registry.json"
     if not reg_path.is_file():
-        errors.append("missing zeref-registry.json (required by L1 dynamic skill count)")
+        errors.append("missing zeref-registry.json (required for dynamic skill count)")
         return []
     try:
         reg = json.loads(reg_path.read_text())
@@ -121,8 +121,8 @@ def load_skill_inventory():
 
 
 def lint_patterns_log(skill_inventory):
-    """L5 + L15: validate PATTERNS.jsonl event schema. L14: stack-length cap.
-    L3 advisory: warn if no recent gate events.
+    """Validate PATTERNS.jsonl event schema + stack-length cap.
+    Advisory: warn if no recent gate events.
     skill-route lead/support may be either skill names OR agent names (memory-keeper / privacy-guardian etc.).
     """
     # Extend inventory with agent names (skill-router lead can be an agent — e.g. memory-keeper)
@@ -155,12 +155,12 @@ def lint_patterns_log(skill_inventory):
         for req in schema["required"]:
             if req not in payload:
                 gate_lint.append(f"PATTERNS.jsonl line {i}: event '{etype}' missing required payload key '{req}'")
-        # L14 + Core Principle 14 lint
+        # Core Principle 14 lint — stack cap of 5
         if etype == "skill-route":
             support = payload.get("support", [])
             stack_size = 1 + len(support) + (1 if payload.get("qa") else 0)
             if stack_size > 5:
-                gate_lint.append(f"PATTERNS.jsonl line {i}: skill-route stack size {stack_size} > 5 (L14 cap; AGENTS.md skill-router §Anti-patterns)")
+                gate_lint.append(f"PATTERNS.jsonl line {i}: skill-route stack size {stack_size} > 5 (stack cap; AGENTS.md skill-router §Anti-patterns)")
             lead = payload.get("lead")
             if lead and lead not in inventory_set:
                 gate_lint.append(f"PATTERNS.jsonl line {i}: skill-route lead '{lead}' not in registry")
@@ -175,7 +175,7 @@ def lint_patterns_log(skill_inventory):
                 gate_lint.append(f"PATTERNS.jsonl line {i}: budget-gate {w}->{t} mismatch (Core Principle 14 violation; only allowed with match=OVERRIDE)")
         if etype in gate_events_seen:
             gate_events_seen[etype] += 1
-    # L3 advisory
+    # advisory
     if sum(gate_events_seen.values()) == 0 and len(lines) > 5:
         warnings.append("no Auto-Activation Gate events (budget-gate/skill-route/prompt-gate) in PATTERNS.jsonl despite >5 entries — gates may be skipped")
 
@@ -258,7 +258,7 @@ def main():
         except (FileNotFoundError, json.JSONDecodeError) as e:
             errors.append(f"{m}: invalid JSON ({e})")
 
-    # L5 + L14 + L15: PATTERNS.jsonl validation
+    # PATTERNS.jsonl validation (schema + stack-cap)
     lint_patterns_log(skill_inventory)
 
     # Output

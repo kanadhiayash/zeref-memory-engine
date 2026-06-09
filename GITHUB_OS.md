@@ -17,35 +17,20 @@ Per global GITHUB_OS §3.2: `<type>/zeref__<short-description>`.
 Examples:
 - `feat/zeref__skill-router-v2`
 - `fix/zeref__validator-skills-count`
-- `chore/zeref__history-reconstruction-v2.6.1`
-- `release/v<major>.<minor>` — frozen-baseline snapshot per FAANG §3.4 controlled baselines (never receives further commits after creation)
-- `release/v<major>.<minor>-legacy` — pre-rebrand (v2.0–v4.3) snapshots
+- `release/v<major>.<minor>` — frozen-baseline snapshot (never receives further commits after creation)
 
 ### Tags
 
 Per global GITHUB_OS §3.4: SemVer `v<major>.<minor>.<patch>` on `main` only.
 
-Zeref-specific: pre-rebrand legacy tags (v2.0 / v2.1 / v3.0.0 / v4.0.0 / v4.1.0 / v4.2.0 / v4.3.0) marked as **GitHub `prerelease`**. Post-rebrand (v1.0.0 / v2.5.0 / v2.6.0 / v2.6.1+) marked as **full release**.
-
 ### Commits
 
 Conventional Commits with scope `(zeref)`. Examples:
-- `chore(zeref): release v2.6.1 — Audit + Hardening Campaign`
+- `chore(zeref): release v2.6.1`
 - `feat(zeref): add prompt-context-engine Gate #3`
-- `fix(zeref): validator dynamic skill count from registry (L1)`
+- `fix(zeref): validator dynamic skill count from registry`
 - `docs(zeref): add R6 Zero Context Loss to _shared/rules.md`
 - `ci(zeref): add zeref-validate workflow`
-
-### Audit cycle
-
-Every major release (`v<major>.0.0` or `v<minor>.0` shift) requires a deep audit campaign (Phases A-G per the v2.5 + v2.6.1 template):
-- Phase A: claim inventory (`tests/claims-v<X>.csv`)
-- Phase B: sandbox stress (`tests/scores-v<X>-B.csv`)
-- Phase C: security hunt (`tests/security-audit-v<X>-C.md`, CVSS-scored)
-- Phase F: AskUserQuestion arbitration (decisions logged to `memory/DECISIONS.md`)
-- Phase D: workaround L-items
-- Phase E: rubric re-score (`tests/zeref-rubric-v<X>.md`)
-- Phase G: wiki-maintenance + commit + push
 
 ### Required gates before push
 
@@ -61,9 +46,9 @@ Per `_shared/model-resolver.md`: registry uses full Anthropic ids (`claude-haiku
 
 ### Memory layer discipline
 
-Per AGENTS.md §0 reading order + `memory/CONFLICTS.md#C1` (memory-drift root cause):
-- Every ship cycle MUST include a `wiki-maintenance` pass before `/stop`
-- `memory/{hot.md,index.md,DECISIONS.md,CONFLICTS.md,RISKS.md}` refreshed at every release
+Per AGENTS.md §0 reading order:
+- Every ship cycle includes a `wiki-maintenance` pass before `/stop`
+- `memory/{hot.md,index.md,DECISIONS.md,RISKS.md}` refreshed at every release
 - `memory/patterns/PATTERNS.jsonl` records session-start + gate events + wiki-writes (validator allowlist enforced)
 
 ### Knowledge-OS artifact naming (new files only)
@@ -71,7 +56,6 @@ Per AGENTS.md §0 reading order + `memory/CONFLICTS.md#C1` (memory-drift root ca
 Per FAANG brief: `[scope]_[subject]_[type]_[state]_[owner]_[yyyy-mm-dd]_v[major.minor]`.
 
 Applied to:
-- ADRs (`docs/adr/`): e.g. `zeref_auto-gated-execution_adr_approved_yk_2026-06-08_v1.0.md`
 - Release log (`docs/RELEASE_LOG.md`): tabular form per row
 
 Existing repo files (SKILL.md, AGENTS.md, CHANGELOG.md, etc.) keep their established Zeref-OS conventions.
@@ -81,7 +65,7 @@ Existing repo files (SKILL.md, AGENTS.md, CHANGELOG.md, etc.) keep their establi
 Per FAANG brief §Classification levels:
 - `public`: README.md, CHANGELOG*.md, GitHub Releases, docs/RELEASE_LOG.md, AGENTS.md, SKILL.md, PRIVACY.md/REDACT.md/SHARING_POLICY.md
 - `internal`: memory/*, agents/, scripts/, tests/, zeref/, _shared/
-- `restricted`: never committed (no credentials / PII / client data; H0.1 + H7.0 sweep gates enforced)
+- `restricted`: never committed (no credentials / PII / client data)
 
 ## Repo-specific paths
 

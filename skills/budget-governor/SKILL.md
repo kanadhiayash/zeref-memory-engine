@@ -34,7 +34,7 @@ Notes:
 - Thinking tokens billed as output tokens (Anthropic 2026).
 - Opus 4.7 tokenizer ~+35% vs Sonnet for same English text — flag inflation when pinning Opus for cost-sensitive work; Opus 4.6 remains the cost-sensitive flagship.
 - Prompt cache reads = 0.1x input cost. Batch API = 0.5x both.
-- Free / Standard / God Mode labels preserved for backward compat with `tests/scores-v*.csv`.
+- Free / Standard / God Mode are accepted aliases for HAIKU / SONNET / OPUS.
 
 User can override tier in `config/BUDGET.md` `model_tier:` field.
 
@@ -101,7 +101,7 @@ User can override in `config/BUDGET.md` `model_tier:` frontmatter field.
 
 
 
-## Dual-key override (L13 — hardened per Phase C V05 MEDIUM)
+## Dual-key override
 
 User may attempt to override a hard-block (e.g. CRITICAL on Haiku). Single-key override (user types "proceed") is insufficient — Core Principle 14 violation slips through silently.
 
@@ -121,7 +121,7 @@ User may attempt to override a hard-block (e.g. CRITICAL on Haiku). Single-key o
    `event: budget-gate, payload: {weight: CRITICAL, tier: HAIKU, match: OVERRIDE, override_reason: "<text>"}`
 4. **pattern-observer** surveils for repeat overrides in 48-80h window — ≥3 same-class overrides triggers `pattern-to-skill` candidate "user routinely overrides X on Y tier — consider reclassifying."
 
-Override events count toward `budget-warn_at_tokens` but bypass the hard-block. Validator (`scripts/zeref-validate.py`) recognizes `match=OVERRIDE` per `EVENT_SCHEMA["budget-gate"]` allowlist (L15).
+Override events count toward `budget-warn_at_tokens` but bypass the hard-block. Validator (`scripts/zeref-validate.py`) recognizes `match=OVERRIDE` per the `budget-gate` event schema allowlist.
 
 Single-key shortcuts (user just says "override") are rejected with a re-prompt requiring full directive + brief acknowledgement.
 
