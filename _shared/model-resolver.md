@@ -1,6 +1,6 @@
-# Model Resolver (v2.6.1)
+# Model Resolver
 
-Canonical mapping between bare tier names (legacy / human-friendly) and full Anthropic model IDs (API-callable + version-explicit). Per `_shared/rules.md#R6` + AGENTS.md `## Model-Tier Routing` + locked decision D-2026-06-08-model-names.
+Canonical mapping between bare tier names (legacy / human-friendly) and full Anthropic model IDs (API-callable + version-explicit). Per `_shared/rules.md#R6` + AGENTS.md `## Model-Tier Routing`.
 
 ## Canonical table (full IDs are the source of truth)
 
@@ -72,5 +72,5 @@ def resolve_model(name: str) -> str:
 - `skills/fleet-activator/SKILL.md` — model field `claude-haiku-4-5`
 - `skills/prompt-context-engine/SKILL.md` — frontmatter `model: sonnet` → resolved at load to `claude-sonnet-4-6`
 - `skills/caveman-handoff/SKILL.md` — model field `claude-haiku-4-5`
-- `zeref-registry.json` — all 14 entries normalized in Phase D L2 (2026-06-08)
+- `zeref-registry.json` — all 14 entries normalized to full Anthropic ids
 - `AGENTS.md` `## Model-Tier Routing` — Tier table column "Model" cites full IDs

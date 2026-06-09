@@ -19,7 +19,7 @@ classes:
       - government_ids            # SSN, passport, license
       - dates_of_birth
   email:
-    enabled: true                  # v2.5 L2 — closes V01/V02 (homoglyph + base64 bypass)
+    enabled: true                  # always-on — homoglyph + base64 bypass coverage
     replacement: "[PII:email]"
     patterns:
       - email_addresses_standalone # bare addresses outside name patterns

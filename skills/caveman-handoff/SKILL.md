@@ -101,7 +101,7 @@ These blocks remain in normal prose inside the handoff payload, marked `<!-- ver
 
 
 
-## Path normalization + homoglyph guard (L12 — hardened per Phase C V04 HIGH)
+## Path normalization + homoglyph guard
 
 §Caveman compression rules say "Keep verbatim: File paths." But verbatim byte-equality lets Unicode lookalikes (Cyrillic а U+0430 vs Latin a U+0061) survive into the receiving session — receiving agent reads the wrong file at a visually-identical path.
 

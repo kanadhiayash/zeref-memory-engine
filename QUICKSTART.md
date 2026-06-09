@@ -58,7 +58,7 @@ zeref write-decision \
   --grade high
 ```
 
-If input contains PII you'll see `PII scrubbed from inputs: N token(s)` — v2.5 L11 scrubs before write.
+If input contains PII you'll see `PII scrubbed from inputs: N token(s)` — `zeref write-decision` scrubs before write.
 
 ---
 

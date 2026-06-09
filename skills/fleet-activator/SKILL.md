@@ -49,7 +49,7 @@ If unreachable, name the gap explicitly in the report. Never proceed silently wi
 
 
 
-## Marker-file probe (L9 — hardened per Phase C V03)
+## Marker-file probe
 
 Presence-only probe (`test -d` / `test -f`) is **not sufficient** — adversary can `mkdir` an empty path matching the expected location. Each tool requires a per-tool marker check:
 
