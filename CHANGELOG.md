@@ -317,3 +317,8 @@ No data migration required — all memory files (`memory/`, `PRIVACY.md`, `REDAC
 ---
 
 For the full history before v1.0.0 (Zeref Skills Fleet v1.x, Zeref Agent OS v2.x, Zeref OS v3.x, Zeref 4.0–4.3 context-and-memory engine), see [`CHANGELOG-LEGACY.md`](CHANGELOG-LEGACY.md).
+
+
+---
+
+Full legacy history (pre-rebrand v2.0–v4.3): [CHANGELOG-LEGACY.md](./CHANGELOG-LEGACY.md)
