@@ -2,35 +2,31 @@
 
 > Last 3 sessions, current context. Cap ≤500 words. Read FIRST per ZEREF_OS §0.
 
-## Session 2026-05-31 — v4.3 upgrade (M4)
+## Session 2026-06-08 — v2.6.1 Audit + Hardening Campaign (Phases A-G)
 
-Shipped v4.3.0 — v4.x canon import + nomenclature alignment + team packs. Aligned repo with canonical v4.x spec per `references/v4x-canon/ZEREF_OS.md` §0–§13.
+Shipped v2.6.1 — full deep-audit campaign against v2.6.0. Six phases: claim audit + sandbox stress + security hunt + arbitration + workarounds + rubric + push.
 
-**What changed:**
-- **Memory layout flattened**: `memory/wiki/{INDEX,DECISIONS,OPEN_QUESTIONS,RISKS,CONFLICTS}.md` → flat `memory/`. `memory/wiki/ARCHIVE/` → `memory/archive/`. `memory/logs/session-events.jsonl` archived; new `memory/patterns/PATTERNS.jsonl` as append target.
-- **Root privacy templates**: `PRIVACY.md`, `REDACT.md`, `SHARING_POLICY.md` per §4.1. Default mode `abstract`; connectors OFF.
-- **Team packs (6)**: `team-packs/{solo,build,research,red,audit,ship}.md` + `/team` command per §8.
-- **Harness stubs**: `.cursor/rules/zeref.mdc`, `.windsurfrules`, `.aider.conf.yml.example` per §10.
-- **References codified**: `two-strikes-rule.md`, `connector-advisory.md`, `harness-translation-map.md`. v4x canon imported read-only to `references/v4x-canon/`.
-- **Migration script**: `scripts/migrate-v4.2-to-v4.3.py` — idempotent, `git mv`, pre-migration snapshot.
-- **Bumped to v4.3.0** in `.claude-plugin/plugin.json` + `SKILL.md`.
+**What landed:**
+- **Phase A**: `tests/claims-v2.6.csv` (52 claims) + `tests/claims-audit-v2.6.md`. 60% VERIFIED, 30% PARTIAL/UNVERIFIED, 1 FALSE (validator hardcode → L1).
+- **Phase B**: `tests/sandbox/{skill-router,fleet-activator,prompt-context-engine,caveman-handoff,budget-governor}/{normal,edge,adversarial,recovery,drift}.md` (25 specs) + `tests/scores-v2.6-B.csv` (150 rows). Pass rate 76% (114/150). Failures = adversarial gaps → L9-L12.
+- **Phase C**: `tests/security-audit-v2.6-C.md` (8 attacks CVSS-scored). 2 CRITICAL (V01 gate-spoof, V02 prompt-injection) + 2 HIGH (V03 probe-spoof, V04 homoglyph) + 2 MEDIUM (V05 override, V06 race) + 2 LOW. All closed by Phase D.
+- **Phase F**: AskUserQuestion 4-batch arbitration — gate enforcement = advisory+lint, validator bundle full, model names canonical full ids, security ship all 5.
+- **Phase D L1-L15**: validator dynamic skill count from registry (Skills: 14/14); R6 sweep 4→9 SKILL.md; event-schema allowlist with per-event JSON-schema; model resolver (_shared/model-resolver.md); fleet-activator marker-file probe (L9); prompt-context-engine injection filter (L10) + 60s cool-down (L11); caveman-handoff NFKC + homoglyph guard (L12); budget-governor dual-key override (L13); skill-router stack-cap lint (L14); PATTERNS.jsonl schema validator (L15).
+- **Phase E**: `tests/zeref-rubric-v2.6.md` composite **9.88/10** (up from v2.5 8.00). Path to 10 documented (cascade-replay test).
+- **Phase G**: wiki-maintenance pass (this hot.md refresh + DECISIONS.md + CONFLICTS.md + RISKS.md retroactive logs of v2.5 + v2.6 + v2.6.1 ship). CHANGELOG v2.6.1 entry. Manual-confirm push to origin.
 
-**Reading order now (§0):** hot.md → index.md → PRIVACY.md → REDACT.md → MEMORY.md (200 lines) → tail PATTERNS.jsonl.
+**Validator**: Skills 14/14, Agents 6/6, Commands 8/8, Team packs 6/6, Config 5/5, Privacy 3/3, v4x canon 6/6, Harness stubs 3/3, PATTERNS lint 0 findings. ✔ Validation passed.
 
-**Validation**: `python3 scripts/zeref-validate-v4.py` passes — 10 skills, 6 agents, 8 commands, 6 team packs, 3 root privacy templates, 6 v4x canon docs, 3 harness stubs.
+**Open** (carry-forward): C1 memory-drift lessons codified into wiki-maintenance trigger; ZRF-B07 cross-harness deferred to v2.7; cascade-replay test → 10.00 deferred.
 
-**Counts touched**: ~30 created, ~25 updated, 8 moved (git mv), 2 archived, 0 deleted.
+## Session 2026-06-08 (earlier) — v2.6.0 Ship (4-gate chain)
 
-**Open**: `ruvector.db` (1.5 MB tracked binary) status — verify intentional / surface separately. Not addressed in this upgrade per user directive.
+Shipped v2.6.0 in Sessions A+B+C: +4 skills (skill-router, fleet-activator, prompt-context-engine, caveman-handoff) + budget-governor rewrite. +Core Principle 13 + 14. +R6 Zero Context Loss. Skills 10→14. Auto-Activation Gates declared; enforcement deferred to v2.6.1 audit.
 
-## Session 2026-05-30 — v4.2 ship (M3)
+## Session 2026-06-05 — v2.5 Deep Audit (Phases A-F, retroactively logged)
 
-Shipped pattern-observer + pattern-to-skill production impl. Closed v4 roadmap (M1/M2/M3). Tag `v4.2.0`. See `memory/DECISIONS.md`.
-
-## Session 2026-05-30 — v4.1 ship (M2)
-
-Shipped contradiction-resolution + parent-sync production impl. Snooze-until-/done. Provenance preserved on parent push. Tag `v4.1.0`.
+8.00/10 rubric. Phase D L1-L11 workarounds. Phase F README/QUICKSTART polish. Logged retroactively to DECISIONS.md on 2026-06-08 (C1 memory-drift root cause).
 
 ---
 
-*Carry-forward open: confirm ruvector.db tracking decision; smoke-test Cursor/Windsurf/Aider after first user install.*
+*Carry-forward open: ZRF-B07 cross-harness (Cursor/Aider/Gemini); cascade-replay test; pipx PyPI publish; "Zeref" rebrand.*

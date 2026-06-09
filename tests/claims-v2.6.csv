@@ -1,0 +1,53 @@
+claim_id,source_file,source_anchor,claim,category,evidence_recency,evidence_provenance,evidence_corroboration,composite_grade,status,contradiction_id,notes
+ZRF-C2.6-001,AGENTS.md,"Core Principle 13","Cost-Weight Auto-Gate: budget-governor runs before every major task; CRITICAL/HIGH cannot proceed without stated tier",architecture,high,spec,low,PARTIAL,VERIFIED-PROSE,C4,Prose-only; no enforcement code
+ZRF-C2.6-002,AGENTS.md,"Core Principle 14","Task-Weight Model Routing: LOW never on Opus; CRITICAL never on Haiku",architecture,high,spec,low,PARTIAL,VERIFIED-PROSE,C4,Prose-only; no enforcement code
+ZRF-C2.6-003,AGENTS.md,"## Auto-Activation Gates","3 gates fire sequentially before any execution-model call",architecture,high,spec,low,PARTIAL,VERIFIED-PROSE,C4,No code enforcement
+ZRF-C2.6-004,AGENTS.md,"Gate #1 spec","Output line format [budget-governor] weight=<W> tier=<T> match=<OK|MISMATCH> budget_remaining=$<n>",contract,high,spec,low,PARTIAL,VERIFIED-PROSE,,No regex validator
+ZRF-C2.6-005,AGENTS.md,"Gate #2 spec","Output [skill-router] domain=<D> lead=<L> support=[<s1>,<s2>] qa=<Q> ext=<E|none>",contract,high,spec,low,PARTIAL,VERIFIED-PROSE,,No regex validator
+ZRF-C2.6-006,AGENTS.md,"Gate #3 spec","Output [prompt-context-engine] class=<C> action=<proceed|assume|restructure> brief_tokens=<n>",contract,high,spec,low,PARTIAL,VERIFIED-PROSE,,No regex validator
+ZRF-C2.6-007,AGENTS.md,"## Skills (14)","14 skills declared in Skills table",count,high,spec,medium,VERIFIED,VERIFIED,,Matches registry + skills/ dirs
+ZRF-C2.6-008,AGENTS.md,"## Model-Tier Routing","CRITICAL→Opus high, HIGH→Sonnet medium, MEDIUM→Sonnet low/Haiku medium, LOW→Haiku low",architecture,high,spec,low,PARTIAL,VERIFIED-PROSE,,Audit per-skill registry alignment in Phase D
+ZRF-C2.6-009,AGENTS.md,"Cascade pattern","orchestrator @ Sonnet medium → executor @ Sonnet/Haiku → final gate @ Opus high",architecture,high,spec,low,UNVERIFIED,UNVERIFIED,,No tests; no orchestrator code
+ZRF-C2.6-010,AGENTS.md,"Per-skill model audit","All 14 skills' model fields audited; no LOW→opus or CRITICAL→haiku mismatches",audit-claim,high,spec,low,PARTIAL,PARTIAL,C3,Done by inspection at v2.6 ship; not re-verified by code
+ZRF-C2.6-011,skills/budget-governor/SKILL.md,"Tier table","Haiku 4.5 $1/$5; Sonnet 4.6 $3/$15; Opus 4.7 $5/$25",pricing,high,vendor-2026,medium,VERIFIED,VERIFIED,,Anthropic 2026 published rates; verify at execution time
+ZRF-C2.6-012,skills/budget-governor/SKILL.md,"Opus tokenizer","Opus 4.7 tokenizer ~+35% vs Sonnet for same English text",pricing,high,vendor,low,PARTIAL,UNVERIFIED,,Cited as Anthropic 2026 note; no benchmark in repo
+ZRF-C2.6-013,skills/budget-governor/SKILL.md,"Prompt cache","Prompt cache reads = 0.1× input cost",pricing,high,vendor,medium,VERIFIED,VERIFIED,,Anthropic published
+ZRF-C2.6-014,skills/budget-governor/SKILL.md,"Batch API","Batch API = 0.5× both",pricing,high,vendor,medium,VERIFIED,VERIFIED,,Anthropic published
+ZRF-C2.6-015,skills/budget-governor/SKILL.md,"Cost Weight Classification","CRITICAL $0.50-$5.00; HIGH $0.10-$0.50; MEDIUM $0.02-$0.10; LOW <$0.02",contract,high,spec,low,UNVERIFIED,UNVERIFIED,,Heuristic ranges; no empirical baseline
+ZRF-C2.6-016,skills/budget-governor/SKILL.md,"Auto-Activation Rule","6-step process for gate fire",contract,high,spec,low,PARTIAL,VERIFIED-PROSE,C4,Steps prose-only
+ZRF-C2.6-017,skills/budget-governor/SKILL.md,"Legacy aliases","Free/Standard/God Mode preserved as aliases mapped to new table",compat,high,spec,medium,VERIFIED,VERIFIED,,Aliases present in tier table
+ZRF-C2.6-018,skills/budget-governor/SKILL.md,"Hard block CRITICAL on Haiku","Refuse execution until escalated",safety,high,spec,low,PARTIAL,VERIFIED-PROSE,C4,No code refusal
+ZRF-C2.6-019,skills/budget-governor/SKILL.md,"Mid-session token tracking","Track cumulative tokens via session events",functional,high,spec,low,UNVERIFIED,UNVERIFIED,,No tracker in zeref/
+ZRF-C2.6-020,skills/skill-router/SKILL.md,"Domain matrix","11 domain rows mapped to lead+support+QA+ext",contract,high,spec,medium,VERIFIED,VERIFIED,,Matrix complete in SKILL.md
+ZRF-C2.6-021,skills/skill-router/SKILL.md,"Smallest-useful-stack cap","Max 5 skills per stack; never all 13",safety,high,spec,low,PARTIAL,VERIFIED-PROSE,,No enforcement
+ZRF-C2.6-022,skills/skill-router/SKILL.md,"Stack declaration mandatory","No execution proceeds without inline [skill-router] line",safety,high,spec,low,PARTIAL,VERIFIED-PROSE,C4,No validator check
+ZRF-C2.6-023,skills/skill-router/SKILL.md,"User override","route: lead=X support=[Y,Z] swaps stack",ux,high,spec,low,UNVERIFIED,UNVERIFIED,,No parser for override syntax
+ZRF-C2.6-024,skills/skill-router/SKILL.md,"Default stack","domain unmatched → lead=memory-keeper support=[evidence-grader,wiki-maintenance] qa=privacy-guardian",fallback,high,spec,medium,VERIFIED,VERIFIED,,Default spec'd
+ZRF-C2.6-025,skills/fleet-activator/SKILL.md,"Probe targets","6 tools: ECC, claude-obsidian, Graphify, browser-harness, notebooklm, gstack",contract,high,spec,medium,VERIFIED,VERIFIED,,All 6 listed with probe method
+ZRF-C2.6-026,skills/fleet-activator/SKILL.md,"ECC path","~/Documents/Claude/11_MY-STACK/ECC-main/ OR ~/.claude/plugins/cache/ecc/ecc/",probe,high,fs-check,high,VERIFIED,VERIFIED,,Both verified reachable 2026-06-08
+ZRF-C2.6-027,skills/fleet-activator/SKILL.md,"Graphify path","~/.claude/skills/graphify/SKILL.md",probe,high,fs-check,high,VERIFIED,VERIFIED,,Verified reachable 2026-06-08
+ZRF-C2.6-028,skills/fleet-activator/SKILL.md,"Probe is cheap","re-probe every invocation (filesystem test)",performance,high,spec,medium,VERIFIED,VERIFIED,,test -d / -f are O(ms)
+ZRF-C2.6-029,skills/fleet-activator/SKILL.md,"Never auto-install","Report gap + emulator only",safety,high,spec,medium,VERIFIED,VERIFIED,,Stated as hard block
+ZRF-C2.6-030,skills/prompt-context-engine/SKILL.md,"Classification","STRUCTURED / SEMI-STRUCTURED / UNSTRUCTURED",contract,high,spec,medium,VERIFIED,VERIFIED,,3-tier per source SKILL.md adapted
+ZRF-C2.6-031,skills/prompt-context-engine/SKILL.md,"Brief tags","<objective>/<deliverable>/<constraints>/<context>/<success_criteria>",contract,high,spec,medium,VERIFIED,VERIFIED,,5 tags consistent
+ZRF-C2.6-032,skills/prompt-context-engine/SKILL.md,"30-second auto-approve","Wait 30s for correction; auto-approve if none",ux,high,spec,low,UNVERIFIED,UNVERIFIED,,No timer impl
+ZRF-C2.6-033,skills/prompt-context-engine/SKILL.md,"R6 enforcement","Zero context loss; diff mandatory before brief presented",safety,high,spec,low,PARTIAL,VERIFIED-PROSE,,No diff tool
+ZRF-C2.6-034,skills/prompt-context-engine/SKILL.md,"Token discipline","Classification <500 tok output; Brief <300 tok",budget,high,spec,low,UNVERIFIED,UNVERIFIED,,No tracker
+ZRF-C2.6-035,skills/prompt-context-engine/SKILL.md,"Notion + Linear blocks dropped","Not applicable to this repo",compat,high,spec,high,VERIFIED,VERIFIED,,Confirmed absent in final SKILL.md
+ZRF-C2.6-036,skills/caveman-handoff/SKILL.md,"Compression rules","Drop articles/filler/pleasantries/hedging; keep file paths/errors/code verbatim",contract,high,spec,medium,VERIFIED,VERIFIED,,Rules complete
+ZRF-C2.6-037,skills/caveman-handoff/SKILL.md,"Compression target","40-60% reduction typical; <20% fallback to verbose",performance,high,spec,low,UNVERIFIED,UNVERIFIED,,No benchmark; estimate only
+ZRF-C2.6-038,skills/caveman-handoff/SKILL.md,"R6_VIOLATION abort","Missing entity = abort + surface to user",safety,high,spec,low,PARTIAL,VERIFIED-PROSE,,No automated diff check
+ZRF-C2.6-039,skills/caveman-handoff/SKILL.md,"Code byte-identical","Code blocks unchanged; never paraphrase",safety,high,spec,high,VERIFIED,VERIFIED,,Hard block stated
+ZRF-C2.6-040,skills/caveman-handoff/SKILL.md,"PATTERNS.jsonl event","event: handoff-compress with original_tokens/compressed_tokens/ratio/model_from/model_to",contract,high,spec,low,PARTIAL,PARTIAL,C5,Event format spec'd; no validator allowlist (R5)
+ZRF-C2.6-041,_shared/rules.md,"R6 Zero Context Loss","Every fact/entity/constraint from raw prompt survives restructure/routing/handoff",architecture,high,spec,medium,VERIFIED,VERIFIED,,Rule written; coverage partial (R4)
+ZRF-C2.6-042,_shared/rules.md,"R6 applies to","prompt-context-engine + skill-router + handoff-compiler + caveman-handoff",coverage,high,spec,medium,VERIFIED,PARTIAL,,Original 10 skills NOT listed; gap per R4
+ZRF-C2.6-043,zeref-registry.json,"14 entries","skills array length = 14 after v2.6",count,high,validator-bypass,high,VERIFIED,VERIFIED,,python3 -c "import json; len()"=14
+ZRF-C2.6-044,zeref-registry.json,"Model field convention","Bare names: haiku/sonnet/opus",contract,high,registry,high,VERIFIED,VERIFIED,C3,Contradicts SKILL.md full-id usage (R3)
+ZRF-C2.6-045,zeref-registry.json,"skill-router model","haiku",routing,high,registry,medium,VERIFIED,VERIFIED,,Matches Auto-detection rules (Haiku for gate skills)
+ZRF-C2.6-046,zeref-registry.json,"fleet-activator model","haiku",routing,high,registry,medium,VERIFIED,VERIFIED,,Matches (probe skill)
+ZRF-C2.6-047,zeref-registry.json,"prompt-context-engine model","sonnet",routing,high,registry,medium,VERIFIED,VERIFIED,,Matches (classification needs intelligence)
+ZRF-C2.6-048,zeref-registry.json,"caveman-handoff model","haiku",routing,high,registry,medium,VERIFIED,VERIFIED,,Matches (mechanical compression)
+ZRF-C2.6-049,CHANGELOG.md,"v2.6.0 entry","Skills count 10→14",count,high,changelog,high,VERIFIED,VERIFIED,,Matches reality
+ZRF-C2.6-050,CHANGELOG.md,"Migration notes","Free/Standard/God Mode aliases preserved for back-compat",compat,high,changelog,medium,VERIFIED,VERIFIED,,Aliases present in budget-governor
+ZRF-C2.6-051,scripts/zeref-validate.py:165,"Skills: 10/10","Validator literal /10",bug,high,code,high,FALSE,FALSE,C2,Should be /14 or read from registry (L1)
+ZRF-C2.6-052,zeref/cli.py,"Model parse path","Reads registry model field; resolves to Anthropic API id",functional,medium,inferred,low,UNVERIFIED,UNVERIFIED,C3,Need code inspection; resolver may be absent

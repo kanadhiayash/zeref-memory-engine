@@ -1,6 +1,6 @@
 {
   "$schema": "https://zeref-os.dev/registry.schema.json",
-  "version": "2.6.0",
+  "version": "2.6.1-phaseD",
   "generated": "2026-06-08",
   "skills": [
     {
@@ -19,13 +19,14 @@
         "memory/index.md domain row updated",
         "duplicate decisions merged",
         "broken cross-references reported",
-        "memory/hot.md refreshed (≤500 words)"
+        "memory/hot.md refreshed (\u2264500 words)"
       ],
       "risk_level": "medium",
       "support_skills": [
         "memory-import-export"
       ],
-      "model": "haiku"
+      "model": "claude-haiku-4-5",
+      "model_alias": "haiku"
     },
     {
       "skill": "budget-governor",
@@ -47,7 +48,8 @@
       "support_skills": [
         "wiki-maintenance"
       ],
-      "model": "haiku"
+      "model": "claude-haiku-4-5",
+      "model_alias": "haiku"
     },
     {
       "skill": "project-setup",
@@ -70,7 +72,8 @@
       ],
       "risk_level": "medium",
       "support_skills": [],
-      "model": "sonnet"
+      "model": "claude-sonnet-4-6",
+      "model_alias": "sonnet"
     },
     {
       "skill": "contradiction-resolution",
@@ -91,7 +94,8 @@
       "support_skills": [
         "evidence-grader"
       ],
-      "model": "sonnet"
+      "model": "claude-sonnet-4-6",
+      "model_alias": "sonnet"
     },
     {
       "skill": "evidence-grader",
@@ -110,7 +114,8 @@
       ],
       "risk_level": "low",
       "support_skills": [],
-      "model": "haiku"
+      "model": "claude-haiku-4-5",
+      "model_alias": "haiku"
     },
     {
       "skill": "handoff-compiler",
@@ -131,7 +136,8 @@
       "support_skills": [
         "privacy-abstraction"
       ],
-      "model": "sonnet"
+      "model": "claude-sonnet-4-6",
+      "model_alias": "sonnet"
     },
     {
       "skill": "memory-import-export",
@@ -152,7 +158,8 @@
       "support_skills": [
         "privacy-abstraction"
       ],
-      "model": "sonnet"
+      "model": "claude-sonnet-4-6",
+      "model_alias": "sonnet"
     },
     {
       "skill": "parent-sync",
@@ -171,7 +178,8 @@
         "evidence-grader",
         "privacy-abstraction"
       ],
-      "model": "sonnet"
+      "model": "claude-sonnet-4-6",
+      "model_alias": "sonnet"
     },
     {
       "skill": "pattern-to-skill",
@@ -183,13 +191,14 @@
       "deliverables": [
         "skills/drafts/<name>/SKILL.md created",
         "PROVENANCE.md created in draft dir",
-        "skill NOT auto-activated — awaits /review-skill"
+        "skill NOT auto-activated \u2014 awaits /review-skill"
       ],
       "risk_level": "high",
       "support_skills": [
         "privacy-abstraction"
       ],
-      "model": "opus"
+      "model": "claude-opus-4-7",
+      "model_alias": "opus"
     },
     {
       "skill": "skill-router",
@@ -210,7 +219,8 @@
         "fleet-activator",
         "budget-governor"
       ],
-      "model": "haiku"
+      "model": "claude-haiku-4-5",
+      "model_alias": "haiku"
     },
     {
       "skill": "fleet-activator",
@@ -228,7 +238,8 @@
       ],
       "risk_level": "low",
       "support_skills": [],
-      "model": "haiku"
+      "model": "claude-haiku-4-5",
+      "model_alias": "haiku"
     },
     {
       "skill": "prompt-context-engine",
@@ -250,7 +261,8 @@
         "budget-governor",
         "skill-router"
       ],
-      "model": "sonnet"
+      "model": "claude-sonnet-4-6",
+      "model_alias": "sonnet"
     },
     {
       "skill": "caveman-handoff",
@@ -273,7 +285,8 @@
         "prompt-context-engine",
         "privacy-abstraction"
       ],
-      "model": "haiku"
+      "model": "claude-haiku-4-5",
+      "model_alias": "haiku"
     },
     {
       "skill": "privacy-abstraction",
@@ -289,7 +302,8 @@
       ],
       "risk_level": "high",
       "support_skills": [],
-      "model": "haiku"
+      "model": "claude-haiku-4-5",
+      "model_alias": "haiku"
     }
   ]
 }
