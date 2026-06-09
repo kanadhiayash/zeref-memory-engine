@@ -130,6 +130,7 @@ If user spots a bad push:
 
 ## Safety
 
+- Per `_shared/rules.md#R6` (Zero Context Loss): every fact, named entity, file path, and provenance tag in the staged outbound must survive verbatim into the parent's `memory/sync/parent/<child-id>/`. Re-diff after privacy-abstraction redaction.
 - Push requires explicit user approval every time — no auto-push
 - Local-only privacy mode blocks all parent sync
 - Pushed content is read-only at parent until parent's memory-keeper processes

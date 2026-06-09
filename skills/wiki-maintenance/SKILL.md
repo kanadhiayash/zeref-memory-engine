@@ -2,9 +2,15 @@
 name: wiki-maintenance
 description: Maintains canonical wiki state (flat memory/ layout) — index consistency, page summaries, decisions log, risks register, open questions queue. Activates after writes and on consolidation requests.
 trigger:
-  - post-write (called by memory-keeper)
-  - /done
-  - user says "clean up wiki"
+  - post-write (called by memory-keeper after every write)
+  - /done (consolidation pass)
+  - "update wiki"
+  - "update index"
+  - "consolidate memory"
+  - "clean up wiki"
+  - "refresh hot.md"
+  - "wiki lint"
+  - /wiki-maintenance
 model: claude-haiku-4-5
 max_turns: 15
 ---

@@ -10,6 +10,7 @@ The name comes from Zeref Dragneel in *Fairy Tail* — the immortal scholar whos
 
 ## First action every session (reading order — ZEREF_OS §0)
 
+0. Read `SOUL.md` (5 operating principles — shapes every decision this session).
 1. Read `config/PROJECT.md`. If missing, run `/start` (triggers project-setup interview).
 2. Read `memory/hot.md` FIRST (≤500 words; current context).
 3. Read `memory/index.md` if hot is insufficient (domain index).
@@ -18,6 +19,8 @@ The name comes from Zeref Dragneel in *Fairy Tail* — the immortal scholar whos
 6. Auto-load first 200 lines of `memory/MEMORY.md` (agent-written session notes).
 7. Tail last 3 entries of `memory/patterns/PATTERNS.jsonl`.
 8. Report: project, last session, active decisions, open questions, conflicts.
+
+Shared safety rules (R1–R4) referenced from all skills: see `_shared/rules.md`.
 
 Do NOT read individual wiki pages for general coding questions or things already in current project context.
 
@@ -35,6 +38,67 @@ Do NOT read individual wiki pages for general coding questions or things already
 10. **Review-first extension**: new skills are drafted to `skills/drafts/`, never auto-activated
 11. **Two-Strikes Rule**: do not codify a rule on the first occurrence of an error. See `references/two-strikes-rule.md`.
 12. **Harness Agnosticism**: AGENTS.md is source of truth; per-harness stubs defer. See `references/harness-translation-map.md`.
+13. **Cost-Weight Auto-Gate**: `budget-governor` runs before every major task; CRITICAL / HIGH cannot proceed without stated tier. See `skills/budget-governor/SKILL.md` §Auto-Activation Rule.
+14. **Task-Weight Model Routing**: LOW never on Opus; CRITICAL never on Haiku. Orchestrator @ Sonnet medium → executor @ Sonnet/Haiku by weight → final gate @ Opus high when stakes warrant. See `## Model-Tier Routing` below.
+
+## Auto-Activation Gates (v2.6)
+
+Every major task passes these gates sequentially before any execution-model call. Each gate declares its result inline; user may override.
+
+### Gate #1 — budget-governor
+
+Classifies cost weight (CRITICAL / HIGH / MEDIUM / LOW), resolves active model tier, enforces weight ↔ tier match. CRITICAL never on Haiku; LOW flagged on Opus. Output line format:
+`[budget-governor] weight=<W> tier=<T> match=<OK|MISMATCH> budget_remaining=$<n>`.
+
+See `skills/budget-governor/SKILL.md`.
+
+### Gate #2 — skill-router
+
+Classifies task domain and pulls the smallest useful stack (1 lead + 2-3 support + 1 QA gate). Never activates all skills. Calls `fleet-activator` for any extended-tool hint. Output line format:
+`[skill-router] domain=<D> lead=<L> support=[<s1>,<s2>] qa=<Q> ext=<E|none>`.
+
+See `skills/skill-router/SKILL.md` and `skills/fleet-activator/SKILL.md`.
+
+### Gate #3 — prompt-context-engine
+
+Classifies the raw prompt (STRUCTURED / SEMI-STRUCTURED / UNSTRUCTURED). Rewrites UNSTRUCTURED prompts into a Structured Task Brief (`<objective>/<deliverable>/<constraints>/<context>/<success_criteria>`) with 30-second auto-approve. Zero context loss per `_shared/rules.md#R6`. Output line format:
+`[prompt-context-engine] class=<C> action=<proceed|assume|restructure> brief_tokens=<n>`.
+
+See `skills/prompt-context-engine/SKILL.md`.
+
+## Model-Tier Routing (v2.6)
+
+Per Core Principle 14. Weight (from `budget-governor`) maps to model + effort.
+
+| Weight | Model | Effort | Typical $ / task | Examples |
+|---|---|---|---|---|
+| **CRITICAL** | `claude-opus-4-7` | high | $0.50 – $5.00 | `pattern-to-skill` draft, parent-sync export, architecture decision |
+| **HIGH** | `claude-sonnet-4-6` | medium | $0.10 – $0.50 | `contradiction-resolution`, `handoff-compiler`, `project-setup` interview, `prompt-context-engine` restructure |
+| **MEDIUM** | `claude-sonnet-4-6` low / `claude-haiku-4-5` medium | low / medium | $0.02 – $0.10 | `wiki-maintenance` consolidation, `evidence-grader` on 5-20 claims, `privacy-abstraction` rewrite |
+| **LOW** | `claude-haiku-4-5` | low | < $0.02 | `budget-governor` gate, `skill-router` gate, `fleet-activator` probe, single-fact lookup |
+
+### Cascade pattern (multi-step tasks)
+
+```
+orchestrator @ Sonnet medium     ← plans + decomposes
+    ↓
+executor @ Sonnet|Haiku by weight ← does the work per sub-task
+    ↓
+final gate @ Opus high            ← only when stakes warrant (irreversible writes, security, architecture)
+```
+
+Default: orchestrator on Sonnet — Sonnet is the cost-balanced default unless task weight escalates or de-escalates.
+
+### Hard constraints
+
+- **LOW never on Opus** — flag mismatch via `budget-governor` Step 4. Propose Haiku downgrade.
+- **CRITICAL never on Haiku** — hard block. Refuse execution until escalated to Sonnet (acceptable) or Opus (preferred).
+- **HIGH on Haiku** — warn, allow if user confirms. Common when budget is tight.
+- **MEDIUM on Opus** — warn, allow. Often the right call when stakes are unclear; `budget-governor` will log for retrospective tuning by `pattern-observer`.
+
+### Per-skill model audit (current state)
+
+All 13 skills' `model` fields in `zeref-registry.json` audited against weight per the matrix above. No LOW→opus or CRITICAL→haiku mismatches detected. Borderline call: `privacy-abstraction` (`risk_level: high`, `model: haiku`) — kept on Haiku because redaction follows deterministic REDACT.md rules; bump to Sonnet if a future PATTERNS.jsonl event shows redaction misses on adversarial input. Tracked as forward signal for `pattern-observer`.
 
 ## Agents (6)
 
@@ -47,7 +111,7 @@ Do NOT read individual wiki pages for general coding questions or things already
 | `pattern-observer` | background | Watches `memory/patterns/PATTERNS.jsonl` for repeats |
 | `handoff-orchestrator` | on `/stop` / model switch | Packages cross-harness handoff |
 
-## Skills (10)
+## Skills (14)
 
 | Skill | Activation |
 |---|---|
@@ -58,8 +122,12 @@ Do NOT read individual wiki pages for general coding questions or things already
 | `parent-sync` | Approved `/stop` or `/sync-parent` |
 | `pattern-to-skill` | Threshold hit in `pattern-observer` |
 | `memory-import-export` | Explicit migration request |
-| `budget-governor` | `/start`, tier change, budget warning |
+| `budget-governor` | Auto-gate #1: every major task, `/start`, tier change, budget warning |
+| `skill-router` | Auto-gate #2: every major task, after budget gate |
+| `fleet-activator` | Companion to `skill-router` when extended-tool hint present |
+| `prompt-context-engine` | Auto-gate #3: every major task, after skill-router |
 | `handoff-compiler` | Session end or model switch |
+| `caveman-handoff` | Cross-model / cross-harness handoff compression (companion to `handoff-compiler`) |
 | `evidence-grader` | On write, review, sync, conflict |
 
 ## Commands (8)

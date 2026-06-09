@@ -50,3 +50,18 @@ This applies to config fields, evidence grades, decision provenance, and any met
 
 Applies to: project-setup, evidence-grader, contradiction-resolution, memory-import-export.
 
+---
+
+## R6 — Zero Context Loss (v2.6)
+
+**Every fact, named entity, constraint, file path, repo, URL, and edge case from the raw user prompt must survive into any restructured brief, routing decision, or handoff package.**
+
+When `prompt-context-engine` rewrites an UNSTRUCTURED prompt into a Structured Task Brief, the rewriter must verify a diff: the brief covers every entity and constraint in the raw prompt, or explicitly marks each omission with a reason.
+
+When `skill-router` declares a stack, every domain signal extracted from the prompt must be reflected in the chosen lead / support / QA — or the unmatched signal must be named in the routing output.
+
+When `handoff-compiler` (or future `caveman-handoff`) packages a session, the original prompt classification + brief diff + stripped-context list ride along with the handoff so the next model can reconstruct full intent.
+
+Forward dependency: referenced by Session B model-tier routing (per-skill model audit must preserve weight signals from prompt) and the Session C `caveman-handoff` skill (must carry the brief diff across model switches).
+
+Applies to: prompt-context-engine, skill-router, handoff-compiler, caveman-handoff (Session C).

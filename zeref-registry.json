@@ -1,7 +1,7 @@
 {
   "$schema": "https://zeref-os.dev/registry.schema.json",
-  "version": "2.0.0-sprint1",
-  "generated": "2026-06-03",
+  "version": "2.6.0",
+  "generated": "2026-06-08",
   "skills": [
     {
       "skill": "wiki-maintenance",
@@ -190,6 +190,90 @@
         "privacy-abstraction"
       ],
       "model": "opus"
+    },
+    {
+      "skill": "skill-router",
+      "triggers": [
+        "every major task",
+        "task domain detected",
+        "after budget-governor gate passes",
+        "what skills should run for this",
+        "route this task"
+      ],
+      "deliverables": [
+        "inline stack declaration: [skill-router] domain=<D> lead=<L> support=[..] qa=<Q> ext=<E>",
+        "PATTERNS.jsonl event: skill-route",
+        "smallest-useful-stack (max 5 skills)"
+      ],
+      "risk_level": "medium",
+      "support_skills": [
+        "fleet-activator",
+        "budget-governor"
+      ],
+      "model": "haiku"
+    },
+    {
+      "skill": "fleet-activator",
+      "triggers": [
+        "invoked by skill-router when Extended-tool hint detected",
+        "probe extended tools",
+        "is ECC reachable",
+        "check fleet reachability",
+        "before any /ecc / /graphify / /browse invocation"
+      ],
+      "deliverables": [
+        "inline reachability report: [fleet-activator] <tool>: reachable|UNREACHABLE",
+        "PATTERNS.jsonl event: tool-probe (per probed tool)",
+        "emulator substitution proposal if unreachable"
+      ],
+      "risk_level": "low",
+      "support_skills": [],
+      "model": "haiku"
+    },
+    {
+      "skill": "prompt-context-engine",
+      "triggers": [
+        "every major task (auto-gate)",
+        "after skill-router stack declaration",
+        "restructure this prompt",
+        "classify this prompt",
+        "UNSTRUCTURED prompt detected"
+      ],
+      "deliverables": [
+        "inline Prompt Classification Report (3-5 lines)",
+        "Structured Task Brief with <objective>/<deliverable>/<constraints>/<context>/<success_criteria> (when UNSTRUCTURED)",
+        "Context Optimization Note (stripped context + cache hints)",
+        "PATTERNS.jsonl event: prompt-gate"
+      ],
+      "risk_level": "medium",
+      "support_skills": [
+        "budget-governor",
+        "skill-router"
+      ],
+      "model": "sonnet"
+    },
+    {
+      "skill": "caveman-handoff",
+      "triggers": [
+        "/stop with handoff requested",
+        "model switch detected",
+        "compress this handoff",
+        "caveman mode handoff",
+        "handoff-compiler invokes for cross-model package"
+      ],
+      "deliverables": [
+        "memory/sync/outbound/handoff-<iso>.md (caveman-grammar payload)",
+        "memory/sync/outbound/handoff-<iso>.diff (R6 zero-context-loss diff)",
+        "inline compression report: [caveman-handoff] orig=<n>tok compressed=<m>tok ratio=<r>%",
+        "PATTERNS.jsonl event: handoff-compress"
+      ],
+      "risk_level": "medium",
+      "support_skills": [
+        "handoff-compiler",
+        "prompt-context-engine",
+        "privacy-abstraction"
+      ],
+      "model": "haiku"
     },
     {
       "skill": "privacy-abstraction",

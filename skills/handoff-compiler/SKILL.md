@@ -60,6 +60,7 @@ Pointer to `references/harness-translation-map.md`. Identifies the source harnes
 
 ## Safety
 
+- Per `_shared/rules.md#R6` (Zero Context Loss): STATE.json + SUMMARY.md + NEXT.md must jointly cover every entity from the source session (decisions, file paths, open questions, error strings). Downstream `caveman-handoff` re-verifies the R6 diff before compression.
 - Target ≤ 1500 tokens for SUMMARY.md (the always-on portion the next session loads)
 - Never include credentials or `.gitignore`-matched content
 - Respect privacy mode and connector allowlist

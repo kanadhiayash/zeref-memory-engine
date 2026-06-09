@@ -47,6 +47,7 @@ Flow:
 
 ## Safety
 
+- Per `_shared/rules.md#R6` (Zero Context Loss): export manifest must enumerate every entity in the archive; import re-verifies count + hash before reconstructing `memory/index.md`. Missing entity = abort + surface.
 - Both directions require explicit user approval
 - Import never overwrites without conflict check
 - Export respects current privacy mode and connector allowlist in `SHARING_POLICY.md`
