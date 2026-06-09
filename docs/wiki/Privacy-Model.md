@@ -1,96 +1,157 @@
-# Privacy Model
+# Privacy Model (v2.6.1)
 
-Three root files. Local-first by default. Connectors OFF by default.
+Privacy in Zeref OS is **deterministic and code-enforced** (v2.5 added the `zeref/privacy.py` runtime; v2.6.1 adds R6 zero-context-loss coverage across 9 SKILL.md Safety sections).
 
-## The three files
+## Three modes (root `PRIVACY.md`)
 
-### `PRIVACY.md` — modes
-
-| Mode | Behavior |
-|---|---|
-| `exact` | Write full detail. Only when user explicitly enables per project. |
-| **`abstract`** *(default)* | `privacy-abstraction` skill rewrites payload before write |
-| `local-only` | Block all writes to `memory/sync/outbound/` and `memory/sync/parent/` |
-
-### `REDACT.md` — sensitive classes
-
-| Class | Default | Replacement strategy |
+| Mode | Default | Behavior |
 |---|---|---|
-| `credentials` | **always on** | full removal → `<REDACTED:credential>` |
-| `pii` | enabled | hash-based pseudonym → `<user:a3f9>` |
-| `internal_paths` | enabled | repo-relative — `/Users/x/proj/foo` → `<repo>/foo` |
-| `client_data` | off (enable per project) | full removal or pseudonym |
-| `financial` | off | bucket — `$1,234,567` → `<order:$1M-10M>` |
-| `proprietary_code` | off | full removal → `<REDACTED:internal>` |
+| `exact` | — | Write verbatim. No abstraction. |
+| `abstract` | **YES** | Strip PII / internal paths / credentials before write. Default for every fresh project. |
+| `local-only` | — | Block all external transmission (parent sync, MCP connectors, handoff push). |
 
-User can add custom classes; routes through `skills/privacy-abstraction/SKILL.md`'s regex library.
+Set in root `PRIVACY.md` frontmatter:
 
-### `SHARING_POLICY.md` — connector allowlist
+```yaml
+mode: abstract                  # exact | abstract | local-only
+abstract_rules:
+  strip_pii: true
+  strip_internal_paths: true
+  strip_credentials: true
+  strip_numbers: false
+local_only_blocks:
+  - memory/sync/outbound/
+  - memory/sync/parent/
+connectors_default: off
+external_transmission: off
+```
 
-All connectors **OFF** by default. To enable:
+## REDACT.md — concrete sensitive classes
+
+`REDACT.md` defines what `privacy-abstraction` (and `zeref/privacy.py`) actually strip:
+
+```yaml
+classes:
+  credentials:
+    enabled: true
+    patterns: [api_keys, oauth_tokens, ssh_private_keys, database_connection_strings, .env values]
+  pii:
+    enabled: true
+    patterns: [email_addresses, phone_numbers, physical_addresses, government_ids, dates_of_birth]
+  internal_paths:
+    enabled: true
+  client_data: ...
+  financial: ...
+  proprietary_code: ...
+```
+
+v2.5 L2: `email` class **default-enabled** (closed V01+V02 CRITICAL from v2.5 Phase C).
+v2.5 L1: PII name regex tightened with verb-prefix lookahead (no more greedy "Hire John" matches).
+v2.5 L11: `zeref write-decision` scrubs PII before disk (closed V12).
+
+## SHARING_POLICY.md — connector allowlist
 
 ```yaml
 connectors:
-  github:
-    enabled: false           # flip to true
-    read_project_context: false
-    allowed_surfaces: []     # [issues, prs, repo_metadata]
-    redact_classes: [credentials, pii, internal_paths]
+  github:   off
+  linear:   off
+  notion:   off
+  jira:     off
+  duckduckgo: off
+  # ... all OFF by default per AGENTS.md
 ```
 
-Recommended connectors live in [`references/connector-advisory.md`](https://github.com/kanadhiayash/zeref-os/blob/main/references/connector-advisory.md). Zeref OS recommends a connector only after `pattern-observer` detects repeated manual behavior.
+Every connector OFF until explicit enable. `sync-coordinator` reads this on `/start`; refuses to mount disabled tools.
 
-## Flow
+## R6 Zero Context Loss (v2.6)
 
-```mermaid
-flowchart TB
-  Write[Write request] --> PG{privacy-guardian}
-  PG -->|exact| Allow
-  PG -->|abstract| PA[privacy-abstraction]
-  PA -->|walk REDACT.md classes| Allow
-  PG -->|local-only AND target=sync/outbound/| Reject
-  Allow[Allow write] --> Memory[(memory/)]
+New shared rule in `_shared/rules.md#R6`. Every fact / named entity / file path / repo / URL / edge case from the raw user prompt must survive into:
+- restructured briefs (`prompt-context-engine`)
+- routing decisions (`skill-router`)
+- handoff packages (`handoff-compiler` → `caveman-handoff`)
+- parent-sync outbound staging
+- memory-import-export archives
+- pattern-to-skill draft synthesis
 
-  External[External transmission] --> PG2{privacy-guardian}
-  PG2 -->|check SHARING_POLICY.md| Conn{connector.enabled?}
-  Conn -->|false| Reject2[REJECT]
-  Conn -->|true| ReqApproval{write_external?}
-  ReqApproval -->|false → require per-action approval| User
-  User -->|approve| Redact[redact via REDACT.md classes]
-  Redact --> Send[external send]
+**v2.6.1 L4 sweep**: R6 referenced in **9 of 14** SKILL.md Safety sections (was 4):
+- ✓ prompt-context-engine (origin)
+- ✓ skill-router
+- ✓ fleet-activator
+- ✓ budget-governor
+- ✓ caveman-handoff
+- ✓ handoff-compiler (L4)
+- ✓ parent-sync (L4)
+- ✓ memory-import-export (L4)
+- ✓ pattern-to-skill (L4)
+
+## Privacy chain (single direction)
+
+```
+skill output
+    ↓
+memory-keeper (R1 single-writer)
+    ↓
+privacy-guardian (mode check)
+    ├── exact → write verbatim
+    ├── abstract → privacy-abstraction rewrites payload per REDACT.md
+    └── local-only → block external transmission
+    ↓
+disk OR external connector (per SHARING_POLICY.md)
 ```
 
-## Always-block (regardless of mode)
+External output **always** passes through `privacy-guardian` (R3).
 
-- Credentials, API keys, tokens (any form)
-- Contents of `.gitignore`-matched files
-- Raw clipboard content (unless explicitly captured to `memory/raw/`)
-- Anything matched by enabled classes in `REDACT.md`
+## Code enforcement (v2.5 runtime)
 
-## Local-First Canonical Rule (§4.4)
+`zeref/privacy.py`:
+- `scrub(text)` → returns `(scrubbed_text, ScrubReport)` with hit count + classes
+- Unicode normalization (NFKC)
+- Base64 nested decode + re-scan (depth limit)
+- Homoglyph table for confusable detection
+- Regex patterns per REDACT class (deterministic, not LLM-judged)
 
-- Local markdown files are the canonical memory. Always.
-- Notion, Linear, GitHub, Slack are connected surfaces, not source-of-truth memory.
-- Switching harnesses requires no reconfiguration of memory because memory is files.
+**v2.6.1 L12 extends to file paths**: caveman-handoff applies NFKC + lookalike-glyph scan to all path strings (Cyrillic а / Greek ο / fullwidth Latin → flag + user confirm).
 
-## External transmission
+## Privacy attacks blocked (per `tests/security-audit-vC.md` + `tests/security-audit-v2.6-C.md`)
 
-Zeref OS **never** transmits wiki content to any external service unless user explicitly approves per action.
+| Attack class | Vector | Status |
+|---|---|---|
+| Homoglyph PII | `Hire Jоhn` (Cyrillic o) | CLOSED (v2.5 L1 + NFKC normalize) |
+| Base64-nested credential | `<base64>` containing API key | CLOSED (recursive decode) |
+| Email leak | unredacted `user@example.com` | CLOSED (v2.5 L2 default-enable) |
+| PII greedy regex | "Hire John" matched as `John Smith` | CLOSED (v2.5 L1 verb-prefix lookahead) |
+| Single-writer race | concurrent writes to DECISIONS.md | CLOSED (v2.5 L9 MemoryLock) |
+| Mid-write crash | partial file on disk | CLOSED (v2.5 L10 atomic_write) |
+| Decision-body injection | PII embedded in narrative prose | CLOSED (v2.5 L11 write-decision scrub) |
+| Gate output spoof | fake `[budget-governor]` line | CLOSED (v2.6.1 L3 lint_patterns_log) |
+| Prompt-injection via `<context>` | "ignore prior" embedded in brief | CLOSED (v2.6.1 L10 injection filter) |
+| File-path homoglyph | Cyrillic-а in handoff payload | CLOSED (v2.6.1 L12 NFKC + confusable scan) |
+| Silent cost-tier override | user types "override" | CLOSED (v2.6.1 L13 dual-key) |
+| Probe spoof | empty dir at expected ECC path | CLOSED (v2.6.1 L9 marker-file probe) |
 
-`privacy-guardian` runs over outbound payload using the per-connector `redact_classes` list before sending.
+**0 CRITICAL open at v2.6.1.**
 
-## Per-session overrides
+## What Zeref OS does NOT do
 
-Use `/zeref-os:reset-permissions` to clear session overrides and restore defaults from `PRIVACY.md` + `SHARING_POLICY.md`.
+- Encrypt at rest (markdown is plaintext by design)
+- Validate via LLM (privacy enforcement is deterministic; LLM is not a privacy enforcer per SOUL.md principle 2)
+- Auto-publish to any connector (every push requires explicit user approval)
+- Send telemetry (no analytics / no usage stats / no remote logging)
 
-## Uncertainty handling
+## Verify
 
-If `privacy-abstraction` cannot classify with high confidence:
+```bash
+python3 scripts/zeref-validate.py | grep "Root privacy"
+# Root privacy:     3/3 (PRIVACY, REDACT, SHARING_POLICY)
 
-1. HALT the write.
-2. Surface to user: "Cannot classify `<snippet>`. Treat as: [credentials | pii | safe | skip]?"
-3. Never silently include uncertain content.
+python3 -c 'from zeref.privacy import scrub; t,r=scrub("Hire John Smith at john@example.com"); print(r.classes_hit, r.tokens_redacted)'
+# {"pii", "credentials" (email)} ≥ 2 tokens
+```
 
-## Recommendations (not bundles)
+## Related
 
-Per ZEREF_OS §9 and D11 — Zeref OS ships **zero** bundled MCP tools. Recommendation-only. See [Inspirations](Inspirations) for what's available externally.
+- [[Memory-Model]] — flat layout, single-writer chain
+- [[Architecture]] — privacy-guardian + privacy-abstraction agents
+- [[Glossary]] — R6, abstract mode, NFKC, homoglyph
+- [`_shared/rules.md`](https://github.com/kanadhiayash/zeref-os/blob/main/_shared/rules.md) — R1-R6
+- [`tests/security-audit-v2.6-C.md`](https://github.com/kanadhiayash/zeref-os/blob/main/tests/security-audit-v2.6-C.md) — full v2.6.1 audit

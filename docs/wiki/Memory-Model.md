@@ -1,145 +1,157 @@
-# Memory Model
+# Memory Model (v2.6.1)
 
-Flat. Local. Markdown.
+Zeref OS stores everything in plain markdown under `memory/`, with append-only event logs and snapshots. Single-writer enforced via `memory-keeper` agent (per shared rule R1). v2.6.1 adds PATTERNS.jsonl event schema validation (L5 + L15).
 
-## Layout
+## Flat layout (per ZEREF_OS §12)
 
 ```
 memory/
-├── hot.md                  ≤500 words — last 3 sessions. Read FIRST.
-├── index.md                Domain index. Read if hot insufficient.
-├── MEMORY.md               Agent-written session notes. First 200 lines auto-load.
-├── DECISIONS.md            Confirmed decisions + provenance + evidence grade
-├── OPEN_QUESTIONS.md       Unresolved questions + owner
-├── RISKS.md                Identified risks + severity
-├── CONFLICTS.md            Contradiction queue (user arbitrates)
-├── archive/                Superseded entries — never deleted (per D9)
+├── hot.md                   ← last 3 sessions, ≤500 words (read FIRST per AGENTS.md §0)
+├── index.md                 ← domain index (read if hot insufficient)
+├── MEMORY.md                ← agent-written session notes (NOT human-edited)
+├── DECISIONS.md             ← confirmed decisions w/ provenance + evidence grade
+├── OPEN_QUESTIONS.md        ← unresolved questions w/ owner
+├── RISKS.md                 ← identified risks w/ severity
+├── CONFLICTS.md             ← contradiction queue (user arbitrates)
+├── glossary.md              ← project-specific term definitions
+├── projects/                ← per-sub-project context (if multi-project repo)
 ├── patterns/
-│   └── PATTERNS.jsonl      Append-only tool/event log
-├── snapshots/<iso>/        Point-in-time wiki state + manifest.json
-├── sync/
-│   ├── outbound/           Staged parent updates
-│   └── parent/             Received parent updates
-└── raw/                    Untouched source material (transcripts, specs, dumps)
+│   └── PATTERNS.jsonl       ← append-only event log; 11-event schema (v2.6.1)
+├── snapshots/<iso>/         ← point-in-time wiki state + manifest
+├── archive/                 ← superseded snapshots (never deleted per R2)
+├── raw/                     ← untouched source material
+└── sync/
+    ├── outbound/            ← staged parent updates
+    └── parent/              ← received parent updates
 ```
 
-## Reading order (per ZEREF_OS §0)
+## Boundary-first reading (per AGENTS.md §0)
 
-Every session start:
+The "boundary file" pattern prevents unbounded reads:
 
-1. **`memory/hot.md`** — ≤500 words; "what's currently in flight"
-2. **`memory/index.md`** — domain index (only if hot insufficient)
-3. **`PRIVACY.md`** (root) — before any write or tool use
-4. **`REDACT.md`** (root) — before any external output
-5. **`memory/MEMORY.md`** first 200 lines — agent-written context
-6. **`memory/patterns/PATTERNS.jsonl`** last 3 entries — recent events
-7. Individual wiki pages — ONLY when domain specifics are needed
+1. **First**: read `memory/hot.md` (≤500 words, current context)
+2. **Second**: read `memory/index.md` if hot is insufficient — find the relevant domain row
+3. **Third**: read only the named section of the named page
+4. **Never**: load a full page just to scan it
 
-Never load a full wiki page just to scan it.
+This caps always-on context to ~3-4k tokens regardless of project age.
 
-## Write protocol
+## Single-writer (R1) + privacy gate (R3)
 
-```mermaid
-sequenceDiagram
-  participant Skill
-  participant MK as memory-keeper
-  participant PG as privacy-guardian
-  participant CR as contradiction-resolution
-  participant Wiki as memory/
-
-  Skill->>MK: write request
-  MK->>PG: CHECK(payload, mode)
-  alt mode=local-only AND target=sync/outbound/
-    PG-->>MK: REJECT
-  else mode=abstract
-    PG->>PG: privacy-abstraction(REDACT.md classes)
-    PG-->>MK: cleaned payload
-  else mode=exact
-    PG-->>MK: pass-through
-  end
-  MK->>CR: DETECT(payload vs wiki state)
-  alt conflict
-    CR->>Wiki: append CONFLICTS.md
-    CR-->>MK: HALT
-  else clean
-    MK->>Wiki: write DECISIONS / RISKS / OPEN_Q / domain page
-    MK->>Wiki: append PATTERNS.jsonl (event log)
-    MK->>Wiki: update index.md
-  end
-```
-
-## Single-writer discipline
-
-Only `memory-keeper` writes to:
-- `memory/hot.md`, `index.md`, `DECISIONS.md`, `OPEN_QUESTIONS.md`, `RISKS.md`, `CONFLICTS.md`, `MEMORY.md`
-
-Any other agent attempting these paths is blocked and the violation is logged.
-
-`memory/patterns/PATTERNS.jsonl` is append-only by any agent.
-
-## Boundary-first reads
+All writes flow:
 
 ```
-✗ Wrong:  read memory/DECISIONS.md           (whole page)
-✓ Right:  read memory/hot.md
-          → if needed: read memory/index.md
-          → find domain row
-          → read named section of named page
+skill output
+    ↓
+memory-keeper (conflict detect, advisory lock via zeref/lock.py)
+    ↓
+privacy-guardian (PRIVACY.md mode + REDACT.md classes + SHARING_POLICY.md allowlist)
+    ↓
+disk (with PII scrub per v2.5 L11)
 ```
 
-This is enforced by skill discipline and tracked by `budget-governor`. Loading full pages blows the token budget.
+No skill writes to `memory/` directly. Concurrent writes blocked by `zeref/lock.py::MemoryLock` (v2.5 L9). Atomic write semantics via `atomic_write` / `atomic_append` (v2.5 L10).
 
 ## Contradiction handling
 
 When `memory-keeper` detects a conflict:
 
-1. **Halt** the write.
-2. **Append** both sides to `memory/CONFLICTS.md` with provenance.
-3. **Surface** to user: "Resolve now / snooze-until-done / both-valid?"
-4. **User arbitrates** — never silent resolution.
-5. On resolution: winner moves to `memory/DECISIONS.md` with both-sides provenance. Loser marked `[SUPERSEDED]` in source page. Never deleted.
+1. Halt write
+2. Subject/predicate/value fingerprint match against DECISIONS / OPEN_QUESTIONS / RISKS
+3. Append both sides to `memory/CONFLICTS.md`
+4. Surface to user immediately OR snooze until `/done` (user choice)
+5. User arbitrates (via `contradiction-resolution` skill) — never silent
+6. Resolved entry moves to `memory/DECISIONS.md` with both-sides provenance
 
-Conflict types detected:
+**4 anti-patterns refused**: recency-wins · grade-wins · silent-drop · indefinite-snooze.
 
-| Type | Example |
-|---|---|
-| Direct negation | "DB is Postgres" vs "DB is MySQL" |
-| Mutually exclusive | "Ship Friday" vs "Ship next Monday" |
-| Quantitative drift | "Budget $50k" vs "Budget $80k" (>20% delta) |
-| Decision supersession | New decision overrides still-active decision |
-| Source disagreement | Two pushed-in claims disagree |
+## PATTERNS.jsonl event schema (v2.6.1 L5 + L15)
 
-## MEMORY.md (agent-written)
+Append-only event log. Every event is a single JSON line:
 
-`AGENTS.md` is human-written, agent-read.
-`memory/MEMORY.md` is agent-written, agent-read.
+```jsonl
+{"ts":"2026-06-08T14:00:00Z","agent":"memory-keeper","event":"wiki-write","target":"memory/DECISIONS.md","payload":{"summary":"..."},"hash":"sha256:...","evidence_grade":"high"}
+```
 
-Auto-hygiene on every `/done`: relative time anchors become absolute dates (per ZEREF_OS §3.4).
+**11 allowlisted event types** (validated by `scripts/zeref-validate.py::lint_patterns_log()`):
 
-Rule: treat your own memory as a hint, not a fact. Verify against actual code before acting.
+| Event | Required payload | Optional payload |
+|---|---|---|
+| `wiki-write` | summary | — |
+| `session-start` | — | trigger, scope, budget_ceiling_usd, team, force_multipliers |
+| `memory-drift-detected` | finding | — |
+| `budget-gate` (v2.6) | weight, tier, match | est_cost_usd, budget_remaining_usd, override_reason |
+| `skill-route` (v2.6) | domain, lead, support, qa | ext |
+| `tool-probe` (v2.6) | tool, reachable | path, fallback, marker_verified |
+| `prompt-gate` (v2.6) | classification | restructured, brief_tokens, stripped_context_tokens, injection_detected |
+| `handoff-compress` (v2.6) | original_tokens, compressed_tokens, ratio | model_from, model_to, harness_from, harness_to |
+| `tier-change` | from, to | — |
+| `grep-with-context` | — | action |
+| `log-cutover` | — | from, to, note |
 
-## Evidence grading
+**Value enums** (enforced):
+- `weight` ∈ {CRITICAL, HIGH, MEDIUM, LOW}
+- `tier` ∈ {OPUS, SONNET, HAIKU, OPUS-equivalent, SONNET-equivalent, HAIKU-equivalent}
 
-Every entry carries a grade:
+**Hard constraints** (L14 stack cap + Core Principle 14):
+- `skill-route` with `len(support) + 2 > 5` → lint error
+- `budget-gate` with `(CRITICAL, HAIKU)` or `(LOW, OPUS)` unless `match=OVERRIDE` → lint error
 
-| Grade | Criteria |
-|---|---|
-| **high** | Verified this session OR confirmed by user OR backed by primary source |
-| **medium** | Reasonable inference, named source, < 30 days old |
-| **low** | Unverified assumption OR > 90 days old OR derived from indirect source |
+## Pattern detection (per `pattern-observer`)
 
-`evidence-curator` re-grades on staleness. Decisions destined for `DECISIONS.md` must be high or medium; low rejected for user confirmation.
+Background scan of `PATTERNS.jsonl` over rolling 48–80h window:
+- Task signature: verb + subject + 3-gram qualifiers
+- Jaccard similarity ≥ 0.8 over qualifier 3-gram sets
+- Union-find clustering; discard clusters < 3 members
+- Scoring: `frequency × (1 / recency_span_hours)`
+- Top-3 by score per scan; rest logged as suppressed
+- Emits candidates → `pattern-to-skill` (review-first)
+
+Activation: `/done`, `/stop`, `/status`, manual. Background only — never blocks active work.
 
 ## Snapshots
 
-On every `/done`: snapshot `memory/` (excluding `archive/`) → `memory/snapshots/<iso>/` with `manifest.json` (ts, event cursor, wiki state hash).
+On `/done`, full `memory/` state copied to `memory/snapshots/<iso>/` with `manifest.json`. Never deleted (R2 non-deletion). Used by `parent-sync` for rollback + by `memory-import-export` for backup.
 
-Snapshots are never overwritten. Each gets a unique ISO timestamp.
+## Parent sync (multi-project rollup)
 
-## Migration history
+Per `parent-sync` skill (v4.1 origin, v2.6.1 R6-aware):
 
-Path changes preserved in [`MIGRATION.md`](https://github.com/kanadhiayash/zeref-os/blob/main/MIGRATION.md):
+1. STAGE: filter via `evidence-curator` (≥medium); pass through `privacy-guardian`; write to `memory/sync/outbound/<iso>/` with `manifest.json`
+2. APPROVE: explicit user confirmation with preview
+3. PUSH: copy to `<parent_path>/memory/sync/parent/<child_id>/<iso>/`; chmod 444; log PUSHED
+4. PARENT INGEST: parent's `/start` runs conflict detection on incoming entries
+5. ROLLBACK: via provenance pointers
+6. **R6 (v2.6.1)**: every staged entity must survive verbatim into parent; re-diff after privacy-abstraction
 
-- v3 → v4: `scripts/migrate-v3-to-v4.py`
-- v4.0–v4.2 (nested `memory/wiki/`) → v4.3 (flat): `scripts/migrate-v4.2-to-v4.3.py`
-- v4.3 → Zeref OS v1.0.0: no data migration; only plugin name change
+`local-only` privacy mode blocks all parent sync.
+
+## Always-on context budget
+
+Per `budget-governor` (v2.6 rewrite):
+
+| Tier | Per-skill cap | Behavior |
+|---|---|---|
+| HAIKU | 4 000 tok | Aggressive compaction, minimal wiki writes |
+| SONNET | 8 000 tok | Normal operation, full wiki writes |
+| OPUS | 16 000 tok | Full parent-child sync, deep conflict analysis |
+
+`warn_at_tokens` (default 50000) → consolidation suggested. `hard_cap_tokens` → blocks writes; forces `/done`.
+
+## Validation
+
+```bash
+python3 scripts/zeref-validate.py
+# Skills:           14/14 (from zeref-registry.json)
+# Memory layout:    flat
+# PATTERNS lint:    0 finding(s)
+# ✔ Validation passed
+```
+
+## Related
+
+- [[Privacy-Model]] — modes + classes + connectors
+- [[Pattern-Detection]] — Two-Strikes Rule + drafting
+- [[Architecture]] — agents + skills + 4-gate chain
+- [[Glossary]] — boundary file, evidence grade, R6, gate event types
+- [`_shared/rules.md`](https://github.com/kanadhiayash/zeref-os/blob/main/_shared/rules.md) — R1-R6

@@ -1,142 +1,111 @@
 # Pattern Detection
 
-Two systems work together:
+Zeref OS extends itself **only via review-first drafts**. The loop:
 
-1. **`pattern-observer`** — background scanner over `memory/patterns/PATTERNS.jsonl`. Detects repeated work signatures.
-2. **`pattern-to-skill`** — invoked manually via `/zeref-os:review-skill`. Drafts skills from detected patterns to `skills/drafts/`. **Never auto-activates.**
-
-Plus a third overarching rule:
-
-3. **Two-Strikes Rule** — never codify a rule on the first occurrence of an error. See [Glossary](Glossary).
-
-## Algorithm
-
-```mermaid
-flowchart TB
-  Trigger[/done · /stop · /status/] --> Load
-  Load[Load 48-80h window from PATTERNS.jsonl] --> Filter
-  Filter[Filter: wiki-read · wiki-write · skill-invoked · tool-invoke] --> Sig
-  Sig[Extract signature: verb · subject · 3-gram qualifiers] --> Cluster
-  Cluster[Jaccard similarity ≥0.8 + union-find clustering] --> Discard{cluster size ≥ 3?}
-  Discard -->|no| End
-  Discard -->|yes| Score
-  Score[Score: frequency × 1/recency_span_hours] --> Emit
-  Emit[Write candidate JSON to memory/sync/outbound/patterns/<cluster-id>.json] --> Notify
-  Notify[Append pattern-candidate event to PATTERNS.jsonl] --> End[done — wait for /review-skill]
+```
+session events → PATTERNS.jsonl → pattern-observer (background scan)
+    → 48-80h rolling window, Jaccard ≥0.8, ≥3 occurrences
+    → cluster + score → top-3 surfaced per scan
+    → pattern-to-skill drafts SKILL.md to skills/drafts/
+    → user reviews via /review-skill (approve/edit/reject/defer)
+    → approved drafts promoted to skills/<name>/ via git mv (preserves history)
 ```
 
-## Window + threshold
+Never auto-activated. Per Core Principle 10 (Review-First Extension).
 
-| Parameter | Value | Source |
-|---|---|---|
-| Rolling window | **48–80h** | ZEREF_OS §3.5, D4 |
-| Repetition threshold | **3×** | ZEREF_OS §3.5, D4 |
-| Jaccard similarity | **≥ 0.8** | community pattern |
+## Two-Strikes Rule (Core Principle 11)
+
+**Do not codify a rule on the first occurrence of an error.** Wait for the second.
+
+| Occurrence | Action |
+|---|---|
+| First | Log to `memory/MEMORY.md` as a trap noticed |
+| Second | Promote to a rule — codify in `_shared/rules.md`, agent prompt, or new skill |
+
+**Why**: Premature codification creates brittle rules that don't generalize. Two occurrences = pattern; one = noise.
+
+**v2.6.1 example**: C1 memory drift (ship cycles without `wiki-maintenance`) — first occurrence logged to `memory/MEMORY.md`. Second occurrence will trigger automation requirement (auto-fire wiki-maintenance on `/stop`).
+
+See [`references/two-strikes-rule.md`](https://github.com/kanadhiayash/zeref-os/blob/main/references/two-strikes-rule.md) for full doctrine.
+
+## `pattern-observer` algorithm
+
+Per AGENTS.md + skill spec:
+
+1. **Window**: rolling 48-80h scan of `memory/patterns/PATTERNS.jsonl`
+2. **Task signature**: verb + subject + 3-gram qualifiers (stop-words stripped)
+3. **Similarity**: Jaccard 3-gram ≥ 0.8 over qualifier sets
+4. **Clustering**: union-find; discard clusters < 3 members
+5. **Scoring**: `frequency × (1 / recency_span_hours)` (favors dense recent repetition)
+6. **Output**: top-3 by score per scan → `memory/sync/outbound/patterns/<cluster-id>.json`
+7. **Dedupe**: by `cluster_id`; update existing candidates with new members
+8. **Quiet hours**: rest logged as suppressed (no overflow)
+9. **Activation**: `/done`, `/stop`, `/status`, manual
+10. **Background only**: never blocks active work
 
 User can disable via `config/BUDGET.md` `pattern_detection: false`.
 
-## Task signature
+## `pattern-to-skill` workflow
 
-For each event, extract:
+When a candidate cluster surfaces:
 
-```
-verb         action root (e.g. "use", "fetch", "summarize")
-subject      noun phrase (target file basename, domain, or summary subject)
-qualifiers   3-grams from payload summary (lowercase, alphanumeric, stop-words removed)
-```
+1. **DRAFT** operation:
+   - Load candidate JSON
+   - Synthesize metadata: `name`, `description`, `trigger`, `model`, `max_turns`
+   - Synthesize body: mission, when-to-use, operations, safety
+   - Write `skills/drafts/<name>/SKILL.md`
+   - Write immutable `skills/drafts/<name>/PROVENANCE.md` (cites every source event by hash)
+   - **v2.6.1 R6**: PROVENANCE.md must preserve every entity that contributed to the pattern (tool names, file paths, repeated arguments)
+2. **REVIEW QUEUE** (`/review-skill`):
+   - Lists pending drafts with score + event count + description
+3. **Per-draft prompt**:
+   - Show frontmatter + body + provenance summary
+   - 4 actions:
+     - **approve** → `git mv skills/drafts/<name>/ skills/<name>/`; strip draft markers; log to DECISIONS.md
+     - **edit** → open file in editor; re-prompt after save
+     - **reject** → prompt reason; `rm -rf` draft dir; mark candidate JSON `rejected_at`
+     - **defer** → leave in place; increment counter; auto-prompt again after 3 defers
 
-Example:
-```
-event:    wiki-write
-target:   memory/DECISIONS.md
-payload:  {"summary": "Use Postgres for user accounts service"}
+PROVENANCE.md is **immutable** — never edited after creation. Approval doesn't touch it.
 
-→ signature:
-  verb:        "use"
-  subject:     "postgres"
-  qualifiers:  ["use postgres user", "postgres user accounts", "user accounts service"]
-```
+## Validator integration
 
-## Clustering
-
-Pairwise Jaccard similarity over qualifier 3-gram sets:
-
-```
-J(A, B) = |A ∩ B| / |A ∪ B|
-```
-
-Verb + subject must match (exact or stemmed). If `J ≥ 0.8`, events are similar. Union-find groups similar events into clusters. Clusters with size < 3 are discarded.
-
-## Scoring
+`scripts/zeref-validate.py` surfaces drafts as warnings:
 
 ```
-score = frequency × (1 / recency_span_hours)
+Warnings:
+  ! skills/drafts/ contains 1 pending draft(s) — run /review-skill
 ```
 
-Favors dense recent repetition over sparse old repetition.
+Validator does NOT block on drafts. Drafts are read-only artifacts until promoted.
 
-## Candidate emission
+## v2.6.1 example: `grep-with-context` draft
 
-For each surviving cluster, write JSON to `memory/sync/outbound/patterns/<cluster-id>.json`:
+Single draft currently in `skills/drafts/grep-with-context/` (v2.5 L8 dogfood). Demonstrates the full pipeline:
+- 4 events in `PATTERNS.jsonl` with `event: grep-with-context, action: "grep -r -B2 -A2 trigger"` clustered together
+- `pattern-observer` surfaced cluster (score > threshold)
+- `pattern-to-skill` drafted SKILL.md with PROVENANCE
+- Awaits user `/review-skill` decision
 
-```json
-{
-  "schema_version": "1.0",
-  "cluster_id": "<sha256-of-member-hashes>",
-  "detected_at": "<iso>",
-  "size": 5,
-  "verb": "use",
-  "subject": "postgres",
-  "qualifiers_top": ["use postgres user", "..."],
-  "members": [
-    {"event_hash": "sha256:...", "ts": "...", "payload_summary": "..."}
-  ],
-  "suggested_skill_name": "use-postgres-pattern",
-  "score": 12.4
-}
-```
+## What triggers a candidate?
 
-Then append a `pattern-candidate` event to `PATTERNS.jsonl`.
+Examples of patterns the system would surface:
+- Repeated `grep -r --include` over `skills/` (3+ in 24h) → draft `skill-search` skill
+- Repeated PII regex addition to `REDACT.md` (4 distinct patterns added) → draft `redact-helper` skill
+- Repeated tier-override (5 instances of `CRITICAL on HAIKU`) → suggest reclassifying CRITICAL or accepting Haiku for that workload (v2.6.1 L13 dual-key triggers this)
+- Repeated `wiki-maintenance` skip on ship cycles → trigger memory-drift remediation (C1)
 
-## Drafting (`pattern-to-skill`)
+## Safety + anti-patterns
 
-User runs `/zeref-os:review-skill`. For each new candidate:
+- **Never auto-activate**: review-first per Core Principle 10
+- **Never overwrite PROVENANCE**: immutable per `pattern-to-skill` spec
+- **Never delete rejected candidates**: mark `rejected_at` in JSON for future revisit (R2 non-deletion)
+- **Never surface candidates that share signature with a user-rejected one** within retention window
+- **R6 (v2.6.1)**: draft must preserve every entity from PATTERNS source events
 
-1. Load candidate JSON.
-2. Synthesize skill metadata (`name`, `description`, `trigger`, `model`, `max_turns`, `provenance`).
-3. Synthesize skill body (mission, when-to-use, operations, safety).
-4. Write to `skills/drafts/<name>/SKILL.md` + immutable `PROVENANCE.md`.
+## Related
 
-Then per-draft prompt:
-
-```
-=== <name> ===
-<description>
-Provenance: <N> events in <hours>h, score <N>
-[show frontmatter]
-[show body]
-
-Action? [approve / edit / reject / defer]
-```
-
-| Action | Effect |
-|---|---|
-| `approve` | `git mv skills/drafts/<name> skills/<name>`; strip `status: draft`; log event |
-| `edit` | Open file for editing; re-prompt after save |
-| `reject` | Prompt reason; `rm -rf` draft; mark candidate JSON with `rejected_at`; never re-surface |
-| `defer` | Leave in place; auto-prompt after 3 defers |
-
-## Two-Strikes Rule
-
-**First occurrence of an error: log it. Second occurrence: promote to a rule.**
-
-See [Glossary](Glossary) for full rule. Codified in [`references/two-strikes-rule.md`](https://github.com/kanadhiayash/zeref-os/blob/main/references/two-strikes-rule.md).
-
-`pattern-observer`'s 3× threshold enforces this naturally — but for non-pattern rule creation, the Two-Strikes Rule applies manually.
-
-## Safety
-
-- Pattern detection is statistical — false positives expected, false negatives acceptable.
-- All candidates queue in `memory/sync/outbound/patterns/` for user review via `/zeref-os:review-skill`.
-- Never auto-creates a skill.
-- Respects `PRIVACY.md` mode: `local-only` keeps patterns local; never pushed via parent-sync.
+- [[Memory-Model]] — PATTERNS.jsonl schema + 11 event types
+- [[Architecture]] — `pattern-observer` agent + `pattern-to-skill` skill
+- [[Glossary]] — Two-Strikes Rule, pattern signature, cluster_id
+- [`references/two-strikes-rule.md`](https://github.com/kanadhiayash/zeref-os/blob/main/references/two-strikes-rule.md)
