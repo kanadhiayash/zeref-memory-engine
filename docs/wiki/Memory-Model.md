@@ -1,8 +1,12 @@
-# Memory Model (v2.6.1)
+# Memory Model
 
-Zeref OS stores everything in plain markdown under `memory/`, with append-only event logs and snapshots. Single-writer enforced via `memory-keeper` agent (per shared rule R1). v2.6.1 adds PATTERNS.jsonl event schema validation (L5 + L15).
+> Imagine handing a six-month-old project to a brand-new collaborator. Where do they read first? What do they read second? When do they stop? Zeref OS answers those three questions with files on disk.
 
-## Flat layout (per ZEREF_OS §12)
+Zeref OS stores everything in plain markdown under `memory/`, with append-only event logs and snapshots. Single-writer enforced via `memory-keeper` agent (per shared rule R1). PATTERNS.jsonl event schema is validator-checked.
+
+_Placeholder: `assets/poc-memory-tree.png` — real per-project memory tree on disk._
+
+## Flat layout
 
 ```
 memory/
@@ -16,7 +20,7 @@ memory/
 ├── glossary.md              ← project-specific term definitions
 ├── projects/                ← per-sub-project context (if multi-project repo)
 ├── patterns/
-│   └── PATTERNS.jsonl       ← append-only event log; 11-event schema (v2.6.1)
+│   └── PATTERNS.jsonl       ← append-only event log; schema-validated
 ├── snapshots/<iso>/         ← point-in-time wiki state + manifest
 ├── archive/                 ← superseded snapshots (never deleted per R2)
 ├── raw/                     ← untouched source material
@@ -25,7 +29,7 @@ memory/
     └── parent/              ← received parent updates
 ```
 
-## Boundary-first reading (per AGENTS.md §0)
+## Boundary-first reading
 
 The "boundary file" pattern prevents unbounded reads:
 
@@ -47,10 +51,10 @@ memory-keeper (conflict detect, advisory lock via zeref/lock.py)
     ↓
 privacy-guardian (PRIVACY.md mode + REDACT.md classes + SHARING_POLICY.md allowlist)
     ↓
-disk (with PII scrub per v2.5 L11)
+disk (with PII scrub)
 ```
 
-No skill writes to `memory/` directly. Concurrent writes blocked by `zeref/lock.py::MemoryLock` (v2.5 L9). Atomic write semantics via `atomic_write` / `atomic_append` (v2.5 L10).
+No skill writes to `memory/` directly. Concurrent writes blocked by `zeref/lock.py::MemoryLock`. Atomic write semantics via `atomic_write` / `atomic_append`.
 
 ## Contradiction handling
 
@@ -65,7 +69,7 @@ When `memory-keeper` detects a conflict:
 
 **4 anti-patterns refused**: recency-wins · grade-wins · silent-drop · indefinite-snooze.
 
-## PATTERNS.jsonl event schema (v2.6.1 L5 + L15)
+## PATTERNS.jsonl event schema
 
 Append-only event log. Every event is a single JSON line:
 
@@ -73,18 +77,18 @@ Append-only event log. Every event is a single JSON line:
 {"ts":"2026-06-08T14:00:00Z","agent":"memory-keeper","event":"wiki-write","target":"memory/DECISIONS.md","payload":{"summary":"..."},"hash":"sha256:...","evidence_grade":"high"}
 ```
 
-**11 allowlisted event types** (validated by `scripts/zeref-validate.py::lint_patterns_log()`):
+**Allowlisted event types** (validated by `scripts/zeref-validate.py::lint_patterns_log()`):
 
 | Event | Required payload | Optional payload |
 |---|---|---|
 | `wiki-write` | summary | — |
 | `session-start` | — | trigger, scope, budget_ceiling_usd, team, force_multipliers |
 | `memory-drift-detected` | finding | — |
-| `budget-gate` (v2.6) | weight, tier, match | est_cost_usd, budget_remaining_usd, override_reason |
-| `skill-route` (v2.6) | domain, lead, support, qa | ext |
-| `tool-probe` (v2.6) | tool, reachable | path, fallback, marker_verified |
-| `prompt-gate` (v2.6) | classification | restructured, brief_tokens, stripped_context_tokens, injection_detected |
-| `handoff-compress` (v2.6) | original_tokens, compressed_tokens, ratio | model_from, model_to, harness_from, harness_to |
+| `budget-gate` | weight, tier, match | est_cost_usd, budget_remaining_usd, override_reason |
+| `skill-route` | domain, lead, support, qa | ext |
+| `tool-probe` | tool, reachable | path, fallback, marker_verified |
+| `prompt-gate` | classification | restructured, brief_tokens, stripped_context_tokens, injection_detected |
+| `handoff-compress` | original_tokens, compressed_tokens, ratio | model_from, model_to, harness_from, harness_to |
 | `tier-change` | from, to | — |
 | `grep-with-context` | — | action |
 | `log-cutover` | — | from, to, note |
@@ -93,13 +97,14 @@ Append-only event log. Every event is a single JSON line:
 - `weight` ∈ {CRITICAL, HIGH, MEDIUM, LOW}
 - `tier` ∈ {OPUS, SONNET, HAIKU, OPUS-equivalent, SONNET-equivalent, HAIKU-equivalent}
 
-**Hard constraints** (L14 stack cap + Core Principle 14):
-- `skill-route` with `len(support) + 2 > 5` → lint error
+**Hard constraints**:
+- `skill-route` with stack > 5 → lint error
 - `budget-gate` with `(CRITICAL, HAIKU)` or `(LOW, OPUS)` unless `match=OVERRIDE` → lint error
 
 ## Pattern detection (per `pattern-observer`)
 
 Background scan of `PATTERNS.jsonl` over rolling 48–80h window:
+
 - Task signature: verb + subject + 3-gram qualifiers
 - Jaccard similarity ≥ 0.8 over qualifier 3-gram sets
 - Union-find clustering; discard clusters < 3 members
@@ -115,20 +120,20 @@ On `/done`, full `memory/` state copied to `memory/snapshots/<iso>/` with `manif
 
 ## Parent sync (multi-project rollup)
 
-Per `parent-sync` skill (v4.1 origin, v2.6.1 R6-aware):
+Per `parent-sync` skill:
 
-1. STAGE: filter via `evidence-curator` (≥medium); pass through `privacy-guardian`; write to `memory/sync/outbound/<iso>/` with `manifest.json`
-2. APPROVE: explicit user confirmation with preview
-3. PUSH: copy to `<parent_path>/memory/sync/parent/<child_id>/<iso>/`; chmod 444; log PUSHED
-4. PARENT INGEST: parent's `/start` runs conflict detection on incoming entries
-5. ROLLBACK: via provenance pointers
-6. **R6 (v2.6.1)**: every staged entity must survive verbatim into parent; re-diff after privacy-abstraction
+1. **STAGE**: filter via `evidence-curator` (≥medium); pass through `privacy-guardian`; write to `memory/sync/outbound/<iso>/` with `manifest.json`
+2. **APPROVE**: explicit user confirmation with preview
+3. **PUSH**: copy to `<parent_path>/memory/sync/parent/<child_id>/<iso>/`; chmod 444; log PUSHED
+4. **PARENT INGEST**: parent's `/start` runs conflict detection on incoming entries
+5. **ROLLBACK**: via provenance pointers
+6. **R6**: every staged entity must survive verbatim into parent; re-diff after privacy-abstraction
 
 `local-only` privacy mode blocks all parent sync.
 
 ## Always-on context budget
 
-Per `budget-governor` (v2.6 rewrite):
+Per `budget-governor`:
 
 | Tier | Per-skill cap | Behavior |
 |---|---|---|

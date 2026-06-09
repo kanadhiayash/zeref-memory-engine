@@ -1,8 +1,8 @@
 # Team Packs
 
-On-demand multi-agent configurations per ZEREF_OS §8. Max 4 agents per pack. Outputs land in `team/` (never inline-only). Activated via `/team [type]`.
+On-demand multi-agent configurations. Max 4 agents per pack. Outputs land in `team/` (never inline-only). Activated via `/team [type]`.
 
-**v2.6.1 compatibility**: Team packs predate the 4-gate Auto-Activation chain but coexist cleanly. When a team pack is active, the 3 gates still fire on every major task; the pack's agents become the candidate stack `skill-router` (Gate #2) picks from.
+Team packs coexist with the 4-gate Auto-Activation chain: when a team pack is active, the gates still fire on every major task, and the pack's agents become the candidate stack that `skill-router` (Gate #2) picks from.
 
 ## Pack inventory
 
@@ -25,8 +25,8 @@ Each pack's roles + outputs declared in `team-packs/<name>.md`.
 /team build         # spawn Planner + Implementer + Reviewer
 /team research      # spawn Investigator + Synthesizer + Fact-checker
 /team red           # spawn read-only adversarial roster
-/team audit         # spawn audit roster (used in v2.5 + v2.6.1 audit campaigns)
-/team ship          # spawn ship roster (used in v2.5 Phase F + v2.6.1 Phase G)
+/team audit         # spawn audit roster
+/team ship          # spawn ship roster
 ```
 
 ### Pack-specific args
@@ -47,7 +47,7 @@ Each pack's roles + outputs declared in `team-packs/<name>.md`.
 4. Spawn roster (via harness Skill tool for Claude Code)
 5. Create `team/.gitkeep` if missing; ensure `team/` exists
 6. Record activation in `memory/MEMORY.md` under `## Active team`
-7. **v2.6 integration**: gates fire on every team-pack task per Auto-Activation chain
+7. Gates fire on every team-pack task per Auto-Activation chain
 8. On `/done` or `/stop`: pack finalizes outputs; `memory-keeper` records decisions per pack rules
 
 ## Output contract
@@ -58,31 +58,22 @@ Each pack's roles + outputs declared in `team-packs/<name>.md`.
 
 ## Safety
 
-- **red** team is read-only by default per ZEREF_OS §8 anti-pattern: "Do NOT activate a team without user trigger or explicit recommendation."
+- **red** team is read-only by default — no writes without `--write` and explicit user trigger.
 - **ship** Deploy verifier blocks on failed checklist. User can override; override is recorded in `memory/DECISIONS.md`.
 - All team writes still pass through `privacy-guardian` per `PRIVACY.md` + R3.
-- **v2.6.1 R6 (Zero Context Loss)**: pack outputs that summarize or restructure source material must preserve every entity from inputs (handoff-compiler + caveman-handoff handle cross-pack handoffs).
+- **R6 (Zero Context Loss)**: pack outputs that summarize or restructure source material must preserve every entity from inputs (handoff-compiler + caveman-handoff handle cross-pack handoffs).
 
 ## Pack composition vs skill-router
 
 When `/team [type]` is active, the pack defines a candidate roster. When a new major task arrives:
 
 1. `budget-governor` classifies weight (Gate #1)
-2. `skill-router` picks lead + support + QA from the pack roster (Gate #2) — **never exceeds 5 skills** (L14 cap)
+2. `skill-router` picks lead + support + QA from the pack roster (Gate #2) — **never exceeds 5 skills**
 3. `fleet-activator` probes external tools the pack may need
 4. `prompt-context-engine` restructures the prompt (Gate #3)
 5. Pack executes per gates
 
 Pack roster ≠ active stack. Roster is the menu; gate #2 picks the dish.
-
-## v2.6.1 audit campaign reference (the `audit` pack in action)
-
-The v2.6.1 audit campaign (7 phases A-G) used `/team audit` as its primary pack:
-- **Reader**: walked AGENTS.md / SKILL.md / registry / CHANGELOG; extracted claims into `tests/claims-v2.6.csv`
-- **Linter**: ran `python3 scripts/zeref-validate.py` + sandbox spec generation
-- **Quality gate**: scored 150 sandbox rows + 8 CVSS attacks → `tests/scores-v2.6-B.csv` + `tests/security-audit-v2.6-C.md`
-
-Force multipliers (per v2.5 hybrid stack pattern): ECC `/ecc:eval-harness`, `/ecc:security-scan`, `/ecc:agent-eval`; gstack `/qa` + `/review`; raptor (security-workspace); `/graphify` (claim graph).
 
 ## Related
 

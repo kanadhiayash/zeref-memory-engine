@@ -1,5 +1,7 @@
 # Pattern Detection
 
+> Imagine your editor noticed you running the same five-step ritual every week and offered — but never imposed — a macro. That is `pattern-observer`.
+
 Zeref OS extends itself **only via review-first drafts**. The loop:
 
 ```
@@ -23,8 +25,6 @@ Never auto-activated. Per Core Principle 10 (Review-First Extension).
 | Second | Promote to a rule — codify in `_shared/rules.md`, agent prompt, or new skill |
 
 **Why**: Premature codification creates brittle rules that don't generalize. Two occurrences = pattern; one = noise.
-
-**v2.6.1 example**: C1 memory drift (ship cycles without `wiki-maintenance`) — first occurrence logged to `memory/MEMORY.md`. Second occurrence will trigger automation requirement (auto-fire wiki-maintenance on `/stop`).
 
 See [`references/two-strikes-rule.md`](https://github.com/kanadhiayash/zeref-os/blob/main/references/two-strikes-rule.md) for full doctrine.
 
@@ -55,12 +55,12 @@ When a candidate cluster surfaces:
    - Synthesize body: mission, when-to-use, operations, safety
    - Write `skills/drafts/<name>/SKILL.md`
    - Write immutable `skills/drafts/<name>/PROVENANCE.md` (cites every source event by hash)
-   - **v2.6.1 R6**: PROVENANCE.md must preserve every entity that contributed to the pattern (tool names, file paths, repeated arguments)
+   - **R6**: PROVENANCE.md must preserve every entity that contributed to the pattern (tool names, file paths, repeated arguments)
 2. **REVIEW QUEUE** (`/review-skill`):
    - Lists pending drafts with score + event count + description
 3. **Per-draft prompt**:
    - Show frontmatter + body + provenance summary
-   - 4 actions:
+   - Four actions:
      - **approve** → `git mv skills/drafts/<name>/ skills/<name>/`; strip draft markers; log to DECISIONS.md
      - **edit** → open file in editor; re-prompt after save
      - **reject** → prompt reason; `rm -rf` draft dir; mark candidate JSON `rejected_at`
@@ -79,21 +79,14 @@ Warnings:
 
 Validator does NOT block on drafts. Drafts are read-only artifacts until promoted.
 
-## v2.6.1 example: `grep-with-context` draft
-
-Single draft currently in `skills/drafts/grep-with-context/` (v2.5 L8 dogfood). Demonstrates the full pipeline:
-- 4 events in `PATTERNS.jsonl` with `event: grep-with-context, action: "grep -r -B2 -A2 trigger"` clustered together
-- `pattern-observer` surfaced cluster (score > threshold)
-- `pattern-to-skill` drafted SKILL.md with PROVENANCE
-- Awaits user `/review-skill` decision
-
 ## What triggers a candidate?
 
 Examples of patterns the system would surface:
+
 - Repeated `grep -r --include` over `skills/` (3+ in 24h) → draft `skill-search` skill
 - Repeated PII regex addition to `REDACT.md` (4 distinct patterns added) → draft `redact-helper` skill
-- Repeated tier-override (5 instances of `CRITICAL on HAIKU`) → suggest reclassifying CRITICAL or accepting Haiku for that workload (v2.6.1 L13 dual-key triggers this)
-- Repeated `wiki-maintenance` skip on ship cycles → trigger memory-drift remediation (C1)
+- Repeated tier-override (5 instances of `CRITICAL on HAIKU`) → suggest reclassifying CRITICAL or accepting Haiku for that workload
+- Repeated `wiki-maintenance` skip on ship cycles → trigger memory-drift remediation
 
 ## Safety + anti-patterns
 
@@ -101,11 +94,11 @@ Examples of patterns the system would surface:
 - **Never overwrite PROVENANCE**: immutable per `pattern-to-skill` spec
 - **Never delete rejected candidates**: mark `rejected_at` in JSON for future revisit (R2 non-deletion)
 - **Never surface candidates that share signature with a user-rejected one** within retention window
-- **R6 (v2.6.1)**: draft must preserve every entity from PATTERNS source events
+- **R6**: draft must preserve every entity from PATTERNS source events
 
 ## Related
 
-- [[Memory-Model]] — PATTERNS.jsonl schema + 11 event types
+- [[Memory-Model]] — PATTERNS.jsonl schema + event types
 - [[Architecture]] — `pattern-observer` agent + `pattern-to-skill` skill
 - [[Glossary]] — Two-Strikes Rule, pattern signature, cluster_id
 - [`references/two-strikes-rule.md`](https://github.com/kanadhiayash/zeref-os/blob/main/references/two-strikes-rule.md)
