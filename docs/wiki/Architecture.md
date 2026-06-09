@@ -1,8 +1,10 @@
-# Architecture (v2.6.1)
+# Architecture
 
-Zeref OS has six surfaces: **agents** (always-on roles), **skills** (on-trigger procedures), **commands** (user-facing slash entries), **team packs** (on-demand multi-agent configurations), **Auto-Activation Gates** (4-gate chain per major task, v2.6), and **Model-Tier Routing** (weight → model matrix, v2.6).
+Zeref OS has six surfaces: **agents** (always-on roles), **skills** (on-trigger procedures), **commands** (user-facing slash entries), **team packs** (on-demand multi-agent configurations), **Auto-Activation Gates** (4-gate chain per major task), and **Model-Tier Routing** (weight → model matrix).
 
-`AGENTS.md` is the source of truth. Every harness-specific file is a thin stub. **14 Core Principles**, **6 agents**, **14 skills**, **8 commands**, **6 team packs**, **3 Auto-Activation Gates** active.
+`AGENTS.md` is the source of truth. Every harness-specific file is a thin stub. **14 Core Principles**, **6 agents**, **14 skills**, **8 commands**, **6 team packs**, **4 Auto-Activation Gates** active.
+
+_Placeholder: `assets/poc-gate-output.png` — sample inline gate declaration on a real task._
 
 ## Overview diagram
 
@@ -12,7 +14,7 @@ flowchart TB
   Harness -->|reads| AG["AGENTS.md (canonical)<br/>14 Core Principles · 4-Gate Auto-Activation"]
   AG --> Gates
 
-  subgraph Gates["Auto-Activation Gates (v2.6 — every major task)"]
+  subgraph Gates["Auto-Activation Gates — every major task"]
     G1["Gate #1<br/>budget-governor<br/>weight + tier"]
     G2["Gate #2<br/>skill-router<br/>smallest stack"]
     GFA["fleet-activator<br/>tool reachability"]
@@ -77,7 +79,7 @@ flowchart TB
 
   MK <--> Mem[(memory/ flat layout)]
   PG -. enforces .-> Mem
-  PO -. logs .-> PJ["PATTERNS.jsonl<br/>11-event schema validator (L5+L15)"]
+  PO -. logs .-> PJ["PATTERNS.jsonl<br/>schema validator"]
   G1 -. event .-> PJ
   G2 -. event .-> PJ
   G3 -. event .-> PJ
@@ -88,21 +90,21 @@ flowchart TB
   class G1,G2,G3,GFA,BG,SR,FA,PCE,CH gate
 ```
 
-## Auto-Activation Gates (v2.6 — 4-gate chain)
+## Auto-Activation Gates (4-gate chain)
 
 Every major task passes 4 sequential gates **before any execution-model token spend**. Each gate declares output inline; user can override.
 
 | # | Gate | Output line format | Hard block |
 |---|---|---|---|
 | 1 | `budget-governor` | `[budget-governor] weight=<W> tier=<T> match=<OK\|MISMATCH> budget_remaining=$<n>` | CRITICAL never on Haiku; LOW flagged on Opus |
-| 2 | `skill-router` | `[skill-router] domain=<D> lead=<L> support=[s1,s2] qa=<Q> ext=<E\|none>` | Stack > 5 skills rejected (L14 lint); fan-out refused |
-| (companion) | `fleet-activator` | `[fleet-activator] <tool>: reachable\|UNREACHABLE-EMPTY-DIR\|UNREACHABLE-MISSING` | Marker-file check per tool (L9; closes V03 probe-spoof) |
-| 3 | `prompt-context-engine` | `[prompt-context-engine] class=<C> action=<proceed\|assume\|restructure> brief_tokens=<n> injection_detected=<bool>` | Injection markers wrapped in `<context type="untrusted-input">` + `<sentinel>` (L10; closes V02 CRITICAL); 60s irreversibility cool-down (L11) |
-| (handoff) | `caveman-handoff` | `[caveman-handoff] orig=<n>tok compressed=<m>tok ratio=<r>% model_from=<X> model_to=<Y>` | NFKC normalize + homoglyph guard (L12; closes V04); R6 diff byte-equal AND NFKC-equal |
+| 2 | `skill-router` | `[skill-router] domain=<D> lead=<L> support=[s1,s2] qa=<Q> ext=<E\|none>` | Stack > 5 skills rejected; fan-out refused |
+| (companion) | `fleet-activator` | `[fleet-activator] <tool>: reachable\|UNREACHABLE-EMPTY-DIR\|UNREACHABLE-MISSING` | Marker-file check per tool (anti probe-spoof) |
+| 3 | `prompt-context-engine` | `[prompt-context-engine] class=<C> action=<proceed\|assume\|restructure> brief_tokens=<n> injection_detected=<bool>` | Injection markers wrapped in `<context type="untrusted-input">` + `<sentinel>`; 60s irreversibility cool-down |
+| (handoff) | `caveman-handoff` | `[caveman-handoff] orig=<n>tok compressed=<m>tok ratio=<r>% model_from=<X> model_to=<Y>` | NFKC normalize + homoglyph guard; R6 diff byte-equal AND NFKC-equal |
 
-Each gate emits a typed event to `memory/patterns/PATTERNS.jsonl`. Validator parses event allowlist + per-event JSON-schema + value-enum checks. See `scripts/zeref-validate.py::lint_patterns_log()` (L3+L5+L15).
+Each gate emits a typed event to `memory/patterns/PATTERNS.jsonl`. Validator parses event allowlist + per-event JSON-schema + value-enum checks. See `scripts/zeref-validate.py::lint_patterns_log()`.
 
-## Model-Tier Routing (v2.6)
+## Model-Tier Routing
 
 Per Core Principle 14: **LOW never on Opus; CRITICAL never on Haiku.** Weight (from `budget-governor`) maps to model + effort.
 
@@ -130,7 +132,7 @@ Per Core Principle 14: **LOW never on Opus; CRITICAL never on Haiku.** Weight (f
 
 ## Skills (14 — on-trigger procedures)
 
-★ = new in v2.6. † = rewritten in v2.6.
+★ = new in v2.6.
 
 | Skill | Activation | Tier |
 |---|---|---|
@@ -141,7 +143,7 @@ Per Core Principle 14: **LOW never on Opus; CRITICAL never on Haiku.** Weight (f
 | `parent-sync` | Approved `/stop` or `/sync-parent` | SONNET (HIGH — irreversible push) |
 | `pattern-to-skill` | Threshold hit in `pattern-observer` | OPUS (CRITICAL — code synthesis) |
 | `memory-import-export` | Explicit migration request | SONNET (HIGH — schema crossing) |
-| `budget-governor` ★† **Gate #1** | Auto-gate: every major task | HAIKU (LOW — classification) |
+| `budget-governor` ★ **Gate #1** | Auto-gate: every major task | HAIKU (LOW — classification) |
 | `skill-router` ★ **Gate #2** | Auto-gate: every major task, after budget gate | HAIKU (LOW — routing) |
 | `fleet-activator` ★ | Companion to `skill-router` when extended-tool hint present | HAIKU (LOW — probe) |
 | `prompt-context-engine` ★ **Gate #3** | Auto-gate: every major task, after skill-router | SONNET (HIGH — restructure) |
@@ -177,47 +179,6 @@ See [[Team-Packs]] for full descriptions.
 
 Max 4 agents per pack. Outputs always land in `team/` (never inline-only).
 
-## File tree (v2.6.1)
-
-```
-project-root/
-├── AGENTS.md              ← canonical (14 Core Principles + Auto-Activation Gates + Model-Tier Routing)
-├── GITHUB_OS.md           ← per-repo doctrine (audit cycle, R6 gate, model-resolver pinning) [v2.6.1]
-├── CLAUDE.md / GEMINI.md  ← harness stubs (defer to AGENTS.md)
-├── PRIVACY.md / REDACT.md / SHARING_POLICY.md
-├── CHANGELOG.md / CHANGELOG-LEGACY.md
-├── SECURITY.md / CONTRIBUTING.md / CODEOWNERS / LICENSE
-├── _shared/
-│   ├── rules.md           ← R1 single-writer, R2 non-deletion, R3 privacy gate, R4 never-invent, R6 zero-context-loss
-│   └── model-resolver.md  ← bare alias → full Anthropic id mapping [v2.6.1]
-├── agents/<6>.md
-├── skills/<14>/SKILL.md
-│   └── drafts/            ← pattern-detected, pending approval
-├── commands/<8>.md
-├── team-packs/<6>.md
-├── team/                  ← team pack outputs
-├── memory/                ← flat layout (see Memory-Model page)
-│   ├── hot.md / index.md / MEMORY.md
-│   ├── DECISIONS.md / OPEN_QUESTIONS.md / RISKS.md / CONFLICTS.md
-│   ├── glossary.md / projects/
-│   ├── patterns/PATTERNS.jsonl    ← 11 event types, schema validated
-│   └── snapshots/ / archive/ / sync/
-├── config/                ← PROJECT, PERMISSIONS, PARENT_SYNC, BUDGET, claude-overrides
-├── references/            ← qa-gate, safety, two-strikes, advisories, v4x-canon
-├── docs/
-│   ├── adr/               ← ADR-001 (4-gate) + ADR-002 (audit hardening) [v2.6.1]
-│   ├── RELEASE_LOG.md     ← controlled baselines per FAANG §3.4 [v2.6.1]
-│   └── wiki/              ← this wiki
-├── scripts/
-│   ├── zeref-validate.py  ← registry-driven count + lint_patterns_log (L1+L3+L5+L14+L15)
-│   ├── zeref-publish-releases.sh  ← gh release create for all tags [v2.6.1]
-│   ├── migrate-v3-to-v4.py / migrate-v4.2-to-v4.3.py
-├── tests/                 ← claims, sandbox, scores, security, rubric (v2.5 + v2.6.1)
-├── zeref/                 ← Python runtime: privacy.py, lock.py, cli.py, db.py, demo.py, dashboard.py
-├── zeref-registry.json    ← 14 entries, full Anthropic ids + model_alias [v2.6.1]
-└── .github/workflows/     ← ci.yml + zeref-validate.yml
-```
-
 ## Core principles (14, per AGENTS.md)
 
 1. **Local-first** — canonical state is markdown on disk
@@ -232,18 +193,13 @@ project-root/
 10. **Review-first extension** — drafts to `skills/drafts/`, never auto-activated
 11. **Two-Strikes Rule** — no rule on first occurrence of an error
 12. **Harness Agnosticism** — AGENTS.md is source of truth
-13. ★ **Cost-Weight Auto-Gate** — `budget-governor` runs before every major task; CRITICAL/HIGH cannot proceed without stated tier [v2.6]
-14. ★ **Task-Weight Model Routing** — LOW never on Opus; CRITICAL never on Haiku [v2.6]
+13. ★ **Cost-Weight Auto-Gate** — `budget-governor` runs before every major task; CRITICAL cannot proceed without stated tier
+14. ★ **Task-Weight Model Routing** — LOW never on Opus; CRITICAL never on Haiku
 
 ## Shared rules (`_shared/rules.md`)
 
 - **R1** Single-Writer + Privacy Gate — all `memory/` writes pass through `memory-keeper` → `privacy-guardian`
-- **R2** Non-Deletion (D9) — archive content; never hard-delete
+- **R2** Non-Deletion — archive content; never hard-delete
 - **R3** Privacy Gate on External Output — `privacy-abstraction` rewrites payload when mode = abstract; blocks when local-only
 - **R4** Never Invent — leave blank with `# TODO`, never fabricate
-- **R6** ★ Zero Context Loss [v2.6] — every fact/entity/constraint from raw prompt survives restructure/routing/handoff; verified by diff
-
-## Decision records (`docs/adr/`)
-
-- **ADR-001** (`zeref_auto-gated-execution_adr_approved_yk_2026-06-08_v1.0.md`) — v2.6.0 4-gate chain
-- **ADR-002** (`zeref_audit-hardening-l1-l15_adr_approved_yk_2026-06-08_v1.0.md`) — v2.6.1 audit campaign + L1-L15
+- **R6** ★ Zero Context Loss — every fact / entity / constraint from raw prompt survives restructure / routing / handoff; verified by diff

@@ -1,26 +1,24 @@
 # Installation
 
-Zeref OS v2.6.1 installs as a Claude Code plugin. Other harnesses (Cursor, Aider, Windsurf, Gemini, Codex) read AGENTS.md directly via per-harness stubs.
+Zeref OS v2.6 installs as a Claude Code plugin. Other harnesses (Cursor, Aider, Windsurf, Gemini, Codex) read AGENTS.md directly via per-harness stubs.
 
 ## Claude Code (primary)
 
 ### Quick install
 
 ```bash
-# Add the marketplace + install
+claude plugin marketplace add kanadhiayash/zeref-os
 claude plugin install zeref-os@zeref-os
 ```
 
-That's it. The plugin is now at `~/.claude/plugins/cache/zeref-os/zeref-os/`.
+The plugin lands at `~/.claude/plugins/cache/zeref-os/zeref-os/`.
 
 ### Verify
 
 ```bash
-# Check plugin loaded
 claude plugin list | grep zeref-os
 # zeref-os@zeref-os  v2.6.1  enabled
 
-# Activate in a project directory
 cd ~/my-project
 claude
 > /zeref-os:start
@@ -79,7 +77,6 @@ Codex reads `AGENTS.md` natively. Just point it at the project root.
 Cursor reads `.cursor/rules/zeref.mdc`. The stub instructs Cursor to load `AGENTS.md`.
 
 ```bash
-# Already included in zeref-os install. Verify:
 ls .cursor/rules/zeref.mdc
 ```
 
@@ -97,11 +94,11 @@ cp .aider.conf.yml.example .aider.conf.yml
 
 ### Gemini CLI / Antigravity
 
-Read `GEMINI.md` natively. Defers to `AGENTS.md`.
+Reads `GEMINI.md` natively. Defers to `AGENTS.md`.
 
 ### Hermes / Amp / Zed / Perplexity
 
-These harnesses are AGENTS.md-native. No additional stub required.
+AGENTS.md-native. No additional stub required.
 
 Full table: [`references/harness-translation-map.md`](https://github.com/kanadhiayash/zeref-os/blob/main/references/harness-translation-map.md).
 
@@ -114,7 +111,7 @@ On first `/zeref-os:start` in a fresh project (no `config/PROJECT.md`):
 3. Writes: `config/PROJECT.md`, `PRIVACY.md`, `REDACT.md`, `SHARING_POLICY.md`, `config/PERMISSIONS.md`, `config/PARENT_SYNC.md` (if parent), `config/BUDGET.md`
 4. Prompts re-run `/zeref-os:start` to boot the session
 
-If user cancels mid-interview: Zeref OS boots in **READ-ONLY mode** until the schema completes (per ZEREF_OS §7).
+If user cancels mid-interview: Zeref OS boots in **READ-ONLY mode** until the schema completes.
 
 ## Optional: install Python runtime
 
@@ -122,49 +119,21 @@ If user cancels mid-interview: Zeref OS boots in **READ-ONLY mode** until the sc
 
 ```bash
 cd ~/.claude/plugins/cache/zeref-os/zeref-os
-pip install -e .                # editable install
+pip install -e .
 python3 -m zeref --help
-
-# Or via pipx (when published to PyPI — deferred to v2.7):
-# pipx install zeref-os
 ```
 
 Available commands:
 
 ```
 zeref status              # print hot.md summary
-zeref write-decision      # append to DECISIONS.md (with PII scrub per L11)
+zeref write-decision      # append to DECISIONS.md (with PII scrub)
 zeref grade <claim>       # invoke evidence-grader logic
 zeref audit               # structural validation + privacy audit
-zeref init                # scaffold memory + config (v2.5 L5)
-zeref demo                # spawn temp dir, run 20-task regression, print scorecard
-zeref dashboard           # render tests/dashboard.html
+zeref init                # scaffold memory + config
+zeref dashboard           # render HTML score dashboard
 zeref db-status           # report backend (sqlite/duckdb) + parquet availability
 ```
-
-## Optional: GitHub Releases publishing (deferred Phase H6)
-
-If you want to publish v2.6.1 GitHub Releases for the legacy tag chain (v2.0–v4.3 prerelease + v1.0.0/v2.5.0/v2.6.0/v2.6.1 full):
-
-```bash
-brew install gh
-gh auth login
-bash scripts/zeref-publish-releases.sh         # dry-run
-bash scripts/zeref-publish-releases.sh --apply # create releases
-```
-
-Idempotent — skips tags that already have releases.
-
-## Optional: GITHUB_OS per-repo doctrine
-
-Copy + customize for your own repos following the Zeref OS pattern:
-
-```bash
-cp ~/.claude/plugins/cache/zeref-os/zeref-os/GITHUB_OS.md ./GITHUB_OS.md
-# Then edit ## Zeref-specific overrides → ## <Your-Project>-specific overrides
-```
-
-See [GITHUB_OS.md](https://github.com/kanadhiayash/zeref-os/blob/main/GITHUB_OS.md).
 
 ## Uninstall
 
@@ -182,11 +151,10 @@ rm -rf memory/ config/PROJECT.md PRIVACY.md REDACT.md SHARING_POLICY.md
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| `Skills: 10/10` in validator | Old validator (pre-v2.6.1 L1) | Update plugin: `claude plugin update zeref-os@zeref-os` |
 | `unknown event type 'X'` in PATTERNS lint | Custom event type added | Either add to `EVENT_SCHEMA` in `scripts/zeref-validate.py` OR rename event |
 | `memory/sync/outbound/handoff-*.md` missing on cross-model handoff | `caveman-handoff` skipped | Confirm `_shared/model-resolver.md` is present + brief diff complete |
 | Gate output missing from PATTERNS.jsonl | Agent skipping gates | Validator warning surfaces this advisory; check session for skipped gates |
-| Cyrillic-а in path detected, blocking handoff | v2.6.1 L12 NFKC + homoglyph guard | Replace with ASCII; user confirm if intentional |
+| Cyrillic-а in path detected, blocking handoff | NFKC + homoglyph guard fired | Replace with ASCII; user confirm if intentional |
 
 ## Related
 
