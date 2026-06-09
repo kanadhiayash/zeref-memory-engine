@@ -18,6 +18,11 @@ classes:
       - physical_addresses
       - government_ids            # SSN, passport, license
       - dates_of_birth
+  email:
+    enabled: true                  # v2.5 L2 — closes V01/V02 (homoglyph + base64 bypass)
+    replacement: "[PII:email]"
+    patterns:
+      - email_addresses_standalone # bare addresses outside name patterns
   internal_paths:
     enabled: true
     patterns:

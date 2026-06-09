@@ -1,0 +1,211 @@
+{
+  "$schema": "https://zeref-os.dev/registry.schema.json",
+  "version": "2.0.0-sprint1",
+  "generated": "2026-06-03",
+  "skills": [
+    {
+      "skill": "wiki-maintenance",
+      "triggers": [
+        "update wiki",
+        "update index",
+        "consolidate memory",
+        "clean up wiki",
+        "after write",
+        "post-write",
+        "/wiki-maintenance",
+        "/done"
+      ],
+      "deliverables": [
+        "memory/index.md domain row updated",
+        "duplicate decisions merged",
+        "broken cross-references reported",
+        "memory/hot.md refreshed (≤500 words)"
+      ],
+      "risk_level": "medium",
+      "support_skills": [
+        "memory-import-export"
+      ],
+      "model": "haiku"
+    },
+    {
+      "skill": "budget-governor",
+      "triggers": [
+        "/start",
+        "session start",
+        "budget warning",
+        "token limit approaching",
+        "tier change",
+        "model changed",
+        "config/BUDGET.md updated"
+      ],
+      "deliverables": [
+        "active tier reported (Free / Standard / God Mode)",
+        "token budget status",
+        "verbosity rules applied"
+      ],
+      "risk_level": "low",
+      "support_skills": [
+        "wiki-maintenance"
+      ],
+      "model": "haiku"
+    },
+    {
+      "skill": "project-setup",
+      "triggers": [
+        "first /start (config/PROJECT.md missing)",
+        "set up project",
+        "initialize project",
+        "missing config",
+        "/start with no config",
+        "configure this project"
+      ],
+      "deliverables": [
+        "config/PROJECT.md written",
+        "PRIVACY.md written",
+        "REDACT.md written",
+        "SHARING_POLICY.md written",
+        "config/PERMISSIONS.md written",
+        "config/PARENT_SYNC.md written (if parent enabled)",
+        "config/BUDGET.md written"
+      ],
+      "risk_level": "medium",
+      "support_skills": [],
+      "model": "sonnet"
+    },
+    {
+      "skill": "contradiction-resolution",
+      "triggers": [
+        "memory-keeper detects conflict during write",
+        "review conflicts",
+        "conflicting claims",
+        "contradiction found",
+        "/done (surfaces snoozed conflicts)"
+      ],
+      "deliverables": [
+        "memory/CONFLICTS.md entry created",
+        "conflict surfaced to user for arbitration",
+        "winner written to memory/DECISIONS.md",
+        "loser marked [SUPERSEDED]"
+      ],
+      "risk_level": "high",
+      "support_skills": [
+        "evidence-grader"
+      ],
+      "model": "sonnet"
+    },
+    {
+      "skill": "evidence-grader",
+      "triggers": [
+        "grade this claim",
+        "grade this",
+        "how confident are we about",
+        "what's the evidence for",
+        "wiki-maintenance consolidation",
+        "parent-sync filter step"
+      ],
+      "deliverables": [
+        "evidence grade (high/medium/low/unverified)",
+        "grade reasoning (3 fields: recency, provenance, corroboration)",
+        "suggested action if grade below threshold"
+      ],
+      "risk_level": "low",
+      "support_skills": [],
+      "model": "haiku"
+    },
+    {
+      "skill": "handoff-compiler",
+      "triggers": [
+        "handoff to",
+        "switching to",
+        "/stop with handoff requested",
+        "handoff-orchestrator invokes",
+        "prepare handoff",
+        "model switch"
+      ],
+      "deliverables": [
+        "STATE.json (machine-readable session state)",
+        "SUMMARY.md (human-readable session summary)",
+        "NEXT.md (next-session prompt)"
+      ],
+      "risk_level": "low",
+      "support_skills": [
+        "privacy-abstraction"
+      ],
+      "model": "sonnet"
+    },
+    {
+      "skill": "memory-import-export",
+      "triggers": [
+        "import memory from",
+        "export memory to",
+        "/migrate",
+        "backup memory",
+        "restore memory",
+        "migrate memory"
+      ],
+      "deliverables": [
+        "portable archive with manifest",
+        "memory/index.md reconstructed on import",
+        "all entries pass privacy-guardian on export"
+      ],
+      "risk_level": "high",
+      "support_skills": [
+        "privacy-abstraction"
+      ],
+      "model": "sonnet"
+    },
+    {
+      "skill": "parent-sync",
+      "triggers": [
+        "approved /stop with parent sync enabled",
+        "/sync-parent"
+      ],
+      "deliverables": [
+        "memory/sync/outbound/ staged",
+        "manifest.json created",
+        "parent's memory/sync/parent/<child-id>/ updated",
+        "conflicts surfaced at parent"
+      ],
+      "risk_level": "high",
+      "support_skills": [
+        "evidence-grader",
+        "privacy-abstraction"
+      ],
+      "model": "sonnet"
+    },
+    {
+      "skill": "pattern-to-skill",
+      "triggers": [
+        "/review-skill picks up a candidate",
+        "draft a skill from this pattern",
+        "pattern-observer threshold hit"
+      ],
+      "deliverables": [
+        "skills/drafts/<name>/SKILL.md created",
+        "PROVENANCE.md created in draft dir",
+        "skill NOT auto-activated — awaits /review-skill"
+      ],
+      "risk_level": "high",
+      "support_skills": [
+        "privacy-abstraction"
+      ],
+      "model": "opus"
+    },
+    {
+      "skill": "privacy-abstraction",
+      "triggers": [
+        "privacy-guardian invokes (mode = abstract)",
+        "outbound transmission with mode = abstract",
+        "before write when PRIVACY.md mode = abstract"
+      ],
+      "deliverables": [
+        "payload rewritten with PII removed per REDACT.md classes",
+        "provenance field preserved",
+        "redaction log entry"
+      ],
+      "risk_level": "high",
+      "support_skills": [],
+      "model": "haiku"
+    }
+  ]
+}
