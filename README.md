@@ -8,15 +8,21 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kanadhiayash/zeref-os/releases"><img src="https://img.shields.io/badge/version-2.5-blueviolet" alt="v2.5"></a>
-  <a href="tests/zeref-rubric-v2.5.md"><img src="https://img.shields.io/badge/rubric-8.0%2F10-success" alt="rubric 8.0/10"></a>
-  <a href="tests/security-audit-vC.md"><img src="https://img.shields.io/badge/CRITICAL-0%20open-success" alt="0 CRITICAL"></a>
-  <a href="tests/scores-vD-live.csv"><img src="https://img.shields.io/badge/live%20tests-20%2F20-success" alt="20/20 live"></a>
+  <a href="https://github.com/kanadhiayash/zeref-os/releases/tag/v2.6.1"><img src="https://img.shields.io/badge/version-2.6.1-blueviolet" alt="v2.6.1"></a>
+  <a href="tests/zeref-rubric-v2.6.md"><img src="https://img.shields.io/badge/rubric-9.88%2F10-success" alt="rubric 9.88/10"></a>
+  <a href="tests/security-audit-v2.6-C.md"><img src="https://img.shields.io/badge/CRITICAL-0%20open-success" alt="0 CRITICAL"></a>
+  <a href="tests/scores-v2.6-B.csv"><img src="https://img.shields.io/badge/sandbox-114%2F150%20pass-success" alt="sandbox pass"></a>
+  <a href="AGENTS.md#auto-activation-gates-v26"><img src="https://img.shields.io/badge/gates-3%20active-blue" alt="3 gates"></a>
   <a href="https://github.com/kanadhiayash/zeref-os/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/source--of--truth-v1.0.0-blueviolet" alt="v1.0.0"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT"></a>
   <a href="https://agents.md"><img src="https://img.shields.io/badge/AGENTS.md-canonical-blue" alt="AGENTS.md"></a>
   <a href="https://github.com/kanadhiayash/zeref-os/actions/workflows/zeref-validate.yml"><img src="https://github.com/kanadhiayash/zeref-os/actions/workflows/zeref-validate.yml/badge.svg" alt="CI"></a>
 </p>
+
+> **Zeref OS Command Center (Notion)**: <https://copper-tv-288.notion.site/Zeref-Agent-OS-Command-Center-358d695d836a81af9f6adf30770217c3>
+> **Repo doctrine (per-repo)**: [`GITHUB_OS.md`](GITHUB_OS.md) — branch naming, audit cycle, R6 gate, model-resolver pinning
+> **Decision records**: [`docs/adr/`](docs/adr/) (FAANG naming `zeref_<subject>_adr_<state>_yk_<date>_v<major.minor>.md`)
+> **Release log**: [`docs/RELEASE_LOG.md`](docs/RELEASE_LOG.md) — controlled baselines per FAANG §3.4
 
 ---
 
@@ -53,9 +59,65 @@ This is not version 1.0 in the literal sense — it's the line drawn under a lon
 | **v4.1** (May 2026) | Full contradiction-resolution + parent-sync | Human arbitration on conflicts; child→parent rollup with provenance. | archived |
 | **v4.2** (May 2026) | Pattern detection + skill drafting | `pattern-observer` + `pattern-to-skill`. Review-first extension. | archived |
 | **v4.3** (May 2026) | v4.x canon alignment + team packs + harness translation map | Flat memory layout, Free/Standard/God Mode tiers, Two-Strikes Rule. | merged → v1.0.0 |
-| **v1.0.0** (May 2026) | **Zeref OS** — canonical release. Rebrand + version reset. | **You are here.** |
+| **v1.0.0** (May 31, 2026) | **Zeref OS** — canonical release. Rebrand + version reset. | shipped |
+| **v2.5.0** (Jun 5, 2026) | **Deep Audit Campaign** — runtime + code-backed privacy + 85-claim audit + 8 attacks + L1-L11 workarounds. Rubric 8.00/10. | shipped |
+| **v2.6.0** (Jun 8, 2026) | **Auto-Gated Execution** — 4-gate chain (budget → router → fleet → prompt → handoff). +4 skills. +2 Core Principles. +R6 Zero Context Loss. | shipped |
+| **v2.6.1** (Jun 8, 2026) | **Audit + Hardening** — 7-phase audit on v2.6.0. 15 L-items closed all CRITICAL+HIGH+MEDIUM findings. Rubric 9.88/10. | **You are here.** |
 
-Years of local iteration converge here. The plugin is renamed, the version clock resets, and the project takes its final form. Full prior history preserved in [`CHANGELOG-LEGACY.md`](CHANGELOG-LEGACY.md).
+Years of local iteration converge here. Full pre-rebrand history preserved in [`CHANGELOG-LEGACY.md`](CHANGELOG-LEGACY.md); post-rebrand release notes in [`CHANGELOG.md`](CHANGELOG.md); per-release rows in [`docs/RELEASE_LOG.md`](docs/RELEASE_LOG.md).
+
+---
+
+## Architecture Evolution (v1 → v2.6)
+
+**The shape Zeref OS settled into** — each version's contribution to the final design, sourced from `CHANGELOG.md` + `CHANGELOG-LEGACY.md`.
+
+| Era | Mental model | What it removed | What it added |
+|---|---|---|---|
+| **v1.x → v2.x** (legacy) | "Specialist skill fleet" | — | 109+ Claude-locked skills |
+| **v3.0** (legacy) | "CEO + LLM council" | — | Always-on multi-agent theater (rejected v4.0) |
+| **v4.0** (May 2026) | **Local-first context + memory engine** | 109 skills, 5 agents, CEO/fleet/council framing | 10 disciplined skills + AGENTS.md canon + flat memory + 3 privacy modes |
+| **v4.1–v4.3** (May 2026) | Refinement | — | Contradiction resolution + parent sync + pattern detection + team packs + harness translation map + Two-Strikes Rule |
+| **v1.0.0** (May 31, 2026) | Canonical release + rebrand | — | Version reset; consolidated v4.x learnings into single canonical line |
+| **v2.5.0** (Jun 5, 2026) | **Code-backed runtime** (not spec-only) | spec-only privacy enforcement | `zeref/{privacy,lock,cli,db,demo,dashboard}.py` + 85-claim audit + L1-L11 workarounds + 300-row sandbox |
+| **v2.6.0** (Jun 8, 2026) | **Reactive → Proactive auto-gated execution** | implicit cost-discipline + manual skill selection + verbatim prompt passthrough | 4-gate chain + 4 skills (skill-router, fleet-activator, prompt-context-engine, caveman-handoff) + Core Principles 13-14 + Model-Tier Routing + R6 |
+| **v2.6.1** (Jun 8, 2026) | **Prose-only → code-enforced gates** | hardcoded validator count + bare model names + R6 coverage gaps + 2 CRITICAL/2 HIGH/2 MEDIUM security findings | dynamic registry-driven validator + event-schema lint + model-resolver (full Anthropic ids) + L9 marker-file probe + L10 injection filter + L11 cool-down + L12 NFKC homoglyph guard + L13 dual-key override |
+
+See [`docs/adr/`](docs/adr/) for the two architectural decision records covering v2.6.0 + v2.6.1 in full.
+
+---
+
+## Tests & Validation
+
+Run locally before every push. CI mirrors these on PR + main.
+
+| Check | Command | Threshold |
+|---|---|---|
+| **Structural validator** | `python3 scripts/zeref-validate.py` | Skills 14/14, all sub-checks pass, PATTERNS lint 0 findings |
+| **PATTERNS.jsonl event schema** | `python3 scripts/zeref-validate.py` (built-in) | 11 event types allowlisted; weight/tier enum enforced; stack-cap ≤5 |
+| **Claim audit** | inspect `tests/claims-v2.6.csv` (52 rows) + `tests/claims-audit-v2.6.md` | ≥60% VERIFIED |
+| **Sandbox stress** | inspect `tests/scores-v2.6-B.csv` (150 rows) + `tests/phase-b-v2.6-summary.md` | ≥70% pass; 0 CRITICAL adversarial failure unresolved |
+| **Security audit** | inspect `tests/security-audit-v2.6-C.md` (8 attacks CVSS-scored) | 0 CRITICAL open at ship |
+| **Rubric** | inspect `tests/zeref-rubric-v2.6.md` | 8 dims, every score cites artifact |
+| **Live regression** | `python3 tests/runner.py --mode structural` | 20/20 |
+| **Zeref-scope sweep** (push gate) | `.github/workflows/ci.yml` runs allowlist regex against diff | no non-zeref paths in diff |
+
+Historical baselines available: `tests/scores-vB.csv` (300 rows from v2.5 sandbox), `tests/scores-vD-live.csv` (20/20 live), `tests/zeref-rubric-v2.5.md` (v2.5 8.00 baseline).
+
+---
+
+## Doctrine + Repo Operations
+
+This repo follows the operating doctrine documented at:
+- **Global**: `~/Documents/Claude/00_COMMAND/GITHUB_OS.md` — Yash GitHub Operating System (branch model, PR review, security gates, configuration management)
+- **Per-repo**: [`GITHUB_OS.md`](GITHUB_OS.md) — Zeref-specific overrides (audit cycle, R6 gate, model-resolver pinning, memory layer discipline, classification levels)
+- **Knowledge-OS**: `~/Documents/Claude/00_COMMAND/yash_faang_architecture_brief.md` — FAANG-grade naming, classification, archive model
+
+**Branch convention**: `<type>/zeref__<short-description>` (e.g. `feat/zeref__skill-router-v2`, `chore/zeref__history-reconstruction-v2.6.1`). Release-snapshot branches `release/v<major>.<minor>` per FAANG §3.4 controlled baselines.
+
+**Commits**: Conventional Commits with scope `(zeref)`. See `git log --oneline` for examples.
+
+**Decision records**: [`docs/adr/`](docs/adr/) — FAANG naming `zeref_<subject>_adr_<state>_yk_<date>_v<major.minor>.md`.
 
 ---
 
