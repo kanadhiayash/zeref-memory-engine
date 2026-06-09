@@ -1,7 +1,7 @@
 ---
-project_name: ""
-project_root: ""
-created: ""
+project_name: "Zeref OS"
+project_root: "/Users/yashkanadhia/Documents/Claude/00_SKILLS/zeref-os/.claude/worktrees/compassionate-ride-66e134"
+created: "2026-06-05"
 last_session: ""
 active_agents:
   - memory-keeper
@@ -9,37 +9,12 @@ active_skills:
   - wiki-maintenance
   - budget-governor
   - evidence-grader
-privacy_mode: exact   # exact | abstract | local-only
-parent_project: null  # path to parent project root, or null
-model_tier: sonnet    # haiku | sonnet | opus
-budget_warn_at: 50000 # tokens
+privacy_mode: abstract
+parent_project: null
+model_tier: standard
+budget_warn_at: 50000
 ---
 
-# Project Context
+# Zeref OS
 
-<!-- Populated by /start interview. Edit by hand at any time. -->
-
-## What this project is
-
-(1–2 sentences)
-
-## Why it exists
-
-(Problem being solved.)
-
-## Out of scope
-
-- (Things explicitly excluded.)
-
-## Stakeholders
-
-| Name | Role | Decision authority |
-|---|---|---|
-
-## Constraints
-
-- (Non-negotiables.)
-
-## Tools / connectors
-
-- (MCP servers, APIs, repos, etc. that are in play.)
+Project initialised via `zeref init` on 2026-06-05.

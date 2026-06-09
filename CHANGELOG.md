@@ -8,6 +8,117 @@ Full pre-rebrand history (Skills Fleet → Agent OS → Zeref 4.x) is preserved 
 
 ---
 
+## [2.5.0] — 2026-06-05
+
+> **v2.5 Deep Audit Campaign — 6 phases shipped (A-F)**
+
+**Rubric:** 8.00/10 (from 7.13 audit-corrected v2.0)
+**Security:** 0 CRITICAL open (from 2 post Phase C)
+**Tests:** 85-claim audit + 300 sandbox rows + 8 attacks + 20 live structural + 8 connector scenarios + 50 spec files
+**Workarounds shipped:** L1-L11 (V07, L12 deferred to v2.6)
+
+### Phase A — Claim Inventory + Evidence Grading
+- `tests/claims.csv` (85 rows), `tests/claims-audit.md`
+- 71% VERIFIED, 22% PARTIAL, 7% UNVERIFIED, 0% FALSE
+- 5 contradictions K1-K5
+
+### Phase B — Sandbox Stress Test
+- `tests/sandbox/<skill>/{normal,edge,adversarial,recovery,drift}.md` — 50 specs
+- `tests/scores-vB.csv` — 300 rows (10 × 5 × 6)
+- `tests/phase-b-summary.md`
+- Adversarial 4.77 best, Recovery 3.93 → new L10 atomic writes
+
+### Phase C — Security + Vulnerability Hunt
+- `tests/security-audit-vC.md` — 8 attacks + 4-vuln sweep, CVSS-scored
+- 2 CRITICAL, 3 HIGH, 1 MEDIUM, 3 PASS
+
+### Phase D — Operational Workarounds (L1-L11)
+- L1 PII regex tightened (verb-prefix lookahead) — `zeref/privacy.py`
+- L2 `email` class default-enabled in REDACT.md → closes V01+V02 CRITICAL
+- L3 `tests/runner.py` — structural (20/20) + LLM modes; unblocks ZRF-B05/B08 scaffold
+- L4 `zeref db-status` backend report
+- L5 `zeref init` scaffolds memory + config (closes K3)
+- L6 Dogfood: `config/PROJECT.md` populated (closes K1)
+- L7 `tests/connector-stub.md` (closes K8)
+- L8 `skills/drafts/grep-with-context/` (closes K10)
+- L9 `zeref/lock.py::MemoryLock` (closes V06 + V11)
+- L10 `zeref/lock.py::atomic_write/atomic_append` (closes Recovery gap)
+- L11 `zeref write-decision` scrubs PII before disk (closes V12)
+- `tests/scores-vD-live.csv` 20/20 PASS
+- `tests/phase-d-summary.md`
+
+### Phase E — Rubric Re-Scoring
+- `tests/zeref-rubric-v2.5.md` — every dim cited
+- Vision 9, Execution 8, Doc 8, Architecture 8, Operational 7, Portfolio 8, Investor 8, Engineer 8
+- ZRF: 6 PASS + 4 SCAFFOLD-READY (was 6+3 DEFER+1 BASELINE)
+
+### Phase F — UX Polish
+- `README.md` badges: v2.5, rubric 8.0/10, 0 CRITICAL, 20/20 live, v1.0.0 source-of-truth
+- `QUICKSTART.md` — 5-step onboarding
+- `TASKS.md` + `memory/glossary.md` + `memory/projects/zeref-os.md` + `dashboard.html`
+
+### Known Limitations (v2.6 candidates)
+- L12 connector rate limiter
+- V07 permission override sentinel
+- "Will Smith" famous-name false-negative (L1 trade-off)
+- LLM-mode pass^3 needs live API runs
+- Cross-harness parity ZRF-B07 needs Cursor/Aider/Gemini live runs
+
+### Bloat Log
+- Phase A actual $110 vs $80 est (+$30)
+- Phase B actual ~$17 vs $350-450 est (programmatic generation saved $330+)
+- Phase C-F batched in single session vs phased estimate
+- Total worktree files modified: 36 (target ~25, +44%)
+
+## [2.0.0] — 2026-06-03
+
+> **v2.0 Complete — Sprints 1-4**
+
+**ZRF Scores (v2.0):** Execution 8/10 (+4 from v1.0) | Engineer Credibility 9/10 (+2) | Operational Readiness 6/10 (+3)
+**Test count:** 40 score rows (20 tasks × 2 versions) | 2 eval-harness specs | 20-task demo suite
+
+### Sprint 4 — Distribution + Demo
+- **`pyproject.toml`** — `pipx install zeref-os`. Zero mandatory deps; extras: `[llm]`, `[duckdb]`, `[yaml]`, `[all]`. Entry point: `zeref = "zeref.cli:main"`.
+- **`zeref/demo.py`** — `zeref demo`: 20 structural checks in temp sandbox, green/red report, auto-cleanup. Fully offline (no LLM).
+- **Rebrand note:** Panel didn't defend "OS" name. v2.1+ recommendation: rename to "Zeref", keep "OS" in tagline.
+
+### Sprint 3 — Structured Data + Cross-Harness
+- **`zeref/db.py`** — `snapshot()`: DECISIONS.md + PATTERNS.jsonl + CONFLICTS.md → SQLite (`memory/snapshots/YYYY-MM-DD/zeref.db`). Optional DuckDB `.parquet`. `query(sql)` against latest snapshot. Markdown stays canonical.
+- **`zeref/dashboard.py`** — `zeref dashboard`: reads `tests/scores-v*.csv`, generates `tests/dashboard.html` (Chart.js, self-contained, no server).
+- **`tests/cross-harness-parity.md`** — ZRF-B07 baseline (4.63 Claude Code). P01-P04 parity matrix. Cursor/Aider/Gemini pending live runs.
+- **`SOUL.md`** — principle 6 added: "Structured Memory Compounds Faster."
+- **`tests/scores-v2.0.0.csv`** — 20-task regression suite scored at v2.0.0 baseline.
+
+### Sprint 2 — Runtime + Privacy-as-Code
+- **`zeref/privacy.py`** — Deterministic PII scrubber: NFKC normalize → homoglyph table → base64 decode → regex redact. 7 built-in classes; credentials always-on. `scrub()` + `audit()`.
+- **`zeref/cli.py`** — CLI: `status`, `write-decision`, `grade`, `audit-privacy`, `audit`, `dashboard`, `demo`. `grade` heuristic + litellm fallback.
+- **`zeref/__init__.py`** + **`zeref/__main__.py`** — package entry points.
+- **`tests/eval-harness/wiki-maintenance.md`** — 3 tests (normal/edge/adversarial) with rubric.
+- **`tests/eval-harness/privacy-abstraction.md`** — 4 tests including base64 + homoglyph adversarial.
+
+## [2.0.0-sprint1] — 2026-06-03
+
+> **v2.0 Sprint 1 — Contracts + Routing Precision**
+>
+> Converts prose specs into machine-readable contracts. Adds SOUL.md ethos document, zeref-registry.json routing catalog, shared rules extraction, and trigger precision rewrites. Locks Phase 0-6 baseline scores for compounding test discipline.
+
+**ZRF Scores (post-Sprint 1):** Execution 7/10 (+1) | Engineer Credibility 9/10 (+1) | Operational Readiness 4/10 (unchanged — Sprint 2 target)
+**Test count:** 20 regression tasks (baseline locked in `tests/scores-v1.0.0.csv`)
+
+### Added
+
+- **`SOUL.md`** — 5 operating principles (Spec-First/Test-Always, Privacy-Deterministic, Contracts-Over-Prose, Memory-Compounds, Boil-the-Lake). Step 0 of §0 reading order.
+- **`zeref-registry.json`** — machine-readable skill catalog: triggers[], deliverables[], risk_level, support_skills[], model per skill. All 10 skills covered. Enables automated routing tests in Sprint 2.
+- **`_shared/rules.md`** — 4 shared safety rules extracted from ≥3 skills (R1: Single-Writer+Privacy-Gate; R2: Non-Deletion/D9; R3: Privacy-Gate-on-External-Output; R4: Never-Invent). Reduces spec drift.
+- **`tests/scores-v1.0.0.csv`** — Phase 3 regression baseline (20 tasks). Compounding from here.
+- **`AGENTS.md`** §0: step 0 (SOUL.md), shared-rules pointer.
+
+### Changed
+
+- **`skills/wiki-maintenance/SKILL.md`** trigger section: expanded from 3 vague items to 9 concrete phrases
+- **`skills/budget-governor/SKILL.md`** trigger section: clarified always-on vs. explicit-invocation vs. mid-session auto-trigger
+- **`skills/project-setup/SKILL.md`** trigger section: disambiguated first-run vs. re-run (previously "first /start" was ambiguous)
+
 ## [1.0.0] — 2026-05-31
 
 > **Canonical release. The first release under the Zeref OS name.**

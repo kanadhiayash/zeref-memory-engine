@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "zeref-os"
+version = "2.0.0"
+description = "Zeref OS — local-first context and memory engine for AI harnesses"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+keywords = ["ai", "memory", "context", "llm", "agent", "zeref"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+]
+
+# Core: stdlib only — zero mandatory deps
+dependencies = []
+
+[project.optional-dependencies]
+llm    = ["litellm>=1.0"]    # zeref grade (LLM-enhanced)
+duckdb = ["duckdb>=0.10"]    # zeref db snapshot --parquet
+yaml   = ["pyyaml>=6.0"]     # richer REDACT.md YAML parsing
+all    = ["litellm>=1.0", "duckdb>=0.10", "pyyaml>=6.0"]
+
+[project.scripts]
+zeref = "zeref.cli:main"
+
+[project.urls]
+Homepage  = "https://github.com/yashkanadhia/zeref-os"
+Changelog = "https://github.com/yashkanadhia/zeref-os/blob/main/CHANGELOG.md"
+
+[tool.setuptools.packages.find]
+where   = ["."]
+include = ["zeref*"]
