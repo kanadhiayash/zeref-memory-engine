@@ -130,7 +130,9 @@ def lint_patterns_log(skill_inventory):
     valid_actors = set(skill_inventory) | set(agent_names)
     p = ROOT / "memory" / "patterns" / "PATTERNS.jsonl"
     if not p.is_file():
-        warnings.append("memory/patterns/PATTERNS.jsonl missing")
+        # Empty scaffold (no hot.md) → already reported by main(); stay quiet here.
+        if (ROOT / "memory" / "hot.md").is_file():
+            warnings.append("memory/patterns/PATTERNS.jsonl missing")
         return
     lines = p.read_text().splitlines()
     if not lines:
@@ -198,12 +200,23 @@ def main():
     for f in EXPECTED["config"]:
         check_file(f"config/{f}", "config")
 
-    # memory/ — flat layout per ZEREF_OS §12
-    for d in EXPECTED["memory_dirs"]:
-        check_dir(f"memory/{d}", "memory")
-    for f in EXPECTED["memory_flat"]:
-        check_file(f"memory/{f}", "memory (flat)")
-    check_file("memory/patterns/PATTERNS.jsonl", "patterns log")
+    # memory/ — flat layout per ZEREF_OS §12.
+    # Memory is per-user-project: this repo ships an empty scaffold (memory/README.md
+    # + .gitkeep). Missing dirs/files are warnings, not errors, in that case;
+    # a populated project should `python3 -m zeref init` to scaffold them.
+    memory_root = ROOT / "memory"
+    memory_populated = any(
+        (memory_root / f).exists()
+        for f in EXPECTED["memory_flat"]
+    )
+    if memory_populated:
+        for d in EXPECTED["memory_dirs"]:
+            check_dir(f"memory/{d}", "memory")
+        for f in EXPECTED["memory_flat"]:
+            check_file(f"memory/{f}", "memory (flat)")
+        check_file("memory/patterns/PATTERNS.jsonl", "patterns log")
+    else:
+        warnings.append("memory/ is empty scaffold — run `python3 -m zeref init` in your project to populate")
 
     # Deprecation warning if old memory/wiki/ still has live content
     wiki_dir = ROOT / "memory" / "wiki"
