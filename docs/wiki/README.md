@@ -1,64 +1,55 @@
-# Wiki Source
+# Zeref OS Wiki — README
 
-This directory contains the **source markdown** for the Zeref OS GitHub Wiki.
+This directory contains the v2.6.1 wiki for [Zeref OS](https://github.com/kanadhiayash/zeref-os).
 
-## How to publish to GitHub Wiki
-
-GitHub Wikis are a separate repo: `https://github.com/<owner>/<repo>.wiki.git`. To publish:
-
-### 1. Enable Wikis on GitHub
-
-Go to: `https://github.com/kanadhiayash/zeref-os/settings` → **Features** → check **Wikis**.
-
-### 2. Create the first page via the web UI
-
-GitHub creates the wiki repo only after the first page exists. Click **Wiki** tab on the repo → **Create the first page** → save (any content; will be overwritten).
-
-### 3. Clone + push wiki content
-
-```bash
-git clone https://github.com/kanadhiayash/zeref-os.wiki.git /tmp/zeref-os.wiki
-cp docs/wiki/*.md /tmp/zeref-os.wiki/
-cd /tmp/zeref-os.wiki
-git add .
-git commit -m "Initial wiki — Zeref OS v1.0.0"
-git push
-```
-
-### 4. Set the sidebar
-
-`_Sidebar.md` here becomes the wiki's left sidebar. Already included.
+**Start here**: [[Home]]
 
 ## Pages
 
-| File | URL slug |
+| Page | Purpose |
 |---|---|
-| `Home.md` | `Home` (landing page) |
-| `Installation.md` | `Installation` |
-| `Architecture.md` | `Architecture` |
-| `Memory-Model.md` | `Memory-Model` |
-| `Privacy-Model.md` | `Privacy-Model` |
-| `Team-Packs.md` | `Team-Packs` |
-| `Pattern-Detection.md` | `Pattern-Detection` |
-| `Decision-Log.md` | `Decision-Log` |
-| `Model-Debates.md` | `Model-Debates` |
-| `Versioning-History.md` | `Versioning-History` |
-| `FAQ.md` | `FAQ` |
-| `Glossary.md` | `Glossary` |
-| `Inspirations.md` | `Inspirations` |
-| `_Sidebar.md` | (sidebar — auto-rendered, no URL) |
+| [[Home]] | Landing page · quick links · v2.6.1 4-gate chain overview |
+| [[Installation]] | Per-harness install · verification · uninstall |
+| [[Architecture]] | 14 skills · 6 agents · 8 commands · 6 team packs · 4-gate chain · Model-Tier Routing |
+| [[Memory-Model]] | Flat layout · boundary-first reads · PATTERNS.jsonl schema (v2.6.1) |
+| [[Privacy-Model]] | 3 modes · REDACT classes · R6 Zero Context Loss · attacks blocked |
+| [[Team-Packs]] | 6 on-demand packs · max 4 agents · v2.6 gates integration |
+| [[Pattern-Detection]] | Two-Strikes Rule · pattern-observer · skill drafting · R6 |
+| [[Decision-Log]] | D1-D11 canonical + ADR-001 (4-gate) + ADR-002 (audit hardening) |
+| [[Model-Debates]] | 2026 Anthropic pricing · model-resolver · cascade pattern · per-skill audit |
+| [[Versioning-History]] | v1.x → v2.6.1 timeline with lessons per era |
+| [[FAQ]] | v2.6.1 new questions + original FAQ |
+| [[Glossary]] | All terms · R6 · 4-gate · L1-L15 · D-numbers |
+| [[Inspirations]] | Naming · engineering lineage · doctrinal influences |
 
-13 content pages + 1 sidebar.
-
-## Updating the wiki
-
-After updates here on `main`:
+## Sync to GitHub Wiki
 
 ```bash
-cd /tmp/zeref-os.wiki
-cp /path/to/zeref-os/docs/wiki/*.md .
-git commit -am "Update wiki from main"
+# Clone wiki separately (GitHub wikis are separate git repos)
+git clone https://github.com/kanadhiayash/zeref-os.wiki.git
+# Copy pages
+cp docs/wiki/*.md zeref-os.wiki/
+cd zeref-os.wiki
+git add -A
+git commit -m "wiki: sync v2.6.1 from docs/wiki/"
 git push
 ```
 
-Or set up a GitHub Action to sync automatically (not currently wired).
+The `docs/wiki/` files in the main repo are the source of truth. GitHub wiki mirrors them.
+
+## Conventions
+
+- File names use Title-Case + hyphens (matches GitHub wiki convention)
+- `[[Page-Name]]` syntax = wiki-internal link (GitHub wiki resolves these)
+- External links use full URLs
+- v2.6.1 additions marked with ★ in tables where helpful
+- Code blocks show actual command output where possible (validator state, etc.)
+
+## Related
+
+- [Main repo README](https://github.com/kanadhiayash/zeref-os)
+- [AGENTS.md](https://github.com/kanadhiayash/zeref-os/blob/main/AGENTS.md)
+- [CHANGELOG](https://github.com/kanadhiayash/zeref-os/blob/main/CHANGELOG.md)
+- [docs/RELEASE_LOG.md](https://github.com/kanadhiayash/zeref-os/blob/main/docs/RELEASE_LOG.md)
+- [docs/adr/](https://github.com/kanadhiayash/zeref-os/tree/main/docs/adr)
+- [Notion Command Center](https://copper-tv-288.notion.site/Zeref-Agent-OS-Command-Center-358d695d836a81af9f6adf30770217c3)

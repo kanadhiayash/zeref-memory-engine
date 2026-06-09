@@ -152,13 +152,22 @@ flowchart TB
     OT["Hermes · Amp · Zed · Perplexity"]
   end
 
-  AG["AGENTS.md (source of truth)"]
+  AG["AGENTS.md (source of truth)<br/>14 Core Principles · 4-Gate Auto-Activation"]
   Harnesses --> AG
 
-  AG --> Agents
-  AG --> Skills
+  AG --> Gates
+  Gates --> Agents
+  Gates --> Skills
   AG --> Commands
   AG --> TeamPacks
+
+  subgraph Gates["Auto-Activation Gates (v2.6, every major task)"]
+    G1["Gate #1<br/>budget-governor<br/>weight + tier"]
+    G2["Gate #2<br/>skill-router<br/>smallest stack"]
+    GFA["fleet-activator<br/>tool reachability"]
+    G3["Gate #3<br/>prompt-context-engine<br/>STRUCTURED brief + R6"]
+    G1 --> G2 --> GFA --> G3
+  end
 
   subgraph Agents["6 agents (background)"]
     MK[memory-keeper]
@@ -169,7 +178,7 @@ flowchart TB
     HO[handoff-orchestrator]
   end
 
-  subgraph Skills["10 skills (on-trigger)"]
+  subgraph Skills["14 skills (on-trigger)"]
     PS[project-setup]
     WM[wiki-maintenance]
     CR[contradiction-resolution]
@@ -177,8 +186,12 @@ flowchart TB
     PSY[parent-sync]
     P2S[pattern-to-skill]
     MIE[memory-import-export]
-    BG[budget-governor]
+    BG["budget-governor ★ Gate #1"]
+    SR["skill-router ★ Gate #2"]
+    FA["fleet-activator ★"]
+    PCE["prompt-context-engine ★ Gate #3"]
     HC[handoff-compiler]
+    CH["caveman-handoff ★"]
     EG[evidence-grader]
   end
 
@@ -204,8 +217,17 @@ flowchart TB
 
   MK <--> Memory[(memory/<br/>flat layout)]
   PG -. enforces .-> Memory
-  PO -. logs .-> PATTERNS["memory/patterns/PATTERNS.jsonl"]
+  PO -. logs .-> PATTERNS["memory/patterns/PATTERNS.jsonl<br/>event-schema validator (L5+L15)"]
+  G1 -. event .-> PATTERNS
+  G2 -. event .-> PATTERNS
+  G3 -. event .-> PATTERNS
+  CH -. R6 chain .-> HO
+
+  classDef gate fill:#e1d5ff,stroke:#5b21b6,color:#000
+  class G1,G2,G3,GFA,BG,SR,FA,PCE,CH gate
 ```
+
+**★ = new in v2.6.** 4 gates fire sequentially before any execution-model call. Output declared inline; user can override before token spend. PATTERNS.jsonl event schema validated by `scripts/zeref-validate.py::lint_patterns_log()` (v2.6.1 L3+L5+L15).
 
 ---
 
@@ -215,6 +237,7 @@ flowchart TB
 sequenceDiagram
   participant User
   participant Harness
+  participant Gates as Auto-Activation Gates
   participant ZerefOS as Zeref OS
   participant Memory as memory/
   participant Patterns as PATTERNS.jsonl
@@ -224,28 +247,39 @@ sequenceDiagram
   ZerefOS->>Memory: read hot.md (≤500 words)
   ZerefOS->>Memory: read index.md if needed
   ZerefOS->>Memory: load PRIVACY.md + REDACT.md
-  ZerefOS-->>User: project, last session, active decisions
+  ZerefOS-->>User: project, last session, active decisions, model tier
 
-  loop work
+  loop major task
     User->>Harness: prompt
-    Harness->>ZerefOS: invoke
+    Harness->>Gates: invoke (v2.6 4-gate chain)
+    Gates->>Gates: Gate #1 budget-governor (weight + tier match)
+    Gates->>Patterns: event budget-gate
+    Gates->>Gates: Gate #2 skill-router (smallest stack)
+    Gates->>Gates: fleet-activator (probe extended tools)
+    Gates->>Patterns: event skill-route + tool-probe
+    Gates->>Gates: Gate #3 prompt-context-engine (STRUCTURED brief + R6)
+    Gates->>Patterns: event prompt-gate
+    Gates-->>User: declared stack + brief (30s auto-approve if UNSTRUCTURED)
+    Gates->>ZerefOS: execute per stack
     ZerefOS->>Memory: read (boundary-first)
     ZerefOS->>Memory: write via memory-keeper
     Note over Memory,Patterns: every write filtered by privacy-guardian
-    ZerefOS->>Patterns: append event
+    ZerefOS->>Patterns: append wiki-write event
   end
 
   User->>Harness: /done
   ZerefOS->>Memory: consolidate · conflict scan
   ZerefOS->>Patterns: pattern-observer scans (48-80h)
   ZerefOS->>Memory: refresh hot.md + snapshot
+  ZerefOS->>Patterns: lint_patterns_log (v2.6.1 L3 advisory)
   alt parent sync configured
-    ZerefOS->>ZerefOS: stage + approve + push
+    ZerefOS->>ZerefOS: stage + approve + push (R6 chain preserved)
   end
 
   User->>Harness: /stop --handoff
-  ZerefOS->>ZerefOS: compile STATE.json + SUMMARY.md + NEXT.md
-  ZerefOS-->>User: handoff package ready
+  ZerefOS->>ZerefOS: handoff-compiler builds STATE.json + SUMMARY.md + NEXT.md
+  ZerefOS->>ZerefOS: caveman-handoff compresses (40-60% reduction; NFKC + R6 diff)
+  ZerefOS-->>User: cross-model handoff package ready
 ```
 
 ---

@@ -1,129 +1,153 @@
 # FAQ
 
-## General
+## v2.6.1 questions (new)
 
-**Q: What is Zeref OS in one sentence?**
-A persistent, harness-agnostic context and memory engine for AI work — local-first markdown files, privacy-on-by-default, no hosted service.
+### What are the Auto-Activation Gates?
 
-**Q: Is it an agent harness?**
-No. Zeref OS wraps existing harnesses (Claude Code, Cursor, Codex, Gemini, etc.). It's a memory engine they plug into.
+3 sequential gates that fire before any execution-model call on a major task:
 
-**Q: Is it open source?**
-Yes — MIT licensed.
+1. `[budget-governor]` — classifies task weight (CRITICAL/HIGH/MEDIUM/LOW), resolves model tier, enforces match
+2. `[skill-router]` — picks smallest-useful-stack (1 lead + 2-3 support + 1 QA, max 5 skills)
+3. `[prompt-context-engine]` — classifies prompt STRUCTURED/SEMI-STRUCTURED/UNSTRUCTURED; restructures if needed
 
-**Q: Does it require a subscription?**
-No. Free install. Works with any model the user provides.
+Plus `[fleet-activator]` companion (probes extended tools) and `[caveman-handoff]` at handoff. Each gate declares output inline; user can override before token spend.
 
-**Q: Does it transmit my data anywhere?**
-No. Local files only by default. External transmission requires per-connector enablement in `SHARING_POLICY.md` (all OFF by default) and per-action user approval.
+See [[Architecture]] §Auto-Activation Gates.
 
-## Setup
+### Why declare gates inline instead of running silently?
 
-**Q: How long does setup take?**
-~5 minutes. `/zeref-os:start` runs a conversational interview that writes 7 config files. Re-run `/zeref-os:start` to boot.
+Two reasons:
+1. **User override path** — silent gates can't be redirected mid-session
+2. **Audit trail** — grep-able evidence of professional workflow design
 
-**Q: Do I need to install MCP connectors?**
-No. Zeref OS ships **zero** bundled MCP tools. Recommendation-only after pattern-observer detects repeated manual behavior. See [Privacy Model](Privacy-Model) → `SHARING_POLICY.md`.
+ADR-001 covers full rationale.
 
-**Q: What if I cancel the setup interview?**
-Zeref OS boots in READ-ONLY mode until the schema is complete (per ZEREF_OS §7).
+### What is R6 Zero Context Loss?
 
-## Privacy
+Shared rule R6 in `_shared/rules.md`. Every fact / entity / constraint from the raw prompt must survive into restructured briefs, routing decisions, handoff packages, parent-sync staging, etc. Verified by diff. v2.6.1 L4 sweep extended R6 coverage to 9 of 14 SKILL.md.
 
-**Q: Default privacy mode?**
-`abstract`. `privacy-abstraction` rewrites every payload, stripping credentials, PII, internal paths, and any other enabled `REDACT.md` classes.
+### What is the L1-L15 hardening?
 
-**Q: Can I write exact data?**
-Yes — set `mode: exact` in root `PRIVACY.md`. Only when project context justifies it.
+v2.6.1 Phase D workarounds closing Phase C audit findings:
+- L1-L5 + L14-L15: validator improvements (dynamic count, event schema, stack-cap lint)
+- L9-L13: skill hardening (marker probe, injection filter, cool-down, homoglyph, dual-key override)
+- L4: R6 sweep coverage
 
-**Q: How do I block all external sharing?**
-Set `mode: local-only` in `PRIVACY.md`. All writes to `memory/sync/outbound/` and `memory/sync/parent/` are blocked.
+Closes 2 CRITICAL + 2 HIGH + 2 MEDIUM security findings. See `tests/security-audit-v2.6-C.md` + ADR-002.
 
-**Q: What's the difference between PRIVACY.md, REDACT.md, and SHARING_POLICY.md?**
-- `PRIVACY.md` = global mode (the gate)
-- `REDACT.md` = concrete sensitive classes (the substance to strip)
-- `SHARING_POLICY.md` = per-connector allowlist (the external surface)
+### How do I install GitHub Releases for all v2.6.1 tags?
 
-See [Privacy Model](Privacy-Model).
+`gh` CLI not installed locally? Use the included script:
 
-## Memory
+```bash
+brew install gh
+gh auth login
+bash scripts/zeref-publish-releases.sh --apply
+```
 
-**Q: Where does Zeref OS store data?**
-In the local project directory under `memory/`. Plain markdown files. No database, no cloud.
+Idempotent. Creates 11 releases (7 legacy `prerelease` + 4 post-rebrand full; v2.6.1 marked `--latest`).
 
-**Q: How does it not blow my token budget?**
-Boundary-first reads. `memory/hot.md` is ≤500 words and read first. Full pages are only loaded when domain-specific context is needed. `budget-governor` scales verbosity to the active model tier.
+### Why are there both `release/v2.6` AND `release/v2.6-legacy`?
 
-**Q: Can I edit memory files manually?**
-- `memory/MEMORY.md` — agent-written. Don't edit; agents may overwrite.
-- All other `memory/*.md` — yes, edit freely. `memory-keeper` will pick up changes on next session.
+Because the repo has two version chains:
+- **Post-rebrand canonical**: v1.0.0 → v2.5.0 → v2.6.0 → v2.6.1 — full GitHub Releases
+- **Pre-rebrand legacy**: v2.0.0 / v2.1.0 / v3.0.0 / v4.0.0–v4.3.0 — GitHub `prerelease` flag, branch suffix `-legacy`
 
-**Q: What's the difference between hot.md and index.md?**
-- `hot.md` = ≤500 words of current context (read first)
-- `index.md` = domain index (read only if hot.md is insufficient)
+The `-legacy` suffix distinguishes them in the branch list. Per FAANG §3.4 controlled-baseline pattern.
 
-## Conflicts
+## Original FAQ
 
-**Q: What happens if two decisions contradict?**
-`memory-keeper` halts the write, appends both sides to `memory/CONFLICTS.md`, and surfaces to the user. User arbitrates. Never silent.
+### Will Zeref OS work with my AI tool?
 
-**Q: Can I snooze a conflict?**
-Yes — `snooze-until-done` is a valid response. The conflict re-surfaces at the next `/zeref-os:done`. After 3 snoozes, you get a warning.
+If your tool can read `AGENTS.md` (Claude Code, Codex, Cursor, Gemini, Aider, Windsurf, Hermes, Amp, Zed, Perplexity), yes. Per-harness stub in the repo handles the rest.
 
-## Harnesses
+### Is my data sent anywhere?
 
-**Q: Which harnesses work?**
-Claude Code (native plugin), Codex, Cursor, Gemini CLI / Antigravity, Windsurf, Aider, Hermes, Amp, Zed, Perplexity Computer — any harness that reads `AGENTS.md`.
+No. Zeref OS is local-first. Memory lives in plain markdown in your project repo. Connectors are OFF by default in `SHARING_POLICY.md` and require explicit per-action approval to enable.
 
-**Q: How do I switch from Claude to Cursor mid-project?**
-Same project directory. Just install Cursor's stub (`cp .zeref/.cursor/rules/zeref.mdc .cursor/rules/`). Memory files don't move. Next session restores context from `hot.md` → `index.md`.
+`local-only` privacy mode blocks all external transmission (parent sync, MCP connectors, handoff push).
 
-**Q: Lossless handoff between models?**
-Yes — `/zeref-os:stop --handoff` compiles `STATE.json` + `SUMMARY.md` + `NEXT.md` into `memory/sync/outbound/handoff-<iso>/`. Next session in any harness reads this and resumes.
+### What does "boundary-first read" mean?
 
-## Teams
+Don't load the whole wiki to find one fact. Read `memory/hot.md` (≤500 words) first; consult `memory/index.md` only if hot is insufficient; then load only the named section of the named page. Caps always-on context to ~3-4k tokens regardless of project size.
 
-**Q: What's a "team pack"?**
-A pre-defined multi-agent configuration with role assignments. Activate via `/zeref-os:team [type]`. Max 4 agents. Outputs land in `team/`. See [Team Packs](Team-Packs).
+### How does Zeref OS know I'm running Claude vs GPT vs Gemini?
 
-**Q: Are team agents always running?**
-No. On-demand only. After `/zeref-os:team build` completes, you're back to `solo`.
+`budget-governor` auto-detects active model from harness env vars. Resolves to a tier (HAIKU / SONNET / OPUS or HAIKU-equivalent / SONNET-equivalent / OPUS-equivalent for non-Anthropic) and scales verbosity + per-skill caps accordingly. v2.6.1 model-resolver canonicalizes bare aliases to full Anthropic IDs.
 
-**Q: Can I run multiple teams in parallel?**
-No. One team active at a time. The current team is tracked in `memory/MEMORY.md` `## Active team` section.
+### What happens if I commit to a conflict?
 
-## Patterns + skills
+`contradiction-resolution` skill halts the write, appends both sides to `memory/CONFLICTS.md`, and asks you to arbitrate (immediately or at `/done`). Never silently resolved. 4 anti-patterns refused: recency-wins, grade-wins, silent-drop, indefinite-snooze.
 
-**Q: How does pattern detection work?**
-`pattern-observer` scans `memory/patterns/PATTERNS.jsonl` over a 48–80h rolling window. If 3+ similar events (Jaccard ≥ 0.8) cluster, a skill draft is proposed. See [Pattern Detection](Pattern-Detection).
+### Can two sessions write to the same memory file at once?
 
-**Q: Will it auto-create skills?**
-No. Never. Drafts land in `skills/drafts/` for review via `/zeref-os:review-skill`.
+No. `memory-keeper` is the single writer (Core Principle 5). v2.5 L9 added `zeref/lock.py::MemoryLock` advisory lock; second writer aborts with clear error.
 
-**Q: What's the Two-Strikes Rule?**
-Never codify a rule on the first occurrence of an error. Log it in MEMORY.md first. If a similar error occurs again within 30 days, then promote it to a rule. Prevents rule bloat. See [Glossary](Glossary).
+### What is the Two-Strikes Rule?
 
-## Versioning
+Don't codify a rule on the first occurrence of an error. Wait for the second. First occurrence → log to `memory/MEMORY.md` as "trap noticed." Second occurrence → promote to a rule. Prevents brittle premature codification.
 
-**Q: Why does v1.0.0 come after v4.3?**
-The plugin was renamed (`zeref` → `zeref-os`) and rebranded. The version clock reset to mark the canonical release. Full iteration history preserved in [Versioning History](Versioning-History) and `CHANGELOG-LEGACY.md`.
+### How are team packs different from skill stacks?
 
-**Q: Did older tags work?**
-Pre-v4 tags fail under the current Claude Code plugin schema (documented in `CHANGELOG-LEGACY.md`). v4.0–v4.3 tags worked but were deleted at v1.0.0 cutover per user directive: "all working versions exist in tags" — and v1.0.0 is now that single tag.
+- **Team pack** (`/team build`): on-demand multi-agent configuration. Roster of up to 4 agents.
+- **Skill stack** (from `skill-router` Gate #2): the specific lead + 2-3 support + 1 QA picked for the current task.
 
-**Q: What about upgrading from a pre-1.0 install?**
-See [`MIGRATION.md`](https://github.com/kanadhiayash/zeref-os/blob/main/MIGRATION.md). Mostly: just reinstall under the new name. No data migration required.
+When a team pack is active, `skill-router` picks the stack from the pack's roster.
 
-## Troubleshooting
+### What's in `references/v4x-canon/`?
 
-**Q: Validator fails with "missing memory dir: memory/logs"**
-You're on a pre-v1.0.0 install. Either pull the latest validator from main, or run `scripts/migrate-v4.2-to-v4.3.py --apply`.
+Read-only design corpus imported in v4.3: `ZEREF_OS.md` (behavioral constitution), `DECISION_LOG.md` (D1-D11), `MODEL_DEBATE.md`, `USE_CASES.md`, `RESEARCH_RESOURCES.md`, `PACKAGE_INDEX.md`. Don't edit; reference only.
 
-**Q: Skills/commands not surfacing in Claude Code**
-Restart Claude Code after install. Slash commands appear under `/zeref-os:`. Skills surface as `zeref-os:<name>` via the Skill tool.
+### Why are pre-v2.5 versions marked `prerelease`?
 
-**Q: Old `zeref@zeref` install still active**
-Uninstall it: `claude plugin uninstall zeref@zeref`. Then install the new one: `claude plugin install zeref-os@zeref-os`.
+Pre-rebrand (v2.0–v4.3 era). Tags were deleted in past `[Unreleased]` cleanup; restored in v2.6.1 history-reconstruction campaign for completeness. They fail current plugin loader (schema evolution). Per FAANG §3.4 controlled-baseline pattern: keep for audit + history, not for fresh install.
 
-**Q: GitHub Wiki shows 404**
-Owner needs to enable Wikis in Settings → Features. Then push the wiki content from `docs/wiki/` to `<owner>/<repo>.wiki.git`.
+### How do I add a new skill?
+
+**Don't write it manually.** Let `pattern-observer` surface a candidate from repeated work, then `pattern-to-skill` drafts it, then you approve via `/review-skill`. Per Core Principle 10 (Review-First Extension).
+
+If you must write manually: put it in `skills/<name>/SKILL.md` with proper frontmatter, add an entry to `zeref-registry.json` (with `model` + `model_alias` fields), update AGENTS.md Skills table, run `python3 scripts/zeref-validate.py`. Cite an ADR in `docs/adr/` if it's a major addition.
+
+### How do I disable pattern detection?
+
+`config/BUDGET.md` → set `pattern_detection: false`.
+
+### How do I migrate from v4.x to v1.0.0?
+
+Already handled in the v1.0.0 release. If you're on v4.x today and want to update: `claude plugin update zeref-os@zeref-os`. No data migration needed — all memory files keep paths + content.
+
+### How do I migrate from v2.5 to v2.6.1?
+
+Just update the plugin. Additive only. Existing `tests/scores-v*.csv` references to Free/Standard/God Mode continue to work via `budget-governor` alias table. No data migration.
+
+### Will the v2.6 4-gate chain slow me down?
+
+Negligibly. Each gate is HAIKU-tier (LOW weight) and emits ≤500 tokens. Gate cost << execution cost. The user experience: each gate prints one inline `[name]` line before execution starts.
+
+You can skip gates for trivial tasks (single-fact lookup, simple edit) by stating "execute verbatim" or "no restructure" — `prompt-context-engine` honors the skip phrase.
+
+### What if I disagree with a gate's classification?
+
+Override before execution. Example: `[budget-governor]` flags MISMATCH on `(CRITICAL, HAIKU)` — type the dual-key override directive:
+
+```
+OVERRIDE: CRITICAL on HAIKU — reason=spec writing, accept lower quality
+```
+
+v2.6.1 L13 enforces dual-key for cost-tier overrides; single-key "override" rejected.
+
+### Where do session decisions get logged?
+
+Three places:
+1. `memory/DECISIONS.md` — per-session arbitrations (single writer: `memory-keeper`)
+2. `docs/adr/` — per-major-release ADRs (FAANG naming)
+3. `CHANGELOG.md` + `docs/RELEASE_LOG.md` — shipped releases
+
+See [[Decision-Log]] for the full decision provenance chain.
+
+## Related
+
+- [[Installation]] — per-harness setup
+- [[Architecture]] — full system
+- [[Glossary]] — terms used here
+- [[Decision-Log]] — D1-D11 + ADR-001 + ADR-002

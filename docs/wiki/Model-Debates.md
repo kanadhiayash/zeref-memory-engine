@@ -1,112 +1,117 @@
 # Model Debates
 
-What each AI model needs from a memory engine, and how Zeref OS scores. Sourced from [`references/v4x-canon/MODEL_DEBATE.md`](https://github.com/kanadhiayash/zeref-os/blob/main/references/v4x-canon/MODEL_DEBATE.md) — synthesized from Anthropic, OpenAI, Google, and open-source community documentation (May 2026).
+Zeref OS is model-agnostic by design. Different model families need slightly different handling. v2.6 added explicit Model-Tier Routing per Core Principle 14; v2.6.1 added the canonical model resolver.
 
-## Six things every model agrees on
+## v2.6 model tiers + canonical IDs
 
-1. Lean metadata at session start (not a wall of text)
-2. Deep context on-demand (retrieved, not always-loaded)
-3. External memory on disk (not in-context at all times)
-4. Minimal tool count with high-leverage primitives
-5. Deterministic scripts for reliability
-6. Clear success criteria (declarative goals, not imperative steps)
-
-Zeref OS satisfies all six via `memory/hot.md` startup, lean `AGENTS.md` protocol, token budget layer, connector advisory, and skill recommendation system.
-
-## Claude (Anthropic) — top 10 needs
-
-| # | Need | Zeref OS solution | Score /10 |
-|---|---|---|---|
-| 1 | Lean context loading (≤250 lines CLAUDE.md) | `CLAUDE.md` = 1-line stub to `AGENTS.md` | 10 |
-| 2 | Persistent memory across sessions | `memory/hot.md` + `MEMORY.md` auto-loaded | 10 |
-| 3 | Anti-sycophancy modes (Challenge / Steel-Man) | Defined in `AGENTS.md` §2 | 9 |
-| 4 | Read/write memory separation | `AGENTS.md` (human) + `MEMORY.md` (agent-written) | 10 |
-| 5 | Subagent context isolation | Team packs spawn with separate context windows | 9 |
-| 6 | PreToolUse hooks for red lines | Red team pack + PRIVACY/REDACT gates | 8 |
-| 7 | Two-Strikes Rule for file hygiene | Defined in §11 + `references/two-strikes-rule.md` | 10 |
-| 8 | Rule lifecycle (active/dormant/dead) | `skills/drafts/` + `CONFLICTS.md` supersession | 9 |
-| 9 | Path-scoped rules (zero token cost) | `AGENTS.md` + per-skill YAML frontmatter | 8 |
-| 10 | Privacy-first output | `PRIVACY.md` + `REDACT.md` pre-write check | 10 |
-
-**Gaps Zeref OS fixes:** zero-context session start (`hot.md`), sycophantic drift (challenge-first), CLAUDE.md rot (Two-Strikes).
-
-## GPT-4o / OpenAI — top 10 needs
-
-| # | Need | Zeref OS solution | Score /10 |
-|---|---|---|---|
-| 1 | Stable context prefix for prompt caching | `AGENTS.md` stable header structure | 9 |
-| 2 | Append-only session history | `PATTERNS.jsonl` + `MEMORY.md` append model | 9 |
-| 3 | External working memory (filesystem over context) | `memory/` file structure with handle-based retrieval | 10 |
-| 4 | Narrow, namespaced tool set | Connector advisory: max 4 core tools | 9 |
-| 5 | Clear success criteria per task | Schema interview enforces goal definition | 8 |
-| 6 | No dead ends (closed tool loop) | Connector advisory: tools share filesystem | 8 |
-| 7 | Codex-compatible AGENTS.md format | OpenAI Codex natively supports AGENTS.md | 10 |
-| 8 | Versioned changelog | `CHANGELOG.md` + `CHANGELOG-LEGACY.md` | 9 |
-| 9 | Oracle mode (cross-model consultation) | Red team + research team packs support multi-model input | 7 |
-| 10 | Eval-driven rule validation | Two-Strikes + `skills/drafts/` review gate | 8 |
-
-**Gaps Zeref OS fixes:** no persistent memory (`hot.md`), hallucinated tool calls (minimal tool set), sycophantic drift.
-
-## Gemini (Google) — top 10 needs
-
-| # | Need | Zeref OS solution | Score /10 |
-|---|---|---|---|
-| 1 | Native AGENTS.md support (Gemini CLI confirmed) | `AGENTS.md` as source of truth | 10 |
-| 2 | Long context utilization (1M token window) | Deep wiki on demand; `hot.md` keeps startup lean | 9 |
-| 3 | Grounding with web search | DuckDuckGo MCP recommended in core stack | 9 |
-| 4 | Antigravity / Gemini CLI harness compatibility | `AGENTS.md` + harness translation map | 10 |
-| 5 | Structured data output (JSON, schemas) | `WIKI.md` schema enforces structured entries | 8 |
-| 6 | Cross-session state | `memory/` file structure | 10 |
-| 7 | Multi-modal context (code + docs + images) | Team packs support vision-capable subagents | 8 |
-| 8 | Tool calling with low hallucination | Narrow connector set + REDACT guard | 8 |
-| 9 | God Mode auto-detection | Gemini 3.5 Pro triggers God Mode automatically | 10 |
-| 10 | Pattern-based skill generation | `PATTERNS.jsonl` harness-agnostic log | 9 |
-
-**Gaps Zeref OS fixes:** inconsistent tool call reliability (minimal tool set), over-explanation (imperative voice rules), long context dilution (`hot.md` startup).
-
-## Open-source / Llama / Mistral / Ollama — top 10 needs
-
-| # | Need | Zeref OS solution | Score /10 |
-|---|---|---|---|
-| 1 | Free tier operation without capability loss | Free tier in `BUDGET.md` with aggressive compaction | 10 |
-| 2 | Local-only privacy (no cloud transmission) | Local canonical memory, no hosted service | 10 |
-| 3 | Minimal context overhead | `hot.md` ≤500 words startup | 9 |
-| 4 | Works without any external API | All memory files are local markdown | 10 |
-| 5 | Graceful degradation with limited capability | Free tier behavior in `BUDGET.md` | 9 |
-| 6 | Instruction compliance in smaller models | Lean `AGENTS.md` under 250 lines | 9 |
-| 7 | No hallucinated tool calls | Narrow tool set reduces hallucination surface | 8 |
-| 8 | Hermes compatibility | `PATTERNS.jsonl` file-based log works with Hermes | 9 |
-| 9 | Upgrades to God Mode on stronger model switch | Auto-detection via `BUDGET.md` | 10 |
-| 10 | Simple, predictable tool schemas | Core stack: simple, well-documented MCP only | 8 |
-
-**Gaps Zeref OS fixes:** shorter context windows (`hot.md`), lower instruction compliance (lean `AGENTS.md`), no built-in memory.
-
-## Cross-model summary
-
-| Requirement | Claude | GPT | Gemini | Open-Source | Zeref OS satisfies? |
+| Tier | Full Anthropic ID | Bare alias | $/1M in | $/1M out | Pin override |
 |---|---|---|---|---|---|
-| Lean startup context | Critical | Critical | Critical | Critical | ✓ `hot.md` + stub CLAUDE.md |
-| Persistent memory | ✓ | ✓ | ✓ | ✓ | ✓ `memory/` files |
-| Privacy-first local memory | Medium | Medium | Medium | Critical | ✓ no hosted service |
-| Anti-sycophancy | ✓ | Partial | Partial | Partial | ✓ challenge-first |
-| Harness-agnostic | ✓ | ✓ | ✓ | ✓ | ✓ AGENTS.md |
-| Free tier operation | N/A | N/A | N/A | Critical | ✓ Free tier in BUDGET.md |
-| Tool set minimalism | ✓ | ✓ | ✓ | Critical | ✓ connector advisory |
-| Rule lifecycle | ✓ | Partial | Partial | Partial | ✓ Two-Strikes + drafts/ |
-| God Mode auto-detect | N/A | N/A | N/A | N/A | ✓ model-based |
-| Pattern-based skills | Partial | Partial | Partial | Partial | ✓ PATTERNS.jsonl |
+| **HAIKU** | `claude-haiku-4-5` | `haiku` | $1 | $5 | — |
+| **SONNET** | `claude-sonnet-4-6` | `sonnet` | $3 | $15 | — |
+| **OPUS** | `claude-opus-4-7` | `opus` | $5 | $25 | `claude-opus-4-6` (cost-sensitive flagship; avoids 4.7 +35% tokenizer) |
 
-## Zeref OS ratings — cross-model average
+Non-Anthropic equivalents (mapped at runtime):
 
-| Parameter | Score /10 | Notes |
+| Detected model | Mapped tier | Legacy alias |
 |---|---|---|
-| Harness portability | 9.5 | AGENTS.md + translation map. Near-universal. |
-| Memory persistence | 10 | File-based; works with any harness, any model |
-| Privacy protection | 9.5 | PRIVACY + REDACT + SHARING_POLICY. Best-in-class |
-| Token efficiency | 9 | hot.md startup + deep retrieval |
-| Developer experience | 9 | Git-first, conversational setup, draft review |
-| Rule compliance | 8 | 70% community baseline. Lean file + Two-Strikes improves it. |
-| Scalability | 9 | Parent-child rollup handles org-wide knowledge |
-| Free model support | 9.5 | Free tier explicitly designed |
-| Pattern intelligence | 8.5 | 48–80h window, file-based log |
-| Privacy-aware sharing | 9.5 | Strongest differentiator |
+| `gpt-4o`, `gemini-3.5-pro` | OPUS-equivalent | God Mode |
+| `gpt-4o-mini`, `gemini-flash-3.5` | SONNET-equivalent | Standard |
+| `mistral-*`, `ollama/*`, `gemini-flash` (older) | HAIKU-equivalent | Free |
+| unknown | SONNET (safe default) | Standard |
+
+Full table + pin policy: [`_shared/model-resolver.md`](https://github.com/kanadhiayash/zeref-os/blob/main/_shared/model-resolver.md).
+
+## Per-model needs (what each family wants for context engineering)
+
+### Claude (Sonnet 4.6 / Opus 4.7 / Haiku 4.5)
+
+- **Strength**: long context, XML tags, plan-mode, instruction following
+- **Sensitivity**: prompt-injection if `<context>` tags aren't sanitized (v2.6.1 L10 closes this)
+- **Best for**: Gate #3 prompt-context-engine (Sonnet medium); pattern-to-skill draft synthesis (Opus high); validator + gate ops (Haiku low)
+- **Honors**: AGENTS.md as canonical; `<override-acknowledged>` blocks (v2.6.1 L13)
+
+### GPT-4o / 4o-mini
+
+- **Strength**: tool use, structured output
+- **Sensitivity**: tighter context window than Claude; prefers explicit step lists
+- **Best for**: SONNET-equivalent workloads; cost-balanced executor
+- **Note**: not yet validated cross-harness (ZRF-B07 deferred to v2.7)
+
+### Gemini (Flash + Pro)
+
+- **Strength**: cost (Flash is cheapest); multimodal
+- **Sensitivity**: prefers system-prompt at top, not interleaved
+- **Best for**: HAIKU-equivalent batch workloads (Flash); OPUS-equivalent reasoning (Pro)
+- **Harness**: GEMINI.md stub defers to AGENTS.md
+
+### Open-source (Mistral / Llama / Ollama)
+
+- **Strength**: local execution (privacy + zero cost)
+- **Sensitivity**: smaller context window; weaker instruction following at smaller sizes
+- **Best for**: HAIKU-equivalent workloads on `local-only` privacy mode
+- **Tradeoff**: accept lower output quality; pair with deterministic validators (`scripts/zeref-validate.py` + `lint_patterns_log`)
+
+## Cascade pattern (v2.6 Core Principle 14)
+
+```
+orchestrator @ Sonnet medium     ← plans + decomposes
+    ↓
+executor @ Sonnet|Haiku by weight ← does the work per sub-task
+    ↓
+final gate @ Opus high            ← only when stakes warrant (irreversible writes, security)
+```
+
+Default orchestrator is Sonnet — cost-balanced. Escalate to Opus only when:
+- Irreversible writes (parent-sync export, memory-import-export)
+- Architecture decisions (ADR-worthy)
+- Security-sensitive payloads (privacy abstraction edge cases)
+
+## Hard constraints (Core Principle 14)
+
+- **LOW never on Opus** — flagged by `budget-governor` Step 4. Propose Haiku downgrade.
+- **CRITICAL never on Haiku** — hard block. v2.6.1 L13 dual-key override required.
+- **HIGH on Haiku** — warn, allow with user confirm.
+- **MEDIUM on Opus** — warn, allow. `pattern-observer` logs for retrospective tuning.
+
+## Per-skill model audit (v2.6.1)
+
+All 14 skills audited; no LOW→opus or CRITICAL→haiku mismatches.
+
+| Skill | Weight | Model | Note |
+|---|---|---|---|
+| `wiki-maintenance` | MEDIUM | `claude-haiku-4-5` | mechanical consolidation |
+| `budget-governor` | LOW | `claude-haiku-4-5` | classification only |
+| `project-setup` | HIGH | `claude-sonnet-4-6` | interview |
+| `contradiction-resolution` | HIGH | `claude-sonnet-4-6` | arbitration |
+| `evidence-grader` | LOW-MEDIUM | `claude-haiku-4-5` | grade |
+| `handoff-compiler` | HIGH | `claude-sonnet-4-6` | cross-harness package |
+| `memory-import-export` | HIGH | `claude-sonnet-4-6` | schema crossing |
+| `parent-sync` | HIGH | `claude-sonnet-4-6` | irreversible push |
+| `pattern-to-skill` | **CRITICAL** | **`claude-opus-4-7`** | code synthesis |
+| `privacy-abstraction` | MEDIUM | `claude-haiku-4-5` | deterministic REDACT rules |
+| `skill-router` | LOW | `claude-haiku-4-5` | routing |
+| `fleet-activator` | LOW | `claude-haiku-4-5` | probe |
+| `prompt-context-engine` | HIGH | `claude-sonnet-4-6` | restructure |
+| `caveman-handoff` | LOW | `claude-haiku-4-5` | mechanical compression |
+
+**Borderline**: `privacy-abstraction` (`risk_level: high`, `model: haiku`) kept on Haiku because redaction follows deterministic REDACT.md rules. Tracked as forward signal for `pattern-observer` — if PATTERNS.jsonl shows redaction misses on adversarial input, bump to Sonnet.
+
+## What Zeref OS does NOT debate
+
+- **Best model overall**: no answer. Use the tier the task weight demands.
+- **Best model for code**: depends on code complexity. CRITICAL refactor → Opus. Single-file edit → Haiku.
+- **Vendor lock-in**: zero. Bring any model; harness translation map handles the rest.
+
+## Future (deferred to v2.7)
+
+- Cross-harness live runs (ZRF-B07): validate same AGENTS.md spec works identically in Cursor / Aider / Gemini
+- Cascade-replay test: end-to-end orchestrator→executor→final-gate live measurement (path to 10.00/10 Execution)
+- Model-specific prompt-context-engine tuning (Sonnet-optimized brief format vs GPT-optimized vs Gemini-optimized)
+
+## Related
+
+- [[Architecture]] §Model-Tier Routing
+- [`_shared/model-resolver.md`](https://github.com/kanadhiayash/zeref-os/blob/main/_shared/model-resolver.md) — canonical mapping + pin policy
+- [`skills/budget-governor/SKILL.md`](https://github.com/kanadhiayash/zeref-os/blob/main/skills/budget-governor/SKILL.md) — Cost Weight Classification + Auto-Activation Rule
+- [`AGENTS.md`](https://github.com/kanadhiayash/zeref-os/blob/main/AGENTS.md) §Core Principle 14 + §Model-Tier Routing
+- [`docs/adr/zeref_auto-gated-execution_adr_approved_yk_2026-06-08_v1.0.md`](https://github.com/kanadhiayash/zeref-os/blob/main/docs/adr/zeref_auto-gated-execution_adr_approved_yk_2026-06-08_v1.0.md) — ADR-001
