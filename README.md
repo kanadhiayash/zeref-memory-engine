@@ -9,136 +9,48 @@
 
 <p align="center">
   <a href="https://github.com/kanadhiayash/zeref-os/releases/tag/v2.6.1"><img src="https://img.shields.io/badge/version-2.6.1-blueviolet" alt="v2.6.1"></a>
-  <a href="tests/zeref-rubric-v2.6.md"><img src="https://img.shields.io/badge/rubric-9.88%2F10-success" alt="rubric 9.88/10"></a>
-  <a href="tests/security-audit-v2.6-C.md"><img src="https://img.shields.io/badge/CRITICAL-0%20open-success" alt="0 CRITICAL"></a>
-  <a href="tests/scores-v2.6-B.csv"><img src="https://img.shields.io/badge/sandbox-114%2F150%20pass-success" alt="sandbox pass"></a>
-  <a href="AGENTS.md#auto-activation-gates-v26"><img src="https://img.shields.io/badge/gates-3%20active-blue" alt="3 gates"></a>
-  <a href="https://github.com/kanadhiayash/zeref-os/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/source--of--truth-v1.0.0-blueviolet" alt="v1.0.0"></a>
+  <a href="AGENTS.md#auto-activation-gates-v26"><img src="https://img.shields.io/badge/gates-4%20active-blue" alt="4 gates"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT"></a>
   <a href="https://agents.md"><img src="https://img.shields.io/badge/AGENTS.md-canonical-blue" alt="AGENTS.md"></a>
-  <a href="https://github.com/kanadhiayash/zeref-os/actions/workflows/zeref-validate.yml"><img src="https://github.com/kanadhiayash/zeref-os/actions/workflows/zeref-validate.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/kanadhiayash/zeref-os/actions/workflows/ci.yml"><img src="https://github.com/kanadhiayash/zeref-os/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 </p>
 
 > **Zeref OS Command Center (Notion)**: <https://copper-tv-288.notion.site/Zeref-Agent-OS-Command-Center-358d695d836a81af9f6adf30770217c3>
-> **Repo doctrine (per-repo)**: [`GITHUB_OS.md`](GITHUB_OS.md) — branch naming, audit cycle, R6 gate, model-resolver pinning
-> **Decision records**: [`docs/adr/`](docs/adr/) (FAANG naming `zeref_<subject>_adr_<state>_yk_<date>_v<major.minor>.md`)
-> **Release log**: [`docs/RELEASE_LOG.md`](docs/RELEASE_LOG.md) — controlled baselines per FAANG §3.4
 
 ---
 
-## What Zeref OS is
+## What is Zeref OS?
 
-The persistent memory layer your AI tools should have had from day one.
+> Imagine you are an **architect** working on a major building. Every morning a different contractor shows up. Before they can lay a single brick, you have to re-explain the blueprint, the constraints, the decisions you and the prior contractor made, and what's already been built. Every conversation starts from zero.
+>
+> That is what working with AI assistants is like today. Each new session — Claude, Codex, Gemini, Cursor, Aider — starts blind. You re-explain your project, your decisions, your constraints. Context evaporates the moment the window closes.
+>
+> **Zeref OS is the persistent memory layer that fixes this.** A per-project markdown wiki that AI sessions read first, write to safely, and hand off cleanly. You build the blueprint once. Every AI tool you bring in reads from the same source. Your project memory travels with the project — not the tool.
 
-A per-project canonical wiki in plain markdown, an append-only pattern log, point-in-time snapshots, contradiction safety, three privacy modes, on-demand team packs, and a cross-harness handoff format. AI sessions become cumulative instead of stateless — across **every** harness you use.
+> **Imagine you are a writer** drafting a novel across six months. Zeref OS keeps the world bible, character arcs, plot decisions, and rejected ideas in plain markdown that any AI can read from and contribute to safely.
+>
+> **Imagine you are an engineer** maintaining a long-lived codebase. Zeref OS holds architectural decisions, open questions, risks, and contradictions in files your AI can navigate boundary-first — never re-loading everything.
+>
+> **Imagine you are a researcher** chasing a literature thread across weeks. Zeref OS captures graded evidence, source claims, and synthesis state in a wiki any session can resume from.
 
-> **Read once. Remember forever. Travel with you, not the tool.**
-
----
-
-## Inspiration — Where the name comes from
-
-Zeref OS is named after **Zeref Dragneel** from *Fairy Tail* — the immortal scholar whose ancient knowledge transcended form, time, and faction. He carried centuries of context with him; he never started from zero.
-
-That's the design north star. AI sessions today start from zero, every time. You re-explain your project every conversation. You lose decisions to context window resets. You can't switch from Claude to Codex to Gemini to Cursor without abandoning your project memory.
-
-Zeref OS is built in that lineage: **long-horizon memory, faithful to the user's accumulated decisions, portable across every AI harness**.
+<p align="center"><img src="assets/poc-stateless-vs-zeref.png" alt="Before / After — stateless AI sessions vs Zeref-backed AI sessions" width="720"></p>
 
 ---
 
-## The Journey — Iterations that led here
+## What v2.6 ships
 
-This is not version 1.0 in the literal sense — it's the line drawn under a long iteration. Every prior attempt taught the design what it should *not* be.
+- **14 disciplined skills** (4 new in v2.6): every skill has a strict trigger; nothing always-on.
+- **4-gate Auto-Activation chain** — every major task self-classifies cost, stack, prompt, and handoff before any token spend.
+- **R6 Zero Context Loss** — every entity in your prompt (file path, tool name, error string, constraint) survives restructure, routing, and handoff.
+- **Model-Tier Routing** — explicit Anthropic id mapping (Haiku 4.5 / Sonnet 4.6 / Opus 4.7) with cost-aware defaults.
+- **6 on-demand team packs** (solo / build / research / red / audit / ship), max 4 agents, opt-in only.
+- **3 privacy modes** — default `abstract`; connectors OFF by default.
 
-| Era | Form | What we learned | Status |
-|---|---|---|---|
-| **v1.x** (2025) | Zeref Skills Fleet — 109 specialist skills | Too broad. Wrong shape. Skill bloat = scope creep. | archived |
-| **v2.0–v2.1** (2025) | Zeref Agent OS | Closer, but Claude-locked. Harness coupling broke portability. | archived |
-| **v3.0** (early 2026) | Zeref OS w/ CEO persona + LLM council | Theatrical. Single-user. Off-mission. CEO framing was wrong for a context engine. | archived |
-| **v4.0** (May 2026) | Philosophical reset → pure context + memory engine | Removed: 109 skills, 5 agents, CEO/fleet/council framing. The shape clicked. | archived |
-| **v4.1** (May 2026) | Full contradiction-resolution + parent-sync | Human arbitration on conflicts; child→parent rollup with provenance. | archived |
-| **v4.2** (May 2026) | Pattern detection + skill drafting | `pattern-observer` + `pattern-to-skill`. Review-first extension. | archived |
-| **v4.3** (May 2026) | v4.x canon alignment + team packs + harness translation map | Flat memory layout, Free/Standard/God Mode tiers, Two-Strikes Rule. | merged → v1.0.0 |
-| **v1.0.0** (May 31, 2026) | **Zeref OS** — canonical release. Rebrand + version reset. | shipped |
-| **v2.5.0** (Jun 5, 2026) | **Deep Audit Campaign** — runtime + code-backed privacy + 85-claim audit + 8 attacks + L1-L11 workarounds. Rubric 8.00/10. | shipped |
-| **v2.6.0** (Jun 8, 2026) | **Auto-Gated Execution** — 4-gate chain (budget → router → fleet → prompt → handoff). +4 skills. +2 Core Principles. +R6 Zero Context Loss. | shipped |
-| **v2.6.1** (Jun 8, 2026) | **Audit + Hardening** — 7-phase audit on v2.6.0. 15 L-items closed all CRITICAL+HIGH+MEDIUM findings. Rubric 9.88/10. | **You are here.** |
-
-Years of local iteration converge here. Full pre-rebrand history preserved in [`CHANGELOG-LEGACY.md`](CHANGELOG-LEGACY.md); post-rebrand release notes in [`CHANGELOG.md`](CHANGELOG.md); per-release rows in [`docs/RELEASE_LOG.md`](docs/RELEASE_LOG.md).
+<p align="center"><img src="assets/poc-gate-output.png" alt="Sample gate output declared inline before any execution" width="720"></p>
 
 ---
 
-## Architecture Evolution (v1 → v2.6)
-
-**The shape Zeref OS settled into** — each version's contribution to the final design, sourced from `CHANGELOG.md` + `CHANGELOG-LEGACY.md`.
-
-| Era | Mental model | What it removed | What it added |
-|---|---|---|---|
-| **v1.x → v2.x** (legacy) | "Specialist skill fleet" | — | 109+ Claude-locked skills |
-| **v3.0** (legacy) | "CEO + LLM council" | — | Always-on multi-agent theater (rejected v4.0) |
-| **v4.0** (May 2026) | **Local-first context + memory engine** | 109 skills, 5 agents, CEO/fleet/council framing | 10 disciplined skills + AGENTS.md canon + flat memory + 3 privacy modes |
-| **v4.1–v4.3** (May 2026) | Refinement | — | Contradiction resolution + parent sync + pattern detection + team packs + harness translation map + Two-Strikes Rule |
-| **v1.0.0** (May 31, 2026) | Canonical release + rebrand | — | Version reset; consolidated v4.x learnings into single canonical line |
-| **v2.5.0** (Jun 5, 2026) | **Code-backed runtime** (not spec-only) | spec-only privacy enforcement | `zeref/{privacy,lock,cli,db,demo,dashboard}.py` + 85-claim audit + L1-L11 workarounds + 300-row sandbox |
-| **v2.6.0** (Jun 8, 2026) | **Reactive → Proactive auto-gated execution** | implicit cost-discipline + manual skill selection + verbatim prompt passthrough | 4-gate chain + 4 skills (skill-router, fleet-activator, prompt-context-engine, caveman-handoff) + Core Principles 13-14 + Model-Tier Routing + R6 |
-| **v2.6.1** (Jun 8, 2026) | **Prose-only → code-enforced gates** | hardcoded validator count + bare model names + R6 coverage gaps + 2 CRITICAL/2 HIGH/2 MEDIUM security findings | dynamic registry-driven validator + event-schema lint + model-resolver (full Anthropic ids) + L9 marker-file probe + L10 injection filter + L11 cool-down + L12 NFKC homoglyph guard + L13 dual-key override |
-
-See [`docs/adr/`](docs/adr/) for the two architectural decision records covering v2.6.0 + v2.6.1 in full.
-
----
-
-## Tests & Validation
-
-Run locally before every push. CI mirrors these on PR + main.
-
-| Check | Command | Threshold |
-|---|---|---|
-| **Structural validator** | `python3 scripts/zeref-validate.py` | Skills 14/14, all sub-checks pass, PATTERNS lint 0 findings |
-| **PATTERNS.jsonl event schema** | `python3 scripts/zeref-validate.py` (built-in) | 11 event types allowlisted; weight/tier enum enforced; stack-cap ≤5 |
-| **Claim audit** | inspect `tests/claims-v2.6.csv` (52 rows) + `tests/claims-audit-v2.6.md` | ≥60% VERIFIED |
-| **Sandbox stress** | inspect `tests/scores-v2.6-B.csv` (150 rows) + `tests/phase-b-v2.6-summary.md` | ≥70% pass; 0 CRITICAL adversarial failure unresolved |
-| **Security audit** | inspect `tests/security-audit-v2.6-C.md` (8 attacks CVSS-scored) | 0 CRITICAL open at ship |
-| **Rubric** | inspect `tests/zeref-rubric-v2.6.md` | 8 dims, every score cites artifact |
-| **Live regression** | `python3 tests/runner.py --mode structural` | 20/20 |
-| **Zeref-scope sweep** (push gate) | `.github/workflows/ci.yml` runs allowlist regex against diff | no non-zeref paths in diff |
-
-Historical baselines available: `tests/scores-vB.csv` (300 rows from v2.5 sandbox), `tests/scores-vD-live.csv` (20/20 live), `tests/zeref-rubric-v2.5.md` (v2.5 8.00 baseline).
-
----
-
-## Doctrine + Repo Operations
-
-This repo follows the operating doctrine documented at:
-- **Global**: `~/Documents/Claude/00_COMMAND/GITHUB_OS.md` — Yash GitHub Operating System (branch model, PR review, security gates, configuration management)
-- **Per-repo**: [`GITHUB_OS.md`](GITHUB_OS.md) — Zeref-specific overrides (audit cycle, R6 gate, model-resolver pinning, memory layer discipline, classification levels)
-- **Knowledge-OS**: `~/Documents/Claude/00_COMMAND/yash_faang_architecture_brief.md` — FAANG-grade naming, classification, archive model
-
-**Branch convention**: `<type>/zeref__<short-description>` (e.g. `feat/zeref__skill-router-v2`, `chore/zeref__history-reconstruction-v2.6.1`). Release-snapshot branches `release/v<major>.<minor>` per FAANG §3.4 controlled baselines.
-
-**Commits**: Conventional Commits with scope `(zeref)`. See `git log --oneline` for examples.
-
-**Decision records**: [`docs/adr/`](docs/adr/) — FAANG naming `zeref_<subject>_adr_<state>_yk_<date>_v<major.minor>.md`.
-
----
-
-## What Zeref OS does
-
-| Capability | Mechanism |
-|---|---|
-| **Remembers across sessions** | Per-project flat `memory/` (hot.md → index.md → DECISIONS/OPEN_QUESTIONS/RISKS/CONFLICTS/MEMORY) |
-| **Works in any harness** | `AGENTS.md` is source of truth; per-harness stubs for Claude / Codex / Cursor / Gemini / Windsurf / Aider / Hermes / Amp / Zed / Perplexity |
-| **Protects sensitive data** | Root `PRIVACY.md` (3 modes, default `abstract`) + `REDACT.md` (concrete classes) + `SHARING_POLICY.md` (connector allowlist, all OFF) |
-| **Catches contradictions** | `memory-keeper` flags conflicts → `memory/CONFLICTS.md` → user arbitrates. Never silent. |
-| **Detects repeated work** | `pattern-observer` scans `memory/patterns/PATTERNS.jsonl` (48–80h, 3× threshold) → drafts skill to `skills/drafts/` for review |
-| **Activates teams on demand** | `/team [solo\|build\|research\|red\|audit\|ship]` — max 4 agents, outputs land in `team/` |
-| **Pushes child→parent** | `/sync-parent` — staged, approved-per-push, provenance preserved |
-| **Crosses harnesses losslessly** | `/stop --handoff` compiles `STATE.json` + `SUMMARY.md` + `NEXT.md` package |
-| **Scales to model tier** | `budget-governor` auto-detects Free / Standard / God Mode; scales verbosity |
-| **Self-extends safely** | Two-Strikes Rule: no rule on 1st error. `pattern-to-skill` drafts only — never auto-activates. |
-
----
-
-## Architecture
+## How it works
 
 ```mermaid
 flowchart TB
@@ -161,7 +73,7 @@ flowchart TB
   AG --> Commands
   AG --> TeamPacks
 
-  subgraph Gates["Auto-Activation Gates (v2.6, every major task)"]
+  subgraph Gates["Auto-Activation Gates (every major task)"]
     G1["Gate #1<br/>budget-governor<br/>weight + tier"]
     G2["Gate #2<br/>skill-router<br/>smallest stack"]
     GFA["fleet-activator<br/>tool reachability"]
@@ -217,7 +129,7 @@ flowchart TB
 
   MK <--> Memory[(memory/<br/>flat layout)]
   PG -. enforces .-> Memory
-  PO -. logs .-> PATTERNS["memory/patterns/PATTERNS.jsonl<br/>event-schema validator (L5+L15)"]
+  PO -. logs .-> PATTERNS["memory/patterns/PATTERNS.jsonl<br/>event-schema validator"]
   G1 -. event .-> PATTERNS
   G2 -. event .-> PATTERNS
   G3 -. event .-> PATTERNS
@@ -227,11 +139,9 @@ flowchart TB
   class G1,G2,G3,GFA,BG,SR,FA,PCE,CH gate
 ```
 
-**★ = new in v2.6.** 4 gates fire sequentially before any execution-model call. Output declared inline; user can override before token spend. PATTERNS.jsonl event schema validated by `scripts/zeref-validate.py::lint_patterns_log()` (v2.6.1 L3+L5+L15).
+**★ = new in v2.6.** Four gates fire sequentially before any execution-model call. Output declared inline; user can override before token spend.
 
----
-
-## How it works — session lifecycle
+### Session lifecycle
 
 ```mermaid
 sequenceDiagram
@@ -251,7 +161,7 @@ sequenceDiagram
 
   loop major task
     User->>Harness: prompt
-    Harness->>Gates: invoke (v2.6 4-gate chain)
+    Harness->>Gates: invoke 4-gate chain
     Gates->>Gates: Gate #1 budget-governor (weight + tier match)
     Gates->>Patterns: event budget-gate
     Gates->>Gates: Gate #2 skill-router (smallest stack)
@@ -271,10 +181,6 @@ sequenceDiagram
   ZerefOS->>Memory: consolidate · conflict scan
   ZerefOS->>Patterns: pattern-observer scans (48-80h)
   ZerefOS->>Memory: refresh hot.md + snapshot
-  ZerefOS->>Patterns: lint_patterns_log (v2.6.1 L3 advisory)
-  alt parent sync configured
-    ZerefOS->>ZerefOS: stage + approve + push (R6 chain preserved)
-  end
 
   User->>Harness: /stop --handoff
   ZerefOS->>ZerefOS: handoff-compiler builds STATE.json + SUMMARY.md + NEXT.md
@@ -284,85 +190,7 @@ sequenceDiagram
 
 ---
 
-## Memory layout (flat, per ZEREF_OS §12)
-
-```
-project-root/
-├── AGENTS.md                    (canonical source of truth)
-├── CLAUDE.md / GEMINI.md / ...  (harness stubs — defer to AGENTS.md)
-├── PRIVACY.md                   (modes — default abstract)
-├── REDACT.md                    (sensitive classes)
-├── SHARING_POLICY.md            (connectors — OFF by default)
-├── memory/
-│   ├── hot.md                   (last 3 sessions, ≤500 words — read FIRST)
-│   ├── index.md                 (domain index — read if hot insufficient)
-│   ├── MEMORY.md                (agent-written session notes)
-│   ├── DECISIONS.md             (confirmed decisions w/ provenance)
-│   ├── OPEN_QUESTIONS.md        (unresolved questions)
-│   ├── RISKS.md                 (identified risks w/ severity)
-│   ├── CONFLICTS.md             (contradiction queue — user arbitrates)
-│   ├── archive/                 (superseded entries — never deleted)
-│   ├── patterns/PATTERNS.jsonl  (append-only tool/event log)
-│   ├── snapshots/<iso>/         (point-in-time wiki state)
-│   ├── sync/outbound/           (staged parent updates)
-│   ├── sync/parent/             (received parent updates)
-│   └── raw/                     (source material)
-├── skills/<10 skills>/SKILL.md
-├── skills/drafts/               (pattern-detected drafts pending approval)
-├── agents/<6 agents>.md
-├── commands/<8 commands>.md
-├── team-packs/<6 packs>.md
-├── team/                        (team pack outputs)
-├── references/                  (qa-gate, safety, two-strikes, advisory, harness map, v4x-canon)
-└── config/                      (PROJECT, PERMISSIONS, PARENT_SYNC, BUDGET, claude-overrides)
-```
-
----
-
-## Privacy model
-
-Three root files govern privacy (per ZEREF_OS §4):
-
-| File | Purpose | Default |
-|---|---|---|
-| `PRIVACY.md` | Modes: `exact` / `abstract` / `local-only` | **`abstract`** |
-| `REDACT.md` | Sensitive classes: credentials, pii, internal_paths, client_data, financial, proprietary_code | credentials + pii + internal_paths enabled |
-| `SHARING_POLICY.md` | Per-connector allowlist for MCP transmission | **all OFF** |
-
-Every write to `memory/` and every external transmission passes through `privacy-guardian` per these files. Connectors recommended only after `pattern-observer` detects repeated manual behavior.
-
----
-
-## Token budget (per ZEREF_OS §5)
-
-Three tiers, auto-detected from the active model:
-
-| Tier | Models | Behavior |
-|---|---|---|
-| **Free** | Gemini Flash, local Ollama, Mistral | aggressive compaction, minimal wiki writes |
-| **Standard** | GPT-4o mini, Claude Haiku, Gemini Flash 3.5 | normal operation, full wiki writes |
-| **God Mode** | GPT-4o, Claude Opus/Sonnet, Gemini 3.5 Pro | full parent-child sync, deep conflict analysis |
-
-No hardcoded limits. User sets the ceiling in `config/BUDGET.md`. Zeref OS warns before approaching it.
-
----
-
-## Team packs (per ZEREF_OS §8)
-
-On-demand only. Max 4 agents. Outputs land in `team/`. Activate via `/team [type]`.
-
-| Team | Roster | Use |
-|---|---|---|
-| solo | 1 primary + memory engine | default |
-| build | Planner + Implementer + Reviewer | multi-module features |
-| research | Investigator + Synthesizer + Fact-checker | tech evaluation, architecture |
-| red | Attacker + Security reviewer + Constraint checker + Evidence recorder (**read-only**) | adversarial review |
-| audit | Reader + Linter + Quality gate | pre-ship QA |
-| ship | Changelog drafter + Release reviewer + Deploy verifier | release prep |
-
----
-
-## Install
+## Install in 5 minutes
 
 ```bash
 # Claude Code
@@ -388,159 +216,109 @@ Then in your harness: `/zeref-os:start` (or `/start`).
 
 Full per-harness instructions: [`INSTALL.md`](INSTALL.md).
 
+<p align="center"><img src="assets/poc-install.png" alt="Installation flow on Claude Code" width="720"></p>
+
 ---
 
-## Validation
+## Memory model
+
+Flat, per-project, plain markdown. Boundary-first reads — never re-load the world.
 
 ```
-$ python3 scripts/zeref-validate.py
-Zeref OS validator — /path/to/project
-Skills:           10/10
-Agents:            6/6
-Commands:          8/8
-Team packs:        6/6
-Config:            5/5
-Root privacy:      3/3 (PRIVACY, REDACT, SHARING_POLICY)
-v4x canon:         6/6
-Harness stubs:     3/3
-Memory layout:    flat
-✔ Validation passed
-
-$ claude plugin validate .
-✔ Validation passed
+project-root/
+├── AGENTS.md                    (canonical source of truth)
+├── CLAUDE.md / GEMINI.md / ...  (harness stubs — defer to AGENTS.md)
+├── PRIVACY.md                   (modes — default abstract)
+├── REDACT.md                    (sensitive classes)
+├── SHARING_POLICY.md            (connectors — OFF by default)
+├── memory/
+│   ├── hot.md                   (last 3 sessions, ≤500 words — read FIRST)
+│   ├── index.md                 (domain index — read if hot insufficient)
+│   ├── MEMORY.md                (agent-written session notes)
+│   ├── DECISIONS.md             (confirmed decisions w/ provenance)
+│   ├── OPEN_QUESTIONS.md        (unresolved questions)
+│   ├── RISKS.md                 (identified risks w/ severity)
+│   ├── CONFLICTS.md             (contradiction queue — user arbitrates)
+│   ├── archive/                 (superseded entries — never deleted)
+│   ├── patterns/PATTERNS.jsonl  (append-only event log)
+│   ├── snapshots/<iso>/         (point-in-time wiki state)
+│   ├── sync/outbound/           (staged parent updates)
+│   ├── sync/parent/             (received parent updates)
+│   └── raw/                     (source material)
+├── skills/<14 skills>/SKILL.md
+├── agents/<6 agents>.md
+├── commands/<8 commands>.md
+├── team-packs/<6 packs>.md
+└── config/                      (PROJECT, PERMISSIONS, PARENT_SYNC, BUDGET)
 ```
 
-CI runs `zeref-validate.py` on every push to `main` and every PR — see [`.github/workflows/zeref-validate.yml`](.github/workflows/zeref-validate.yml).
+<p align="center"><img src="assets/poc-memory-tree.png" alt="Per-project memory layout in a real project" width="720"></p>
 
 ---
 
-## Decision log highlights
+## Cross-harness handoff
 
-Sourced from [`references/v4x-canon/DECISION_LOG.md`](references/v4x-canon/DECISION_LOG.md):
+Same project memory, different harness. The handoff package compiles `STATE.json` + `SUMMARY.md` + `NEXT.md`, then `caveman-handoff` compresses it for the target model — 40–60% smaller, R6 diff preserved.
 
-| # | Decision | Why |
+| Harness | Activation file | Stub |
 |---|---|---|
-| D1 | One wiki per project/repo, child→parent rollup | Project boundary maps to git boundary |
-| D4 | Pattern detection: 48–80h window, 3× threshold, drafts only | Catches recurring workflows without auto-creating noise |
-| D5 | Token budget auto-detected by model | Free install; capability scales with user's own tier |
-| D6 | Developers first → Knowledge workers → End users | Git-first defaults, clean SKILL.md output |
-| D7 | Harness Agnosticism: AGENTS.md is source of truth | Linux Foundation standard, 60k+ repos, 20+ tools |
-| D8 | Privacy-first local memory; PRIVACY/REDACT/SHARING_POLICY at every project | Local-only canonical state, opt-in external sharing |
-| D9 | Never hard delete — archive instead | Audit trail intact across iterations |
-| D10 | Team packs on-demand, max 4 agents, red team read-only | Avoid always-on overhead; safety on adversarial mode |
-| D11 | No bundled MCP tools — recommendation only | Respect user consent and harness portability |
+| Claude Code | `AGENTS.md` | `CLAUDE.md` |
+| Codex | `AGENTS.md` | — |
+| Cursor | `AGENTS.md` | `.cursor/rules/zeref.mdc` |
+| Gemini CLI / Antigravity | `AGENTS.md` | `GEMINI.md` |
+| Windsurf | `AGENTS.md` | `.windsurfrules` |
+| Aider | `AGENTS.md` | `.aider.conf.yml.example` |
+| Hermes · Amp · Zed · Perplexity | `AGENTS.md` | — |
 
-Full table + rejected directions: [`references/v4x-canon/DECISION_LOG.md`](references/v4x-canon/DECISION_LOG.md).
+<p align="center"><img src="assets/poc-handoff.png" alt="Same project memory carried across Claude, Codex, Cursor, Gemini" width="720"></p>
 
 ---
 
-## Model debate (cross-model design check)
+## Privacy by default
 
-From [`references/v4x-canon/MODEL_DEBATE.md`](references/v4x-canon/MODEL_DEBATE.md) — what each model needs and how Zeref OS scores:
+Three root files govern privacy. All defaults err toward the user.
 
-| Parameter | Score /10 | Notes |
+| File | Purpose | Default |
 |---|---|---|
-| Harness portability | 9.5 | AGENTS.md standard + translation map |
-| Memory persistence | 10 | File-based; works with any harness, any model |
-| Privacy protection | 9.5 | PRIVACY + REDACT + SHARING_POLICY. Best-in-class |
-| Token efficiency | 9 | hot.md startup + deep retrieval |
-| Developer experience | 9 | Git-first, conversational setup, draft-review |
-| Rule compliance | 8 | 70% community baseline; lean file + Two-Strikes Rule |
-| Scalability | 9 | Parent-child rollup handles org-wide knowledge |
-| Free model support | 9.5 | Free tier explicitly designed |
-| Pattern intelligence | 8.5 | 48–80h window, file-based log |
-| Privacy-aware sharing | 9.5 | Strongest differentiator vs comparable systems |
+| `PRIVACY.md` | Modes: `exact` / `abstract` / `local-only` | **`abstract`** |
+| `REDACT.md` | Sensitive classes: credentials, pii, internal_paths, client_data, financial, proprietary_code | credentials + pii + internal_paths enabled |
+| `SHARING_POLICY.md` | Per-connector allowlist for MCP transmission | **all OFF** |
+
+Every write to `memory/` and every external transmission passes through `privacy-guardian` first.
 
 ---
 
-## Engineering inspirations
+## Inspiration
 
-Zeref OS stands on the work of many engineers in the AI agent and LLM tooling space. The most direct influences:
+Zeref OS is named after **Zeref Dragneel** from *Fairy Tail* — the immortal scholar whose ancient knowledge transcended form, time, and faction. He carried centuries of context with him; he never started from zero.
 
-### Foundations
-- **AGENTS.md** — Linux Foundation hosted open standard (60k+ repos, 20+ tools natively support). Zeref OS adopts AGENTS.md as the single source of truth.
-- **Anthropic CLAUDE.md best practices** — informed the lean stub pattern, Two-Strikes Rule.
-- **HumanLayer — "Writing a good CLAUDE.md"** — informed the boundary-first reads discipline.
-- **Modern Agent Harness Blueprint 2026** (@amazingvince) — informed the harness-vs-context layering.
+That is the design north star. AI sessions today start from zero, every time. You re-explain your project every conversation. You lose decisions to context window resets. You can't switch from Claude to Codex to Gemini to Cursor without abandoning your project memory.
 
-### Karpathy paradigm shifts
-- **karpathy/autoresearch** (`program.md` pattern) — informed the structured reasoning flow.
-- **karpathy/llm-council `CLAUDE.md`** — informed the rejected-direction "LLM council" framing (Zeref OS explicitly rejects this in favor of team packs).
-- **forrestchang/andrej-karpathy-skills** (43k installs/week) — informed skill discipline.
-- **affaan-m/ecc (AgentShield)** — informed safety gates.
-- **Karpathy LLM Wiki gist** — informed the wiki-as-canonical-memory pattern.
-
-### Memory + evolution patterns
-- **jack60810/claude-evolve** (Darwinian memory, EMA rule ratings) — informed the confidence-decay + supersession model.
-- **MEMORY.md read/write separation** — community-wide pattern. AGENTS.md = human-written, MEMORY.md = agent-written.
-- **Auto Dream (relative→absolute date hygiene)** — informed the MEMORY.md auto-hygiene pass on `/done`.
-
-### Community mental models
-- **Armin Ronacher — "Logs as APIs, No Dead Ends"** — informed `PATTERNS.jsonl` as the harness-agnostic append-only log.
-- **Geoffrey Huntley — stdlib + Ralph Wiggum technique** — informed the "skills are recommendations, not bundled tools" stance.
-- **Harrison Chase — Model / Harness / Context layers** — informed the layered architecture (harness ≠ memory engine ≠ model).
-- **Hamel Husain — "Evals as living PRD"** — informed the validator + CI structure.
-- **Simon Willison on AGENTS.md** — informed adoption rationale.
-
-### Spec-driven development
-- **BMAD-METHOD** (43k stars) — informed the human-gated phase structure (project-setup interview).
-- **GitHub Spec Kit** (6-phase, human-gated) — informed the conversational schema interview pattern.
-- **Martin Fowler — SDD Tools Comparison** — informed the rejection of always-on agent fleets.
-- **Kiro (AWS VS Code fork)** — informed the steering-files pattern (Zeref OS uses harness stubs instead).
-
-### Knowledge management
-- **ballred/obsidian-claude-pkm** (PARA starter kit) — informed the per-domain wiki structure.
-- **AgriciDaniel/claude-obsidian** (Karpathy-style LLM Wiki) — informed the boundary-first read protocol.
-
-### Canonical AGENTS.md samples studied
-- `openai/codex`, `vercel/vercel`, `openai/openai-agents-python`, `vercel-labs/open-agents`, `vercel-labs/agent-skills`, `anthropics/anthropic-cookbook` — all carry production AGENTS.md files; Zeref OS adopts conventions consistent with all of them.
-
-Full inspiration table with links: [`references/v4x-canon/RESEARCH_RESOURCES.md`](references/v4x-canon/RESEARCH_RESOURCES.md) and the **Inspirations** page on the [Wiki](https://github.com/kanadhiayash/zeref-os/wiki/Inspirations).
+Zeref OS is built in that lineage: **long-horizon memory, faithful to the user's accumulated decisions, portable across every AI harness**.
 
 ---
 
-## Where Zeref OS diverges from community defaults
+## What v2.6 is NOT
 
-| Community default | Zeref OS choice | Reason |
-|---|---|---|
-| CLAUDE.md as primary file | AGENTS.md primary; CLAUDE.md = stub | Harness-agnostic |
-| Skills bundled with the harness | Skills recommended only | User consent + portability |
-| Memory in hosted service | Memory in local markdown | Privacy-first |
-| Team agents always available | On-demand only | Token budget |
-| Immediate skill activation | Review-first, approval required | Prevents misdetection |
-| Single-user persona / "CEO" | Free for all users, no persona | Adoption |
+- **Not itself a harness.** Zeref OS plugs *into* your existing harness (Claude Code, Cursor, Codex, Gemini CLI, Windsurf, Aider, etc.). It is the memory layer they read — not a replacement.
+- **Not a hosted service.** No server, no account, no cloud. Your memory lives in local markdown files in your repo. Optional MCP connectors can talk to hosted services — but only after you explicitly enable them in `SHARING_POLICY.md`.
+- **Not bundled with any MCP tools.** Recommendation-only. Zeref OS never installs a connector on your behalf.
+- **Not a sprawling skill catalog.** 14 disciplined skills with strict triggers — not a fleet of specialists.
+- **Not an always-on multi-agent council.** Team packs are on-demand only and capped at 4 agents. No background swarm.
+- **Not dedicated to any single user or organization.** Free to install. Use with any project, any model you bring.
 
 ---
 
 ## Documentation
 
-- **[GitHub Wiki](https://github.com/kanadhiayash/zeref-os/wiki)** — full pages: Architecture, Memory model, Privacy model, Team packs, Pattern detection, Decision log, Model debates, Versioning history, FAQ, Glossary, Inspirations
+- **[GitHub Wiki](https://github.com/kanadhiayash/zeref-os/wiki)** — Architecture, Memory model, Privacy model, Team packs, Pattern detection, Installation, FAQ, Glossary, Inspirations
 - **[`AGENTS.md`](AGENTS.md)** — canonical agent spec
 - **[`INSTALL.md`](INSTALL.md)** — per-harness install
-- **[`MIGRATION.md`](MIGRATION.md)** — pre-1.0 migration paths
-- **[`CHANGELOG.md`](CHANGELOG.md)** — v1.0.0 release notes
-- **[`CHANGELOG-LEGACY.md`](CHANGELOG-LEGACY.md)** — pre-1.0 history
-- **[`references/v4x-canon/`](references/v4x-canon/)** — imported design canon (ZEREF_OS spec, decision log, model debates, use cases, research resources)
+- **[`MIGRATION.md`](MIGRATION.md)** — migration paths
+- **[`CHANGELOG.md`](CHANGELOG.md)** — release notes
+- **[`GITHUB_OS.md`](GITHUB_OS.md)** — per-repo doctrine
 
----
-
-## Roadmap
-
-- **v1.0.0 (current)** — Zeref OS canonical release ✅
-- **v1.x** — additive improvements, no breaking changes
-- **v2.x** — only if a fundamental design assumption changes (unlikely)
-
----
-
-## What Zeref OS is NOT (and what those mean)
-
-- **Not itself a harness.** Zeref OS plugs *into* your existing harness (Claude Code, Cursor, Codex, Gemini CLI, Windsurf, Aider, etc.). It's the memory layer they read — not a replacement for the harness itself.
-- **Not a hosted service.** No Zeref OS server, no account, no cloud. Your memory lives in local markdown files in your repo. Optional MCP connectors can talk to hosted services (GitHub, Linear, Notion, etc.) — but only after you explicitly enable them in `SHARING_POLICY.md`.
-- **Not bundled with any MCP tools.** Recommendation-only. Zeref OS never installs a connector on your behalf.
-- **Not a sprawling skill catalog.** 10 disciplined skills with strict triggers — not the v1.x "fleet of 109 specialist skills" approach.
-- **Not an always-on multi-agent council.** Team packs are on-demand only and capped at 4 agents. No background swarm.
-- **Not a CEO persona.** Zeref OS is a context + memory engine, not a leader. (Historical reject of the v3.x framing.)
-- **Not dedicated to any single user or organization.** Free to install. Use with any project, any model you bring.
+<p align="center"><img src="assets/poc-wiki.png" alt="Zeref OS wiki landing page on GitHub" width="720"></p>
 
 ---
 
