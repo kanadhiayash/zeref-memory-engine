@@ -114,6 +114,6 @@ zeref grade <claim>     # grade open questions
 ## Next
 
 - `AGENTS.md` — canonical spec
-- `SOUL.md` — 6 operating principles
-- `tests/zeref-rubric-v2.5.md` — current scorecard (8.0/10)
-- `tests/security-audit-vC.md` — security findings + fixes
+- `CHANGELOG.md` — release notes
+- `GITHUB_OS.md` — per-repo doctrine
+- `docs/wiki/` — full documentation
