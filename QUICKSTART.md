@@ -72,13 +72,11 @@ Heuristic without an API key. With `litellm` + key, it's LLM-graded.
 
 ---
 
-## 5. Audit + Demo
+## 5. Audit
 
 ```bash
 zeref audit-privacy --directory memory/   # PII scan
 zeref audit                               # structural validation
-zeref demo                                # 20 deterministic checks
-zeref dashboard                           # HTML chart → tests/dashboard.html
 ```
 
 ---
@@ -106,8 +104,6 @@ zeref grade <claim>     # grade open questions
 | `zeref audit-privacy` | Scan for PII hits |
 | `zeref audit` | Structural validation |
 | `zeref db-status` | Backend availability |
-| `zeref dashboard` | Regenerate HTML chart |
-| `zeref demo` | 20 regression checks |
 
 ---
 

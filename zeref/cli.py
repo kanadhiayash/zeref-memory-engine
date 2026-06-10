@@ -7,8 +7,6 @@ Commands:
     zeref grade <claim>   Grade a claim (evidence-grader heuristics + optional LLM)
     zeref audit-privacy   Run deterministic PII audit on memory/
     zeref audit           Structural validation (wraps zeref-validate.py)
-    zeref dashboard       Generate scores HTML dashboard (Sprint 3)
-    zeref demo            Run sandbox demo (Sprint 4)
 
 All commands are read-only except write-decision.
 Wraps litellm for grade if available; degrades gracefully without it.
@@ -323,21 +321,6 @@ def cmd_audit(args: argparse.Namespace) -> int:
     return subprocess.run([sys.executable, str(script)], cwd=str(root)).returncode
 
 
-def cmd_dashboard(args: argparse.Namespace) -> int:
-    from zeref.dashboard import generate
-
-    root = _project_root()
-    out = Path(args.output) if args.output else root / "tests" / "dashboard.html"
-    generate(scores_dir=root / "tests", output_path=out)
-    print(f"✔ Dashboard → {out}\n  Open: file://{out.resolve()}")
-    return 0
-
-
-def cmd_demo(args: argparse.Namespace) -> int:
-    from zeref.demo import run_demo
-    return run_demo()
-
-
 # ---------------------------------------------------------------------------
 # Parser
 # ---------------------------------------------------------------------------
@@ -360,11 +343,6 @@ def _build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("audit", help="Structural validation")
 
-    db = sub.add_parser("dashboard", help="Generate HTML score dashboard")
-    db.add_argument("--output", help="Output path (default: tests/dashboard.html)")
-
-    sub.add_parser("demo", help="Run sandbox demo (20 regression tasks)")
-
     init_p = sub.add_parser("init", help="Scaffold memory/ + config/ + privacy templates")
     init_p.add_argument("--directory", help="Target dir (default: cwd)")
     init_p.add_argument("--name", help="Project name (non-interactive)")
@@ -386,10 +364,8 @@ def main() -> None:
         "grade": cmd_grade,
         "audit-privacy": cmd_audit_privacy,
         "audit": cmd_audit,
-        "dashboard": cmd_dashboard,
-        "demo": cmd_demo,
-        "init": cmd_init,           # v2.5 L5
-        "db-status": cmd_db_status, # v2.5 L4
+        "init": cmd_init,
+        "db-status": cmd_db_status,
     }
     handler = handlers.get(args.command)
     if not handler:
