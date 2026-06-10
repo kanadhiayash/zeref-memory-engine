@@ -3,20 +3,25 @@ name: Zeref OS CI
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   validate:
     runs-on: ubuntu-latest
-    name: Validate Zeref OS structure + PATTERNS lint
+    name: Validate (Python ${{ matrix.python-version }})
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12', '3.13']
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: ${{ matrix.python-version }}
 
       - name: Run zeref-validate
         run: |
