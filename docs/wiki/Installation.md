@@ -115,7 +115,7 @@ If user cancels mid-interview: Zeref OS boots in **READ-ONLY mode** until the sc
 
 ## Optional: install Python runtime
 
-`zeref/` Python runtime provides CLI + dashboard + structured queries:
+`zeref/` Python runtime provides CLI + structured queries:
 
 ```bash
 cd ~/.claude/plugins/cache/zeref-os/zeref-os
@@ -131,7 +131,6 @@ zeref write-decision      # append to DECISIONS.md (with PII scrub)
 zeref grade <claim>       # invoke evidence-grader logic
 zeref audit               # structural validation + privacy audit
 zeref init                # scaffold memory + config
-zeref dashboard           # render HTML score dashboard
 zeref db-status           # report backend (sqlite/duckdb) + parquet availability
 ```
 

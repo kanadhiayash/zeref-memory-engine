@@ -47,7 +47,7 @@ Every major task is classified before execution. Classification drives model + e
 | **CRITICAL** | Multi-skill orchestration, irreversible writes, security-sensitive payloads, architecture decisions, parent-sync exports | $0.50 – $5.00 | Opus 4.7 high (or Opus 4.6 for cost-sensitive flagship) |
 | **HIGH** | Cross-file refactor, new skill draft, contradiction arbitration, eval harness run, schema migration | $0.10 – $0.50 | Sonnet 4.6 medium |
 | **MEDIUM** | Single-file edit, wiki consolidation, evidence grading on 5–20 claims, README polish | $0.02 – $0.10 | Sonnet 4.6 low / Haiku 4.5 medium |
-| **LOW** | Single-fact lookup, formatting fix, single-claim grade, dashboard regen | < $0.02 | Haiku 4.5 low |
+| **LOW** | Single-fact lookup, formatting fix, single-claim grade, status read | < $0.02 | Haiku 4.5 low |
 
 Signal precedence: highest matching signal wins. If unsure, escalate one tier (never silently downgrade).
 
