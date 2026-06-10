@@ -154,7 +154,7 @@ sequenceDiagram
 
   User->>Harness: /start
   Harness->>ZerefOS: boot
-  ZerefOS->>Memory: read hot.md (≤500 words)
+  ZerefOS->>Memory: read hot.md (<=500 words)
   ZerefOS->>Memory: read index.md if needed
   ZerefOS->>Memory: load PRIVACY.md + REDACT.md
   ZerefOS-->>User: project, last session, active decisions, model tier
@@ -178,13 +178,13 @@ sequenceDiagram
   end
 
   User->>Harness: /done
-  ZerefOS->>Memory: consolidate · conflict scan
+  ZerefOS->>Memory: consolidate + conflict scan
   ZerefOS->>Patterns: pattern-observer scans (48-80h)
   ZerefOS->>Memory: refresh hot.md + snapshot
 
   User->>Harness: /stop --handoff
   ZerefOS->>ZerefOS: handoff-compiler builds STATE.json + SUMMARY.md + NEXT.md
-  ZerefOS->>ZerefOS: caveman-handoff compresses (40-60% reduction; NFKC + R6 diff)
+  ZerefOS->>ZerefOS: caveman-handoff compresses (40-60% reduction, NFKC + R6 diff)
   ZerefOS-->>User: cross-model handoff package ready
 ```
 
