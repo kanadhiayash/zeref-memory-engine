@@ -26,14 +26,94 @@ from typing import Optional
 # Homoglyph table — common lookalike substitutions used to evade regex
 # ---------------------------------------------------------------------------
 _HOMOGLYPHS: dict[str, str] = {
-    "а": "a",   # Cyrillic а
-    "е": "e",   # Cyrillic е
-    "о": "o",   # Cyrillic о
-    "р": "p",   # Cyrillic р
-    "с": "c",   # Cyrillic с
-    "х": "x",   # Cyrillic х
-    "і": "i",   # Cyrillic і
-    "ӏ": "l",   # Cyrillic ӏ
+    # lowercase Cyrillic
+    "а": "a",   # Cyrillic а  U+0430
+    "е": "e",   # Cyrillic е  U+0435
+    "о": "o",   # Cyrillic о  U+043E
+    "р": "p",   # Cyrillic р  U+0440
+    "с": "c",   # Cyrillic с  U+0441
+    "х": "x",   # Cyrillic х  U+0445
+    "і": "i",   # Cyrillic і  U+0456
+    "ӏ": "l",   # Cyrillic ӏ  U+04CF
+    "у": "y",   # Cyrillic у  U+0443
+    # uppercase Cyrillic — needed to defend AKIA/AIza/PEM-style uppercase patterns
+    "А": "A",   # Cyrillic А  U+0410
+    "В": "B",   # Cyrillic В  U+0412
+    "Е": "E",   # Cyrillic Е  U+0415
+    "К": "K",   # Cyrillic К  U+041A
+    "М": "M",   # Cyrillic М  U+041C
+    "Н": "H",   # Cyrillic Н  U+041D (looks like H)
+    "О": "O",   # Cyrillic О  U+041E
+    "Р": "P",   # Cyrillic Р  U+0420
+    "С": "C",   # Cyrillic С  U+0421
+    "Т": "T",   # Cyrillic Т  U+0422
+    "Х": "X",   # Cyrillic Х  U+0425
+    "І": "I",   # Cyrillic І  U+0406
+    "Ѕ": "S",   # Cyrillic Ѕ  U+0405
+    "Ј": "J",   # Cyrillic Ј  U+0408
+    "У": "Y",   # Cyrillic У  U+0423
+    # Greek lookalikes
+    "Α": "A",   # Greek Alpha   U+0391
+    "Β": "B",   # Greek Beta    U+0392
+    "Ε": "E",   # Greek Epsilon U+0395
+    "Ζ": "Z",   # Greek Zeta    U+0396
+    "Η": "H",   # Greek Eta     U+0397
+    "Ι": "I",   # Greek Iota    U+0399
+    "Κ": "K",   # Greek Kappa   U+039A
+    "Μ": "M",   # Greek Mu      U+039C
+    "Ν": "N",   # Greek Nu      U+039D
+    "Ο": "O",   # Greek Omicron U+039F
+    "Ρ": "P",   # Greek Rho     U+03A1
+    "Τ": "T",   # Greek Tau     U+03A4
+    "Υ": "Y",   # Greek Upsilon U+03A5
+    "Χ": "X",   # Greek Chi     U+03A7
+}
+
+
+# ---------------------------------------------------------------------------
+# Provider-shaped credential tokens — high-precision patterns that catch
+# specific issuer prefixes regardless of whether a label precedes them.
+# Order matters: these are evaluated before the generic credentials regex
+# so a structured match wins.
+# ---------------------------------------------------------------------------
+_PROVIDER_PATTERNS: dict[str, re.Pattern] = {
+    "credentials_openai_project": re.compile(
+        r"sk-proj-[A-Za-z0-9_\-]{20,}",
+    ),
+    "credentials_openai_bare": re.compile(
+        # bare sk-... but not the project-prefixed form (handled above)
+        r"\bsk-(?!proj-)[A-Za-z0-9]{20,}\b",
+    ),
+    "credentials_github_pat": re.compile(
+        r"github_pat_[A-Za-z0-9_]{20,}",
+    ),
+    "credentials_github_ghp": re.compile(
+        r"\bghp_[A-Za-z0-9]{20,}\b",
+    ),
+    "credentials_slack_bot": re.compile(
+        r"\bxoxb-[A-Za-z0-9\-]{10,}\b",
+    ),
+    "credentials_google_api": re.compile(
+        r"\bAIza[A-Za-z0-9_\-]{30,}\b",
+    ),
+    "credentials_aws_access_key": re.compile(
+        r"\bAKIA[A-Z0-9]{16}\b",
+    ),
+    "credentials_pem_block": re.compile(
+        r"-----BEGIN (?:RSA |EC |DSA |OPENSSH |ENCRYPTED |PGP )?PRIVATE KEY-----"
+        r"[\s\S]{1,8192}?"
+        r"-----END (?:RSA |EC |DSA |OPENSSH |ENCRYPTED |PGP )?PRIVATE KEY-----",
+    ),
+    "credentials_natural_language": re.compile(
+        # "API key sk-...", "secret key abc123", "access token xoxb-..."
+        r"""(?xi)
+        \b(?:api\ key|secret\ key|access\ token)
+        \s*[:=]?\s*
+        ['"]?
+        ([A-Za-z0-9_\-][A-Za-z0-9_\-./+=]{7,})
+        ['"]?
+        """,
+    ),
 }
 
 
@@ -245,6 +325,20 @@ def scrub(
     working = _unicode_normalize(text)
     working = _homoglyph_normalize(working)
     working = _decode_base64_fragments(working)
+
+    # Stage 1.5 — provider-shaped credential tokens (always-on, high-precision)
+    for name, pattern in _PROVIDER_PATTERNS.items():
+        matches = list(pattern.finditer(working))
+        if matches:
+            report.redacted += len(matches)
+            if "credentials" not in report.classes_hit:
+                report.classes_hit.append("credentials")
+            report.audit_trail.append({
+                "class": name,
+                "count": len(matches),
+                "replacement": "[REDACTED:credentials]",
+            })
+            working = pattern.sub("[REDACTED:credentials]", working)
 
     # Stage 2 — apply enabled classes; credentials always-on
     for cls in classes:

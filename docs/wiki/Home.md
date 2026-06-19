@@ -8,7 +8,7 @@
 >
 > **Zeref OS is the persistent memory layer that fixes this.** A per-project markdown wiki that AI sessions read first, write to safely, and hand off cleanly. Your project memory travels with the project — not the tool.
 
-**Current version**: v2.6 · [`CHANGELOG`](https://github.com/kanadhiayash/zeref-os/blob/main/CHANGELOG.md) · [Notion Command Center](https://copper-tv-288.notion.site/Zeref-Agent-OS-Command-Center-358d695d836a81af9f6adf30770217c3)
+**Current version**: v1.0.0 · [`CHANGELOG`](https://github.com/kanadhiayash/zeref-os/blob/main/CHANGELOG.md) · [`BENCHMARK_REPORT`](https://github.com/kanadhiayash/zeref-os/blob/main/docs/BENCHMARK_REPORT.md) · [Notion Command Center](https://copper-tv-288.notion.site/Zeref-Agent-OS-Command-Center-358d695d836a81af9f6adf30770217c3)
 
 _Placeholder: `assets/poc-stateless-vs-zeref.png` — add screenshot of two sessions, before / after Zeref OS._
 
@@ -24,7 +24,7 @@ _Placeholder: `assets/poc-stateless-vs-zeref.png` — add screenshot of two sess
 - 📖 **[[Glossary]]** — boundary file, evidence grade, Two-Strikes Rule, R6, 4-gate chain, model-resolver
 - 🌱 **[[Inspirations]]** — engineering lineage and influences
 
-## What v2.6 ships
+## What v1.0.0 ships
 
 Per-project flat `memory/` wiki in plain markdown · append-only `PATTERNS.jsonl` event log with schema validator · point-in-time snapshots · contradiction safety with human arbitration · three privacy modes (`exact` / `abstract` / `local-only`) · six on-demand team packs · cross-harness handoff format with caveman-grammar compression · and a **4-gate auto-activation chain** that classifies every major task on cost weight, picks the smallest useful skill stack, probes extended-tool reachability, and restructures unstructured prompts before any token spend.
 

@@ -1,7 +1,7 @@
 # Shared Anti-Hallucination Rules
 **Zeref OS Skills Fleet V2 — Canonical Reference**
-Version: 2.0.0 | Owner: Yash Kanadhia
-Last Updated: 2026-05-12
+Version: 1.0.0 | Owner: Yash Kanadhia
+Last Updated: 2026-06-19
 
 > All Zeref OS skill files reference this document instead of duplicating these rules.
 > Do not modify this file without updating the version number and changelog.

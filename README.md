@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kanadhiayash/zeref-os/releases/tag/v2.6.1"><img src="https://img.shields.io/badge/version-2.6.1-blueviolet" alt="v2.6.1"></a>
+  <a href="https://github.com/kanadhiayash/zeref-os/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/version-1.0.0-blueviolet" alt="v1.0.0"></a>
   <a href="AGENTS.md#auto-activation-gates-v26"><img src="https://img.shields.io/badge/gates-4%20active-blue" alt="4 gates"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT"></a>
   <a href="https://agents.md"><img src="https://img.shields.io/badge/AGENTS.md-canonical-blue" alt="AGENTS.md"></a>
@@ -37,9 +37,9 @@
 
 ---
 
-## What v2.6 ships
+## What v1.0.0 ships
 
-- **14 disciplined skills** (4 new in v2.6): every skill has a strict trigger; nothing always-on.
+- **14 disciplined skills**: every skill has a strict trigger; nothing always-on.
 - **4-gate Auto-Activation chain** — every major task self-classifies cost, stack, prompt, and handoff before any token spend.
 - **R6 Zero Context Loss** — every entity in your prompt (file path, tool name, error string, constraint) survives restructure, routing, and handoff.
 - **Model-Tier Routing** — explicit Anthropic id mapping (Haiku 4.5 / Sonnet 4.6 / Opus 4.7) with cost-aware defaults.
@@ -139,7 +139,7 @@ flowchart TB
   class G1,G2,G3,GFA,BG,SR,FA,PCE,CH gate
 ```
 
-**★ = new in v2.6.** Four gates fire sequentially before any execution-model call. Output declared inline; user can override before token spend.
+**★ = Auto-Activation Gate.** Four gates fire sequentially before any execution-model call. Output declared inline; user can override before token spend.
 
 ### Session lifecycle
 
@@ -298,7 +298,7 @@ Zeref OS is built in that lineage: **long-horizon memory, faithful to the user's
 
 ---
 
-## What v2.6 is NOT
+## What v1.0.0 is NOT
 
 - **Not itself a harness.** Zeref OS plugs *into* your existing harness (Claude Code, Cursor, Codex, Gemini CLI, Windsurf, Aider, etc.). It is the memory layer they read — not a replacement.
 - **Not a hosted service.** No server, no account, no cloud. Your memory lives in local markdown files in your repo. Optional MCP connectors can talk to hosted services — but only after you explicitly enable them in `SHARING_POLICY.md`.

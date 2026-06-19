@@ -26,7 +26,7 @@ Per global GITHUB_OS §3.4: SemVer `v<major>.<minor>.<patch>` on `main` only.
 ### Commits
 
 Conventional Commits with scope `(zeref)`. Examples:
-- `chore(zeref): release v2.6.1`
+- `chore(zeref): release v1.0.0`
 - `feat(zeref): add prompt-context-engine Gate #3`
 - `fix(zeref): validator dynamic skill count from registry`
 - `docs(zeref): add R6 Zero Context Loss to _shared/rules.md`
