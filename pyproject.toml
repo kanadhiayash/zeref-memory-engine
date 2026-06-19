@@ -4,7 +4,7 @@ build-backend = "setuptools.backends.legacy:build"
 
 [project]
 name = "zeref-os"
-version = "2.0.0"
+version = "1.0.0"
 description = "Zeref OS — local-first context and memory engine for AI harnesses"
 readme = "README.md"
 license = { text = "MIT" }
@@ -39,3 +39,6 @@ Changelog = "https://github.com/yashkanadhia/zeref-os/blob/main/CHANGELOG.md"
 [tool.setuptools.packages.find]
 where   = ["."]
 include = ["zeref*"]
+
+[tool.setuptools.package-data]
+zeref = ["VERSION"]

@@ -326,7 +326,9 @@ def cmd_audit(args: argparse.Namespace) -> int:
 # ---------------------------------------------------------------------------
 
 def _build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="zeref", description="Zeref OS CLI v2.0")
+    from zeref import __version__ as _v
+    p = argparse.ArgumentParser(prog="zeref", description=f"Zeref OS CLI v{_v}")
+    p.add_argument("--version", action="version", version=f"zeref {_v}")
     sub = p.add_subparsers(dest="command", required=True)
 
     sub.add_parser("status", help="Print hot.md + tier")
@@ -340,6 +342,8 @@ def _build_parser() -> argparse.ArgumentParser:
 
     ap = sub.add_parser("audit-privacy", help="Scan memory/ for PII (read-only)")
     ap.add_argument("--directory", help="Directory to scan (default: memory/)")
+    ap.add_argument("--strict", action="store_true",
+                    help="Exit non-zero on any unredacted hit (suitable for CI gate)")
 
     sub.add_parser("audit", help="Structural validation")
 
