@@ -1,7 +1,7 @@
 {
   "$schema": "https://zeref-os.dev/registry.schema.json",
-  "version": "2.6.1-phaseD",
-  "generated": "2026-06-08",
+  "version": "1.0.0",
+  "generated": "2026-06-19",
   "skills": [
     {
       "skill": "wiki-maintenance",

@@ -1,0 +1,55 @@
+name: Zeref OS Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    name: pytest (Python ${{ matrix.python-version }})
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12', '3.13']
+    steps:
+      # actions/checkout — pinned to v4.2.2 release SHA
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Set up Python
+        # actions/setup-python — pinned to v5.3.0 release SHA
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install test dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install pytest coverage
+
+      - name: Run pytest with coverage
+        # Tests exercise the CLI via subprocess; in-process coverage therefore
+        # under-counts cli.py / lock.py paths. The 15% floor is the honest
+        # baseline measured today; raising it to 60–85% is tracked in
+        # docs/RISK_LOG.md R-007 (in-process CLI test refactor).
+        run: |
+          coverage run --source=zeref --branch -m pytest -q
+          coverage report -m --fail-under=15
+          coverage xml -o coverage.xml
+          coverage html -d htmlcov
+
+      - name: Upload coverage report
+        # actions/upload-artifact — pinned to v4.4.3 release SHA
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+        with:
+          name: coverage-${{ matrix.python-version }}
+          path: |
+            coverage.xml
+            htmlcov/
+          retention-days: 14

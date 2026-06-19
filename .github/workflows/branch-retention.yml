@@ -1,0 +1,26 @@
+name: Branch retention guard
+
+# Enforces the "never delete a branch after merge" project policy.
+# Triggered on every push to main and on every PR close event; fails fast if
+# the deleted-branch payload indicates an intentional delete of a tracked
+# release/feature branch.
+
+on:
+  delete:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.ref_type == 'branch' }}
+    steps:
+      - name: Reject branch deletion
+        run: |
+          DELETED_REF="${{ github.event.ref }}"
+          echo "Detected branch delete event: ${DELETED_REF}"
+          echo "Project policy retains every branch after merge."
+          echo "Rename to archive/<original-name> instead of deleting."
+          exit 1

@@ -1,0 +1,110 @@
+{
+  "passed": true,
+  "axes": [
+    {
+      "axis": "portability",
+      "score": 10.0,
+      "sub": {
+        "canonical_agents_md": {
+          "score": 10.0,
+          "evidence": "AGENTS.md present; 7/7 stubs cite it"
+        },
+        "per_harness_stubs": {
+          "score": 10.0,
+          "evidence": "7/7 harness stubs present: ['CLAUDE.md', 'CODEX.md', 'GEMINI.md', 'LLAMA.md', '.windsurfrules', '.aider.conf.yml.example', '.cursor/rules/zeref.mdc']"
+        },
+        "harness_probe": {
+          "score": 10.0,
+          "evidence": "probe ran clean; 7/7 stubs present"
+        },
+        "harness_matrix": {
+          "score": 10.0,
+          "evidence": "HARNESS_MATRIX.md has ~8 harness rows"
+        },
+        "cli_works": {
+          "score": 10.0,
+          "evidence": "CLI --version and status both clean"
+        }
+      }
+    },
+    {
+      "axis": "adaptivity",
+      "score": 9.0,
+      "sub": {
+        "router_ranking": {
+          "score": 7.0,
+          "evidence": "router doc: ranking=True, recency=False"
+        },
+        "importer_doc": {
+          "score": 10.0,
+          "evidence": "skill-importer present; provenance documented=True"
+        },
+        "provenance": {
+          "score": 10.0,
+          "evidence": "sha=True, source_path=True"
+        },
+        "review_gate": {
+          "score": 8.0,
+          "evidence": "review-gated=True, audit-logged=False"
+        },
+        "privacy_filter": {
+          "score": 10.0,
+          "evidence": "privacy-filter=True, rejects-on-hit=True"
+        }
+      }
+    },
+    {
+      "axis": "scalability",
+      "score": 10.0,
+      "sub": {
+        "packs_exist": {
+          "score": 10.0,
+          "evidence": "3/3 packs present; 3/3 with token envelope"
+        },
+        "budget_enforced": {
+          "score": 10.0,
+          "evidence": "soft=True, hard=True, override=True"
+        },
+        "tier_routed": {
+          "score": 10.0,
+          "evidence": "3/3 packs set default_tier; opus_reserved=True"
+        },
+        "r6_preserved": {
+          "score": 10.0,
+          "evidence": "R6 in rules=True, R6 referenced in handoff skills=True"
+        },
+        "decision_criteria": {
+          "score": 10.0,
+          "evidence": "3/3 packs document upgrade/use criteria"
+        }
+      }
+    },
+    {
+      "axis": "trust",
+      "score": 10.0,
+      "sub": {
+        "version_consistency": {
+          "score": 10.0,
+          "evidence": "checker clean; ci_enforced=True"
+        },
+        "test_suite": {
+          "score": 10.0,
+          "evidence": "7 test files; pytest.ini=True; ci=True"
+        },
+        "privacy_patterns": {
+          "score": 10.0,
+          "evidence": "9 provider-shaped credential patterns wired"
+        },
+        "security_md": {
+          "score": 10.0,
+          "evidence": "no_public_route=True, pvr=True, pgp=True, window=True"
+        },
+        "ci_hardening": {
+          "score": 10.0,
+          "evidence": "9/9 action refs SHA-pinned (100%); dependabot=True"
+        }
+      },
+      "note": "Draft score from deterministic scorer. Final score in docs/BENCHMARK_REPORT.md must come from an independent Opus security-audit pass."
+    }
+  ]
+}

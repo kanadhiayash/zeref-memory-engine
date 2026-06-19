@@ -1,6 +1,14 @@
-# AGENTS.md — Zeref OS Canonical Spec (v1.0.0)
+# AGENTS.md — Zeref Memory Engine Canonical Spec (v1.0.0)
 
-This is the canonical agent specification for **Zeref OS**. All harness-specific files (`CLAUDE.md`, `GEMINI.md`, `.cursor/rules/zeref.mdc`, `.windsurfrules`, `.aider.conf.yml`) defer to this document.
+> **Naming note.** The product is **Zeref Memory Engine** (short form: **Zeref**).
+> The legacy name was "Zeref OS" — preserved throughout this document for
+> historical continuity and because the repo / Claude plugin identifier
+> (`zeref-os`) is retained for install-URL backward compatibility.
+> **Zeref is not an operating system.** It is a persistent memory and
+> context layer that plugs into your existing AI harness. See
+> [`README.md`](README.md) for the full disclaimer set.
+
+This is the canonical agent specification for **Zeref**. All harness-specific files (`CLAUDE.md`, `CODEX.md`, `GEMINI.md`, `LLAMA.md`, `.cursor/rules/zeref.mdc`, `.windsurfrules`, `.aider.conf.yml`) defer to this document.
 
 ## Identity
 

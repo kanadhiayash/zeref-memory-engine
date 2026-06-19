@@ -1,6 +1,11 @@
 # Installation
 
-Zeref OS v2.6 installs as a Claude Code plugin. Other harnesses (Cursor, Aider, Windsurf, Gemini, Codex) read AGENTS.md directly via per-harness stubs.
+> Product name: **Zeref Memory Engine** (short form: **Zeref**).
+> Repo / plugin identifier `zeref-os` is retained for install-URL backward
+> compatibility. **Zeref is not an operating system** — it is a persistent
+> memory and context layer that plugs into your existing AI harness.
+
+Zeref v1.0.0 installs as a Claude Code plugin. Other harnesses (Cursor, Aider, Windsurf, Gemini, Codex, Llama-family) read AGENTS.md directly via per-harness stubs.
 
 ## Claude Code (primary)
 
@@ -17,7 +22,7 @@ The plugin lands at `~/.claude/plugins/cache/zeref-os/zeref-os/`.
 
 ```bash
 claude plugin list | grep zeref-os
-# zeref-os@zeref-os  v2.6.1  enabled
+# zeref-os@zeref-os  v1.0.0  enabled
 
 cd ~/my-project
 claude

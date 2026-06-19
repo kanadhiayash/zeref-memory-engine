@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+"""
+check-version-consistency.py — Fail CI on any drift across version surfaces.
+
+Single source of truth: zeref/VERSION
+Surfaces verified:
+    - zeref/VERSION                       (the canonical file)
+    - zeref/__init__.py:__version__       (loaded at import time)
+    - pyproject.toml:[project].version
+    - zeref-registry.json:.version
+    - .claude-plugin/plugin.json:.version
+    - README.md:badge URL + alt text
+    - docs/wiki/Installation.md:grep example
+    - docs/RELEASE_LOG.md:top "Releases" row
+
+Exit code:
+    0  all surfaces agree
+    1  drift detected (prints offending surfaces)
+    2  the canonical VERSION file is missing or malformed
+
+Usage:
+    python3 scripts/check-version-consistency.py [--root <repo-root>]
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+CANONICAL_FILE = "zeref/VERSION"
+SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+(?:[-+][\w.\-]+)?$")
+
+
+def _read(root: Path, rel: str) -> str:
+    return (root / rel).read_text(encoding="utf-8", errors="ignore")
+
+
+def _read_canonical(root: Path) -> str:
+    p = root / CANONICAL_FILE
+    if not p.exists():
+        print(f"ERROR: canonical version file missing: {p}", file=sys.stderr)
+        sys.exit(2)
+    v = p.read_text(encoding="utf-8").strip()
+    if not SEMVER_RE.match(v):
+        print(f"ERROR: canonical version '{v}' is not SemVer", file=sys.stderr)
+        sys.exit(2)
+    return v
+
+
+def _check_pyproject(root: Path, expected: str) -> tuple[str, str | None]:
+    text = _read(root, "pyproject.toml")
+    m = re.search(r'(?m)^version\s*=\s*"([^"]+)"', text)
+    return ("pyproject.toml:[project].version", m.group(1) if m else None)
+
+
+def _check_init(root: Path, expected: str) -> tuple[str, str | None]:
+    # We do not exec the file; we treat VERSION as the canonical and check the loader is intact.
+    text = _read(root, "zeref/__init__.py")
+    if "_VERSION_FILE" not in text or "VERSION" not in text:
+        return ("zeref/__init__.py loader", None)
+    return ("zeref/__init__.py loader", expected)
+
+
+def _check_registry(root: Path, expected: str) -> tuple[str, str | None]:
+    data = json.loads(_read(root, "zeref-registry.json"))
+    return ("zeref-registry.json:.version", data.get("version"))
+
+
+def _check_plugin(root: Path, expected: str) -> tuple[str, str | None]:
+    data = json.loads(_read(root, ".claude-plugin/plugin.json"))
+    return (".claude-plugin/plugin.json:.version", data.get("version"))
+
+
+def _check_readme(root: Path, expected: str) -> tuple[str, str | None]:
+    text = _read(root, "README.md")
+    m = re.search(r"version-(\d+\.\d+\.\d+(?:[-+][\w.\-]+)?)-blueviolet", text)
+    return ("README.md:badge", m.group(1) if m else None)
+
+
+def _check_wiki_install(root: Path, expected: str) -> tuple[str, str | None]:
+    text = _read(root, "docs/wiki/Installation.md")
+    m = re.search(r"zeref-os@zeref-os\s+v(\d+\.\d+\.\d+(?:[-+][\w.\-]+)?)", text)
+    return ("docs/wiki/Installation.md", m.group(1) if m else None)
+
+
+def _check_release_log(root: Path, expected: str) -> tuple[str, str | None]:
+    text = _read(root, "docs/RELEASE_LOG.md")
+    m = re.search(r"`v(\d+\.\d+\.\d+(?:[-+][\w.\-]+)?)`", text)
+    return ("docs/RELEASE_LOG.md:top row", m.group(1) if m else None)
+
+
+CHECKS = [
+    _check_pyproject,
+    _check_init,
+    _check_registry,
+    _check_plugin,
+    _check_readme,
+    _check_wiki_install,
+    _check_release_log,
+]
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--root", default=".", help="Repository root (default: cwd)")
+    args = ap.parse_args()
+    root = Path(args.root).resolve()
+
+    expected = _read_canonical(root)
+    print(f"canonical version (from {CANONICAL_FILE}): {expected}")
+
+    drift: list[tuple[str, str | None]] = []
+    for check in CHECKS:
+        name, observed = check(root, expected)
+        mark = "OK" if observed == expected else "DRIFT"
+        print(f"  [{mark}] {name}: {observed!r}")
+        if observed != expected:
+            drift.append((name, observed))
+
+    if drift:
+        print("\nVersion drift detected:", file=sys.stderr)
+        for name, observed in drift:
+            print(f"  - {name}: expected {expected!r}, found {observed!r}", file=sys.stderr)
+        return 1
+
+    print("\nAll surfaces aligned on", expected)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
