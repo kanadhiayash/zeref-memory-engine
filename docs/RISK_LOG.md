@@ -100,6 +100,28 @@ created or accepted the risk.
 
 ---
 
+## R-007 — Coverage gate measures only in-process paths
+
+- **Opened:** 2026-06-19
+- **Owner:** yk
+- **Status:** open / mitigated
+- **Severity:** low
+- **Description:** The `tests/` suite exercises the CLI via `subprocess`
+  to validate the real entry point. Python's `coverage` library does not
+  see subprocess-spawned line execution by default, so the reported
+  total of ~15% under-counts the actual coverage of `zeref/privacy.py`
+  (well-covered in-process) and especially `zeref/cli.py` (heavily
+  exercised but invisible to the in-process tracer).
+- **Mitigation now:** CI gate set to `--fail-under=15` — the honest
+  measured floor. Tests still run; their assertions still cover the
+  behaviour. The gate prevents *regressions below* the current level.
+- **Planned follow-up:** Refactor a subset of subprocess tests to call
+  the CLI handlers in-process via `argparse.Namespace`, OR add
+  subprocess coverage via `sitecustomize.py` + `COVERAGE_PROCESS_START`.
+  Either path lets us raise the gate to 60–85% honestly. Tracked.
+
+---
+
 ## R-006 — Never-delete-branch policy + repo size
 
 - **Opened:** 2026-06-19

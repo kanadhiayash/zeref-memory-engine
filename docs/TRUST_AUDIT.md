@@ -38,12 +38,12 @@ for the next iteration.
 2. **No `actionlint` step in CI.** A lint pass would catch malformed
    `uses:` lines and missing permission scopes. Track via
    `chore(ci): add actionlint workflow`.
-3. **Coverage gate is conservative (60%, not 85%).** Subprocess-style
-   CLI tests undercount line coverage of the `cli.py` module because
-   each subprocess imports fresh. Either raise the gate after
-   instrumenting in-process CLI tests, or accept 60% as the realistic
-   floor and re-rate the rubric. Track via
-   `test(zeref): raise coverage gate to 85% with in-process CLI tests`.
+3. **Coverage gate sits at the honest in-process floor (15%, not 60–85%).**
+   Subprocess-style CLI tests undercount in-process coverage. See
+   `docs/RISK_LOG.md` R-007. Raise the gate after instrumenting
+   in-process CLI tests or adding subprocess coverage via
+   `sitecustomize.py`. Track via
+   `test(zeref): subprocess coverage via sitecustomize OR in-process CLI tests`.
 4. **Homoglyph table is Cyrillic + Greek only.** Other scripts that have
    ASCII lookalikes (Latin extended, mathematical italic, fullwidth) are
    not covered. NFKC normalisation in stage 1 catches *most* fullwidth
