@@ -1,5 +1,8 @@
 {
   "passed": true,
+  "pass_bar": {
+    "axis_min": 9.0
+  },
   "axes": [
     {
       "axis": "portability",
@@ -156,7 +159,7 @@
         },
         "test_suite": {
           "score": 10.0,
-          "evidence": "26 test files; pytest.ini=True; ci=True"
+          "evidence": "27 test files; pytest.ini=True; ci=True"
         },
         "privacy_patterns": {
           "score": 10.0,
@@ -174,6 +177,192 @@
       "note": "Deterministic draft score was 10.00. Published trust score is 9.70 per docs/TRUST_AUDIT.md independent audit.",
       "draft_score": 10.0,
       "summary_note": "Verified by TRUST_AUDIT.md; deterministic draft was 10.00."
+    },
+    {
+      "axis": "token_efficiency",
+      "score": 10.0,
+      "sub": {
+        "markdown_guard": {
+          "score": 10.0,
+          "evidence": "markdown rewrite executor=blocked"
+        },
+        "minimalism_ladder": {
+          "score": 10.0,
+          "evidence": "duplicate=link-existing, append=atom-append, patch=atom-patch"
+        },
+        "flagship_gate": {
+          "score": 10.0,
+          "evidence": "public claim executor=flagship"
+        },
+        "deterministic_estimator": {
+          "score": 10.0,
+          "evidence": "estimate=4 deterministic=True"
+        }
+      }
+    },
+    {
+      "axis": "retrieval_accuracy",
+      "score": 10.0,
+      "sub": {
+        "sqlite_indexed_recall": {
+          "score": 10.0,
+          "evidence": "top=decision_8d7b9dbbdec8311c"
+        },
+        "jsonl_fallback_recall": {
+          "score": 10.0,
+          "evidence": "top=decision_8d7b9dbbdec8311c"
+        },
+        "explain_search": {
+          "score": 10.0,
+          "evidence": "candidates=1"
+        }
+      }
+    },
+    {
+      "axis": "contradiction_detection",
+      "score": 10.0,
+      "sub": {
+        "case_creation": {
+          "score": 10.0,
+          "evidence": "created=1"
+        },
+        "arbitration_required": {
+          "score": 10.0,
+          "evidence": "User arbitration required. Pick a winner with resolve --winner and provide --reason."
+        },
+        "no_silent_resolution": {
+          "score": 10.0,
+          "evidence": "before_status=active"
+        },
+        "explicit_resolution": {
+          "score": 10.0,
+          "evidence": "after_status=superseded"
+        }
+      }
+    },
+    {
+      "axis": "privacy_safety",
+      "score": 10.0,
+      "sub": {
+        "credential_scrub": {
+          "score": 10.0,
+          "evidence": "redacted=2"
+        },
+        "handoff_field_scrub": {
+          "score": 10.0,
+          "evidence": "atom_id_preserved=True"
+        },
+        "redaction_metadata": {
+          "score": 10.0,
+          "evidence": "field_redactions=1"
+        }
+      }
+    },
+    {
+      "axis": "prompt_rewrite_quality",
+      "score": 10.0,
+      "sub": {
+        "classification": {
+          "score": 10.0,
+          "evidence": "SEMI_STRUCTURED"
+        },
+        "brief_fields": {
+          "score": 10.0,
+          "evidence": "fields=['classification', 'constraints', 'context', 'deliverable', 'execution_loop', 'missing_info', 'objective', 'risks', 'source_prompt', 'success_criteria', 'verification']"
+        },
+        "wording_preserved": {
+          "score": 10.0,
+          "evidence": "I want to change the dashboard screen buttons just like we did on settings page."
+        },
+        "inject_target": {
+          "score": 10.0,
+          "evidence": "codex"
+        },
+        "unsafe_flag": {
+          "score": 10.0,
+          "evidence": "UNSAFE"
+        },
+        "markdown_output": {
+          "score": 10.0,
+          "evidence": "markdown generated"
+        }
+      }
+    },
+    {
+      "axis": "handoff_success",
+      "score": 10.0,
+      "sub": {
+        "artifact_files": {
+          "score": 10.0,
+          "evidence": "markdown_exists=True json_exists=True"
+        },
+        "source_backed_content": {
+          "score": 10.0,
+          "evidence": "atom ids present in markdown"
+        },
+        "machine_readable_json": {
+          "score": 10.0,
+          "evidence": "target=human"
+        },
+        "verification_checklist": {
+          "score": 10.0,
+          "evidence": "checklist present"
+        }
+      }
+    },
+    {
+      "axis": "loop_control",
+      "score": 10.0,
+      "sub": {
+        "bounded_contract": {
+          "score": 10.0,
+          "evidence": "max=2"
+        },
+        "run_stops": {
+          "score": 10.0,
+          "evidence": "iterations=1"
+        },
+        "no_direct_memory_write": {
+          "score": 10.0,
+          "evidence": "proposal={'direct_memory_write': False, 'loop_id': 'loop_c3719eead3a6', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []}"
+        },
+        "status_available": {
+          "score": 10.0,
+          "evidence": "latest status read"
+        },
+        "report_available": {
+          "score": 10.0,
+          "evidence": "report read"
+        }
+      }
+    },
+    {
+      "axis": "memory_refinement",
+      "score": 10.0,
+      "sub": {
+        "duplicate_detection": {
+          "score": 10.0,
+          "evidence": "groups=1"
+        },
+        "unsupported_detection": {
+          "score": 10.0,
+          "evidence": "unsupported=1"
+        },
+        "dry_run_no_write": {
+          "score": 10.0,
+          "evidence": "report_after_dry=False"
+        },
+        "report_write": {
+          "score": 10.0,
+          "evidence": "json_written=True markdown_written=True"
+        },
+        "view_render": {
+          "score": 10.0,
+          "evidence": "rendered=5"
+        }
+      }
     }
-  ]
+  ],
+  "failures": [],
+  "failure_report": "memory/reports/benchmark-failures.md"
 }
