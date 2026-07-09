@@ -27,6 +27,10 @@ agentdb.rvf.lock
 # Zeref trace logs (local runtime)
 zeref-trace.jsonl
 
+# Zeref structured memory state (local runtime)
+memory/state/*.sqlite
+memory/state/*.sqlite-*
+
 # Python
 __pycache__/
 *.pyc
