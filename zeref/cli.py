@@ -364,6 +364,37 @@ def cmd_explain_search(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_cost(args: argparse.Namespace) -> int:
+    from zeref.memory.cost_router import audit_budgets, estimate_tokens, report, route_operation
+
+    root = _project_root()
+    if args.cost_command == "estimate":
+        result = estimate_tokens(args.text or "")
+    elif args.cost_command == "route":
+        result = route_operation(
+            args.operation,
+            text=args.text or "",
+            approval=args.approval,
+            render_mode=args.render_mode,
+            duplicate=args.duplicate,
+            status_change=args.status_change,
+            public_claim=args.public_claim,
+            contradiction=args.contradiction,
+        )
+    elif args.cost_command == "report":
+        result = report(root)
+    elif args.cost_command == "audit":
+        result = audit_budgets(root, strict=args.strict)
+        if args.strict and not result["passed"]:
+            print(json.dumps(result, indent=2, sort_keys=True))
+            return 1
+    else:
+        print("✘ cost subcommand required")
+        return 2
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
 def cmd_db_status(args: argparse.Namespace) -> int:
     """v2.5 L4: report backend (sqlite/duckdb) + extras availability."""
     backends = {"sqlite3": False, "duckdb": False, "yaml": False, "litellm": False}
@@ -589,6 +620,25 @@ def _build_parser() -> argparse.ArgumentParser:
     ])
     exp.add_argument("--status", choices=["active", "stale", "superseded", "disputed", "archived"])
 
+    cost = sub.add_parser("cost", help="Estimate and route memory operation cost")
+    cost_sub = cost.add_subparsers(dest="cost_command", required=True)
+    cost_est = cost_sub.add_parser("estimate", help="Estimate text token cost")
+    cost_est.add_argument("--text", default="")
+
+    cost_route = cost_sub.add_parser("route", help="Route an operation to the cheapest safe executor")
+    cost_route.add_argument("--operation", required=True)
+    cost_route.add_argument("--text", default="")
+    cost_route.add_argument("--approval", action="store_true")
+    cost_route.add_argument("--render-mode", action="store_true")
+    cost_route.add_argument("--duplicate", action="store_true")
+    cost_route.add_argument("--status-change", action="store_true")
+    cost_route.add_argument("--public-claim", action="store_true")
+    cost_route.add_argument("--contradiction", action="store_true")
+
+    cost_sub.add_parser("report", help="Print cost policy summary")
+    cost_audit = cost_sub.add_parser("audit", help="Audit artifact token budgets")
+    cost_audit.add_argument("--strict", action="store_true")
+
     return p
 
 
@@ -606,6 +656,7 @@ def main() -> None:
         "memory": cmd_memory,
         "recall": cmd_recall,
         "explain-search": cmd_explain_search,
+        "cost": cmd_cost,
     }
     handler = handlers.get(args.command)
     if not handler:
