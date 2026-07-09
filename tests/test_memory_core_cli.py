@@ -65,6 +65,8 @@ def test_memory_cli_add_search_get_update_history_explain(repo_root: Path, tmp_p
             "Zeref",
             "--tag",
             "retrieval",
+            "--layer",
+            "L2",
             "--source-ref",
             "docs/memory-core.md",
             "--confidence",
@@ -78,6 +80,7 @@ def test_memory_cli_add_search_get_update_history_explain(repo_root: Path, tmp_p
     item = json.loads(added.stdout)
     assert item["id"] == 1
     assert item["source_ref"] == "docs/memory-core.md"
+    assert item["layer"] == "L2"
     assert item["confidence"] == "high"
     assert item["authority"] == "canonical"
 
@@ -90,7 +93,11 @@ def test_memory_cli_add_search_get_update_history_explain(repo_root: Path, tmp_p
     assert events
     assert json.loads(events[-1])["event"] == "memory-add"
 
-    searched = _run(repo_root, tmp_path, ["memory", "search", "recall", "--entity", "Zeref", "--json"])
+    searched = _run(
+        repo_root,
+        tmp_path,
+        ["memory", "search", "recall", "--entity", "Zeref", "--layer", "L2", "--json"],
+    )
     assert searched.returncode == 0, searched.stderr
     results = json.loads(searched.stdout)
     assert len(results) == 1
@@ -111,13 +118,17 @@ def test_memory_cli_add_search_get_update_history_explain(repo_root: Path, tmp_p
             "1",
             "--body",
             "SQLite state supports keyword and entity recall.",
+            "--layer",
+            "L1",
             "--confidence",
             "medium",
             "--json",
         ],
     )
     assert updated.returncode == 0, updated.stderr
-    assert json.loads(updated.stdout)["confidence"] == "medium"
+    updated_item = json.loads(updated.stdout)
+    assert updated_item["confidence"] == "medium"
+    assert updated_item["layer"] == "L1"
 
     history = _run(repo_root, tmp_path, ["memory", "history", "1", "--json"])
     assert history.returncode == 0, history.stderr
@@ -129,6 +140,7 @@ def test_memory_cli_add_search_get_update_history_explain(repo_root: Path, tmp_p
     explanation = json.loads(explained.stdout)
     assert explanation["why_returned"]
     assert "confidence=medium" in explanation["why_returned"]
+    assert "layer=L1" in explanation["why_returned"]
 
     views = _run(repo_root, tmp_path, ["memory", "views", "--json"])
     assert views.returncode == 0, views.stderr
@@ -145,6 +157,7 @@ def test_memory_cli_add_search_get_update_history_explain(repo_root: Path, tmp_p
     decisions = (tmp_path / "memory" / "views" / "decisions.md").read_text(encoding="utf-8")
     assert "Generated from `memory/state/zeref.sqlite`" in decisions
     assert "memory state decision" in decisions
+    assert "**Layer:** L1" in decisions
     assert "**Source:** docs/memory-core.md" in decisions
 
     risks = (tmp_path / "memory" / "views" / "risks.md").read_text(encoding="utf-8")

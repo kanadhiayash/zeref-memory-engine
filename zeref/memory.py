@@ -17,9 +17,16 @@ from zeref.lock import LockError, MemoryLock, atomic_append
 from zeref.privacy import scrub
 
 
+MEMORY_LAYERS: tuple[str, ...] = ("L0", "L1", "L2", "L3")
+
 MEMORY_DIRS: tuple[str, ...] = (
     "memory",
     "memory/archive",
+    "memory/layers",
+    "memory/layers/L0",
+    "memory/layers/L1",
+    "memory/layers/L2",
+    "memory/layers/L3",
     "memory/patterns",
     "memory/state",
     "memory/views",
@@ -61,6 +68,7 @@ STATE_SCHEMA: dict = {
                 "body",
                 "entity",
                 "tags",
+                "layer",
                 "source_ref",
                 "confidence",
                 "authority",
