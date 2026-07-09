@@ -54,7 +54,7 @@ The `trust` axis is independently re-graded by the security audit before publica
 |---|---:|---|
 | `fixture_inventory` | 10.00 | 5/5 fixtures present |
 | `continuity` | 10.00 | returns source_ref/confidence/authority/why_returned |
-| `privacy_recall` | 10.00 | raw provider credential scrubbed before recall |
+| `privacy_recall` | 10.00 | raw credential fixture scrubbed before recall |
 | `contradiction` | 10.00 | conflicting same-entity assumptions both returned |
 | `freshness` | 10.00 | updated item is freshest and history records update |
 | `abstention` | 10.00 | unmatched query returns empty result set |
