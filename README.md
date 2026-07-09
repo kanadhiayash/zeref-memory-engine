@@ -8,12 +8,12 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/kanadhiayash/zeref-os/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/version-1.0.0-blueviolet" alt="v1.0.0"></a>
+  <a href="https://github.com/kanadhiayash/zeref-memory-engine/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/version-1.0.0-blueviolet" alt="v1.0.0"></a>
   <a href="AGENTS.md#auto-activation-gates"><img src="https://img.shields.io/badge/gates-4%20active-blue" alt="4 gates"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT"></a>
   <a href="docs/BENCHMARK_REPORT.md"><img src="https://img.shields.io/badge/benchmarks-PASS-success" alt="benchmarks PASS"></a>
   <a href="https://agents.md"><img src="https://img.shields.io/badge/AGENTS.md-canonical-blue" alt="AGENTS.md"></a>
-  <a href="https://github.com/kanadhiayash/zeref-os/actions/workflows/ci.yml"><img src="https://github.com/kanadhiayash/zeref-os/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/kanadhiayash/zeref-memory-engine/actions/workflows/ci.yml"><img src="https://github.com/kanadhiayash/zeref-memory-engine/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
 </p>
 
 ---
@@ -203,17 +203,17 @@ claude plugin install zeref-os@zeref-os
 claude plugin list | grep "zeref-os.*1.0.0"
 
 # Cursor
-git clone https://github.com/kanadhiayash/zeref-os.git .zeref
+git clone https://github.com/kanadhiayash/zeref-memory-engine.git .zeref
 mkdir -p .cursor/rules && cp .zeref/.cursor/rules/zeref.mdc .cursor/rules/
 
 # Windsurf
-git clone https://github.com/kanadhiayash/zeref-os.git .zeref && cp .zeref/.windsurfrules .
+git clone https://github.com/kanadhiayash/zeref-memory-engine.git .zeref && cp .zeref/.windsurfrules .
 
 # Aider
-git clone https://github.com/kanadhiayash/zeref-os.git .zeref && cp .zeref/.aider.conf.yml.example .aider.conf.yml
+git clone https://github.com/kanadhiayash/zeref-memory-engine.git .zeref && cp .zeref/.aider.conf.yml.example .aider.conf.yml
 
 # Codex / Gemini / Antigravity / Llama family / Hermes / Amp / Zed / Perplexity
-git clone https://github.com/kanadhiayash/zeref-os.git .zeref
+git clone https://github.com/kanadhiayash/zeref-memory-engine.git .zeref
 # Point your harness at .zeref/AGENTS.md
 ```
 
@@ -333,7 +333,7 @@ in my own day-to-day stack — your usage may differ.
 
 - **[karpathy / "Software 2.0" gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)**
   — conceptual lineage for AI-first engineering.
-- **[kanadhiayash / zeref-os](https://github.com/kanadhiayash/zeref-os)**
+- **[kanadhiayash / zeref-memory-engine](https://github.com/kanadhiayash/zeref-memory-engine)**
   — this repo (the memory layer everything below routes through).
 
 ### Memory + knowledge graph
@@ -449,7 +449,7 @@ pattern) — just send them.
 
 ## Documentation
 
-- **[GitHub Wiki](https://github.com/kanadhiayash/zeref-os/wiki)** —
+- **[GitHub Wiki](https://github.com/kanadhiayash/zeref-memory-engine/wiki)** —
   Architecture, Memory model, Privacy model, Team packs, Pattern
   detection, Installation, FAQ, Glossary, Inspirations.
 - **[`AGENTS.md`](AGENTS.md)** — canonical agent spec.

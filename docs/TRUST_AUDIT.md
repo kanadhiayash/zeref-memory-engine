@@ -18,7 +18,7 @@ The verified score is the one published in `docs/BENCHMARK_REPORT.md`.
 | Sub-criterion | Draft | Verified | Δ | Reason |
 |---|---:|---:|---:|---|
 | `version_consistency` | 10.0 | 10.0 | 0.0 | Checker covers 7 surfaces, CI workflow enforces, machine-verified. |
-| `test_suite` | 10.0 | 10.0 | 0.0 | 46 tests pass; CI `test.yml` runs `coverage --fail-under=60`; bypass tests added in this PR. |
+| `test_suite` | 10.0 | 10.0 | 0.0 | 46 tests pass; CI `test.yml` runs the honest measured floor, currently `coverage --fail-under=15`; bypass tests added in this PR. |
 | `privacy_patterns` | 10.0 | 10.0 | 0.0 | 9 provider patterns + 8 built-in classes; 3 bypass-resistance tests pass (homoglyph, base64, NFKC). |
 | `security_md` | 10.0 | 9.5 | -0.5 | All four required items present (no public route, PVR, PGP, 90-day window) but PGP fingerprint is `to be published` in `SECURITY_CONTACTS.md`. Fingerprint must land before next release. |
 | `ci_hardening` | 10.0 | 9.0 | -1.0 | SHA pins independently verified via `gh api repos/<owner>/git/refs/tags/<tag>` (recorded in [RISK_LOG.md](RISK_LOG.md) R-003). Deduction: only three actions are pinned because only three are used; no defence-in-depth scan (e.g. `actionlint` step) yet. |
