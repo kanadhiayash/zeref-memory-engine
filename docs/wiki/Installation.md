@@ -105,7 +105,7 @@ Reads `GEMINI.md` natively. Defers to `AGENTS.md`.
 
 AGENTS.md-native. No additional stub required.
 
-Full table: [`references/harness-translation-map.md`](https://github.com/kanadhiayash/zeref-os/blob/main/references/harness-translation-map.md).
+Full table: [`references/harness-translation-map.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/references/harness-translation-map.md).
 
 ## Per-project setup
 
@@ -164,6 +164,6 @@ rm -rf memory/ config/PROJECT.md PRIVACY.md REDACT.md SHARING_POLICY.md
 
 - [[Architecture]] — full system overview
 - [[FAQ]] — common questions
-- [`AGENTS.md`](https://github.com/kanadhiayash/zeref-os/blob/main/AGENTS.md) — canonical spec
-- [`references/harness-translation-map.md`](https://github.com/kanadhiayash/zeref-os/blob/main/references/harness-translation-map.md) — per-harness install
+- [`AGENTS.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/AGENTS.md) — canonical spec
+- [`references/harness-translation-map.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/references/harness-translation-map.md) — per-harness install
 - [Notion Command Center](https://copper-tv-288.notion.site/Zeref-Agent-OS-Command-Center-358d695d836a81af9f6adf30770217c3)

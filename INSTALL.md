@@ -15,7 +15,7 @@ These harnesses read `AGENTS.md` natively.
 
 1. Clone the repo into your project:
    ```bash
-   git clone https://github.com/kanadhiayash/zeref-os.git .zeref
+   git clone https://github.com/kanadhiayash/zeref-memory-engine.git .zeref
    ```
 2. Point your harness at `.zeref/AGENTS.md` as the canonical agent spec.
 3. (Optional) Symlink the relevant harness stub to your project root:
@@ -25,7 +25,7 @@ These harnesses read `AGENTS.md` natively.
 ## Cursor
 
 ```bash
-git clone https://github.com/kanadhiayash/zeref-os.git .zeref
+git clone https://github.com/kanadhiayash/zeref-memory-engine.git .zeref
 mkdir -p .cursor/rules
 cp .zeref/.cursor/rules/zeref.mdc .cursor/rules/
 ```
@@ -35,7 +35,7 @@ Cursor auto-loads `.cursor/rules/zeref.mdc` which points to `.zeref/AGENTS.md`.
 ## Windsurf
 
 ```bash
-git clone https://github.com/kanadhiayash/zeref-os.git .zeref
+git clone https://github.com/kanadhiayash/zeref-memory-engine.git .zeref
 cp .zeref/.windsurfrules .
 ```
 
@@ -44,7 +44,7 @@ Windsurf auto-loads `.windsurfrules` at project root.
 ## Aider
 
 ```bash
-git clone https://github.com/kanadhiayash/zeref-os.git .zeref
+git clone https://github.com/kanadhiayash/zeref-memory-engine.git .zeref
 cp .zeref/.aider.conf.yml.example .aider.conf.yml
 # Edit .aider.conf.yml as needed
 ```
