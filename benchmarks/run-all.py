@@ -29,26 +29,43 @@ from benchmarks import adaptivity, portability, retrieval, scalability, trust  #
 AXES = [portability, adaptivity, scalability, retrieval, trust]
 
 
-def _apply_verified_trust(results: list[dict]) -> None:
-    audit = REPO / "docs" / "TRUST_AUDIT.md"
-    if not audit.exists():
-        return
-    text = audit.read_text(errors="ignore")
-    match = re.search(r"Verified score \(this audit\):\*\*\s+\*\*([0-9.]+)", text)
+def _apply_verified_overrides(results: list[dict]) -> list[dict]:
+    """Apply independent audit overrides that may lower deterministic drafts."""
+    trust_audit = REPO / "docs" / "TRUST_AUDIT.md"
+    if not trust_audit.exists():
+        return results
+
+    text = trust_audit.read_text(encoding="utf-8", errors="ignore")
+    match = re.search(
+        r"^- \*\*Verified score \(this audit\):\*\* \*\*([0-9]+(?:\.[0-9]+)?)\*\*",
+        text,
+        re.MULTILINE,
+    )
     if not match:
-        return
-    verified = float(match.group(1))
+        return results
+
+    verified_trust = float(match.group(1))
+    adjusted: list[dict] = []
     for result in results:
-        if result["axis"] != "trust":
+        if result.get("axis") != "trust":
+            adjusted.append(result)
             continue
-        draft = float(result["score"])
-        if verified <= draft:
-            result["draft_score"] = draft
-            result["score"] = verified
-            result["note"] = (
-                "Verified by docs/TRUST_AUDIT.md; deterministic draft was "
-                f"{draft:.2f}."
+
+        published = dict(result)
+        draft_score = float(result["score"])
+        if verified_trust <= draft_score:
+            published["draft_score"] = draft_score
+            published["score"] = round(verified_trust, 2)
+            published["summary_note"] = (
+                f"Verified by TRUST_AUDIT.md; deterministic draft was {draft_score:.2f}."
             )
+            published["note"] = (
+                f"Deterministic draft score was {draft_score:.2f}. "
+                f"Published trust score is {verified_trust:.2f} per "
+                "docs/TRUST_AUDIT.md independent audit."
+            )
+        adjusted.append(published)
+    return adjusted
 
 
 def _render_report(results: list[dict], rubric_rel: str, passed: bool) -> str:
@@ -65,6 +82,10 @@ def _render_report(results: list[dict], rubric_rel: str, passed: bool) -> str:
          "**FAIL** — at least one axis falls below the pass bar (≥ 9.0 / "
          "≥ 8.0)."),
         "",
+        ("The `trust` axis is independently re-graded by the security audit "
+         "before publication. When the audit score is lower than the "
+         "deterministic draft, the verified score is the published score."),
+        "",
         "## Scores",
         "",
         "| Axis | Score | Pass? | Note |",
@@ -72,9 +93,8 @@ def _render_report(results: list[dict], rubric_rel: str, passed: bool) -> str:
     ]
     for r in results:
         ok = "✅" if r["score"] >= 9.0 else ("⚠️" if r["score"] >= 8.0 else "❌")
-        note = r.get("note", "")
-        score = f"**{r['score']:.2f}**" if r["axis"] == "trust" else f"{r['score']:.2f}"
-        lines.append(f"| {r['axis']} | {score} | {ok} | {note} |")
+        note = r.get("summary_note", "")
+        lines.append(f"| {r['axis']} | {r['score']:.2f} | {ok} | {note} |")
     lines.append("")
 
     for r in results:
@@ -122,8 +142,7 @@ def main() -> int:
     ap.add_argument("--out-json", default="benchmarks/results.json")
     args = ap.parse_args()
 
-    results = [axis.run() for axis in AXES]
-    _apply_verified_trust(results)
+    results = _apply_verified_overrides([axis.run() for axis in AXES])
 
     passed = all(r["score"] >= 9.0 for r in results) and \
              all(r["score"] >= 8.0 for r in results)

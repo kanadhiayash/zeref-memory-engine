@@ -33,8 +33,8 @@ all    = ["litellm>=1.0", "duckdb>=0.10", "pyyaml>=6.0"]
 zeref = "zeref.cli:main"
 
 [project.urls]
-Homepage  = "https://github.com/yashkanadhia/zeref-os"
-Changelog = "https://github.com/yashkanadhia/zeref-os/blob/main/CHANGELOG.md"
+Homepage  = "https://github.com/kanadhiayash/zeref-memory-engine"
+Changelog = "https://github.com/kanadhiayash/zeref-memory-engine/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where   = ["."]
