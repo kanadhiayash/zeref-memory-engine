@@ -7,6 +7,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
+from zeref.audit.logger import AuditLogger
 from zeref.core.errors import GuardRejection, ValidationError
 from zeref.core.schema import SOURCE_OPTIONAL_TYPES
 from zeref.memory_state import MemoryStore
@@ -40,6 +41,7 @@ def propose_memory(claim: str, *, output: Path) -> dict[str, Any]:
 
 
 def write_from_proposal(path: Path, store: MemoryStore) -> dict[str, Any]:
+    audit = AuditLogger(store.memory_root)
     try:
         proposal = json.loads(path.read_text(encoding="utf-8"))
         _validate_gate(proposal, store)
@@ -58,11 +60,34 @@ def write_from_proposal(path: Path, store: MemoryStore) -> dict[str, Any]:
             event="memory-write-accepted",
             payload={"memory_id": card.id, "source": str(path)},
         )
+        audit.append(
+            event_type="memory_write",
+            status="accepted",
+            reason="accepted guarded write",
+            file=str(path),
+            memory_id=card.id,
+            guards_run=["factguard", "evidenceguard", "privacyguard", "contradictionguard"],
+        )
         return card.to_dict()
     except GuardRejection as exc:
         store.record_event(
             event="memory-write-rejected",
             payload={"source": str(path), "guard": exc.guard, "reason": exc.reason, "fix": exc.fix},
+        )
+        audit.append(
+            event_type="guard_failure",
+            status="blocked",
+            reason=exc.reason,
+            file=str(path),
+            guards_run=[exc.guard.lower()],
+            payload={"fix": exc.fix},
+        )
+        audit.append(
+            event_type="memory_write",
+            status="blocked",
+            reason=exc.reason,
+            file=str(path),
+            guards_run=[exc.guard.lower()],
         )
         raise
     except (KeyError, ValidationError, json.JSONDecodeError) as exc:
@@ -74,6 +99,21 @@ def write_from_proposal(path: Path, store: MemoryStore) -> dict[str, Any]:
         store.record_event(
             event="memory-write-rejected",
             payload={"source": str(path), "guard": rejection.guard, "reason": rejection.reason, "fix": rejection.fix},
+        )
+        audit.append(
+            event_type="guard_failure",
+            status="blocked",
+            reason=rejection.reason,
+            file=str(path),
+            guards_run=[rejection.guard.lower()],
+            payload={"fix": rejection.fix},
+        )
+        audit.append(
+            event_type="memory_write",
+            status="blocked",
+            reason=rejection.reason,
+            file=str(path),
+            guards_run=[rejection.guard.lower()],
         )
         raise rejection from exc
 

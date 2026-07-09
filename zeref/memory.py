@@ -22,6 +22,7 @@ MEMORY_LAYERS: tuple[str, ...] = ("L0", "L1", "L2", "L3")
 MEMORY_DIRS: tuple[str, ...] = (
     "memory",
     "memory/archive",
+    "memory/audit",
     "memory/layers",
     "memory/layers/L0",
     "memory/layers/L1",
@@ -53,6 +54,12 @@ MEMORY_FILES: tuple[str, ...] = (
     "memory/patterns/PATTERNS.jsonl",
     "memory/state/events.jsonl",
     "memory/state/schema.json",
+    "memory/audit/writes.jsonl",
+    "memory/audit/reads.jsonl",
+    "memory/audit/routes.jsonl",
+    "memory/audit/guard_failures.jsonl",
+    "memory/audit/redactions.jsonl",
+    "memory/audit/releases.jsonl",
 )
 
 STATE_SCHEMA: dict = {
@@ -140,6 +147,10 @@ class MemoryLayout:
     @property
     def state_schema(self) -> Path:
         return self.state_dir / "schema.json"
+
+    @property
+    def audit_dir(self) -> Path:
+        return self.memory_dir / "audit"
 
     def path(self, relative: str) -> Path:
         return self.root / relative
@@ -375,6 +386,18 @@ def _write_memory_files(layout: MemoryLayout) -> None:
 
     if not layout.state_events.exists():
         layout.state_events.write_text("", encoding="utf-8")
+
+    for relative in (
+        "memory/audit/writes.jsonl",
+        "memory/audit/reads.jsonl",
+        "memory/audit/routes.jsonl",
+        "memory/audit/guard_failures.jsonl",
+        "memory/audit/redactions.jsonl",
+        "memory/audit/releases.jsonl",
+    ):
+        path = layout.path(relative)
+        if not path.exists():
+            path.write_text("", encoding="utf-8")
 
     layout.state_schema.write_text(
         json.dumps(STATE_SCHEMA, indent=2, sort_keys=True) + "\n",
