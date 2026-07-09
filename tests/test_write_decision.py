@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import sys
@@ -47,6 +48,14 @@ def test_write_decision_appends_to_DECISIONS(repo_root: Path, tmp_path: Path) ->
     assert "Adopt v1.0.0 trust-repair plan" in decisions
     assert "**Evidence grade:** high" in decisions
     assert "**Provenance:**" in decisions
+
+    events = (tmp_path / "memory" / "patterns" / "PATTERNS.jsonl").read_text(encoding="utf-8")
+    event = json.loads(events.strip())
+    assert event["event"] == "wiki-write"
+    assert event["target"] == "memory/DECISIONS.md"
+    assert event["payload"]["summary"] == "Decision: Adopt v1.0.0 trust-repair plan"
+    assert event["hash"].startswith("sha256:")
+    assert event["evidence_grade"] == "high"
 
 
 def test_write_decision_scrubs_pii(repo_root: Path, tmp_path: Path) -> None:

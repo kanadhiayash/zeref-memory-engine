@@ -10,7 +10,7 @@ Use one of the private channels below.
 ### Preferred: GitHub Private Vulnerability Reporting
 
 1. Go to the **Security** tab of
-   [`kanadhiayash/zeref-os`](https://github.com/kanadhiayash/zeref-os/security).
+   [`kanadhiayash/zeref-os`](https://github.com/kanadhiayash/zeref-memory-engine/security).
 2. Click **Report a vulnerability**.
 3. Fill in the form with:
    - a clear description of the issue,
@@ -100,7 +100,7 @@ for the full safety framework. Key rules:
 ## Public advisories
 
 Published advisories will live at
-<https://github.com/kanadhiayash/zeref-os/security/advisories>.
+<https://github.com/kanadhiayash/zeref-memory-engine/security/advisories>.
 
 ## Contact
 

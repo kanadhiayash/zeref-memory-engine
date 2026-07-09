@@ -83,8 +83,75 @@
       }
     },
     {
-      "axis": "trust",
+      "axis": "retrieval",
       "score": 10.0,
+      "sub": {
+        "fixture_inventory": {
+          "score": 10.0,
+          "evidence": "5/5 fixtures present"
+        },
+        "continuity": {
+          "score": 10.0,
+          "evidence": "returns source_ref/confidence/authority/why_returned"
+        },
+        "privacy_recall": {
+          "score": 10.0,
+          "evidence": "raw credential fixture scrubbed before recall"
+        },
+        "contradiction": {
+          "score": 10.0,
+          "evidence": "conflicting same-entity assumptions both returned"
+        },
+        "freshness": {
+          "score": 10.0,
+          "evidence": "updated item is freshest and history records update"
+        },
+        "abstention": {
+          "score": 10.0,
+          "evidence": "unmatched query returns empty result set"
+        },
+        "external_adapter_fixtures": {
+          "score": 10.0,
+          "evidence": "LoCoMo=fixture_pass, LongMemEval=fixture_pass, BEAM=fixture_pass, PersonaMem=fixture_pass, PersonaMem-v2=fixture_pass"
+        }
+      },
+      "note": "Deterministic lexical/FTS5 retrieval benchmark; external adapters are fixture-only unless marked verified.",
+      "adapters": [
+        {
+          "adapter": "LoCoMo",
+          "status": "fixture_pass",
+          "source": "https://github.com/snap-research/locomo",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        },
+        {
+          "adapter": "LongMemEval",
+          "status": "fixture_pass",
+          "source": "https://github.com/xiaowu0162/longmemeval",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        },
+        {
+          "adapter": "BEAM",
+          "status": "fixture_pass",
+          "source": "https://github.com/mohammadtavakoli78/BEAM",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        },
+        {
+          "adapter": "PersonaMem",
+          "status": "fixture_pass",
+          "source": "https://github.com/bowen-upenn/PersonaMem",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        },
+        {
+          "adapter": "PersonaMem-v2",
+          "status": "fixture_pass",
+          "source": "https://github.com/bowen-upenn/PersonaMem-v2",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        }
+      ]
+    },
+    {
+      "axis": "trust",
+      "score": 9.7,
       "sub": {
         "version_consistency": {
           "score": 10.0,
@@ -92,7 +159,7 @@
         },
         "test_suite": {
           "score": 10.0,
-          "evidence": "16 test files; pytest.ini=True; ci=True"
+          "evidence": "27 test files; pytest.ini=True; ci=True"
         },
         "privacy_patterns": {
           "score": 10.0,
@@ -107,7 +174,9 @@
           "evidence": "9/9 action refs SHA-pinned (100%); dependabot=True"
         }
       },
-      "note": "Deterministic trust scorer. Use an independent high-effort security review before making any public final trust verdict."
+      "note": "Deterministic draft score was 10.00. Published trust score is 9.70 per docs/TRUST_AUDIT.md independent audit.",
+      "draft_score": 10.0,
+      "summary_note": "Verified by TRUST_AUDIT.md; deterministic draft was 10.00."
     },
     {
       "axis": "token_efficiency",
@@ -137,11 +206,11 @@
       "sub": {
         "sqlite_indexed_recall": {
           "score": 10.0,
-          "evidence": "top=decision_e3aede839941afdd"
+          "evidence": "top=decision_8d7b9dbbdec8311c"
         },
         "jsonl_fallback_recall": {
           "score": 10.0,
-          "evidence": "top=decision_e3aede839941afdd"
+          "evidence": "top=decision_8d7b9dbbdec8311c"
         },
         "explain_search": {
           "score": 10.0,
@@ -225,7 +294,7 @@
       "sub": {
         "artifact_files": {
           "score": 10.0,
-          "evidence": "markdown_exists=False json_exists=False"
+          "evidence": "markdown_exists=True json_exists=True"
         },
         "source_backed_content": {
           "score": 10.0,
@@ -255,7 +324,7 @@
         },
         "no_direct_memory_write": {
           "score": 10.0,
-          "evidence": "proposal={'direct_memory_write': False, 'loop_id': 'loop_5b421763e352', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []}"
+          "evidence": "proposal={'direct_memory_write': False, 'loop_id': 'loop_c3719eead3a6', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []}"
         },
         "status_available": {
           "score": 10.0,
