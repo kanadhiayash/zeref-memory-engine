@@ -10,6 +10,8 @@ from typing import Any
 from zeref.audit.logger import AuditLogger
 from zeref.core.errors import GuardRejection, ValidationError
 from zeref.core.schema import SOURCE_OPTIONAL_TYPES
+from zeref.guards.contradiction_guard import detect_incoming_conflicts, write_conflicts
+from zeref.guards.privacy_guard import classify_text
 from zeref.memory_state import MemoryStore
 
 
@@ -135,6 +137,13 @@ def _validate_gate(proposal: dict[str, Any], store: MemoryStore) -> None:
             f"privacy_class `{privacy_class}` cannot be stored.",
             "Use a lower-risk abstraction or do not store this memory.",
         )
+    privacy = classify_text(str(proposal.get("claim", "")), redact_md_path=store.memory_root.root / "REDACT.md")
+    if privacy["privacy_class"] == "secret":
+        raise GuardRejection(
+            "PrivacyGuard",
+            "The memory claim contains credential-shaped or secret material.",
+            "Remove the secret and store only a public-safe abstraction.",
+        )
 
     memory_type = proposal["type"]
     source_refs = list(proposal.get("source_refs") or [])
@@ -154,14 +163,15 @@ def _validate_gate(proposal: dict[str, Any], store: MemoryStore) -> None:
             "Rewrite the claim as a sourced, bounded statement.",
         )
 
-    title = str(proposal.get("title") or _title_from_claim(claim)).lower()
-    for existing in store.list_cards(status="active"):
-        if existing.title.lower() == title and existing.claim.lower() != claim.lower():
-            raise GuardRejection(
-                "ContradictionGuard",
-                "An active memory card with the same title already has a different claim.",
-                "Resolve or supersede the existing card before writing this claim.",
-            )
+    title = str(proposal.get("title") or _title_from_claim(claim))
+    conflicts = detect_incoming_conflicts(store, title=title, claim=claim)
+    if conflicts:
+        write_conflicts(store, conflicts)
+        raise GuardRejection(
+            "ContradictionGuard",
+            "An active memory card with the same title already has a different claim.",
+            "Resolve or supersede the existing card before writing this claim.",
+        )
 
 
 def _title_from_claim(claim: str) -> str:
