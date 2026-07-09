@@ -8,22 +8,25 @@ _Generated: 2026-07-09. Rubric: [`benchmarks/RUBRIC.md`](benchmarks/RUBRIC.md)._
 
 This report is local and deterministic. It does not claim external superiority, production readiness, or a final perfect-score verdict.
 
+The `trust` axis is independently re-graded by the security audit before publication. When the audit score is lower than the deterministic draft, the verified score is the published score.
+
 ## Scores
 
-| Axis | Score | Status |
-|---|---:|---|
-| portability | 10.00 | pass |
-| adaptivity | 9.00 | pass |
-| scalability | 10.00 | pass |
-| trust | 10.00 | pass |
-| token_efficiency | 10.00 | pass |
-| retrieval_accuracy | 10.00 | pass |
-| contradiction_detection | 10.00 | pass |
-| privacy_safety | 10.00 | pass |
-| prompt_rewrite_quality | 10.00 | pass |
-| handoff_success | 10.00 | pass |
-| loop_control | 10.00 | pass |
-| memory_refinement | 10.00 | pass |
+| Axis | Score | Status | Note |
+|---|---:|---|---|
+| portability | 10.00 | pass |  |
+| adaptivity | 9.00 | pass |  |
+| scalability | 10.00 | pass |  |
+| retrieval | 10.00 | pass |  |
+| trust | 9.70 | pass | Verified by TRUST_AUDIT.md; deterministic draft was 10.00. |
+| token_efficiency | 10.00 | pass |  |
+| retrieval_accuracy | 10.00 | pass |  |
+| contradiction_detection | 10.00 | pass |  |
+| privacy_safety | 10.00 | pass |  |
+| prompt_rewrite_quality | 10.00 | pass |  |
+| handoff_success | 10.00 | pass |  |
+| loop_control | 10.00 | pass |  |
+| memory_refinement | 10.00 | pass |  |
 
 ## Portability - 10.00 / 10
 
@@ -55,17 +58,32 @@ This report is local and deterministic. It does not claim external superiority, 
 | `r6_preserved` | 10.00 | R6 in rules=True, R6 referenced in handoff skills=True |
 | `decision_criteria` | 10.00 | 3/3 packs document upgrade/use criteria |
 
-## Trust - 10.00 / 10
+## Retrieval - 10.00 / 10
+
+| Sub-criterion | Score | Evidence |
+|---|---:|---|
+| `fixture_inventory` | 10.00 | 5/5 fixtures present |
+| `continuity` | 10.00 | returns source_ref/confidence/authority/why_returned |
+| `privacy_recall` | 10.00 | raw credential fixture scrubbed before recall |
+| `contradiction` | 10.00 | conflicting same-entity assumptions both returned |
+| `freshness` | 10.00 | updated item is freshest and history records update |
+| `abstention` | 10.00 | unmatched query returns empty result set |
+| `external_adapter_fixtures` | 10.00 | LoCoMo=fixture_pass, LongMemEval=fixture_pass, BEAM=fixture_pass, PersonaMem=fixture_pass, PersonaMem-v2=fixture_pass |
+
+> _Deterministic lexical/FTS5 retrieval benchmark; external adapters are fixture-only unless marked verified._
+
+
+## Trust - 9.70 / 10
 
 | Sub-criterion | Score | Evidence |
 |---|---:|---|
 | `version_consistency` | 10.00 | checker clean; ci_enforced=True |
-| `test_suite` | 10.00 | 16 test files; pytest.ini=True; ci=True |
+| `test_suite` | 10.00 | 27 test files; pytest.ini=True; ci=True |
 | `privacy_patterns` | 10.00 | 9 provider-shaped credential patterns wired |
 | `security_md` | 10.00 | no_public_route=True, pvr=True, pgp=True, window=True |
 | `ci_hardening` | 10.00 | 9/9 action refs SHA-pinned (100%); dependabot=True |
 
-> _Deterministic trust scorer. Use an independent high-effort security review before making any public final trust verdict._
+> _Deterministic draft score was 10.00. Published trust score is 9.70 per docs/TRUST_AUDIT.md independent audit._
 
 
 ## Token Efficiency - 10.00 / 10
@@ -81,8 +99,8 @@ This report is local and deterministic. It does not claim external superiority, 
 
 | Sub-criterion | Score | Evidence |
 |---|---:|---|
-| `sqlite_indexed_recall` | 10.00 | top=decision_e3aede839941afdd |
-| `jsonl_fallback_recall` | 10.00 | top=decision_e3aede839941afdd |
+| `sqlite_indexed_recall` | 10.00 | top=decision_8d7b9dbbdec8311c |
+| `jsonl_fallback_recall` | 10.00 | top=decision_8d7b9dbbdec8311c |
 | `explain_search` | 10.00 | candidates=1 |
 
 ## Contradiction Detection - 10.00 / 10
@@ -117,7 +135,7 @@ This report is local and deterministic. It does not claim external superiority, 
 
 | Sub-criterion | Score | Evidence |
 |---|---:|---|
-| `artifact_files` | 10.00 | markdown_exists=False json_exists=False |
+| `artifact_files` | 10.00 | markdown_exists=True json_exists=True |
 | `source_backed_content` | 10.00 | atom ids present in markdown |
 | `machine_readable_json` | 10.00 | target=human |
 | `verification_checklist` | 10.00 | checklist present |
@@ -128,7 +146,7 @@ This report is local and deterministic. It does not claim external superiority, 
 |---|---:|---|
 | `bounded_contract` | 10.00 | max=2 |
 | `run_stops` | 10.00 | iterations=1 |
-| `no_direct_memory_write` | 10.00 | proposal={'direct_memory_write': False, 'loop_id': 'loop_5b421763e352', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []} |
+| `no_direct_memory_write` | 10.00 | proposal={'direct_memory_write': False, 'loop_id': 'loop_c3719eead3a6', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []} |
 | `status_available` | 10.00 | latest status read |
 | `report_available` | 10.00 | report read |
 
@@ -154,6 +172,7 @@ Per-axis scorers under `benchmarks/` are standalone:
 python3 -m benchmarks.portability
 python3 -m benchmarks.adaptivity
 python3 -m benchmarks.scalability
+python3 -m benchmarks.retrieval
 python3 -m benchmarks.trust
 python3 -m benchmarks.token_efficiency
 python3 -m benchmarks.retrieval_accuracy

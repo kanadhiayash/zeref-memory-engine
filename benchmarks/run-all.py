@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -32,6 +33,7 @@ from benchmarks import (  # noqa: E402
     portability,
     privacy_safety,
     prompt_rewrite_quality,
+    retrieval,
     retrieval_accuracy,
     scalability,
     token_efficiency,
@@ -43,6 +45,7 @@ AXES = [
     portability,
     adaptivity,
     scalability,
+    retrieval,
     trust,
     token_efficiency,
     retrieval_accuracy,
@@ -53,6 +56,45 @@ AXES = [
     loop_control,
     memory_refinement,
 ]
+
+
+def _apply_verified_overrides(results: list[dict]) -> list[dict]:
+    """Apply independent audit overrides that may lower deterministic drafts."""
+    trust_audit = REPO / "docs" / "TRUST_AUDIT.md"
+    if not trust_audit.exists():
+        return results
+
+    text = trust_audit.read_text(encoding="utf-8", errors="ignore")
+    match = re.search(
+        r"^- \*\*Verified score \(this audit\):\*\* \*\*([0-9]+(?:\.[0-9]+)?)\*\*",
+        text,
+        re.MULTILINE,
+    )
+    if not match:
+        return results
+
+    verified_trust = float(match.group(1))
+    adjusted: list[dict] = []
+    for result in results:
+        if result.get("axis") != "trust":
+            adjusted.append(result)
+            continue
+
+        published = dict(result)
+        draft_score = float(result["score"])
+        if verified_trust <= draft_score:
+            published["draft_score"] = draft_score
+            published["score"] = round(verified_trust, 2)
+            published["summary_note"] = (
+                f"Verified by TRUST_AUDIT.md; deterministic draft was {draft_score:.2f}."
+            )
+            published["note"] = (
+                f"Deterministic draft score was {draft_score:.2f}. "
+                f"Published trust score is {verified_trust:.2f} per "
+                "docs/TRUST_AUDIT.md independent audit."
+            )
+        adjusted.append(published)
+    return adjusted
 
 
 def _render_report(results: list[dict], rubric_rel: str, passed: bool, failures: list[dict]) -> str:
@@ -70,14 +112,19 @@ def _render_report(results: list[dict], rubric_rel: str, passed: bool, failures:
         "",
         "This report is local and deterministic. It does not claim external superiority, production readiness, or a final perfect-score verdict.",
         "",
+        ("The `trust` axis is independently re-graded by the security audit "
+         "before publication. When the audit score is lower than the "
+         "deterministic draft, the verified score is the published score."),
+        "",
         "## Scores",
         "",
-        "| Axis | Score | Status |",
-        "|---|---:|---|",
+        "| Axis | Score | Status | Note |",
+        "|---|---:|---|---|",
     ]
     for r in results:
         ok = "pass" if r["score"] >= 9.0 else ("review" if r["score"] >= 8.0 else "fail")
-        lines.append(f"| {r['axis']} | {r['score']:.2f} | {ok} |")
+        note = r.get("summary_note", "")
+        lines.append(f"| {r['axis']} | {r['score']:.2f} | {ok} | {note} |")
     lines.append("")
 
     if failures:
@@ -120,6 +167,7 @@ def _render_report(results: list[dict], rubric_rel: str, passed: bool, failures:
         "python3 -m benchmarks.portability",
         "python3 -m benchmarks.adaptivity",
         "python3 -m benchmarks.scalability",
+        "python3 -m benchmarks.retrieval",
         "python3 -m benchmarks.trust",
         "python3 -m benchmarks.token_efficiency",
         "python3 -m benchmarks.retrieval_accuracy",
@@ -146,7 +194,7 @@ def main() -> int:
     ap.add_argument("--out-json", default="benchmarks/results.json")
     args = ap.parse_args()
 
-    results = [axis.run() for axis in AXES]
+    results = _apply_verified_overrides([axis.run() for axis in AXES])
 
     failures = collect_failures(results)
     passed = not failures
