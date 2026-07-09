@@ -18,7 +18,6 @@ import argparse
 import json
 import subprocess
 import sys
-from datetime import date
 from pathlib import Path
 
 
@@ -76,50 +75,32 @@ def cmd_status(args: argparse.Namespace) -> int:
 
 def cmd_write_decision(args: argparse.Namespace) -> int:
     """Write a decision: hold single-writer lock, atomic append, scrub PII first."""
-    from zeref.lock import MemoryLock, atomic_append, LockError
-    from zeref.privacy import scrub
+    from zeref.lock import LockError
+    from zeref.memory import MemoryWriter
 
     root = _project_root()
-    path = root / "memory" / "DECISIONS.md"
-    redact = root / "REDACT.md"
 
     title    = args.title    or input("Decision title: ").strip()
     why      = args.why      or input("Why (rationale): ").strip()
     evidence = args.evidence or input("Evidence/source (Enter to skip): ").strip()
     grade    = args.grade    or "medium"
-    today    = date.today().isoformat()
 
-    # scrub PII from all user-provided fields before persisting
-    title_s,    title_r    = scrub(title, redact, provenance="write-decision/title")
-    why_s,      why_r      = scrub(why, redact, provenance="write-decision/why")
-    evidence_s, evidence_r = scrub(evidence, redact, provenance="write-decision/evidence")
-    total_redacted = title_r.redacted + why_r.redacted + evidence_r.redacted
-
-    entry = (
-        f"\n---\n"
-        f"**Decision:** {title_s}\n"
-        f"**Date:** {today}\n"
-        f"**Rationale:** {why_s}\n"
-        f"**Evidence:** {evidence_s or '(none provided)'}\n"
-        f"**Evidence grade:** {grade}\n"
-        f"**Provenance:** zeref-cli write-decision (pii_scrubbed={total_redacted})\n"
-        f"---\n"
-    )
-
-    # hold single-writer lock, atomic append
-    memory_dir = root / "memory"
-    memory_dir.mkdir(parents=True, exist_ok=True)
     try:
-        with MemoryLock(memory_dir):
-            atomic_append(path, entry)
+        result = MemoryWriter.from_root(root).write_decision(
+            title=title,
+            why=why,
+            evidence=evidence,
+            grade=grade,
+        )
     except LockError as e:
         print(f"✘ {e}")
         return 2
 
-    print(f"✔ Decision appended to {path}")
-    print(f"  Title: {title_s} | Date: {today} | Grade: {grade}")
-    if total_redacted:
-        print(f"  PII scrubbed from inputs: {total_redacted} token(s)")
+    print(f"✔ Decision appended to {result.target}")
+    print(f"  Title: {result.title} | Date: {result.date} | Grade: {grade}")
+    print(f"  Event: {result.event_hash}")
+    if result.redacted:
+        print(f"  PII scrubbed from inputs: {result.redacted} token(s)")
     return 0
 
 
