@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from zeref.core.schema import MemoryCard, create_memory_card
 from zeref.lock import MemoryLock, atomic_append, atomic_write
 from zeref.memory import MEMORY_LAYERS, MemoryRoot, STATE_SCHEMA
 from zeref.privacy import scrub
@@ -109,6 +110,26 @@ class MemoryStore:
                     payload TEXT NOT NULL,
                     hash TEXT NOT NULL
                 );
+
+                CREATE TABLE IF NOT EXISTS memory_cards (
+                    id TEXT PRIMARY KEY,
+                    type TEXT NOT NULL,
+                    title TEXT NOT NULL,
+                    claim TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    confidence TEXT NOT NULL,
+                    evidence_grade TEXT NOT NULL,
+                    source_refs TEXT NOT NULL,
+                    privacy_class TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL,
+                    valid_from TEXT,
+                    valid_until TEXT,
+                    supersedes TEXT NOT NULL DEFAULT '[]',
+                    superseded_by TEXT,
+                    tags TEXT NOT NULL DEFAULT '[]',
+                    owner TEXT NOT NULL DEFAULT 'zeref'
+                );
                 """
             )
             _ensure_column(conn, "memory_items", "layer", "TEXT NOT NULL DEFAULT 'L1'")
@@ -178,6 +199,118 @@ class MemoryStore:
         if item is None:
             raise RuntimeError(f"memory item {item_id} was not readable after insert")
         return item
+
+    def add_card(
+        self,
+        *,
+        type: str,
+        title: str,
+        claim: str,
+        privacy_class: str,
+        evidence_grade: str,
+        source_refs: list[str] | None = None,
+        confidence: str = "medium",
+        status: str = "active",
+        valid_from: str | None = None,
+        valid_until: str | None = None,
+        supersedes: list[str] | None = None,
+        superseded_by: str | None = None,
+        tags: list[str] | None = None,
+        owner: str = "zeref",
+    ) -> MemoryCard:
+        self.ensure()
+        redact = self.memory_root.root / "REDACT.md"
+        title_s = scrub(title, redact, provenance="memory-card/title")[0]
+        claim_s = scrub(claim, redact, provenance="memory-card/claim")[0]
+        refs_s = [scrub(ref, redact, provenance="memory-card/source_ref")[0] for ref in (source_refs or [])]
+        tags_s = [scrub(tag, redact, provenance="memory-card/tag")[0] for tag in (tags or [])]
+
+        with MemoryLock(self.layout.memory_dir):
+            with self._connect() as conn:
+                card = create_memory_card(
+                    type=type,
+                    title=title_s,
+                    claim=claim_s,
+                    privacy_class=privacy_class,
+                    evidence_grade=evidence_grade,
+                    source_refs=refs_s,
+                    confidence=confidence,
+                    status=status,
+                    valid_from=valid_from,
+                    valid_until=valid_until,
+                    supersedes=supersedes or [],
+                    superseded_by=superseded_by,
+                    tags=tags_s,
+                    owner=owner,
+                    counter=self._next_card_counter(conn),
+                )
+                self._insert_card(conn, card)
+                event = self._record_event(
+                    conn,
+                    event="memory-card-add",
+                    item_id=None,
+                    payload={"id": card.id, "type": card.type, "status": card.status},
+                )
+                conn.commit()
+                atomic_append(self.layout.state_events, json.dumps(asdict(event), sort_keys=True) + "\n")
+        return card
+
+    def get_card(self, memory_id: str) -> MemoryCard | None:
+        self.ensure()
+        with self._connect() as conn:
+            row = conn.execute("SELECT * FROM memory_cards WHERE id=?", (memory_id,)).fetchone()
+        return _card_from_row(row) if row else None
+
+    def list_cards(self, *, type: str = "", status: str = "", limit: int = 200) -> list[MemoryCard]:
+        self.ensure()
+        params: list[Any] = []
+        sql = "SELECT * FROM memory_cards WHERE 1=1"
+        if type:
+            sql += " AND type=?"
+            params.append(type)
+        if status:
+            sql += " AND status=?"
+            params.append(status)
+        sql += " ORDER BY updated_at DESC, id DESC LIMIT ?"
+        params.append(limit)
+        with self._connect() as conn:
+            rows = conn.execute(sql, params).fetchall()
+        return [card for row in rows if (card := _card_from_row(row))]
+
+    def archive_card(self, memory_id: str) -> MemoryCard:
+        return self._update_card_status(memory_id, status="archived")
+
+    def supersede_card(self, old_id: str, new_id: str) -> tuple[MemoryCard, MemoryCard]:
+        self.ensure()
+        old = self.get_card(old_id)
+        new = self.get_card(new_id)
+        if old is None:
+            raise KeyError(f"memory card {old_id} not found")
+        if new is None:
+            raise KeyError(f"memory card {new_id} not found")
+        old_data = old.to_dict()
+        old_data["status"] = "superseded"
+        old_data["superseded_by"] = new_id
+        old_data["updated_at"] = _utc_now()
+        new_data = new.to_dict()
+        new_supersedes = list(dict.fromkeys([*new.supersedes, old_id]))
+        new_data["supersedes"] = new_supersedes
+        new_data["updated_at"] = _utc_now()
+        old_card = MemoryCard.from_dict(old_data)
+        new_card = MemoryCard.from_dict(new_data)
+        with MemoryLock(self.layout.memory_dir):
+            with self._connect() as conn:
+                self._replace_card(conn, old_card)
+                self._replace_card(conn, new_card)
+                event = self._record_event(
+                    conn,
+                    event="memory-card-supersede",
+                    item_id=None,
+                    payload={"old_id": old_id, "new_id": new_id},
+                )
+                conn.commit()
+                atomic_append(self.layout.state_events, json.dumps(asdict(event), sort_keys=True) + "\n")
+        return old_card, new_card
 
     def update(
         self,
@@ -385,6 +518,61 @@ class MemoryStore:
         conn.row_factory = sqlite3.Row
         return conn
 
+    def _next_card_counter(self, conn: sqlite3.Connection) -> int:
+        today = datetime.now(timezone.utc).strftime("mem_%Y_%m_%d_%")
+        row = conn.execute(
+            "SELECT COUNT(*) AS count FROM memory_cards WHERE id LIKE ?",
+            (today,),
+        ).fetchone()
+        return int(row["count"]) + 1
+
+    def _insert_card(self, conn: sqlite3.Connection, card: MemoryCard) -> None:
+        conn.execute(
+            """
+            INSERT INTO memory_cards(
+                id, type, title, claim, status, confidence, evidence_grade,
+                source_refs, privacy_class, created_at, updated_at, valid_from,
+                valid_until, supersedes, superseded_by, tags, owner
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            _card_params(card),
+        )
+
+    def _replace_card(self, conn: sqlite3.Connection, card: MemoryCard) -> None:
+        conn.execute(
+            """
+            REPLACE INTO memory_cards(
+                id, type, title, claim, status, confidence, evidence_grade,
+                source_refs, privacy_class, created_at, updated_at, valid_from,
+                valid_until, supersedes, superseded_by, tags, owner
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            _card_params(card),
+        )
+
+    def _update_card_status(self, memory_id: str, *, status: str) -> MemoryCard:
+        card = self.get_card(memory_id)
+        if card is None:
+            raise KeyError(f"memory card {memory_id} not found")
+        data = card.to_dict()
+        data["status"] = status
+        data["updated_at"] = _utc_now()
+        updated = MemoryCard.from_dict(data)
+        with MemoryLock(self.layout.memory_dir):
+            with self._connect() as conn:
+                self._replace_card(conn, updated)
+                event = self._record_event(
+                    conn,
+                    event=f"memory-card-{status}",
+                    item_id=None,
+                    payload={"id": updated.id, "status": updated.status},
+                )
+                conn.commit()
+                atomic_append(self.layout.state_events, json.dumps(asdict(event), sort_keys=True) + "\n")
+        return updated
+
     def _record_event(
         self,
         conn: sqlite3.Connection,
@@ -412,6 +600,10 @@ def item_to_dict(item: MemoryItem) -> dict[str, Any]:
 
 def event_to_dict(event: MemoryEvent) -> dict[str, Any]:
     return asdict(event)
+
+
+def card_to_dict(card: MemoryCard) -> dict[str, Any]:
+    return card.to_dict()
 
 
 def _utc_now() -> str:
@@ -493,6 +685,52 @@ def _item_from_row(row: sqlite3.Row | None) -> MemoryItem | None:
         authority=row["authority"],
         created_at=row["created_at"],
         updated_at=row["updated_at"],
+    )
+
+
+def _card_from_row(row: sqlite3.Row | None) -> MemoryCard | None:
+    if row is None:
+        return None
+    return MemoryCard(
+        id=row["id"],
+        type=row["type"],
+        title=row["title"],
+        claim=row["claim"],
+        status=row["status"],
+        confidence=row["confidence"],
+        evidence_grade=row["evidence_grade"],
+        source_refs=json.loads(row["source_refs"] or "[]"),
+        privacy_class=row["privacy_class"],
+        created_at=row["created_at"],
+        updated_at=row["updated_at"],
+        valid_from=row["valid_from"],
+        valid_until=row["valid_until"],
+        supersedes=json.loads(row["supersedes"] or "[]"),
+        superseded_by=row["superseded_by"],
+        tags=json.loads(row["tags"] or "[]"),
+        owner=row["owner"],
+    )
+
+
+def _card_params(card: MemoryCard) -> tuple:
+    return (
+        card.id,
+        card.type,
+        card.title,
+        card.claim,
+        card.status,
+        card.confidence,
+        card.evidence_grade,
+        json.dumps(card.source_refs),
+        card.privacy_class,
+        card.created_at,
+        card.updated_at,
+        card.valid_from,
+        card.valid_until,
+        json.dumps(card.supersedes),
+        card.superseded_by,
+        json.dumps(card.tags),
+        card.owner,
     )
 
 
