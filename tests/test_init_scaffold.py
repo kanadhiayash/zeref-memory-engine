@@ -8,52 +8,19 @@ import subprocess
 import sys
 from pathlib import Path
 
+from zeref.memory import MEMORY_DIRS, MEMORY_FILES, PROJECT_DIRS
+
 
 REQUIRED_DIRS = [
-    "memory",
-    "memory/archive",
-    "memory/patterns",
-    "memory/snapshots",
-    "memory/raw",
-    "memory/sync/outbound",
-    "memory/sync/parent",
-    "memory/l0_raw",
-    "memory/l1_atoms",
-    "memory/l2_scenes",
-    "memory/l3_profiles",
-    "memory/indexes",
-    "memory/views",
-    "memory/reports",
-    "memory/handoffs",
-    "memory/loops",
-    "memory/archives",
-    "config",
-    "skills",
-    "skills/drafts",
+    *MEMORY_DIRS,
+    *PROJECT_DIRS,
 ]
 
 REQUIRED_FILES = [
     "config/PROJECT.md",
     "config/BUDGET.md",
     "PRIVACY.md",
-    "memory/hot.md",
-    "memory/index.md",
-    "memory/DECISIONS.md",
-    "memory/OPEN_QUESTIONS.md",
-    "memory/RISKS.md",
-    "memory/CONFLICTS.md",
-    "memory/MEMORY.md",
-    "memory/patterns/PATTERNS.jsonl",
-    "memory/l1_atoms/facts.jsonl",
-    "memory/l1_atoms/decisions.jsonl",
-    "memory/l1_atoms/risks.jsonl",
-    "memory/l1_atoms/tasks.jsonl",
-    "memory/l1_atoms/preferences.jsonl",
-    "memory/l1_atoms/contradictions.jsonl",
-    "memory/l1_atoms/sources.jsonl",
-    "memory/l1_atoms/errors.jsonl",
-    "memory/l1_atoms/tests.jsonl",
-    "memory/l1_atoms/events.jsonl",
+    *MEMORY_FILES,
 ]
 
 
