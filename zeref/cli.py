@@ -210,6 +210,53 @@ def cmd_cost(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_evidence(args: argparse.Namespace) -> int:
+    from zeref.memory.evidence import audit_evidence, grade_claim
+
+    if args.evidence_command == "grade":
+        result = grade_claim(args.claim, source=args.source or "", source_type=args.source_type)
+    elif args.evidence_command == "audit":
+        result = audit_evidence(_project_root())
+    else:
+        return 2
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0 if result.get("passed", True) else 1
+
+
+def cmd_facts(args: argparse.Namespace) -> int:
+    from zeref.memory.fact_guard import audit_facts
+
+    result = audit_facts(_project_root())
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0 if result["passed"] else 1
+
+
+def cmd_contradictions(args: argparse.Namespace) -> int:
+    from zeref.memory.contradictions import (
+        list_contradictions,
+        propose_resolution,
+        resolve_contradiction,
+        scan_contradictions,
+        show_contradiction,
+    )
+
+    root = _project_root()
+    if args.contradictions_command == "scan":
+        result = scan_contradictions(root)
+    elif args.contradictions_command == "list":
+        result = list_contradictions(root)
+    elif args.contradictions_command == "show":
+        result = show_contradiction(root, args.id)
+    elif args.contradictions_command == "propose":
+        result = propose_resolution(root, args.id)
+    elif args.contradictions_command == "resolve":
+        result = resolve_contradiction(root, args.id, winner=args.winner, reason=args.reason)
+    else:
+        return 2
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
 def cmd_db_status(args: argparse.Namespace) -> int:
     """v2.5 L4: report backend (sqlite/duckdb) + extras availability."""
     backends = {"sqlite3": False, "duckdb": False, "yaml": False, "litellm": False}
@@ -613,9 +660,25 @@ def cmd_evidence(args: argparse.Namespace) -> int:
 
     store = MemoryStore.from_root(_project_root())
     if args.evidence_command == "grade":
+        if getattr(args, "source", None) is not None:
+            from zeref.memory.evidence import grade_claim
+
+            result = grade_claim(
+                args.path,
+                source=args.source or "",
+                source_type=args.source_type,
+            )
+            print(json.dumps(result, indent=2, sort_keys=True))
+            return 0
         text = Path(args.path).read_text(errors="ignore") if Path(args.path).exists() else args.path
         print(grade_text(text))
         return 0
+    if args.evidence_command == "audit":
+        from zeref.memory.evidence import audit_evidence
+
+        result = audit_evidence(_project_root())
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result.get("passed", True) else 1
     if args.evidence_command == "check":
         path = Path(args.path)
         if path.exists() and path.name != "memory":
@@ -654,6 +717,12 @@ def cmd_contradictions(args: argparse.Namespace) -> int:
 
     store = MemoryStore.from_root(_project_root())
     if args.contradictions_command == "scan":
+        if getattr(args, "path", None) is None:
+            from zeref.memory.contradictions import scan_contradictions
+
+            result = scan_contradictions(_project_root())
+            print(json.dumps(result, indent=2, sort_keys=True))
+            return 0
         conflicts = list_conflicts(store)
         write_conflicts(store, conflicts)
         print(format_conflicts(conflicts, format=args.format), end="")
@@ -663,14 +732,42 @@ def cmd_contradictions(args: argparse.Namespace) -> int:
         print(format_conflicts(conflicts, format=args.format), end="")
         return 0
     if args.contradictions_command == "show":
+        try:
+            from zeref.memory.contradictions import show_contradiction
+
+            print(json.dumps(show_contradiction(_project_root(), args.id), indent=2, sort_keys=True))
+            return 0
+        except KeyError:
+            pass
         conflict = show_conflict(store, args.id)
         if conflict is None:
             print(f"✘ conflict {args.id} not found")
             return 1
         print(json.dumps(conflict.to_dict(), indent=2, sort_keys=True))
         return 0
+    if args.contradictions_command == "propose":
+        from zeref.memory.contradictions import propose_resolution
+
+        try:
+            result = propose_resolution(_project_root(), args.id)
+        except KeyError:
+            print(f"✘ contradiction {args.id} not found")
+            return 1
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
     if args.contradictions_command == "resolve":
-        result = resolve_conflict(store, args.id, winner=args.winner, reason=args.reason)
+        try:
+            from zeref.memory.contradictions import resolve_contradiction, show_contradiction
+
+            show_contradiction(_project_root(), args.id)
+            result = resolve_contradiction(
+                _project_root(),
+                args.id,
+                winner=args.winner,
+                reason=args.reason,
+            )
+        except KeyError:
+            result = resolve_conflict(store, args.id, winner=args.winner, reason=args.reason)
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0
     if args.contradictions_command == "archive":
@@ -975,8 +1072,13 @@ def _build_parser() -> argparse.ArgumentParser:
 
     evidence = sub.add_parser("evidence", help="Check and manage evidence grades")
     evidence_sub = evidence.add_subparsers(dest="evidence_command", required=True)
-    ev_grade = evidence_sub.add_parser("grade", help="Grade a file or text")
+    ev_grade = evidence_sub.add_parser("grade", help="Grade a claim, file, or text")
     ev_grade.add_argument("path")
+    ev_grade.add_argument("--source")
+    ev_grade.add_argument("--source-type", default="unknown", choices=[
+        "user", "file", "tool", "session", "git", "manual", "unknown",
+    ])
+    evidence_sub.add_parser("audit", help="Audit atom evidence")
     ev_check = evidence_sub.add_parser("check", help="Check memory or docs path")
     ev_check.add_argument("path")
     ev_list = evidence_sub.add_parser("list", help="List memory cards by evidence grade")
@@ -986,15 +1088,21 @@ def _build_parser() -> argparse.ArgumentParser:
     ev_upgrade.add_argument("--source", required=True)
     evidence_sub.add_parser("report", help="Report low-evidence memory cards")
 
+    facts = sub.add_parser("facts", help="Audit unsupported atom fact claims")
+    facts_sub = facts.add_subparsers(dest="facts_command", required=True)
+    facts_sub.add_parser("audit", help="Audit atoms for unsupported claims")
+
     contradictions = sub.add_parser("contradictions", help="Scan and resolve memory conflicts")
     contradictions_sub = contradictions.add_subparsers(dest="contradictions_command", required=True)
     con_scan = contradictions_sub.add_parser("scan", help="Scan memory cards for contradictions")
-    con_scan.add_argument("path", nargs="?", default="memory/")
+    con_scan.add_argument("path", nargs="?", default=None)
     con_scan.add_argument("--format", choices=["text", "json"], default="text")
     con_list = contradictions_sub.add_parser("list", help="List current contradictions")
     con_list.add_argument("--format", choices=["text", "json"], default="text")
     con_show = contradictions_sub.add_parser("show", help="Show one contradiction")
     con_show.add_argument("id")
+    con_prop = contradictions_sub.add_parser("propose", help="Propose an atom contradiction resolution")
+    con_prop.add_argument("id")
     con_resolve = contradictions_sub.add_parser("resolve", help="Resolve a contradiction")
     con_resolve.add_argument("id")
     con_resolve.add_argument("--winner", required=True)
@@ -1057,6 +1165,7 @@ def main() -> None:
         "cost": cmd_cost,
         "factguard": cmd_factguard,
         "evidence": cmd_evidence,
+        "facts": cmd_facts,
         "contradictions": cmd_contradictions,
         "privacy": cmd_privacy,
         "route": cmd_route,
