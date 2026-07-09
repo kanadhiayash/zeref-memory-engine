@@ -463,6 +463,21 @@ class MemoryStore:
             for row in rows
         ]
 
+    def record_event(
+        self,
+        *,
+        event: str,
+        payload: dict[str, Any],
+        item_id: int | None = None,
+    ) -> MemoryEvent:
+        self.ensure()
+        with MemoryLock(self.layout.memory_dir):
+            with self._connect() as conn:
+                record = self._record_event(conn, event=event, item_id=item_id, payload=payload)
+                conn.commit()
+                atomic_append(self.layout.state_events, json.dumps(asdict(record), sort_keys=True) + "\n")
+        return record
+
     def explain(self, item_id: int, query: str = "") -> MemoryItem:
         item = self.get(item_id)
         if item is None:
