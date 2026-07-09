@@ -4,7 +4,7 @@ _Generated: 2026-07-09. Rubric: [`benchmarks/RUBRIC.md`](benchmarks/RUBRIC.md)._
 
 ## Verdict
 
-**PASS** - deterministic local benchmark gates passed.
+**FAIL** - at least one deterministic benchmark gate failed.
 
 This report is local and deterministic. It does not claim external superiority, production readiness, or a final perfect-score verdict.
 
@@ -18,7 +18,7 @@ The `trust` axis is independently re-graded by the security audit before publica
 | adaptivity | 9.00 | pass |  |
 | scalability | 10.00 | pass |  |
 | retrieval | 10.00 | pass |  |
-| trust | 9.70 | pass | Verified by TRUST_AUDIT.md; deterministic draft was 10.00. |
+| trust | 8.80 | review |  |
 | token_efficiency | 10.00 | pass |  |
 | retrieval_accuracy | 10.00 | pass |  |
 | contradiction_detection | 10.00 | pass |  |
@@ -27,6 +27,12 @@ The `trust` axis is independently re-graded by the security audit before publica
 | handoff_success | 10.00 | pass |  |
 | loop_control | 10.00 | pass |  |
 | memory_refinement | 10.00 | pass |  |
+
+## Failure Summary
+
+| Failed metric | Expected | Actual | Needed fix |
+|---|---|---|---|
+| `trust` | axis score >= 9.0 | axis score 8.8 | Inspect the trust sub-criteria and implement the missing local behavior. |
 
 ## Portability - 10.00 / 10
 
@@ -73,17 +79,22 @@ The `trust` axis is independently re-graded by the security audit before publica
 > _Deterministic lexical/FTS5 retrieval benchmark; external adapters are fixture-only unless marked verified._
 
 
-## Trust - 9.70 / 10
+## Trust - 8.80 / 10
 
 | Sub-criterion | Score | Evidence |
 |---|---:|---|
-| `version_consistency` | 10.00 | checker clean; ci_enforced=True |
+| `version_consistency` | 4.00 | checker exits non-zero: gistry.json:.version: '1.0.0'
+  [OK] .claude-plugin/plugin.json:.version: '1.0.0'
+  [DRIFT] README.md:badge: None
+  [OK] docs/wiki/Installation.md: '1.0.0'
+  [OK] docs/RELEASE_LOG.md:top row: '1.0.0'
+ |
 | `test_suite` | 10.00 | 27 test files; pytest.ini=True; ci=True |
 | `privacy_patterns` | 10.00 | 9 provider-shaped credential patterns wired |
 | `security_md` | 10.00 | no_public_route=True, pvr=True, pgp=True, window=True |
 | `ci_hardening` | 10.00 | 9/9 action refs SHA-pinned (100%); dependabot=True |
 
-> _Deterministic draft score was 10.00. Published trust score is 9.70 per docs/TRUST_AUDIT.md independent audit._
+> _Deterministic trust scorer. Use an independent high-effort security review before making any public final trust verdict._
 
 
 ## Token Efficiency - 10.00 / 10
@@ -99,8 +110,8 @@ The `trust` axis is independently re-graded by the security audit before publica
 
 | Sub-criterion | Score | Evidence |
 |---|---:|---|
-| `sqlite_indexed_recall` | 10.00 | top=decision_8d7b9dbbdec8311c |
-| `jsonl_fallback_recall` | 10.00 | top=decision_8d7b9dbbdec8311c |
+| `sqlite_indexed_recall` | 10.00 | top=decision_e447fde9c35289b8 |
+| `jsonl_fallback_recall` | 10.00 | top=decision_e447fde9c35289b8 |
 | `explain_search` | 10.00 | candidates=1 |
 
 ## Contradiction Detection - 10.00 / 10
@@ -146,7 +157,7 @@ The `trust` axis is independently re-graded by the security audit before publica
 |---|---:|---|
 | `bounded_contract` | 10.00 | max=2 |
 | `run_stops` | 10.00 | iterations=1 |
-| `no_direct_memory_write` | 10.00 | proposal={'direct_memory_write': False, 'loop_id': 'loop_c3719eead3a6', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []} |
+| `no_direct_memory_write` | 10.00 | proposal={'direct_memory_write': False, 'loop_id': 'loop_7a199a4640af', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []} |
 | `status_available` | 10.00 | latest status read |
 | `report_available` | 10.00 | report read |
 
