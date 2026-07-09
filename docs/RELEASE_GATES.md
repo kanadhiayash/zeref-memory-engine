@@ -10,4 +10,4 @@
 - EvidenceGuard memory and docs scan
 
 Benchmark checks only confirm the local benchmark report status. They do not
-authorize public leaderboard, best-in-class, or external-dataset claims.
+authorize public ranking, superiority, or external-dataset claims.

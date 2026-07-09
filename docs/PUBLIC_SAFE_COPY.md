@@ -9,9 +9,9 @@ Preferred positioning:
 Avoid:
 
 - unsupported superlatives
-- production-ready claims without a release record
+- release-maturity claims without a release record
 - benchmark claims without dated reproducible evidence
 - internal paths, credentials, private project details, or exact personal data
 
-When a claim is useful but not fully verified, mark it as an assumption or keep it
+When a claim is useful but not source-backed, mark it as an assumption or keep it
 out of public-facing docs.

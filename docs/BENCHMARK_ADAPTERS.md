@@ -20,4 +20,4 @@ Adapter statuses:
 - `verified`: a dated, reproducible full-dataset run passed locally.
 
 Current public-safe status: fixture adapters pass locally; full external dataset
-verification is pending and must not be described as leaderboard performance.
+verification is pending and must not be described as ranking performance.

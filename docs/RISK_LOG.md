@@ -37,7 +37,7 @@ created or accepted the risk.
 - **Severity:** medium
 - **Description:** The standing operational protocol requires "propose →
   APPROVE → apply". The v1.0.0 trust-repair run was authorised to execute
-  fully autonomously, gated only by the 10/10 benchmark rubric.
+  fully autonomously, gated only by the public benchmark rubric.
 - **Mitigation:**
   1. Hard halt: any benchmark axis scoring <8.0 stops the loop and
      surfaces the failure for human review before publish.
