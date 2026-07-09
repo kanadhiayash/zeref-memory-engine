@@ -80,6 +80,37 @@
       }
     },
     {
+      "axis": "retrieval",
+      "score": 10.0,
+      "sub": {
+        "fixture_inventory": {
+          "score": 10.0,
+          "evidence": "5/5 fixtures present"
+        },
+        "continuity": {
+          "score": 10.0,
+          "evidence": "returns source_ref/confidence/authority/why_returned"
+        },
+        "privacy_recall": {
+          "score": 10.0,
+          "evidence": "raw credential fixture scrubbed before recall"
+        },
+        "contradiction": {
+          "score": 10.0,
+          "evidence": "conflicting same-entity assumptions both returned"
+        },
+        "freshness": {
+          "score": 10.0,
+          "evidence": "updated item is freshest and history records update"
+        },
+        "abstention": {
+          "score": 10.0,
+          "evidence": "unmatched query returns empty result set"
+        }
+      },
+      "note": "Deterministic lexical/FTS5 retrieval benchmark; no semantic-vector evaluation."
+    },
+    {
       "axis": "trust",
       "score": 9.7,
       "sub": {
@@ -89,7 +120,7 @@
         },
         "test_suite": {
           "score": 10.0,
-          "evidence": "7 test files; pytest.ini=True; ci=True"
+          "evidence": "9 test files; pytest.ini=True; ci=True"
         },
         "privacy_patterns": {
           "score": 10.0,

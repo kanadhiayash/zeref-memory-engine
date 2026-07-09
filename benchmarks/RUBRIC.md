@@ -76,6 +76,28 @@ process.
 
 ---
 
+## Axis 5 — Retrieval
+
+> Can Zeref Memory Core retrieve local structured state with explainable
+> recall while preserving privacy and abstaining when there is no match?
+
+| Sub-criterion | Weight | 0–3 | 4–6 | 7–8 | 9–10 |
+|---|---|---|---|---|---|
+| Fixture inventory covers continuity, privacy recall, contradiction, freshness, abstention | 2 | missing | partial | all present | all present + machine-checked |
+| Continuity recall returns source, confidence, authority, and why-returned metadata | 2 | no result | partial result | result without all metadata | result + all metadata |
+| Privacy recall never returns raw provider-shaped credentials | 2 | leaks raw secret | partial scrub | scrubbed but searchable raw | scrubbed + raw search abstains |
+| Contradiction fixture preserves conflicting same-entity entries | 2 | collapses conflict | partial | returns both without provenance | returns both with provenance |
+| Freshness and abstention return latest state and empty no-match sets | 2 | stale or hallucinated | partial | one behavior works | both behaviors pass |
+
+**Score = weighted sum / 2**.
+
+This axis is deterministic and local. It measures SQLite + FTS5 keyword/entity
+retrieval only; it does **not** measure semantic-vector recall, hosted search,
+multi-user sync, or long-context model injection quality. See
+[`docs/RETRIEVAL_BENCHMARKS.md`](../docs/RETRIEVAL_BENCHMARKS.md).
+
+---
+
 ## Scoring procedure
 
 1. Each axis is scored independently. The author of the rubric does
@@ -84,9 +106,11 @@ process.
 2. `benchmarks/run-all.py` runs deterministic checks and emits a draft
    `BENCHMARK_REPORT.md` with the per-axis numbers and the underlying
    evidence pointers.
-3. The Opus pass re-scores trust independently and may also lower any
+3. The retrieval axis runs deterministic local fixtures only; claims about
+   semantic recall require a separate rubric version.
+4. The Opus pass re-scores trust independently and may also lower any
    other axis if it finds undisclosed coverage gaps.
-4. Final scores published in `docs/BENCHMARK_REPORT.md`. The rubric
+5. Final scores published in `docs/BENCHMARK_REPORT.md`. The rubric
    version that produced them is recorded inline.
 
 ## Versioning
