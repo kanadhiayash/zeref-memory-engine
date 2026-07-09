@@ -311,6 +311,50 @@ def cmd_memory(args: argparse.Namespace) -> int:
             print(f"✔ Indexed {result['atoms_indexed']} atom(s) at {result['path']}")
         return 0
 
+    if args.memory_command == "health":
+        from zeref.memory.refine import build_health_report, write_health_report
+
+        result = build_health_report(root)
+        if not args.no_write:
+            result = {**result, "written": write_health_report(root, result)}
+        if args.json:
+            print(json.dumps(result, indent=2, sort_keys=True))
+        else:
+            print(f"Memory health: {'pass' if result['passed'] else 'needs attention'}")
+            print(f"Active atoms: {result['summary']['active_atoms']}")
+            print(f"Duplicate groups: {result['summary']['duplicate_groups']}")
+            if "written" in result:
+                print(f"Report: {result['written']['markdown']}")
+        return 0 if result["passed"] or not args.strict else 1
+
+    if args.memory_command == "refine":
+        from zeref.memory.refine import refine_memory
+
+        result = refine_memory(root, dry_run=args.dry_run, strict=args.strict)
+        if args.json:
+            print(json.dumps(result, indent=2, sort_keys=True))
+        else:
+            mode = "dry run" if result["dry_run"] else "report written"
+            print(f"Memory refine: {mode}")
+            print(f"Proposals: {len(result['proposals'])}")
+            for proposal in result["proposals"]:
+                print(f"- {proposal['action']}: {proposal.get('atom_id') or ', '.join(proposal.get('atom_ids', []))}")
+        return 0 if result["passed"] or not args.strict else 1
+
+    if args.memory_command == "render":
+        from zeref.memory.render import render_memory_view
+
+        result = render_memory_view(root, args.view)
+        if args.json:
+            print(json.dumps(result, indent=2, sort_keys=True))
+        else:
+            if args.view == "all":
+                for item in result["rendered"]:
+                    print(f"✔ Rendered {item['view']} -> {item['path']}")
+            else:
+                print(f"✔ Rendered {result['view']} -> {result['path']}")
+        return 0
+
     print("✘ memory subcommand required")
     return 2
 
@@ -646,6 +690,22 @@ def _build_parser() -> argparse.ArgumentParser:
 
     mem_index = mem_sub.add_parser("index", help="Rebuild SQLite memory index")
     mem_index.add_argument("--json", action="store_true")
+
+    mem_health = mem_sub.add_parser("health", help="Generate memory health reports")
+    mem_health.add_argument("--json", action="store_true")
+    mem_health.add_argument("--strict", action="store_true")
+    mem_health.add_argument("--no-write", action="store_true", help="Report without writing memory/reports")
+
+    mem_refine = mem_sub.add_parser("refine", help="Propose safe memory cleanup actions")
+    mem_refine.add_argument("--dry-run", action="store_true")
+    mem_refine.add_argument("--json", action="store_true")
+    mem_refine.add_argument("--strict", action="store_true")
+
+    mem_render = mem_sub.add_parser("render", help="Render Markdown views from atoms")
+    mem_render.add_argument("view", choices=[
+        "hot.md", "index.md", "decisions", "risks", "contradictions", "all",
+    ])
+    mem_render.add_argument("--json", action="store_true")
 
     rec = sub.add_parser("recall", help="Recall memory atoms by query")
     rec.add_argument("query")
