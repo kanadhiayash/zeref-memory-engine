@@ -16,7 +16,9 @@ def test_retrieval_benchmark_scores_all_fixtures() -> None:
         "contradiction",
         "freshness",
         "abstention",
+        "external_adapter_fixtures",
     }
+    assert {adapter["status"] for adapter in result["adapters"]} == {"fixture_pass"}
     for sub in result["sub"].values():
         assert sub["score"] == 10.0
         assert sub["evidence"]
