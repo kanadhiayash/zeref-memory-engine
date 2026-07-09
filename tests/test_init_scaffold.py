@@ -8,32 +8,19 @@ import subprocess
 import sys
 from pathlib import Path
 
+from zeref.memory import MEMORY_DIRS, MEMORY_FILES, PROJECT_DIRS
+
 
 REQUIRED_DIRS = [
-    "memory",
-    "memory/archive",
-    "memory/patterns",
-    "memory/snapshots",
-    "memory/raw",
-    "memory/sync/outbound",
-    "memory/sync/parent",
-    "config",
-    "skills",
-    "skills/drafts",
+    *MEMORY_DIRS,
+    *PROJECT_DIRS,
 ]
 
 REQUIRED_FILES = [
     "config/PROJECT.md",
     "config/BUDGET.md",
     "PRIVACY.md",
-    "memory/hot.md",
-    "memory/index.md",
-    "memory/DECISIONS.md",
-    "memory/OPEN_QUESTIONS.md",
-    "memory/RISKS.md",
-    "memory/CONFLICTS.md",
-    "memory/MEMORY.md",
-    "memory/patterns/PATTERNS.jsonl",
+    *MEMORY_FILES,
 ]
 
 
