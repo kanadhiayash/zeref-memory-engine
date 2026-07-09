@@ -260,11 +260,56 @@ def cmd_audit(args: argparse.Namespace) -> int:
 
 
 def cmd_memory(args: argparse.Namespace) -> int:
-    from zeref.memory_state import event_to_dict, item_to_dict, MemoryStore
+    from zeref.core.errors import GuardRejection
+    from zeref.guards.write_gate import propose_memory, write_from_proposal
+    from zeref.memory_state import card_to_dict, event_to_dict, item_to_dict, MemoryStore
 
     store = MemoryStore.from_root(_project_root())
 
     try:
+        if args.memory_command == "propose":
+            proposal = propose_memory(args.claim, output=Path(args.out))
+            if args.json:
+                print(json.dumps(proposal, indent=2, sort_keys=True))
+            else:
+                print(f"✔ proposal written to {args.out}")
+            return 0
+
+        if args.memory_command == "write":
+            card = write_from_proposal(Path(args.from_path), store)
+            print(json.dumps(card, indent=2, sort_keys=True) if args.json else f"✔ memory card written: {card['id']}")
+            return 0
+
+        if args.memory_command == "list":
+            cards = store.list_cards(type=args.type or "", status=args.status or "", limit=args.limit)
+            if args.json:
+                print(json.dumps([card_to_dict(card) for card in cards], indent=2, sort_keys=True))
+            else:
+                for card in cards:
+                    print(f"{card.id} {card.type} {card.status} {card.title}")
+                if not cards:
+                    print("No memory cards found.")
+            return 0
+
+        if args.memory_command == "show":
+            card = store.get_card(args.id)
+            if card is None:
+                print(f"✘ memory card {args.id} not found")
+                return 1
+            print(json.dumps(card_to_dict(card), indent=2, sort_keys=True))
+            return 0
+
+        if args.memory_command == "archive":
+            card = store.archive_card(args.id)
+            print(json.dumps(card_to_dict(card), indent=2, sort_keys=True) if args.json else f"✔ archived {card.id}")
+            return 0
+
+        if args.memory_command == "supersede":
+            old_card, new_card = store.supersede_card(args.id, args.with_id)
+            result = {"superseded": card_to_dict(old_card), "replacement": card_to_dict(new_card)}
+            print(json.dumps(result, indent=2, sort_keys=True) if args.json else f"✔ {old_card.id} superseded by {new_card.id}")
+            return 0
+
         if args.memory_command == "add":
             item = store.add(
                 kind=args.kind,
@@ -343,6 +388,9 @@ def cmd_memory(args: argparse.Namespace) -> int:
                 for name, path in sorted(written.items()):
                     print(f"  {name}: {path}")
             return 0
+    except GuardRejection as exc:
+        print(str(exc))
+        return 1
     except (KeyError, ValueError, RuntimeError) as exc:
         print(f"✘ {exc}")
         return 1
@@ -410,6 +458,33 @@ def _build_parser() -> argparse.ArgumentParser:
 
     memory = sub.add_parser("memory", help="Structured local memory state")
     memory_sub = memory.add_subparsers(dest="memory_command", required=True)
+
+    mem_propose = memory_sub.add_parser("propose", help="Create a guarded memory proposal JSON file")
+    mem_propose.add_argument("claim")
+    mem_propose.add_argument("--out", default="proposal.json")
+    mem_propose.add_argument("--json", action="store_true")
+
+    mem_write = memory_sub.add_parser("write", help="Write a guarded memory proposal")
+    mem_write.add_argument("--from", dest="from_path", required=True)
+    mem_write.add_argument("--json", action="store_true")
+
+    mem_list_cards = memory_sub.add_parser("list", help="List memory cards")
+    mem_list_cards.add_argument("--type")
+    mem_list_cards.add_argument("--status")
+    mem_list_cards.add_argument("--limit", type=int, default=200)
+    mem_list_cards.add_argument("--json", action="store_true")
+
+    mem_show = memory_sub.add_parser("show", help="Show a memory card")
+    mem_show.add_argument("id")
+
+    mem_archive = memory_sub.add_parser("archive", help="Archive a memory card")
+    mem_archive.add_argument("id")
+    mem_archive.add_argument("--json", action="store_true")
+
+    mem_supersede = memory_sub.add_parser("supersede", help="Mark one memory card superseded by another")
+    mem_supersede.add_argument("id")
+    mem_supersede.add_argument("--with", dest="with_id", required=True)
+    mem_supersede.add_argument("--json", action="store_true")
 
     mem_add = memory_sub.add_parser("add", help="Add a structured memory item")
     mem_add.add_argument("--kind", default="note")
