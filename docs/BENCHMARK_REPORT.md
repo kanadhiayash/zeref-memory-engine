@@ -1,23 +1,21 @@
 # Benchmark Report — Zeref OS v1.0.0
 
-_Generated: 2026-06-19. Rubric: [`benchmarks/RUBRIC.md`](benchmarks/RUBRIC.md)._
+_Generated: 2026-07-09. Rubric: [`benchmarks/RUBRIC.md`](benchmarks/RUBRIC.md)._
 
 ## Verdict
 
 **PASS** — every axis ≥ 9.0, no axis below 8.0.
 
-The `trust` axis was independently re-graded by an Opus audit pass. The
-verified score below replaces the deterministic draft. See
-[`TRUST_AUDIT.md`](TRUST_AUDIT.md) for sub-criterion deductions.
+The `trust` axis is independently re-graded by the security audit before publication. When the audit score is lower than the deterministic draft, the verified score is the published score.
 
 ## Scores
 
 | Axis | Score | Pass? | Note |
 |---|---:|:---:|---|
-| portability | 10.00 | ✅ | |
-| adaptivity | 9.00 | ✅ | |
-| scalability | 10.00 | ✅ | |
-| trust | **9.70** | ✅ | _Verified by [`TRUST_AUDIT.md`](TRUST_AUDIT.md); draft was 10.00._ |
+| portability | 10.00 | ✅ |  |
+| adaptivity | 9.00 | ✅ |  |
+| scalability | 10.00 | ✅ |  |
+| trust | 9.70 | ✅ | Verified by TRUST_AUDIT.md; deterministic draft was 10.00. |
 
 ## Portability — 10.00 / 10
 
@@ -49,7 +47,7 @@ verified score below replaces the deterministic draft. See
 | `r6_preserved` | 10.00 | R6 in rules=True, R6 referenced in handoff skills=True |
 | `decision_criteria` | 10.00 | 3/3 packs document upgrade/use criteria |
 
-## Trust — 10.00 / 10
+## Trust — 9.70 / 10
 
 | Sub-criterion | Score | Evidence |
 |---|---:|---|
@@ -59,7 +57,7 @@ verified score below replaces the deterministic draft. See
 | `security_md` | 10.00 | no_public_route=True, pvr=True, pgp=True, window=True |
 | `ci_hardening` | 10.00 | 9/9 action refs SHA-pinned (100%); dependabot=True |
 
-> _Draft score from deterministic scorer. Final score in docs/BENCHMARK_REPORT.md must come from an independent Opus security-audit pass._
+> _Deterministic draft score was 10.00. Published trust score is 9.70 per docs/TRUST_AUDIT.md independent audit._
 
 
 ## How to reproduce

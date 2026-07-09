@@ -18,7 +18,7 @@ Terms used throughout Zeref OS. Page references go to other wiki pages.
 
 ## B
 
-**Bare alias** — Short model name (`haiku` / `sonnet` / `opus`) used in `zeref-registry.json` `model_alias` field. Resolves to full Anthropic id via [`_shared/model-resolver.md`](https://github.com/kanadhiayash/zeref-os/blob/main/_shared/model-resolver.md).
+**Bare alias** — Short model name (`haiku` / `sonnet` / `opus`) used in `zeref-registry.json` `model_alias` field. Resolves to full Anthropic id via [`_shared/model-resolver.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/_shared/model-resolver.md).
 
 **Boundary file** — A page that lists where things live so the agent doesn't have to load everything. Examples: `memory/index.md`, the Skills table in `AGENTS.md`. Boundary-first reads are Core Principle 3.
 
