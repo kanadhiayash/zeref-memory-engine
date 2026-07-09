@@ -1,11 +1,24 @@
-"""Structured memory substrate for Zeref.
+"""Memory APIs for Zeref.
 
-This package contains the v2 atom schema and append-only JSONL store. The
-legacy markdown files remain human-readable views; atoms are the machine-facing
-source for new memory work.
+This package preserves the existing Memory Core layout/write API while adding
+the v2 atom schema and append-only JSONL store. Legacy Markdown files remain
+human-readable views; atoms are the machine-facing source for new memory work.
 """
 
 from zeref.memory.atom_store import AtomStore
+from zeref.memory.core import (
+    MEMORY_DIRS,
+    MEMORY_FILES,
+    MEMORY_LAYERS,
+    PROJECT_DIRS,
+    STATE_SCHEMA,
+    MemoryLayout,
+    MemoryRoot,
+    MemoryWriter,
+    discover_project_root,
+    normalize_init_values,
+    scaffold_project,
+)
 from zeref.memory.schemas import (
     AtomValidationError,
     create_atom,
@@ -16,7 +29,18 @@ from zeref.memory.schemas import (
 __all__ = [
     "AtomStore",
     "AtomValidationError",
+    "MEMORY_DIRS",
+    "MEMORY_FILES",
+    "MEMORY_LAYERS",
+    "PROJECT_DIRS",
+    "STATE_SCHEMA",
+    "MemoryLayout",
+    "MemoryRoot",
+    "MemoryWriter",
     "create_atom",
+    "discover_project_root",
     "make_atom_id",
+    "normalize_init_values",
+    "scaffold_project",
     "validate_atom",
 ]
