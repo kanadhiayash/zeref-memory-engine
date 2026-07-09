@@ -1,0 +1,193 @@
+"""Memory Core layout helpers for Zeref.
+
+This module is the narrow boundary for project-root discovery and memory
+scaffolding. Higher-level write, search, and lifecycle behavior should build on
+these helpers instead of duplicating path lists in the CLI.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from datetime import date
+from pathlib import Path
+
+
+MEMORY_DIRS: tuple[str, ...] = (
+    "memory",
+    "memory/archive",
+    "memory/patterns",
+    "memory/snapshots",
+    "memory/raw",
+    "memory/sync/outbound",
+    "memory/sync/parent",
+)
+
+PROJECT_DIRS: tuple[str, ...] = (
+    "config",
+    "skills",
+    "skills/drafts",
+)
+
+MEMORY_FILES: tuple[str, ...] = (
+    "memory/hot.md",
+    "memory/index.md",
+    "memory/DECISIONS.md",
+    "memory/OPEN_QUESTIONS.md",
+    "memory/RISKS.md",
+    "memory/CONFLICTS.md",
+    "memory/MEMORY.md",
+    "memory/patterns/PATTERNS.jsonl",
+)
+
+
+@dataclass(frozen=True)
+class MemoryLayout:
+    """Resolved paths for the current Zeref memory layout."""
+
+    root: Path
+
+    @property
+    def memory_dir(self) -> Path:
+        return self.root / "memory"
+
+    @property
+    def config_dir(self) -> Path:
+        return self.root / "config"
+
+    @property
+    def patterns_log(self) -> Path:
+        return self.root / "memory" / "patterns" / "PATTERNS.jsonl"
+
+    def path(self, relative: str) -> Path:
+        return self.root / relative
+
+    def directories(self) -> tuple[Path, ...]:
+        return tuple(self.root / rel for rel in (*MEMORY_DIRS, *PROJECT_DIRS))
+
+    def files(self) -> tuple[Path, ...]:
+        return tuple(self.root / rel for rel in MEMORY_FILES)
+
+
+@dataclass(frozen=True)
+class MemoryRoot:
+    """A Zeref project root plus its resolved memory layout."""
+
+    root: Path
+    layout: MemoryLayout
+
+    @classmethod
+    def from_path(cls, root: Path) -> "MemoryRoot":
+        resolved = root.resolve()
+        return cls(root=resolved, layout=MemoryLayout(resolved))
+
+    @classmethod
+    def discover(cls, start: Path | None = None, max_depth: int = 10) -> "MemoryRoot":
+        return cls.from_path(discover_project_root(start=start, max_depth=max_depth))
+
+
+def discover_project_root(start: Path | None = None, max_depth: int = 10) -> Path:
+    """Walk up from start until AGENTS.md is found, then return that root."""
+    current = (start or Path.cwd()).resolve()
+    for _ in range(max_depth):
+        if (current / "AGENTS.md").exists():
+            return current
+        parent = current.parent
+        if parent == current:
+            break
+        current = parent
+    return (start or Path.cwd()).resolve()
+
+
+def normalize_init_values(
+    *,
+    name: str | None,
+    privacy: str | None,
+    tier: str | None,
+    parent: str | None,
+) -> dict[str, str | None]:
+    """Normalize init values while preserving empty parent as explicit null."""
+    normalized_name = name or "(unnamed)"
+    normalized_privacy = privacy or "abstract"
+    normalized_tier = tier or "auto"
+    normalized_parent = parent if parent else None
+    return {
+        "name": normalized_name,
+        "privacy": normalized_privacy,
+        "tier": normalized_tier,
+        "parent": normalized_parent,
+    }
+
+
+def scaffold_project(
+    root: Path,
+    *,
+    name: str | None,
+    privacy: str | None,
+    tier: str | None,
+    parent: str | None,
+) -> MemoryRoot:
+    """Create the Zeref memory/config scaffold without overwriting user files."""
+    memory_root = MemoryRoot.from_path(root)
+    values = normalize_init_values(
+        name=name,
+        privacy=privacy,
+        tier=tier,
+        parent=parent,
+    )
+
+    for directory in memory_root.layout.directories():
+        directory.mkdir(parents=True, exist_ok=True)
+
+    project_path = memory_root.layout.config_dir / "PROJECT.md"
+    project_path.write_text(
+        f"---\nproject_name: \"{values['name']}\"\nproject_root: \"{memory_root.root}\"\n"
+        f"created: \"{date.today().isoformat()}\"\nlast_session: \"\"\n"
+        f"active_agents:\n  - memory-keeper\n"
+        f"active_skills:\n  - wiki-maintenance\n  - budget-governor\n  - evidence-grader\n"
+        f"privacy_mode: {values['privacy']}\nparent_project: {values['parent'] or 'null'}\n"
+        f"model_tier: {values['tier']}\nbudget_warn_at: 50000\n---\n\n# {values['name']}\n\n"
+        f"Project initialised via `zeref init` on {date.today().isoformat()}.\n",
+        encoding="utf-8",
+    )
+
+    privacy_path = memory_root.root / "PRIVACY.md"
+    if not privacy_path.exists():
+        privacy_path.write_text(
+            f"---\nmode: {values['privacy']}\nabstract_rules:\n  strip_pii: true\n"
+            f"  strip_internal_paths: true\n  strip_credentials: true\n"
+            f"  strip_numbers: false\nlocal_only_blocks:\n  - memory/sync/outbound/\n"
+            f"  - memory/sync/parent/\n---\n\n# PRIVACY.md\n\nMode: `{values['privacy']}`.\n",
+            encoding="utf-8",
+        )
+
+    budget_path = memory_root.layout.config_dir / "BUDGET.md"
+    if not budget_path.exists():
+        budget_path.write_text(
+            f"---\nmodel_tier: {values['tier']}\nalways_on_target_tokens: 2000\n"
+            f"warn_at_tokens: 50000\nhard_cap_tokens: 180000\nboundary_first: true\n---\n",
+            encoding="utf-8",
+        )
+
+    _write_memory_files(memory_root.layout)
+    return memory_root
+
+
+def _write_memory_files(layout: MemoryLayout) -> None:
+    hot = layout.path("memory/hot.md")
+    if not hot.exists():
+        hot.write_text("# memory/hot.md\n\n*(empty - populated on first /done)*\n", encoding="utf-8")
+
+    for relative in (
+        "memory/index.md",
+        "memory/DECISIONS.md",
+        "memory/OPEN_QUESTIONS.md",
+        "memory/RISKS.md",
+        "memory/CONFLICTS.md",
+        "memory/MEMORY.md",
+    ):
+        path = layout.path(relative)
+        if not path.exists():
+            path.write_text(f"# {Path(relative).name}\n", encoding="utf-8")
+
+    if not layout.patterns_log.exists():
+        layout.patterns_log.write_text("", encoding="utf-8")

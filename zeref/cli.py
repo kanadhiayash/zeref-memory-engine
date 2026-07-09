@@ -28,12 +28,9 @@ from pathlib import Path
 
 def _project_root() -> Path:
     """Walk up from cwd until AGENTS.md found (Zeref OS root)."""
-    p = Path.cwd()
-    for _ in range(10):
-        if (p / "AGENTS.md").exists():
-            return p
-        p = p.parent
-    return Path.cwd()
+    from zeref.memory import MemoryRoot
+
+    return MemoryRoot.discover().root
 
 
 def _read_file(path: Path, fallback: str = "") -> str:
@@ -128,66 +125,25 @@ def cmd_write_decision(args: argparse.Namespace) -> int:
 
 def cmd_init(args: argparse.Namespace) -> int:
     """v2.5 L5: scaffold memory/ + config/ + privacy templates (no LLM)."""
+    from zeref.memory import normalize_init_values, scaffold_project
+
     root = Path(args.directory).resolve() if args.directory else Path.cwd()
     print(f"\nInitialising Zeref OS layout at {root}")
-
-    for d in ["memory", "memory/archive", "memory/patterns", "memory/snapshots",
-              "memory/raw", "memory/sync/outbound", "memory/sync/parent",
-              "config", "skills", "skills/drafts"]:
-        (root / d).mkdir(parents=True, exist_ok=True)
 
     # Use `is None` so empty-string CLI args (e.g. --parent "") skip the prompt
     name    = args.name    if args.name    is not None else (input("Project name: ").strip() or "(unnamed)")
     privacy = args.privacy if args.privacy is not None else (input("Privacy mode [abstract/exact/local-only] (default abstract): ").strip() or "abstract")
     tier    = args.tier    if args.tier    is not None else (input("Model tier [auto/free/standard/god-mode] (default auto): ").strip() or "auto")
     parent  = args.parent  if args.parent  is not None else input("Parent project path (Enter if none): ").strip()
-    if not name:    name    = "(unnamed)"
-    if not privacy: privacy = "abstract"
-    if not tier:    tier    = "auto"
-
-    (root / "config" / "PROJECT.md").write_text(
-        f"---\nproject_name: \"{name}\"\nproject_root: \"{root}\"\n"
-        f"created: \"{date.today().isoformat()}\"\nlast_session: \"\"\n"
-        f"active_agents:\n  - memory-keeper\n"
-        f"active_skills:\n  - wiki-maintenance\n  - budget-governor\n  - evidence-grader\n"
-        f"privacy_mode: {privacy}\nparent_project: {parent or 'null'}\n"
-        f"model_tier: {tier}\nbudget_warn_at: 50000\n---\n\n# {name}\n\n"
-        f"Project initialised via `zeref init` on {date.today().isoformat()}.\n"
-    )
-
-    if not (root / "PRIVACY.md").exists():
-        (root / "PRIVACY.md").write_text(
-            f"---\nmode: {privacy}\nabstract_rules:\n  strip_pii: true\n"
-            f"  strip_internal_paths: true\n  strip_credentials: true\n"
-            f"  strip_numbers: false\nlocal_only_blocks:\n  - memory/sync/outbound/\n"
-            f"  - memory/sync/parent/\n---\n\n# PRIVACY.md\n\nMode: `{privacy}`.\n"
-        )
-
-    if not (root / "config" / "BUDGET.md").exists():
-        (root / "config" / "BUDGET.md").write_text(
-            f"---\nmodel_tier: {tier}\nalways_on_target_tokens: 2000\n"
-            f"warn_at_tokens: 50000\nhard_cap_tokens: 180000\nboundary_first: true\n---\n"
-        )
-
-    if not (root / "memory" / "hot.md").exists():
-        (root / "memory" / "hot.md").write_text(
-            f"# memory/hot.md\n\n*(empty — populated on first /done)*\n"
-        )
-    for fname in ["index.md", "DECISIONS.md", "OPEN_QUESTIONS.md",
-                  "RISKS.md", "CONFLICTS.md", "MEMORY.md"]:
-        f = root / "memory" / fname
-        if not f.exists():
-            f.write_text(f"# {fname}\n")
-    pat = root / "memory" / "patterns" / "PATTERNS.jsonl"
-    if not pat.exists():
-        pat.write_text("")
+    values = normalize_init_values(name=name, privacy=privacy, tier=tier, parent=parent)
+    scaffold_project(root, name=name, privacy=privacy, tier=tier, parent=parent)
 
     print(f"\n✔ Scaffolded:")
-    print(f"  config/PROJECT.md (name={name}, privacy={privacy}, tier={tier})")
+    print(f"  config/PROJECT.md (name={values['name']}, privacy={values['privacy']}, tier={values['tier']})")
     print(f"  memory/ flat layout")
     print(f"  skills/drafts/ (review queue)")
-    if parent:
-        print(f"  parent: {parent}")
+    if values["parent"]:
+        print(f"  parent: {values['parent']}")
     print(f"\nNext: edit config/PROJECT.md as needed, then `zeref status`.")
     return 0
 
