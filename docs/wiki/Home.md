@@ -8,7 +8,7 @@
 >
 > **Zeref is the persistent memory layer that fixes this.** A per-project Markdown wiki that AI sessions read first, write to safely, and hand off cleanly. Your project memory travels with the project — not the tool.
 
-**Current version**: v1.0.0 (first public release under this name) · [`CHANGELOG`](https://github.com/kanadhiayash/zeref-os/blob/main/CHANGELOG.md) · [`BENCHMARK_REPORT`](https://github.com/kanadhiayash/zeref-os/blob/main/docs/BENCHMARK_REPORT.md) · [`TRUST_AUDIT`](https://github.com/kanadhiayash/zeref-os/blob/main/docs/TRUST_AUDIT.md)
+**Current version**: v1.0.0 (first public release under this name) · [`CHANGELOG`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/CHANGELOG.md) · [`BENCHMARK_REPORT`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/docs/BENCHMARK_REPORT.md) · [`TRUST_AUDIT`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/docs/TRUST_AUDIT.md)
 
 ## Disclaimers (read first)
 
@@ -85,7 +85,7 @@ Each gate declares its result inline. User can override before token spend. Per 
 | See the published benchmark verdict | [[Benchmarks]] |
 | Inspect the independent trust audit | [[Trust-Audit]] |
 | Understand who we built on | [[Inspirations]] · [[Stack]] |
-| Run the validator yourself | [`scripts/zeref-validate.py`](https://github.com/kanadhiayash/zeref-os/blob/main/scripts/zeref-validate.py) |
+| Run the validator yourself | [`scripts/zeref-validate.py`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/scripts/zeref-validate.py) |
 
 ## Help test it, fork it, scale it
 
@@ -95,9 +95,9 @@ harness, fork it for your team's constraints, or scale it in a direction
 the maintainer hasn't (shared multi-device memory, GUI, harness adapter
 for a tool that doesn't exist yet, higher coverage on the privacy
 scrubber), open an issue with a short proposal. See the README's
-[Help test it, fork it, scale it](https://github.com/kanadhiayash/zeref-os#help-test-it-fork-it-scale-it-in-a-direction-i-havent)
+[Help test it, fork it, scale it](https://github.com/kanadhiayash/zeref-memory-engine#help-test-it-fork-it-scale-it-in-a-direction-i-havent)
 section for direction prompts.
 
 ---
 
-[`README`](https://github.com/kanadhiayash/zeref-os) · [`AGENTS.md`](https://github.com/kanadhiayash/zeref-os/blob/main/AGENTS.md) · [`CHANGELOG`](https://github.com/kanadhiayash/zeref-os/blob/main/CHANGELOG.md) · [`SECURITY.md`](https://github.com/kanadhiayash/zeref-os/blob/main/SECURITY.md) · [`CONTRIBUTING.md`](https://github.com/kanadhiayash/zeref-os/blob/main/CONTRIBUTING.md) · [`GITHUB_OS.md`](https://github.com/kanadhiayash/zeref-os/blob/main/GITHUB_OS.md) · [`_shared/model-resolver.md`](https://github.com/kanadhiayash/zeref-os/blob/main/_shared/model-resolver.md)
+[`README`](https://github.com/kanadhiayash/zeref-memory-engine) · [`AGENTS.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/AGENTS.md) · [`CHANGELOG`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/CHANGELOG.md) · [`SECURITY.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/SECURITY.md) · [`CONTRIBUTING.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/CONTRIBUTING.md) · [`GITHUB_OS.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/GITHUB_OS.md) · [`_shared/model-resolver.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/_shared/model-resolver.md)
