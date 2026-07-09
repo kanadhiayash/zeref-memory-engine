@@ -80,8 +80,75 @@
       }
     },
     {
-      "axis": "trust",
+      "axis": "retrieval",
       "score": 10.0,
+      "sub": {
+        "fixture_inventory": {
+          "score": 10.0,
+          "evidence": "5/5 fixtures present"
+        },
+        "continuity": {
+          "score": 10.0,
+          "evidence": "returns source_ref/confidence/authority/why_returned"
+        },
+        "privacy_recall": {
+          "score": 10.0,
+          "evidence": "raw credential fixture scrubbed before recall"
+        },
+        "contradiction": {
+          "score": 10.0,
+          "evidence": "conflicting same-entity assumptions both returned"
+        },
+        "freshness": {
+          "score": 10.0,
+          "evidence": "updated item is freshest and history records update"
+        },
+        "abstention": {
+          "score": 10.0,
+          "evidence": "unmatched query returns empty result set"
+        },
+        "external_adapter_fixtures": {
+          "score": 10.0,
+          "evidence": "LoCoMo=fixture_pass, LongMemEval=fixture_pass, BEAM=fixture_pass, PersonaMem=fixture_pass, PersonaMem-v2=fixture_pass"
+        }
+      },
+      "note": "Deterministic lexical/FTS5 retrieval benchmark; external adapters are fixture-only unless marked verified.",
+      "adapters": [
+        {
+          "adapter": "LoCoMo",
+          "status": "fixture_pass",
+          "source": "https://github.com/snap-research/locomo",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        },
+        {
+          "adapter": "LongMemEval",
+          "status": "fixture_pass",
+          "source": "https://github.com/xiaowu0162/longmemeval",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        },
+        {
+          "adapter": "BEAM",
+          "status": "fixture_pass",
+          "source": "https://github.com/mohammadtavakoli78/BEAM",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        },
+        {
+          "adapter": "PersonaMem",
+          "status": "fixture_pass",
+          "source": "https://github.com/bowen-upenn/PersonaMem",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        },
+        {
+          "adapter": "PersonaMem-v2",
+          "status": "fixture_pass",
+          "source": "https://github.com/bowen-upenn/PersonaMem-v2",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        }
+      ]
+    },
+    {
+      "axis": "trust",
+      "score": 9.7,
       "sub": {
         "version_consistency": {
           "score": 10.0,
@@ -89,7 +156,7 @@
         },
         "test_suite": {
           "score": 10.0,
-          "evidence": "7 test files; pytest.ini=True; ci=True"
+          "evidence": "22 test files; pytest.ini=True; ci=True"
         },
         "privacy_patterns": {
           "score": 10.0,
@@ -104,7 +171,9 @@
           "evidence": "9/9 action refs SHA-pinned (100%); dependabot=True"
         }
       },
-      "note": "Draft score from deterministic scorer. Final score in docs/BENCHMARK_REPORT.md must come from an independent Opus security-audit pass."
+      "note": "Deterministic draft score was 10.00. Published trust score is 9.70 per docs/TRUST_AUDIT.md independent audit.",
+      "draft_score": 10.0,
+      "summary_note": "Verified by TRUST_AUDIT.md; deterministic draft was 10.00."
     }
   ]
 }
