@@ -395,6 +395,53 @@ def cmd_cost(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_evidence(args: argparse.Namespace) -> int:
+    from zeref.memory.evidence import audit_evidence, grade_claim
+
+    if args.evidence_command == "grade":
+        result = grade_claim(args.claim, source=args.source or "", source_type=args.source_type)
+    elif args.evidence_command == "audit":
+        result = audit_evidence(_project_root())
+    else:
+        return 2
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0 if result.get("passed", True) else 1
+
+
+def cmd_facts(args: argparse.Namespace) -> int:
+    from zeref.memory.fact_guard import audit_facts
+
+    result = audit_facts(_project_root())
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0 if result["passed"] else 1
+
+
+def cmd_contradictions(args: argparse.Namespace) -> int:
+    from zeref.memory.contradictions import (
+        list_contradictions,
+        propose_resolution,
+        resolve_contradiction,
+        scan_contradictions,
+        show_contradiction,
+    )
+
+    root = _project_root()
+    if args.contradictions_command == "scan":
+        result = scan_contradictions(root)
+    elif args.contradictions_command == "list":
+        result = list_contradictions(root)
+    elif args.contradictions_command == "show":
+        result = show_contradiction(root, args.id)
+    elif args.contradictions_command == "propose":
+        result = propose_resolution(root, args.id)
+    elif args.contradictions_command == "resolve":
+        result = resolve_contradiction(root, args.id, winner=args.winner, reason=args.reason)
+    else:
+        return 2
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
 def cmd_db_status(args: argparse.Namespace) -> int:
     """v2.5 L4: report backend (sqlite/duckdb) + extras availability."""
     backends = {"sqlite3": False, "duckdb": False, "yaml": False, "litellm": False}
@@ -639,6 +686,33 @@ def _build_parser() -> argparse.ArgumentParser:
     cost_audit = cost_sub.add_parser("audit", help="Audit artifact token budgets")
     cost_audit.add_argument("--strict", action="store_true")
 
+    evidence = sub.add_parser("evidence", help="Grade and audit evidence")
+    evidence_sub = evidence.add_subparsers(dest="evidence_command", required=True)
+    evidence_grade = evidence_sub.add_parser("grade", help="Grade a claim")
+    evidence_grade.add_argument("claim")
+    evidence_grade.add_argument("--source")
+    evidence_grade.add_argument("--source-type", default="unknown", choices=[
+        "user", "file", "tool", "session", "git", "manual", "unknown",
+    ])
+    evidence_sub.add_parser("audit", help="Audit atom evidence")
+
+    facts = sub.add_parser("facts", help="Audit unsupported fact claims")
+    facts_sub = facts.add_subparsers(dest="facts_command", required=True)
+    facts_sub.add_parser("audit", help="Audit atoms for unsupported claims")
+
+    contradictions = sub.add_parser("contradictions", help="Scan and resolve contradictions")
+    con_sub = contradictions.add_subparsers(dest="contradictions_command", required=True)
+    con_sub.add_parser("scan", help="Create contradiction atoms for detected conflicts")
+    con_sub.add_parser("list", help="List contradiction atoms")
+    con_show = con_sub.add_parser("show", help="Show one contradiction")
+    con_show.add_argument("id")
+    con_prop = con_sub.add_parser("propose", help="Propose a resolution")
+    con_prop.add_argument("id")
+    con_res = con_sub.add_parser("resolve", help="Resolve by explicit winner")
+    con_res.add_argument("id")
+    con_res.add_argument("--winner", required=True)
+    con_res.add_argument("--reason", required=True)
+
     return p
 
 
@@ -657,6 +731,9 @@ def main() -> None:
         "recall": cmd_recall,
         "explain-search": cmd_explain_search,
         "cost": cmd_cost,
+        "evidence": cmd_evidence,
+        "facts": cmd_facts,
+        "contradictions": cmd_contradictions,
     }
     handler = handlers.get(args.command)
     if not handler:
