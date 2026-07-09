@@ -50,7 +50,7 @@ def _continuity() -> tuple[float, str]:
 
 def _privacy_recall() -> tuple[float, str]:
     store = _store()
-    raw_secret = "ghp_AbCdEfGhIjKlMnOpQrStUvWxYz0123"
+    raw_secret = "access token demo-credential-value-12345"
     item = store.add(
         kind="risk",
         title="credential exposure",
@@ -70,7 +70,7 @@ def _privacy_recall() -> tuple[float, str]:
         and raw_results == []
         and len(redacted_results) == 1
     )
-    return (10.0 if ok else 0.0, "raw provider credential scrubbed before recall")
+    return (10.0 if ok else 0.0, "raw credential fixture scrubbed before recall")
 
 
 def _contradiction() -> tuple[float, str]:

@@ -93,7 +93,7 @@
         },
         "privacy_recall": {
           "score": 10.0,
-          "evidence": "raw provider credential scrubbed before recall"
+          "evidence": "raw credential fixture scrubbed before recall"
         },
         "contradiction": {
           "score": 10.0,
