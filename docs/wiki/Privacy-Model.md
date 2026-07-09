@@ -125,4 +125,4 @@ python3 -c 'from zeref.privacy import scrub; t,r=scrub("Hire John Smith at john@
 - [[Memory-Model]] — flat layout, single-writer chain
 - [[Architecture]] — privacy-guardian + privacy-abstraction agents
 - [[Glossary]] — R6, abstract mode, NFKC, homoglyph
-- [`_shared/rules.md`](https://github.com/kanadhiayash/zeref-os/blob/main/_shared/rules.md) — R1-R6
+- [`_shared/rules.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/_shared/rules.md) — R1-R6

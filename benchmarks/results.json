@@ -81,7 +81,7 @@
     },
     {
       "axis": "trust",
-      "score": 10.0,
+      "score": 9.7,
       "sub": {
         "version_consistency": {
           "score": 10.0,
@@ -104,7 +104,9 @@
           "evidence": "9/9 action refs SHA-pinned (100%); dependabot=True"
         }
       },
-      "note": "Draft score from deterministic scorer. Final score in docs/BENCHMARK_REPORT.md must come from an independent Opus security-audit pass."
+      "note": "Deterministic draft score was 10.00. Published trust score is 9.70 per docs/TRUST_AUDIT.md independent audit.",
+      "draft_score": 10.0,
+      "summary_note": "Verified by TRUST_AUDIT.md; deterministic draft was 10.00."
     }
   ]
 }
