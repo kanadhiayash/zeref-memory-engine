@@ -159,4 +159,4 @@ python3 scripts/zeref-validate.py
 - [[Pattern-Detection]] — Two-Strikes Rule + drafting
 - [[Architecture]] — agents + skills + 4-gate chain
 - [[Glossary]] — boundary file, evidence grade, R6, gate event types
-- [`_shared/rules.md`](https://github.com/kanadhiayash/zeref-os/blob/main/_shared/rules.md) — R1-R6
+- [`_shared/rules.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/_shared/rules.md) — R1-R6
