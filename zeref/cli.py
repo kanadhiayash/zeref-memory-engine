@@ -532,6 +532,51 @@ def cmd_privacy(args: argparse.Namespace) -> int:
     return 1
 
 
+def cmd_route(args: argparse.Namespace) -> int:
+    from zeref.routing.policy import classify_task, policy_json, route_report, validate_policy
+
+    if args.route_command == "classify":
+        decision = classify_task(args.text)
+        print(json.dumps(decision.to_dict(), indent=2, sort_keys=True))
+        return 0
+    if args.route_command == "explain":
+        decision = classify_task(args.text)
+        print(f"{decision.domain} / {decision.weight} / {decision.lead}\n{decision.reason}")
+        return 0
+    if args.route_command == "policy":
+        if args.policy_command == "show":
+            print(policy_json(), end="")
+            return 0
+        if args.policy_command == "validate":
+            issues = validate_policy()
+            print("Route policy valid." if not issues else "\n".join(issues))
+            return 1 if issues else 0
+    if args.route_command == "report":
+        print(route_report(), end="")
+        return 0
+    print("✘ unknown route command")
+    return 1
+
+
+def cmd_release(args: argparse.Namespace) -> int:
+    from zeref.release.checks import format_release, release_passed, run_release_check
+
+    if args.release_command == "check":
+        findings = run_release_check(_project_root())
+        print(format_release(findings, format=args.format), end="")
+        return 0 if release_passed(findings) else 1
+    print("✘ unknown release command")
+    return 1
+
+
+def cmd_doctor(args: argparse.Namespace) -> int:
+    from zeref.release.doctor import doctor_passed, format_doctor, run_doctor
+
+    checks = run_doctor(_project_root())
+    print(format_doctor(checks, format=args.format), end="")
+    return 0 if doctor_passed(checks) else 1
+
+
 def _print_item_result(item, *, json_output: bool, verb: str) -> int:
     from zeref.memory_state import item_to_dict
 
@@ -729,6 +774,26 @@ def _build_parser() -> argparse.ArgumentParser:
     privacy_report.add_argument("--format", choices=["text", "json"], default="text")
     privacy_report.add_argument("--strict", action="store_true")
 
+    route = sub.add_parser("route", help="Classify tasks against the local routing policy")
+    route_sub = route.add_subparsers(dest="route_command", required=True)
+    route_classify = route_sub.add_parser("classify", help="Classify a task")
+    route_classify.add_argument("text")
+    route_explain = route_sub.add_parser("explain", help="Explain a task route")
+    route_explain.add_argument("text")
+    route_policy = route_sub.add_parser("policy", help="Show or validate route policy")
+    route_policy_sub = route_policy.add_subparsers(dest="policy_command", required=True)
+    route_policy_sub.add_parser("show", help="Print route policy")
+    route_policy_sub.add_parser("validate", help="Validate route policy")
+    route_sub.add_parser("report", help="Generate route report")
+
+    release = sub.add_parser("release", help="Run release readiness checks")
+    release_sub = release.add_subparsers(dest="release_command", required=True)
+    release_check = release_sub.add_parser("check", help="Run local release checks")
+    release_check.add_argument("--format", choices=["text", "md", "json"], default="text")
+
+    doctor = sub.add_parser("doctor", help="Run local Zeref health checks")
+    doctor.add_argument("--format", choices=["text", "json"], default="text")
+
     return p
 
 
@@ -748,6 +813,9 @@ def main() -> None:
         "evidence": cmd_evidence,
         "contradictions": cmd_contradictions,
         "privacy": cmd_privacy,
+        "route": cmd_route,
+        "release": cmd_release,
+        "doctor": cmd_doctor,
     }
     handler = handlers.get(args.command)
     if not handler:
