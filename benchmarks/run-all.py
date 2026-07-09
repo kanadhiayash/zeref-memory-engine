@@ -24,9 +24,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
-from benchmarks import adaptivity, portability, scalability, trust  # noqa: E402
+from benchmarks import adaptivity, portability, retrieval, scalability, trust  # noqa: E402
 
-AXES = [portability, adaptivity, scalability, trust]
+AXES = [portability, adaptivity, scalability, retrieval, trust]
 
 
 def _apply_verified_overrides(results: list[dict]) -> list[dict]:
@@ -123,6 +123,7 @@ def _render_report(results: list[dict], rubric_rel: str, passed: bool) -> str:
         "python3 -m benchmarks.portability",
         "python3 -m benchmarks.adaptivity",
         "python3 -m benchmarks.scalability",
+        "python3 -m benchmarks.retrieval",
         "python3 -m benchmarks.trust",
         "```",
         "",
