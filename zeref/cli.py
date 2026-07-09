@@ -257,6 +257,96 @@ def cmd_contradictions(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_prompt(args: argparse.Namespace) -> int:
+    if args.prompt_command == "classify":
+        from zeref.prompt.classify import classify_prompt
+
+        result = classify_prompt(args.prompt)
+    elif args.prompt_command == "rewrite":
+        from zeref.prompt.rewrite import rewrite_prompt
+
+        result = rewrite_prompt(args.prompt)
+    elif args.prompt_command == "brief":
+        from zeref.prompt.rewrite import build_brief
+
+        result = build_brief(args.prompt)
+    elif args.prompt_command == "inject":
+        from zeref.prompt.inject import inject_prompt
+
+        result = inject_prompt(args.prompt, target=args.target)
+    else:
+        return 2
+    if args.json:
+        print(json.dumps(result, indent=2, sort_keys=True))
+    elif args.prompt_command == "classify":
+        print(f"{result['classification']}: {result['reason']}")
+    elif args.prompt_command == "inject":
+        print(result["content"])
+    elif args.prompt_command == "rewrite":
+        print(result["markdown"])
+    else:
+        from zeref.prompt.rewrite import brief_to_markdown
+
+        print(brief_to_markdown(result))
+    return 0 if result.get("classification") != "UNSAFE" else 1
+
+
+def cmd_handoff(args: argparse.Namespace) -> int:
+    from zeref.handoff.compiler import compile_handoff
+
+    result = compile_handoff(
+        _project_root(),
+        target=args.handoff_command,
+        objective=args.objective,
+    )
+    if args.json:
+        print(json.dumps(result, indent=2, sort_keys=True))
+    else:
+        print(f"✔ Handoff written for {result['target']}")
+        print(f"  Markdown: {result['markdown']}")
+        print(f"  JSON: {result['json']}")
+    return 0
+
+
+def cmd_loop(args: argparse.Namespace) -> int:
+    root = _project_root()
+    if args.loop_command == "plan":
+        from zeref.loops.contract import create_loop_contract
+
+        result = create_loop_contract(
+            root,
+            args.goal,
+            team_pack=args.team,
+            max_iterations=args.max_iterations,
+        )
+    elif args.loop_command == "run":
+        from zeref.loops.runtime import run_loop
+
+        result = run_loop(
+            root,
+            args.goal,
+            team_pack=args.team,
+            max_iterations=args.max_iterations,
+        )
+    elif args.loop_command == "status":
+        from zeref.loops.runtime import loop_status
+
+        result = loop_status(root)
+    elif args.loop_command == "report":
+        from zeref.loops.runtime import loop_report
+
+        result = loop_report(root, loop_id=args.loop_id)
+    else:
+        return 2
+    if args.json:
+        print(json.dumps(result, indent=2, sort_keys=True))
+    elif args.loop_command == "report":
+        print(result["report"] if result["found"] else "No loop report found.")
+    else:
+        print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
 def cmd_db_status(args: argparse.Namespace) -> int:
     """v2.5 L4: report backend (sqlite/duckdb) + extras availability."""
     backends = {"sqlite3": False, "duckdb": False, "yaml": False, "litellm": False}
@@ -1206,6 +1296,47 @@ def _build_parser() -> argparse.ArgumentParser:
     doctor = sub.add_parser("doctor", help="Run local Zeref health checks")
     doctor.add_argument("--format", choices=["text", "json"], default="text")
 
+    prompt = sub.add_parser("prompt", help="Classify and rewrite task prompts")
+    prompt_sub = prompt.add_subparsers(dest="prompt_command", required=True)
+    prompt_classify = prompt_sub.add_parser("classify", help="Classify a raw prompt")
+    prompt_classify.add_argument("prompt")
+    prompt_classify.add_argument("--json", action="store_true")
+    prompt_rewrite = prompt_sub.add_parser("rewrite", help="Rewrite a prompt into a task brief")
+    prompt_rewrite.add_argument("prompt")
+    prompt_rewrite.add_argument("--json", action="store_true")
+    prompt_brief = prompt_sub.add_parser("brief", help="Return structured brief fields")
+    prompt_brief.add_argument("prompt")
+    prompt_brief.add_argument("--json", action="store_true")
+    prompt_inject = prompt_sub.add_parser("inject", help="Wrap a task brief for a target harness")
+    prompt_inject.add_argument("prompt")
+    prompt_inject.add_argument("--target", default="codex", choices=["codex", "claude", "cursor", "github", "human"])
+    prompt_inject.add_argument("--json", action="store_true")
+
+    handoff = sub.add_parser("handoff", help="Write cross-agent handoff artifacts")
+    handoff_sub = handoff.add_subparsers(dest="handoff_command", required=True)
+    for target in ["codex", "claude", "cursor", "github", "human"]:
+        handoff_target = handoff_sub.add_parser(target, help=f"Write {target} handoff")
+        handoff_target.add_argument("--objective", default="Continue from current Zeref memory state.")
+        handoff_target.add_argument("--json", action="store_true")
+
+    loop = sub.add_parser("loop", help="Plan and run bounded observe-only loops")
+    loop_sub = loop.add_subparsers(dest="loop_command", required=True)
+    loop_plan = loop_sub.add_parser("plan", help="Create a loop contract")
+    loop_plan.add_argument("goal")
+    loop_plan.add_argument("--team", default="small")
+    loop_plan.add_argument("--max-iterations", type=int, default=3)
+    loop_plan.add_argument("--json", action="store_true")
+    loop_run = loop_sub.add_parser("run", help="Run a bounded deterministic loop")
+    loop_run.add_argument("goal")
+    loop_run.add_argument("--team", default="small")
+    loop_run.add_argument("--max-iterations", type=int, default=3)
+    loop_run.add_argument("--json", action="store_true")
+    loop_status = loop_sub.add_parser("status", help="Show latest loop status")
+    loop_status.add_argument("--json", action="store_true")
+    loop_report = loop_sub.add_parser("report", help="Show latest or selected loop report")
+    loop_report.add_argument("--loop-id")
+    loop_report.add_argument("--json", action="store_true")
+
     return p
 
 
@@ -1232,6 +1363,9 @@ def main() -> None:
         "route": cmd_route,
         "release": cmd_release,
         "doctor": cmd_doctor,
+        "prompt": cmd_prompt,
+        "handoff": cmd_handoff,
+        "loop": cmd_loop,
     }
     handler = handlers.get(args.command)
     if not handler:
