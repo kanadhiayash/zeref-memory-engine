@@ -1,5 +1,5 @@
 {
-  "passed": true,
+  "passed": false,
   "pass_bar": {
     "axis_min": 9.0
   },
@@ -151,11 +151,11 @@
     },
     {
       "axis": "trust",
-      "score": 9.7,
+      "score": 8.8,
       "sub": {
         "version_consistency": {
-          "score": 10.0,
-          "evidence": "checker clean; ci_enforced=True"
+          "score": 4.0,
+          "evidence": "checker exits non-zero: gistry.json:.version: '1.0.0'\n  [OK] .claude-plugin/plugin.json:.version: '1.0.0'\n  [DRIFT] README.md:badge: None\n  [OK] docs/wiki/Installation.md: '1.0.0'\n  [OK] docs/RELEASE_LOG.md:top row: '1.0.0'\n"
         },
         "test_suite": {
           "score": 10.0,
@@ -174,9 +174,7 @@
           "evidence": "9/9 action refs SHA-pinned (100%); dependabot=True"
         }
       },
-      "note": "Deterministic draft score was 10.00. Published trust score is 9.70 per docs/TRUST_AUDIT.md independent audit.",
-      "draft_score": 10.0,
-      "summary_note": "Verified by TRUST_AUDIT.md; deterministic draft was 10.00."
+      "note": "Deterministic trust scorer. Use an independent high-effort security review before making any public final trust verdict."
     },
     {
       "axis": "token_efficiency",
@@ -206,11 +204,11 @@
       "sub": {
         "sqlite_indexed_recall": {
           "score": 10.0,
-          "evidence": "top=decision_8d7b9dbbdec8311c"
+          "evidence": "top=decision_e447fde9c35289b8"
         },
         "jsonl_fallback_recall": {
           "score": 10.0,
-          "evidence": "top=decision_8d7b9dbbdec8311c"
+          "evidence": "top=decision_e447fde9c35289b8"
         },
         "explain_search": {
           "score": 10.0,
@@ -324,7 +322,7 @@
         },
         "no_direct_memory_write": {
           "score": 10.0,
-          "evidence": "proposal={'direct_memory_write': False, 'loop_id': 'loop_c3719eead3a6', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []}"
+          "evidence": "proposal={'direct_memory_write': False, 'loop_id': 'loop_7a199a4640af', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []}"
         },
         "status_available": {
           "score": 10.0,
@@ -363,6 +361,15 @@
       }
     }
   ],
-  "failures": [],
+  "failures": [
+    {
+      "failed_metric": "trust",
+      "expected": "axis score >= 9.0",
+      "actual": "axis score 8.8",
+      "likely_cause": "One or more benchmark sub-criteria are below the deterministic pass bar.",
+      "needed_fix": "Inspect the trust sub-criteria and implement the missing local behavior.",
+      "regression_test_suggestion": "Add or update a regression test for benchmarks.trust."
+    }
+  ],
   "failure_report": "memory/reports/benchmark-failures.md"
 }
