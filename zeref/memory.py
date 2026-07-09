@@ -7,9 +7,14 @@ these helpers instead of duplicating path lists in the CLI.
 
 from __future__ import annotations
 
+import hashlib
+import json
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
+
+from zeref.lock import LockError, MemoryLock, atomic_append
+from zeref.privacy import scrub
 
 
 MEMORY_DIRS: tuple[str, ...] = (
@@ -83,6 +88,104 @@ class MemoryRoot:
     @classmethod
     def discover(cls, start: Path | None = None, max_depth: int = 10) -> "MemoryRoot":
         return cls.from_path(discover_project_root(start=start, max_depth=max_depth))
+
+
+@dataclass(frozen=True)
+class WriteResult:
+    """Summary returned after a memory write."""
+
+    target: Path
+    title: str
+    date: str
+    redacted: int
+    event_hash: str
+
+
+class MemoryWriter:
+    """Single writer for wiki files and their matching event-log entries."""
+
+    def __init__(self, memory_root: MemoryRoot):
+        self.memory_root = memory_root
+        self.layout = memory_root.layout
+
+    @classmethod
+    def from_root(cls, root: Path) -> "MemoryWriter":
+        return cls(MemoryRoot.from_path(root))
+
+    @classmethod
+    def discover(cls, start: Path | None = None) -> "MemoryWriter":
+        return cls(MemoryRoot.discover(start=start))
+
+    def write_decision(
+        self,
+        *,
+        title: str,
+        why: str,
+        evidence: str,
+        grade: str,
+    ) -> WriteResult:
+        """Append a scrubbed decision and emit a schema-valid wiki-write event."""
+        target = self.layout.path("memory/DECISIONS.md")
+        redact = self.memory_root.root / "REDACT.md"
+
+        title_s, title_r = scrub(title, redact, provenance="write-decision/title")
+        why_s, why_r = scrub(why, redact, provenance="write-decision/why")
+        evidence_s, evidence_r = scrub(evidence, redact, provenance="write-decision/evidence")
+        total_redacted = title_r.redacted + why_r.redacted + evidence_r.redacted
+        today = date.today().isoformat()
+
+        entry = (
+            f"\n---\n"
+            f"**Decision:** {title_s}\n"
+            f"**Date:** {today}\n"
+            f"**Rationale:** {why_s}\n"
+            f"**Evidence:** {evidence_s or '(none provided)'}\n"
+            f"**Evidence grade:** {grade}\n"
+            f"**Provenance:** zeref-cli write-decision (pii_scrubbed={total_redacted})\n"
+            f"---\n"
+        )
+
+        event, event_hash = self._wiki_write_event(
+            target="memory/DECISIONS.md",
+            summary=f"Decision: {title_s}",
+            evidence_grade=grade,
+        )
+
+        try:
+            with MemoryLock(self.layout.memory_dir):
+                atomic_append(target, entry)
+                atomic_append(self.layout.patterns_log, json.dumps(event, sort_keys=True) + "\n")
+        except LockError:
+            raise
+
+        return WriteResult(
+            target=target,
+            title=title_s,
+            date=today,
+            redacted=total_redacted,
+            event_hash=event_hash,
+        )
+
+    def _wiki_write_event(
+        self,
+        *,
+        target: str,
+        summary: str,
+        evidence_grade: str,
+    ) -> tuple[dict, str]:
+        payload = {"summary": summary}
+        payload_json = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+        event_hash = "sha256:" + hashlib.sha256(payload_json.encode("utf-8")).hexdigest()
+        event = {
+            "ts": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+            "agent": "memory-keeper",
+            "event": "wiki-write",
+            "target": target,
+            "payload": payload,
+            "hash": event_hash,
+            "evidence_grade": evidence_grade,
+        }
+        return event, event_hash
 
 
 def discover_project_root(start: Path | None = None, max_depth: int = 10) -> Path:
