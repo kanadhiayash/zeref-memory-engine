@@ -21,6 +21,7 @@ MEMORY_DIRS: tuple[str, ...] = (
     "memory",
     "memory/archive",
     "memory/patterns",
+    "memory/state",
     "memory/snapshots",
     "memory/raw",
     "memory/sync/outbound",
@@ -42,7 +43,38 @@ MEMORY_FILES: tuple[str, ...] = (
     "memory/CONFLICTS.md",
     "memory/MEMORY.md",
     "memory/patterns/PATTERNS.jsonl",
+    "memory/state/events.jsonl",
+    "memory/state/schema.json",
 )
+
+STATE_SCHEMA: dict = {
+    "schema_version": "memory-state.v1",
+    "canonical_store": "memory/state/zeref.sqlite",
+    "event_log": "memory/state/events.jsonl",
+    "tables": {
+        "memory_items": {
+            "fields": [
+                "id",
+                "kind",
+                "title",
+                "body",
+                "entity",
+                "tags",
+                "source_ref",
+                "confidence",
+                "authority",
+                "created_at",
+                "updated_at",
+                "archived",
+            ],
+            "search_index": "memory_items_fts",
+        },
+        "memory_events": {
+            "fields": ["id", "ts", "event", "item_id", "payload", "hash"],
+            "append_only_mirror": "memory/state/events.jsonl",
+        },
+    },
+}
 
 
 @dataclass(frozen=True)
@@ -62,6 +94,22 @@ class MemoryLayout:
     @property
     def patterns_log(self) -> Path:
         return self.root / "memory" / "patterns" / "PATTERNS.jsonl"
+
+    @property
+    def state_dir(self) -> Path:
+        return self.root / "memory" / "state"
+
+    @property
+    def state_db(self) -> Path:
+        return self.state_dir / "zeref.sqlite"
+
+    @property
+    def state_events(self) -> Path:
+        return self.state_dir / "events.jsonl"
+
+    @property
+    def state_schema(self) -> Path:
+        return self.state_dir / "schema.json"
 
     def path(self, relative: str) -> Path:
         return self.root / relative
@@ -294,3 +342,11 @@ def _write_memory_files(layout: MemoryLayout) -> None:
 
     if not layout.patterns_log.exists():
         layout.patterns_log.write_text("", encoding="utf-8")
+
+    if not layout.state_events.exists():
+        layout.state_events.write_text("", encoding="utf-8")
+
+    layout.state_schema.write_text(
+        json.dumps(STATE_SCHEMA, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )

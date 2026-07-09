@@ -4,11 +4,12 @@ zeref.cli — Reference CLI for Zeref OS (Sprint 2).
 Commands:
     zeref status          Print hot.md summary + active tier
     zeref write-decision  Append a decision to memory/DECISIONS.md
+    zeref memory ...      Add/search/get/update/history/explain structured memory
     zeref grade <claim>   Grade a claim (evidence-grader heuristics + optional LLM)
     zeref audit-privacy   Run deterministic PII audit on memory/
     zeref audit           Structural validation (wraps zeref-validate.py)
 
-All commands are read-only except write-decision.
+Write commands: write-decision, memory add, memory update.
 Wraps litellm for grade if available; degrades gracefully without it.
 """
 
@@ -258,6 +259,107 @@ def cmd_audit(args: argparse.Namespace) -> int:
     return subprocess.run([sys.executable, str(script)], cwd=str(root)).returncode
 
 
+def cmd_memory(args: argparse.Namespace) -> int:
+    from zeref.memory_state import event_to_dict, item_to_dict, MemoryStore
+
+    store = MemoryStore.from_root(_project_root())
+
+    try:
+        if args.memory_command == "add":
+            item = store.add(
+                kind=args.kind,
+                title=args.title or input("Title: ").strip(),
+                body=args.body or input("Body: ").strip(),
+                entity=args.entity or "",
+                tags=args.tag or [],
+                source_ref=args.source_ref or "",
+                confidence=args.confidence,
+                authority=args.authority,
+            )
+            return _print_item_result(item, json_output=args.json, verb="added")
+
+        if args.memory_command == "search":
+            items = store.search(
+                args.query or "",
+                entity=args.entity or "",
+                kind=args.kind or "",
+                limit=args.limit,
+            )
+            if args.json:
+                print(json.dumps([item_to_dict(item) for item in items], indent=2, sort_keys=True))
+            else:
+                for item in items:
+                    _print_memory_item(item)
+                if not items:
+                    print("No memory items found.")
+            return 0
+
+        if args.memory_command == "get":
+            item = store.get(args.id)
+            if item is None:
+                print(f"✘ memory item {args.id} not found")
+                return 1
+            return _print_item_result(item, json_output=args.json, verb="found")
+
+        if args.memory_command == "update":
+            item = store.update(
+                args.id,
+                kind=args.kind,
+                title=args.title,
+                body=args.body,
+                entity=args.entity,
+                tags=args.tag,
+                source_ref=args.source_ref,
+                confidence=args.confidence,
+                authority=args.authority,
+            )
+            return _print_item_result(item, json_output=args.json, verb="updated")
+
+        if args.memory_command == "history":
+            events = store.history(args.id, limit=args.limit)
+            if args.json:
+                print(json.dumps([event_to_dict(event) for event in events], indent=2, sort_keys=True))
+            else:
+                for event in events:
+                    item = f" item={event.item_id}" if event.item_id is not None else ""
+                    print(f"{event.ts} {event.event}{item} {event.hash}")
+                if not events:
+                    print("No memory events found.")
+            return 0
+
+        if args.memory_command == "explain":
+            item = store.explain(args.id, query=args.query or "")
+            return _print_item_result(item, json_output=args.json, verb="explained")
+    except (KeyError, ValueError, RuntimeError) as exc:
+        print(f"✘ {exc}")
+        return 1
+
+    print("✘ unknown memory command")
+    return 1
+
+
+def _print_item_result(item, *, json_output: bool, verb: str) -> int:
+    from zeref.memory_state import item_to_dict
+
+    if json_output:
+        print(json.dumps(item_to_dict(item), indent=2, sort_keys=True))
+    else:
+        print(f"✔ memory item {verb}: {item.id}")
+        _print_memory_item(item)
+    return 0
+
+
+def _print_memory_item(item) -> None:
+    print(f"[{item.id}] {item.title}")
+    print(f"  kind={item.kind} entity={item.entity or '(none)'}")
+    print(f"  source_ref={item.source_ref or '(none)'} confidence={item.confidence} authority={item.authority}")
+    if item.why_returned:
+        print(f"  why_returned={item.why_returned}")
+    if item.tags:
+        print(f"  tags={', '.join(item.tags)}")
+    print(f"  body={item.body}")
+
+
 # ---------------------------------------------------------------------------
 # Parser
 # ---------------------------------------------------------------------------
@@ -293,6 +395,53 @@ def _build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("db-status", help="Report backend (sqlite/duckdb) + extras")
 
+    memory = sub.add_parser("memory", help="Structured local memory state")
+    memory_sub = memory.add_subparsers(dest="memory_command", required=True)
+
+    mem_add = memory_sub.add_parser("add", help="Add a structured memory item")
+    mem_add.add_argument("--kind", default="note")
+    mem_add.add_argument("--title")
+    mem_add.add_argument("--body")
+    mem_add.add_argument("--entity")
+    mem_add.add_argument("--tag", action="append")
+    mem_add.add_argument("--source-ref")
+    mem_add.add_argument("--confidence", choices=["high", "medium", "low"], default="medium")
+    mem_add.add_argument("--authority", choices=["canonical", "confirmed", "inferred", "unknown"], default="unknown")
+    mem_add.add_argument("--json", action="store_true")
+
+    mem_search = memory_sub.add_parser("search", help="Search structured memory state")
+    mem_search.add_argument("query", nargs="?", default="")
+    mem_search.add_argument("--entity")
+    mem_search.add_argument("--kind")
+    mem_search.add_argument("--limit", type=int, default=10)
+    mem_search.add_argument("--json", action="store_true")
+
+    mem_get = memory_sub.add_parser("get", help="Get a memory item by id")
+    mem_get.add_argument("id", type=int)
+    mem_get.add_argument("--json", action="store_true")
+
+    mem_update = memory_sub.add_parser("update", help="Update a memory item by id")
+    mem_update.add_argument("id", type=int)
+    mem_update.add_argument("--kind")
+    mem_update.add_argument("--title")
+    mem_update.add_argument("--body")
+    mem_update.add_argument("--entity")
+    mem_update.add_argument("--tag", action="append")
+    mem_update.add_argument("--source-ref")
+    mem_update.add_argument("--confidence", choices=["high", "medium", "low"])
+    mem_update.add_argument("--authority", choices=["canonical", "confirmed", "inferred", "unknown"])
+    mem_update.add_argument("--json", action="store_true")
+
+    mem_history = memory_sub.add_parser("history", help="Show memory state event history")
+    mem_history.add_argument("id", type=int, nargs="?")
+    mem_history.add_argument("--limit", type=int, default=20)
+    mem_history.add_argument("--json", action="store_true")
+
+    mem_explain = memory_sub.add_parser("explain", help="Explain why a memory item is relevant")
+    mem_explain.add_argument("id", type=int)
+    mem_explain.add_argument("--query", default="")
+    mem_explain.add_argument("--json", action="store_true")
+
     return p
 
 
@@ -307,6 +456,7 @@ def main() -> None:
         "audit": cmd_audit,
         "init": cmd_init,
         "db-status": cmd_db_status,
+        "memory": cmd_memory,
     }
     handler = handlers.get(args.command)
     if not handler:
