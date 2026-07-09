@@ -12,7 +12,7 @@ be added.
 
 - **[karpathy / "Software 2.0" gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)**
   — conceptual lineage for AI-first engineering.
-- **[kanadhiayash / zeref-os](https://github.com/kanadhiayash/zeref-os)**
+- **[kanadhiayash / zeref-os](https://github.com/kanadhiayash/zeref-memory-engine)**
   — this repo (the memory layer everything below routes through).
 
 ## Memory + knowledge graph
