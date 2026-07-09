@@ -14,8 +14,8 @@ pipx install "zeref-os[all]"             # with litellm, duckdb, pyyaml
 Or from this repo:
 
 ```bash
-git clone https://github.com/kanadhiayash/zeref-os
-cd zeref-os
+git clone https://github.com/kanadhiayash/zeref-memory-engine
+cd zeref-memory-engine
 pip install -e .
 ```
 
