@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from zeref.lock import MemoryLock, atomic_append, atomic_write
-from zeref.memory import MemoryRoot, STATE_SCHEMA
+from zeref.memory import MEMORY_LAYERS, MemoryRoot, STATE_SCHEMA
 from zeref.privacy import scrub
 
 
@@ -40,6 +40,7 @@ class MemoryItem:
     body: str
     entity: str
     tags: list[str]
+    layer: str
     source_ref: str
     confidence: str
     authority: str
@@ -91,6 +92,7 @@ class MemoryStore:
                     body TEXT NOT NULL,
                     entity TEXT NOT NULL DEFAULT '',
                     tags TEXT NOT NULL DEFAULT '[]',
+                    layer TEXT NOT NULL DEFAULT 'L1',
                     source_ref TEXT NOT NULL DEFAULT '',
                     confidence TEXT NOT NULL DEFAULT 'medium',
                     authority TEXT NOT NULL DEFAULT 'unknown',
@@ -98,33 +100,6 @@ class MemoryStore:
                     updated_at TEXT NOT NULL,
                     archived INTEGER NOT NULL DEFAULT 0
                 );
-
-                CREATE VIRTUAL TABLE IF NOT EXISTS memory_items_fts
-                USING fts5(
-                    title,
-                    body,
-                    entity,
-                    tags,
-                    content='memory_items',
-                    content_rowid='id'
-                );
-
-                CREATE TRIGGER IF NOT EXISTS memory_items_ai AFTER INSERT ON memory_items BEGIN
-                    INSERT INTO memory_items_fts(rowid, title, body, entity, tags)
-                    VALUES (new.id, new.title, new.body, new.entity, new.tags);
-                END;
-
-                CREATE TRIGGER IF NOT EXISTS memory_items_ad AFTER DELETE ON memory_items BEGIN
-                    INSERT INTO memory_items_fts(memory_items_fts, rowid, title, body, entity, tags)
-                    VALUES ('delete', old.id, old.title, old.body, old.entity, old.tags);
-                END;
-
-                CREATE TRIGGER IF NOT EXISTS memory_items_au AFTER UPDATE ON memory_items BEGIN
-                    INSERT INTO memory_items_fts(memory_items_fts, rowid, title, body, entity, tags)
-                    VALUES ('delete', old.id, old.title, old.body, old.entity, old.tags);
-                    INSERT INTO memory_items_fts(rowid, title, body, entity, tags)
-                    VALUES (new.id, new.title, new.body, new.entity, new.tags);
-                END;
 
                 CREATE TABLE IF NOT EXISTS memory_events (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -136,6 +111,8 @@ class MemoryStore:
                 );
                 """
             )
+            _ensure_column(conn, "memory_items", "layer", "TEXT NOT NULL DEFAULT 'L1'")
+            _ensure_fts(conn)
 
     def add(
         self,
@@ -145,11 +122,13 @@ class MemoryStore:
         body: str,
         entity: str = "",
         tags: list[str] | None = None,
+        layer: str = "L1",
         source_ref: str = "",
         confidence: str = "medium",
         authority: str = "unknown",
     ) -> MemoryItem:
         self.ensure()
+        layer = _validated(layer, set(MEMORY_LAYERS), "layer")
         confidence = _validated(confidence, VALID_CONFIDENCE, "confidence")
         authority = _validated(authority, VALID_AUTHORITY, "authority")
         tags = [t.strip() for t in (tags or []) if t.strip()]
@@ -166,10 +145,10 @@ class MemoryStore:
                 cur = conn.execute(
                     """
                     INSERT INTO memory_items(
-                        kind, title, body, entity, tags, source_ref,
+                        kind, title, body, entity, tags, layer, source_ref,
                         confidence, authority, created_at, updated_at
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         kind,
@@ -177,6 +156,7 @@ class MemoryStore:
                         body_s,
                         entity_s,
                         json.dumps(tags_s),
+                        layer,
                         source_s,
                         confidence,
                         authority,
@@ -189,7 +169,7 @@ class MemoryStore:
                     conn,
                     event="memory-add",
                     item_id=item_id,
-                    payload={"kind": kind, "title": title_s},
+                    payload={"kind": kind, "layer": layer, "title": title_s},
                 )
                 conn.commit()
                 atomic_append(self.layout.state_events, json.dumps(asdict(event), sort_keys=True) + "\n")
@@ -208,6 +188,7 @@ class MemoryStore:
         body: str | None = None,
         entity: str | None = None,
         tags: list[str] | None = None,
+        layer: str | None = None,
         source_ref: str | None = None,
         confidence: str | None = None,
         authority: str | None = None,
@@ -224,6 +205,7 @@ class MemoryStore:
             "body": scrub(body, redact, provenance="memory/update/body")[0] if body is not None else current.body,
             "entity": scrub(entity, redact, provenance="memory/update/entity")[0] if entity is not None else current.entity,
             "tags": [scrub(tag, redact, provenance="memory/update/tag")[0] for tag in tags] if tags is not None else current.tags,
+            "layer": _validated(layer, set(MEMORY_LAYERS), "layer") if layer is not None else current.layer,
             "source_ref": scrub(source_ref, redact, provenance="memory/update/source_ref")[0] if source_ref is not None else current.source_ref,
             "confidence": _validated(confidence, VALID_CONFIDENCE, "confidence") if confidence is not None else current.confidence,
             "authority": _validated(authority, VALID_AUTHORITY, "authority") if authority is not None else current.authority,
@@ -235,7 +217,7 @@ class MemoryStore:
                 conn.execute(
                     """
                     UPDATE memory_items
-                    SET kind=?, title=?, body=?, entity=?, tags=?, source_ref=?,
+                    SET kind=?, title=?, body=?, entity=?, tags=?, layer=?, source_ref=?,
                         confidence=?, authority=?, updated_at=?
                     WHERE id=? AND archived=0
                     """,
@@ -245,6 +227,7 @@ class MemoryStore:
                         next_values["body"],
                         next_values["entity"],
                         json.dumps(next_values["tags"]),
+                        next_values["layer"],
                         next_values["source_ref"],
                         next_values["confidence"],
                         next_values["authority"],
@@ -281,6 +264,7 @@ class MemoryStore:
         *,
         entity: str = "",
         kind: str = "",
+        layer: str = "",
         limit: int = 10,
     ) -> list[MemoryItem]:
         self.ensure()
@@ -304,6 +288,10 @@ class MemoryStore:
         if kind:
             sql += " AND mi.kind=?"
             params.append(kind)
+        if layer:
+            layer = _validated(layer, set(MEMORY_LAYERS), "layer")
+            sql += " AND mi.layer=?"
+            params.append(layer)
 
         sql += " ORDER BY rank ASC, mi.updated_at DESC LIMIT ?"
         params.append(limit)
@@ -315,7 +303,7 @@ class MemoryStore:
         for row in rows:
             item = _item_from_row(row)
             if item:
-                items.append(_with_reason(item, query=query, entity=entity, kind=kind))
+                items.append(_with_reason(item, query=query, entity=entity, kind=kind, layer=layer))
         return items
 
     def history(self, item_id: int | None = None, limit: int = 20) -> list[MemoryEvent]:
@@ -346,7 +334,7 @@ class MemoryStore:
         item = self.get(item_id)
         if item is None:
             raise KeyError(f"memory item {item_id} not found")
-        return _with_reason(item, query=query, entity="", kind="")
+        return _with_reason(item, query=query, entity="", kind="", layer="")
 
     def generate_views(self) -> dict[str, str]:
         self.ensure()
@@ -373,13 +361,17 @@ class MemoryStore:
 
         return written
 
-    def list_items(self, *, kind: str = "", limit: int = 500) -> list[MemoryItem]:
+    def list_items(self, *, kind: str = "", layer: str = "", limit: int = 500) -> list[MemoryItem]:
         self.ensure()
         params: list[Any] = []
         sql = "SELECT * FROM memory_items WHERE archived=0"
         if kind:
             sql += " AND kind=?"
             params.append(kind)
+        if layer:
+            layer = _validated(layer, set(MEMORY_LAYERS), "layer")
+            sql += " AND layer=?"
+            params.append(layer)
         sql += " ORDER BY updated_at DESC, id DESC LIMIT ?"
         params.append(limit)
 
@@ -432,6 +424,54 @@ def _validated(value: str, allowed: set[str], name: str) -> str:
     return value
 
 
+def _ensure_column(conn: sqlite3.Connection, table: str, column: str, definition: str) -> None:
+    columns = {row["name"] for row in conn.execute(f"PRAGMA table_info({table})").fetchall()}
+    if column not in columns:
+        conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
+
+
+def _ensure_fts(conn: sqlite3.Connection) -> None:
+    conn.executescript(
+        """
+        DROP TRIGGER IF EXISTS memory_items_ai;
+        DROP TRIGGER IF EXISTS memory_items_ad;
+        DROP TRIGGER IF EXISTS memory_items_au;
+        DROP TABLE IF EXISTS memory_items_fts;
+
+        CREATE VIRTUAL TABLE memory_items_fts
+        USING fts5(
+            title,
+            body,
+            entity,
+            tags,
+            layer,
+            content='memory_items',
+            content_rowid='id'
+        );
+
+        INSERT INTO memory_items_fts(rowid, title, body, entity, tags, layer)
+        SELECT id, title, body, entity, tags, layer FROM memory_items WHERE archived=0;
+
+        CREATE TRIGGER memory_items_ai AFTER INSERT ON memory_items BEGIN
+            INSERT INTO memory_items_fts(rowid, title, body, entity, tags, layer)
+            VALUES (new.id, new.title, new.body, new.entity, new.tags, new.layer);
+        END;
+
+        CREATE TRIGGER memory_items_ad AFTER DELETE ON memory_items BEGIN
+            INSERT INTO memory_items_fts(memory_items_fts, rowid, title, body, entity, tags, layer)
+            VALUES ('delete', old.id, old.title, old.body, old.entity, old.tags, old.layer);
+        END;
+
+        CREATE TRIGGER memory_items_au AFTER UPDATE ON memory_items BEGIN
+            INSERT INTO memory_items_fts(memory_items_fts, rowid, title, body, entity, tags, layer)
+            VALUES ('delete', old.id, old.title, old.body, old.entity, old.tags, old.layer);
+            INSERT INTO memory_items_fts(rowid, title, body, entity, tags, layer)
+            VALUES (new.id, new.title, new.body, new.entity, new.tags, new.layer);
+        END;
+        """
+    )
+
+
 def _fts_query(query: str) -> str:
     tokens = re.findall(r"[A-Za-z0-9_./:-]+", query)
     return " OR ".join(f'"{token}"' for token in tokens)
@@ -447,6 +487,7 @@ def _item_from_row(row: sqlite3.Row | None) -> MemoryItem | None:
         body=row["body"],
         entity=row["entity"],
         tags=json.loads(row["tags"] or "[]"),
+        layer=row["layer"],
         source_ref=row["source_ref"],
         confidence=row["confidence"],
         authority=row["authority"],
@@ -455,7 +496,7 @@ def _item_from_row(row: sqlite3.Row | None) -> MemoryItem | None:
     )
 
 
-def _with_reason(item: MemoryItem, *, query: str, entity: str, kind: str) -> MemoryItem:
+def _with_reason(item: MemoryItem, *, query: str, entity: str, kind: str, layer: str) -> MemoryItem:
     reasons: list[str] = []
     tokens = [t.lower() for t in re.findall(r"[A-Za-z0-9_./:-]+", query)]
     haystack = " ".join([item.title, item.body, item.entity, " ".join(item.tags)]).lower()
@@ -470,6 +511,9 @@ def _with_reason(item: MemoryItem, *, query: str, entity: str, kind: str) -> Mem
         reasons.append(f"entity_filter={entity}")
     if kind:
         reasons.append(f"kind_filter={kind}")
+    if layer:
+        reasons.append(f"layer_filter={layer}")
+    reasons.append(f"layer={item.layer}")
     if item.source_ref:
         reasons.append(f"source_ref={item.source_ref}")
     reasons.append(f"confidence={item.confidence}")
@@ -479,7 +523,7 @@ def _with_reason(item: MemoryItem, *, query: str, entity: str, kind: str) -> Mem
 
 def _changed_fields(current: MemoryItem, next_values: dict[str, Any]) -> list[str]:
     changed = []
-    for field in ("kind", "title", "body", "entity", "tags", "source_ref", "confidence", "authority"):
+    for field in ("kind", "title", "body", "entity", "tags", "layer", "source_ref", "confidence", "authority"):
         if getattr(current, field) != next_values[field]:
             changed.append(field)
     return changed
@@ -505,6 +549,7 @@ def _render_view(*, title: str, kind: str, items: list[MemoryItem]) -> str:
                 f"- **ID:** {item.id}",
                 f"- **Kind:** {item.kind}",
                 f"- **Entity:** {item.entity or '(none)'}",
+                f"- **Layer:** {item.layer}",
                 f"- **Source:** {item.source_ref or '(none)'}",
                 f"- **Confidence:** {item.confidence}",
                 f"- **Authority:** {item.authority}",

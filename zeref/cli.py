@@ -272,6 +272,7 @@ def cmd_memory(args: argparse.Namespace) -> int:
                 body=args.body or input("Body: ").strip(),
                 entity=args.entity or "",
                 tags=args.tag or [],
+                layer=args.layer,
                 source_ref=args.source_ref or "",
                 confidence=args.confidence,
                 authority=args.authority,
@@ -283,6 +284,7 @@ def cmd_memory(args: argparse.Namespace) -> int:
                 args.query or "",
                 entity=args.entity or "",
                 kind=args.kind or "",
+                layer=args.layer or "",
                 limit=args.limit,
             )
             if args.json:
@@ -309,6 +311,7 @@ def cmd_memory(args: argparse.Namespace) -> int:
                 body=args.body,
                 entity=args.entity,
                 tags=args.tag,
+                layer=args.layer,
                 source_ref=args.source_ref,
                 confidence=args.confidence,
                 authority=args.authority,
@@ -361,7 +364,7 @@ def _print_item_result(item, *, json_output: bool, verb: str) -> int:
 
 def _print_memory_item(item) -> None:
     print(f"[{item.id}] {item.title}")
-    print(f"  kind={item.kind} entity={item.entity or '(none)'}")
+    print(f"  kind={item.kind} layer={item.layer} entity={item.entity or '(none)'}")
     print(f"  source_ref={item.source_ref or '(none)'} confidence={item.confidence} authority={item.authority}")
     if item.why_returned:
         print(f"  why_returned={item.why_returned}")
@@ -414,6 +417,7 @@ def _build_parser() -> argparse.ArgumentParser:
     mem_add.add_argument("--body")
     mem_add.add_argument("--entity")
     mem_add.add_argument("--tag", action="append")
+    mem_add.add_argument("--layer", choices=["L0", "L1", "L2", "L3"], default="L1")
     mem_add.add_argument("--source-ref")
     mem_add.add_argument("--confidence", choices=["high", "medium", "low"], default="medium")
     mem_add.add_argument("--authority", choices=["canonical", "confirmed", "inferred", "unknown"], default="unknown")
@@ -423,6 +427,7 @@ def _build_parser() -> argparse.ArgumentParser:
     mem_search.add_argument("query", nargs="?", default="")
     mem_search.add_argument("--entity")
     mem_search.add_argument("--kind")
+    mem_search.add_argument("--layer", choices=["L0", "L1", "L2", "L3"])
     mem_search.add_argument("--limit", type=int, default=10)
     mem_search.add_argument("--json", action="store_true")
 
@@ -437,6 +442,7 @@ def _build_parser() -> argparse.ArgumentParser:
     mem_update.add_argument("--body")
     mem_update.add_argument("--entity")
     mem_update.add_argument("--tag", action="append")
+    mem_update.add_argument("--layer", choices=["L0", "L1", "L2", "L3"])
     mem_update.add_argument("--source-ref")
     mem_update.add_argument("--confidence", choices=["high", "medium", "low"])
     mem_update.add_argument("--authority", choices=["canonical", "confirmed", "inferred", "unknown"])
