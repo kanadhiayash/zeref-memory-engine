@@ -15,13 +15,21 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from zeref.lock import MemoryLock, atomic_append
+from zeref.lock import MemoryLock, atomic_append, atomic_write
 from zeref.memory import MemoryRoot, STATE_SCHEMA
 from zeref.privacy import scrub
 
 
 VALID_CONFIDENCE = {"high", "medium", "low"}
 VALID_AUTHORITY = {"canonical", "confirmed", "inferred", "unknown"}
+VIEW_DEFINITIONS: tuple[tuple[str, str, str], ...] = (
+    ("decision", "decisions.md", "Decisions"),
+    ("risk", "risks.md", "Risks"),
+    ("assumption", "assumptions.md", "Assumptions"),
+    ("unknown", "unknowns.md", "Unknowns"),
+    ("project-profile", "project-profile.md", "Project Profile"),
+    ("operating-profile", "operating-profile.md", "Operating Profile"),
+)
 
 
 @dataclass(frozen=True)
@@ -340,6 +348,46 @@ class MemoryStore:
             raise KeyError(f"memory item {item_id} not found")
         return _with_reason(item, query=query, entity="", kind="")
 
+    def generate_views(self) -> dict[str, str]:
+        self.ensure()
+        views_dir = self.layout.memory_dir / "views"
+        views_dir.mkdir(parents=True, exist_ok=True)
+        written: dict[str, str] = {}
+
+        with MemoryLock(self.layout.memory_dir):
+            for kind, filename, title in VIEW_DEFINITIONS:
+                items = self.list_items(kind=kind)
+                path = views_dir / filename
+                atomic_write(path, _render_view(title=title, kind=kind, items=items))
+                written[filename] = str(path)
+
+            with self._connect() as conn:
+                event = self._record_event(
+                    conn,
+                    event="memory-views-generated",
+                    item_id=None,
+                    payload={"files": sorted(written)},
+                )
+                conn.commit()
+                atomic_append(self.layout.state_events, json.dumps(asdict(event), sort_keys=True) + "\n")
+
+        return written
+
+    def list_items(self, *, kind: str = "", limit: int = 500) -> list[MemoryItem]:
+        self.ensure()
+        params: list[Any] = []
+        sql = "SELECT * FROM memory_items WHERE archived=0"
+        if kind:
+            sql += " AND kind=?"
+            params.append(kind)
+        sql += " ORDER BY updated_at DESC, id DESC LIMIT ?"
+        params.append(limit)
+
+        with self._connect() as conn:
+            rows = conn.execute(sql, params).fetchall()
+
+        return [item for row in rows if (item := _item_from_row(row))]
+
     def _connect(self) -> sqlite3.Connection:
         conn = sqlite3.connect(str(self.layout.state_db))
         conn.row_factory = sqlite3.Row
@@ -435,3 +483,35 @@ def _changed_fields(current: MemoryItem, next_values: dict[str, Any]) -> list[st
         if getattr(current, field) != next_values[field]:
             changed.append(field)
     return changed
+
+
+def _render_view(*, title: str, kind: str, items: list[MemoryItem]) -> str:
+    lines = [
+        f"# {title}",
+        "",
+        "_Generated from `memory/state/zeref.sqlite`. Markdown views are derived and human-auditable; structured state remains canonical for retrieval._",
+        "",
+    ]
+    if not items:
+        lines.append(f"_(no `{kind}` entries)_")
+        lines.append("")
+        return "\n".join(lines)
+
+    for item in items:
+        lines.extend(
+            [
+                f"## {item.title}",
+                "",
+                f"- **ID:** {item.id}",
+                f"- **Kind:** {item.kind}",
+                f"- **Entity:** {item.entity or '(none)'}",
+                f"- **Source:** {item.source_ref or '(none)'}",
+                f"- **Confidence:** {item.confidence}",
+                f"- **Authority:** {item.authority}",
+                f"- **Updated:** {item.updated_at}",
+            ]
+        )
+        if item.tags:
+            lines.append(f"- **Tags:** {', '.join(item.tags)}")
+        lines.extend(["", item.body, ""])
+    return "\n".join(lines)

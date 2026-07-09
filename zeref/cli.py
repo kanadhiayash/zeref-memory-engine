@@ -330,6 +330,16 @@ def cmd_memory(args: argparse.Namespace) -> int:
         if args.memory_command == "explain":
             item = store.explain(args.id, query=args.query or "")
             return _print_item_result(item, json_output=args.json, verb="explained")
+
+        if args.memory_command == "views":
+            written = store.generate_views()
+            if args.json:
+                print(json.dumps(written, indent=2, sort_keys=True))
+            else:
+                print("✔ generated markdown views")
+                for name, path in sorted(written.items()):
+                    print(f"  {name}: {path}")
+            return 0
     except (KeyError, ValueError, RuntimeError) as exc:
         print(f"✘ {exc}")
         return 1
@@ -441,6 +451,9 @@ def _build_parser() -> argparse.ArgumentParser:
     mem_explain.add_argument("id", type=int)
     mem_explain.add_argument("--query", default="")
     mem_explain.add_argument("--json", action="store_true")
+
+    mem_views = memory_sub.add_parser("views", help="Generate Markdown views from structured state")
+    mem_views.add_argument("--json", action="store_true")
 
     return p
 
