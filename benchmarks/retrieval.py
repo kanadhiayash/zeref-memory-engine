@@ -8,6 +8,7 @@ from pathlib import Path
 
 from zeref.memory import scaffold_project
 from zeref.memory_state import MemoryStore
+from benchmarks.adapters import adapter_summary, run_fixture_adapters
 
 REPO = Path(__file__).resolve().parent.parent
 FIXTURES = REPO / "benchmarks" / "fixtures" / "retrieval_cases.json"
@@ -143,6 +144,8 @@ def _abstention() -> tuple[float, str]:
 def run() -> dict:
     expected = {"continuity", "privacy_recall", "contradiction", "freshness", "abstention"}
     fixtures_ok = _fixture_ids() == expected
+    adapter_results = run_fixture_adapters()
+    adapter_score, adapter_evidence = adapter_summary(adapter_results)
     subs = {
         "fixture_inventory": (10.0 if fixtures_ok else 0.0, f"{len(_fixture_ids())}/5 fixtures present"),
         "continuity": _continuity(),
@@ -150,13 +153,15 @@ def run() -> dict:
         "contradiction": _contradiction(),
         "freshness": _freshness(),
         "abstention": _abstention(),
+        "external_adapter_fixtures": (adapter_score, adapter_evidence),
     }
     axis = sum(s for s, _ in subs.values()) / len(subs)
     return {
         "axis": "retrieval",
         "score": round(axis, 2),
         "sub": {k: {"score": round(s, 2), "evidence": e} for k, (s, e) in subs.items()},
-        "note": "Deterministic lexical/FTS5 retrieval benchmark; no semantic-vector evaluation.",
+        "note": "Deterministic lexical/FTS5 retrieval benchmark; external adapters are fixture-only unless marked verified.",
+        "adapters": [result.to_dict() for result in adapter_results],
     }
 
 

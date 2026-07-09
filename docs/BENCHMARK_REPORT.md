@@ -58,8 +58,9 @@ The `trust` axis is independently re-graded by the security audit before publica
 | `contradiction` | 10.00 | conflicting same-entity assumptions both returned |
 | `freshness` | 10.00 | updated item is freshest and history records update |
 | `abstention` | 10.00 | unmatched query returns empty result set |
+| `external_adapter_fixtures` | 10.00 | LoCoMo=fixture_pass, LongMemEval=fixture_pass, BEAM=fixture_pass, PersonaMem=fixture_pass, PersonaMem-v2=fixture_pass |
 
-> _Deterministic lexical/FTS5 retrieval benchmark; no semantic-vector evaluation._
+> _Deterministic lexical/FTS5 retrieval benchmark; external adapters are fixture-only unless marked verified._
 
 
 ## Trust — 9.70 / 10
@@ -67,7 +68,7 @@ The `trust` axis is independently re-graded by the security audit before publica
 | Sub-criterion | Score | Evidence |
 |---|---:|---|
 | `version_consistency` | 10.00 | checker clean; ci_enforced=True |
-| `test_suite` | 10.00 | 9 test files; pytest.ini=True; ci=True |
+| `test_suite` | 10.00 | 18 test files; pytest.ini=True; ci=True |
 | `privacy_patterns` | 10.00 | 9 provider-shaped credential patterns wired |
 | `security_md` | 10.00 | no_public_route=True, pvr=True, pgp=True, window=True |
 | `ci_hardening` | 10.00 | 9/9 action refs SHA-pinned (100%); dependabot=True |

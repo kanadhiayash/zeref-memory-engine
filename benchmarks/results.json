@@ -106,9 +106,45 @@
         "abstention": {
           "score": 10.0,
           "evidence": "unmatched query returns empty result set"
+        },
+        "external_adapter_fixtures": {
+          "score": 10.0,
+          "evidence": "LoCoMo=fixture_pass, LongMemEval=fixture_pass, BEAM=fixture_pass, PersonaMem=fixture_pass, PersonaMem-v2=fixture_pass"
         }
       },
-      "note": "Deterministic lexical/FTS5 retrieval benchmark; no semantic-vector evaluation."
+      "note": "Deterministic lexical/FTS5 retrieval benchmark; external adapters are fixture-only unless marked verified.",
+      "adapters": [
+        {
+          "adapter": "LoCoMo",
+          "status": "fixture_pass",
+          "source": "https://github.com/snap-research/locomo",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        },
+        {
+          "adapter": "LongMemEval",
+          "status": "fixture_pass",
+          "source": "https://github.com/xiaowu0162/longmemeval",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        },
+        {
+          "adapter": "BEAM",
+          "status": "fixture_pass",
+          "source": "https://github.com/mohammadtavakoli78/BEAM",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        },
+        {
+          "adapter": "PersonaMem",
+          "status": "fixture_pass",
+          "source": "https://github.com/bowen-upenn/PersonaMem",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        },
+        {
+          "adapter": "PersonaMem-v2",
+          "status": "fixture_pass",
+          "source": "https://github.com/bowen-upenn/PersonaMem-v2",
+          "evidence": "offline fixture pass; full external dataset not downloaded by default"
+        }
+      ]
     },
     {
       "axis": "trust",
@@ -120,7 +156,7 @@
         },
         "test_suite": {
           "score": 10.0,
-          "evidence": "9 test files; pytest.ini=True; ci=True"
+          "evidence": "18 test files; pytest.ini=True; ci=True"
         },
         "privacy_patterns": {
           "score": 10.0,
