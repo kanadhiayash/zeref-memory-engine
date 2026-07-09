@@ -405,6 +405,64 @@ def cmd_memory(args: argparse.Namespace) -> int:
     return 1
 
 
+def cmd_factguard(args: argparse.Namespace) -> int:
+    from zeref.guards.fact_guard import check_claim, report, scan_path
+
+    if args.factguard_command == "check":
+        findings = check_claim(args.claim, source_refs=args.source_ref or [])
+    elif args.factguard_command == "scan":
+        findings = scan_path(Path(args.path))
+    elif args.factguard_command == "report":
+        findings = scan_path(_project_root() / "docs")
+    else:
+        print("✘ unknown factguard command")
+        return 1
+
+    print(report(findings, format=args.format))
+    return 1 if any(f.severity == "high" for f in findings) else 0
+
+
+def cmd_evidence(args: argparse.Namespace) -> int:
+    from zeref.guards.evidence_guard import (
+        check_public_docs,
+        check_store,
+        grade_text,
+        list_by_grade,
+        report_findings,
+        upgrade_evidence,
+    )
+    from zeref.memory_state import card_to_dict, MemoryStore
+
+    store = MemoryStore.from_root(_project_root())
+    if args.evidence_command == "grade":
+        text = Path(args.path).read_text(errors="ignore") if Path(args.path).exists() else args.path
+        print(grade_text(text))
+        return 0
+    if args.evidence_command == "check":
+        path = Path(args.path)
+        if path.exists() and path.name != "memory":
+            issues = check_public_docs(path)
+            print("\n".join(issues) if issues else "No EvidenceGuard findings.")
+            return 1 if issues else 0
+        findings = check_store(store)
+        print(report_findings(findings), end="")
+        return 1 if any(f.severity == "high" for f in findings) else 0
+    if args.evidence_command == "list":
+        cards = list_by_grade(store, args.grade)
+        print(json.dumps([card_to_dict(card) for card in cards], indent=2, sort_keys=True))
+        return 0
+    if args.evidence_command == "upgrade":
+        card = upgrade_evidence(store, args.id, args.source)
+        print(json.dumps(card_to_dict(card), indent=2, sort_keys=True))
+        return 0
+    if args.evidence_command == "report":
+        findings = check_store(store)
+        print(report_findings(findings), end="")
+        return 1 if any(f.severity == "high" for f in findings) else 0
+    print("✘ unknown evidence command")
+    return 1
+
+
 def _print_item_result(item, *, json_output: bool, verb: str) -> int:
     from zeref.memory_state import item_to_dict
 
@@ -546,6 +604,31 @@ def _build_parser() -> argparse.ArgumentParser:
     mem_views = memory_sub.add_parser("views", help="Generate Markdown views from structured state")
     mem_views.add_argument("--json", action="store_true")
 
+    factguard = sub.add_parser("factguard", help="Scan or check unsupported claims")
+    fact_sub = factguard.add_subparsers(dest="factguard_command", required=True)
+    fact_scan = fact_sub.add_parser("scan", help="Scan Markdown path")
+    fact_scan.add_argument("path")
+    fact_scan.add_argument("--format", choices=["text", "md"], default="text")
+    fact_check = fact_sub.add_parser("check", help="Check one claim")
+    fact_check.add_argument("--claim", required=True)
+    fact_check.add_argument("--source-ref", action="append")
+    fact_check.add_argument("--format", choices=["text", "md"], default="text")
+    fact_report = fact_sub.add_parser("report", help="Report on docs/")
+    fact_report.add_argument("--format", choices=["text", "md"], default="text")
+
+    evidence = sub.add_parser("evidence", help="Check and manage evidence grades")
+    evidence_sub = evidence.add_subparsers(dest="evidence_command", required=True)
+    ev_grade = evidence_sub.add_parser("grade", help="Grade a file or text")
+    ev_grade.add_argument("path")
+    ev_check = evidence_sub.add_parser("check", help="Check memory or docs path")
+    ev_check.add_argument("path")
+    ev_list = evidence_sub.add_parser("list", help="List memory cards by evidence grade")
+    ev_list.add_argument("--grade", required=True, choices=["A", "B", "C", "D", "F"])
+    ev_upgrade = evidence_sub.add_parser("upgrade", help="Upgrade card evidence with a source")
+    ev_upgrade.add_argument("id")
+    ev_upgrade.add_argument("--source", required=True)
+    evidence_sub.add_parser("report", help="Report low-evidence memory cards")
+
     return p
 
 
@@ -561,6 +644,8 @@ def main() -> None:
         "init": cmd_init,
         "db-status": cmd_db_status,
         "memory": cmd_memory,
+        "factguard": cmd_factguard,
+        "evidence": cmd_evidence,
     }
     handler = handlers.get(args.command)
     if not handler:
