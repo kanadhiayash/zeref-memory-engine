@@ -3,7 +3,7 @@
 <p align="center"><img src="assets/zeref-os-hero.png" alt="Zeref — pixel-art mage with floating tomes" width="720"></p>
 
 <p align="center">
-  <strong>Local-first memory engine for AI-assisted work.</strong><br>
+  <strong>Local-first memory hardening layer for AI agents.</strong><br>
   Harness-agnostic · Model-agnostic · Privacy-first · Developer-first · Free to install
 </p>
 
@@ -26,7 +26,7 @@
   name was "Zeref OS". The repo and the Claude plugin keep the
   `zeref-os` identifier purely for install-URL backward compatibility.
   The product name is now **Zeref Memory Engine** (short form: Zeref).
-- **v1.0.0 is the first public release** under this name. The
+- **v1.0.0 is the current public release** under this name. The
   architecture (6 agents, 14 skills, 4-gate Auto-Activation chain,
   R6 Zero Context Loss invariant, three privacy modes, flat memory
   layout) is carried forward from the pre-public v2.6.x line. Pre-v1
@@ -40,16 +40,18 @@
 - **Trust posture, honestly stated.**
   - Version surfaces machine-checked
     ([scripts/check-version-consistency.py](scripts/check-version-consistency.py)).
-  - 46-test pytest suite in [`tests/`](tests/).
+  - Pytest suite in [`tests/`](tests/).
   - Privacy scrubber covers 9 provider-shaped credential patterns plus
     9 built-in PII / financial / path classes.
   - CI actions pinned to commit SHAs **verified** via `gh api`.
   - Vuln reports route through GitHub Private Vulnerability Reporting
     + PGP fallback ([SECURITY.md](SECURITY.md)).
-  - Benchmark verdict published in
+  - Local benchmark verdict published in
     [`docs/BENCHMARK_REPORT.md`](docs/BENCHMARK_REPORT.md):
     portability **10.00**, adaptivity **9.00**, scalability **10.00**,
-    trust **9.70** (independently re-graded). Overall **PASS**.
+    retrieval **10.00**, trust **9.70**. Overall **PASS**.
+    External benchmark adapters are fixture-only unless separately marked
+    verified.
   - Known gaps live in
     [`docs/RISK_LOG.md`](docs/RISK_LOG.md) and
     [`docs/TRUST_AUDIT.md`](docs/TRUST_AUDIT.md). Nothing is hidden.
@@ -69,7 +71,7 @@
 >
 > That is what working with AI assistants is like today. Each new session — Claude, Codex, Gemini, Cursor, Aider — starts blind. You re-explain your project, your decisions, your constraints. Context evaporates the moment the window closes.
 >
-> **Zeref is the persistent memory layer that fixes this.** A per-project Markdown wiki that AI sessions read first, write to safely, and hand off cleanly. You build the blueprint once. Every AI tool you bring in reads from the same source. Your project memory travels with the project — not the tool.
+> **Zeref is the local-first memory hardening layer for AI agents.** A per-project Markdown wiki plus structured local state that AI sessions read first, write to safely, and hand off cleanly. You build the blueprint once. Every AI tool you bring in reads from the same source. Your project memory travels with the project — not the tool.
 
 > **Imagine you are a writer** drafting a novel across six months. Zeref keeps the world bible, character arcs, plot decisions, and rejected ideas in plain Markdown that any AI can read from and contribute to safely.
 >
@@ -81,7 +83,7 @@
 
 ---
 
-## What v1.0.0 ships
+## What Zeref ships
 
 - **14 disciplined skills**: every skill has a strict trigger; nothing always-on.
 - **4-gate Auto-Activation chain** — every major task self-classifies cost, stack, prompt, and handoff before any token spend.
@@ -89,8 +91,17 @@
 - **Model-Tier Routing** — explicit Anthropic id mapping (Haiku 4.5 / Sonnet 4.6 / Opus 4.7) with cost-aware defaults.
 - **9 on-demand team packs** (solo / build / research / red / audit / ship + new small / medium / enterprise size envelopes), max 4 agents, opt-in only.
 - **3 privacy modes** — default `abstract`; connectors OFF by default.
-- **Reproducible test suite** — 46 tests covering version consistency, privacy redaction (positive + negative + adversarial bypass), CLI contract, init scaffold, write-decision round-trip, validator.
-- **Benchmark harness** — public 4-axis rubric, machine-readable results, Opus-graded trust verdict.
+- **Structured Memory Core** — SQLite-backed local state with source refs,
+  confidence, authority, and explainable recall.
+- **Guarded memory writes** — proposals pass FactGuard, EvidenceGuard,
+  PrivacyGuard, and ContradictionGuard before storage.
+- **Append-only audit logs** — local JSONL traces for writes, guard failures,
+  redactions, routes, and release checks.
+- **Reproducible test suite** — version consistency, privacy redaction,
+  CLI contract, init scaffold, guarded writes, retrieval, guards, routing,
+  release, doctor, and benchmark adapters.
+- **Benchmark harness** — public rubric, machine-readable results, retrieval
+  fixtures, and fixture-first external benchmark adapters.
 
 <p align="center"><img src="assets/poc-gate-output.png" alt="Sample gate output declared inline before any execution" width="720"></p>
 
@@ -225,7 +236,7 @@ Verify the install works end-to-end:
 python3 -m zeref --version          # zeref 1.0.0
 python3 -m zeref status
 python3 scripts/harness-probe.py    # 7/7 stubs present
-python3 -m pytest -q                # 46 passed
+python3 -m pytest -q
 python3 benchmarks/run-all.py       # PASS
 ```
 
@@ -255,6 +266,9 @@ project-root/
 │   ├── OPEN_QUESTIONS.md        (unresolved questions)
 │   ├── RISKS.md                 (identified risks w/ severity)
 │   ├── CONFLICTS.md             (contradiction queue — user arbitrates)
+│   ├── state/zeref.sqlite       (structured Memory Core state)
+│   ├── views/                   (generated Markdown views)
+│   ├── audit/*.jsonl            (append-only audit logs)
 │   ├── archive/                 (superseded entries — never deleted)
 │   ├── patterns/PATTERNS.jsonl  (append-only event log)
 │   ├── snapshots/<iso>/         (point-in-time wiki state)
@@ -453,6 +467,10 @@ pattern) — just send them.
   Architecture, Memory model, Privacy model, Team packs, Pattern
   detection, Installation, FAQ, Glossary, Inspirations.
 - **[`AGENTS.md`](AGENTS.md)** — canonical agent spec.
+- **[`docs/GETTING_STARTED.md`](docs/GETTING_STARTED.md)** — local setup and
+  verification commands.
+- **[`docs/HARDENING_OVERVIEW.md`](docs/HARDENING_OVERVIEW.md)** — v1.1
+  hardening surfaces and public-safe release position.
 - **[`INSTALL.md`](INSTALL.md)** — per-harness install.
 - **[`MIGRATION.md`](MIGRATION.md)** — migration paths from pre-v1.
 - **[`CHANGELOG.md`](CHANGELOG.md)** — release notes.
@@ -461,7 +479,14 @@ pattern) — just send them.
   scopes, never-delete-branch policy.
 - **[`GITHUB_OS.md`](GITHUB_OS.md)** — per-repo doctrine.
 - **[`docs/BENCHMARK_REPORT.md`](docs/BENCHMARK_REPORT.md)** —
-  published benchmark verdict.
+  local benchmark verdict.
+- **[`docs/BENCHMARK_ADAPTERS.md`](docs/BENCHMARK_ADAPTERS.md)** —
+  fixture-first external benchmark adapter status.
+- **[`docs/RELEASE_GATES.md`](docs/RELEASE_GATES.md)** — local release
+  readiness gates.
+- **[`docs/PUBLIC_SAFE_COPY.md`](docs/PUBLIC_SAFE_COPY.md)** — public-safe
+  copy rules.
+- **[`docs/DOCTOR.md`](docs/DOCTOR.md)** — local health checks.
 - **[`docs/TRUST_AUDIT.md`](docs/TRUST_AUDIT.md)** — independent trust
   re-grade.
 - **[`docs/RISK_LOG.md`](docs/RISK_LOG.md)** — open risks + mitigations.
