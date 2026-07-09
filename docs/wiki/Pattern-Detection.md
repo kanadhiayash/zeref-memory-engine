@@ -26,7 +26,7 @@ Never auto-activated. Per Core Principle 10 (Review-First Extension).
 
 **Why**: Premature codification creates brittle rules that don't generalize. Two occurrences = pattern; one = noise.
 
-See [`references/two-strikes-rule.md`](https://github.com/kanadhiayash/zeref-os/blob/main/references/two-strikes-rule.md) for full doctrine.
+See [`references/two-strikes-rule.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/references/two-strikes-rule.md) for full doctrine.
 
 ## `pattern-observer` algorithm
 
@@ -101,4 +101,4 @@ Examples of patterns the system would surface:
 - [[Memory-Model]] — PATTERNS.jsonl schema + event types
 - [[Architecture]] — `pattern-observer` agent + `pattern-to-skill` skill
 - [[Glossary]] — Two-Strikes Rule, pattern signature, cluster_id
-- [`references/two-strikes-rule.md`](https://github.com/kanadhiayash/zeref-os/blob/main/references/two-strikes-rule.md)
+- [`references/two-strikes-rule.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/references/two-strikes-rule.md)

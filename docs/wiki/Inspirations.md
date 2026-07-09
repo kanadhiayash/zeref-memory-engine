@@ -73,4 +73,4 @@ Force multipliers used during build: ECC (eval-harness, security-scan, agent-eva
 
 - [[Architecture]] — the shape that settled
 - [[Memory-Model]] — how memory lives on disk
-- [`GITHUB_OS.md`](https://github.com/kanadhiayash/zeref-os/blob/main/GITHUB_OS.md) — per-repo doctrine
+- [`GITHUB_OS.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/GITHUB_OS.md) — per-repo doctrine
