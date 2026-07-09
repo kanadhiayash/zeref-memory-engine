@@ -117,9 +117,8 @@ def run() -> dict:
         "score": round(axis, 2),
         "sub": {k: {"score": round(s, 2), "evidence": e} for k, (s, e) in subs.items()},
         "note": (
-            "Draft score from deterministic scorer. Final score in "
-            "docs/BENCHMARK_REPORT.md must come from an independent Opus "
-            "security-audit pass."
+            "Deterministic trust scorer. Use an independent high-effort "
+            "security review before making any public final trust verdict."
         ),
     }
 

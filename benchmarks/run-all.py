@@ -24,9 +24,38 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
-from benchmarks import adaptivity, portability, retrieval, scalability, trust  # noqa: E402
+from benchmarks import (  # noqa: E402
+    adaptivity,
+    contradiction_detection,
+    handoff_success,
+    loop_control,
+    memory_refinement,
+    portability,
+    privacy_safety,
+    prompt_rewrite_quality,
+    retrieval,
+    retrieval_accuracy,
+    scalability,
+    token_efficiency,
+    trust,
+)
+from zeref.benchmark.failure_analysis import collect_failures, write_failure_report  # noqa: E402
 
-AXES = [portability, adaptivity, scalability, retrieval, trust]
+AXES = [
+    portability,
+    adaptivity,
+    scalability,
+    retrieval,
+    trust,
+    token_efficiency,
+    retrieval_accuracy,
+    contradiction_detection,
+    privacy_safety,
+    prompt_rewrite_quality,
+    handoff_success,
+    loop_control,
+    memory_refinement,
+]
 
 
 def _apply_verified_overrides(results: list[dict]) -> list[dict]:
@@ -68,19 +97,20 @@ def _apply_verified_overrides(results: list[dict]) -> list[dict]:
     return adjusted
 
 
-def _render_report(results: list[dict], rubric_rel: str, passed: bool) -> str:
+def _render_report(results: list[dict], rubric_rel: str, passed: bool, failures: list[dict]) -> str:
     today = date.today().isoformat()  # noqa: DTZ011 — public report only
     lines = [
-        "# Benchmark Report — Zeref OS v1.0.0",
+        "# Benchmark Report - Zeref Memory Engine",
         "",
         f"_Generated: {today}. Rubric: [`{rubric_rel}`]({rubric_rel})._",
         "",
         "## Verdict",
         "",
-        ("**PASS** — every axis ≥ 9.0, no axis below 8.0."
+        ("**PASS** - deterministic local benchmark gates passed."
          if passed else
-         "**FAIL** — at least one axis falls below the pass bar (≥ 9.0 / "
-         "≥ 8.0)."),
+         "**FAIL** - at least one deterministic benchmark gate failed."),
+        "",
+        "This report is local and deterministic. It does not claim external superiority, production readiness, or a final perfect-score verdict.",
         "",
         ("The `trust` axis is independently re-graded by the security audit "
          "before publication. When the audit score is lower than the "
@@ -88,18 +118,32 @@ def _render_report(results: list[dict], rubric_rel: str, passed: bool) -> str:
         "",
         "## Scores",
         "",
-        "| Axis | Score | Pass? | Note |",
-        "|---|---:|:---:|---|",
+        "| Axis | Score | Status | Note |",
+        "|---|---:|---|---|",
     ]
     for r in results:
-        ok = "✅" if r["score"] >= 9.0 else ("⚠️" if r["score"] >= 8.0 else "❌")
+        ok = "pass" if r["score"] >= 9.0 else ("review" if r["score"] >= 8.0 else "fail")
         note = r.get("summary_note", "")
         lines.append(f"| {r['axis']} | {r['score']:.2f} | {ok} | {note} |")
     lines.append("")
 
+    if failures:
+        lines += [
+            "## Failure Summary",
+            "",
+            "| Failed metric | Expected | Actual | Needed fix |",
+            "|---|---|---|---|",
+        ]
+        for failure in failures:
+            lines.append(
+                f"| `{failure['failed_metric']}` | {failure['expected']} | "
+                f"{failure['actual']} | {failure['needed_fix']} |"
+            )
+        lines.append("")
+
     for r in results:
         lines += [
-            f"## {r['axis'].title()} — {r['score']:.2f} / 10",
+            f"## {r['axis'].replace('_', ' ').title()} - {r['score']:.2f} / 10",
             "",
             "| Sub-criterion | Score | Evidence |",
             "|---|---:|---|",
@@ -125,6 +169,14 @@ def _render_report(results: list[dict], rubric_rel: str, passed: bool) -> str:
         "python3 -m benchmarks.scalability",
         "python3 -m benchmarks.retrieval",
         "python3 -m benchmarks.trust",
+        "python3 -m benchmarks.token_efficiency",
+        "python3 -m benchmarks.retrieval_accuracy",
+        "python3 -m benchmarks.contradiction_detection",
+        "python3 -m benchmarks.privacy_safety",
+        "python3 -m benchmarks.prompt_rewrite_quality",
+        "python3 -m benchmarks.handoff_success",
+        "python3 -m benchmarks.loop_control",
+        "python3 -m benchmarks.memory_refinement",
         "```",
         "",
         "## Rubric",
@@ -144,13 +196,20 @@ def main() -> int:
 
     results = _apply_verified_overrides([axis.run() for axis in AXES])
 
-    passed = all(r["score"] >= 9.0 for r in results) and \
-             all(r["score"] >= 8.0 for r in results)
+    failures = collect_failures(results)
+    passed = not failures
 
-    report = _render_report(results, args.rubric, passed)
+    report = _render_report(results, args.rubric, passed, failures)
     (REPO / args.out_report).write_text(report, encoding="utf-8")
+    failure_report = write_failure_report(REPO, failures)
     (REPO / args.out_json).write_text(
-        json.dumps({"passed": passed, "axes": results}, indent=2),
+        json.dumps({
+            "passed": passed,
+            "pass_bar": {"axis_min": 9.0},
+            "axes": results,
+            "failures": failures,
+            "failure_report": str(failure_report.relative_to(REPO)),
+        }, indent=2),
         encoding="utf-8",
     )
 

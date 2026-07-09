@@ -66,11 +66,14 @@ def _handoff_payload(
     redact_path: Path,
 ) -> dict[str, Any]:
     by_type: dict[str, list[dict[str, Any]]] = {}
+    relevant_files = []
     redactions = 0
     for atom in atoms:
         brief, count = _brief(atom, redact_path)
         redactions += count
         by_type.setdefault(atom["type"], []).append(brief)
+        if atom["source_type"] == "file":
+            relevant_files.append(brief["source"])
     return {
         "target": target,
         "objective": objective,
@@ -83,7 +86,7 @@ def _handoff_payload(
         "active_decisions": by_type.get("decision", []),
         "open_risks": by_type.get("risk", []),
         "open_contradictions": by_type.get("contradiction", []),
-        "relevant_files": sorted({atom["source"] for atom in atoms if atom["source_type"] == "file"}),
+        "relevant_files": sorted(set(relevant_files)),
         "do_not_touch": ["legacy memory/*.md unless explicitly rendering views"],
         "next_steps": ["Run recall for targeted context before editing.", "Run focused verification before reporting completion."],
         "verification_checklist": [
