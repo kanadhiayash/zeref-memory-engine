@@ -93,7 +93,7 @@
         },
         "privacy_recall": {
           "score": 10.0,
-          "evidence": "raw provider credential scrubbed before recall"
+          "evidence": "raw credential fixture scrubbed before recall"
         },
         "contradiction": {
           "score": 10.0,
@@ -171,8 +171,9 @@
           "evidence": "9/9 action refs SHA-pinned (100%); dependabot=True"
         }
       },
-      "note": "Verified by docs/TRUST_AUDIT.md; deterministic draft was 10.00.",
-      "draft_score": 10.0
+      "note": "Deterministic draft score was 10.00. Published trust score is 9.70 per docs/TRUST_AUDIT.md independent audit.",
+      "draft_score": 10.0,
+      "summary_note": "Verified by TRUST_AUDIT.md; deterministic draft was 10.00."
     }
   ]
 }

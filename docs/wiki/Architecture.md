@@ -117,7 +117,7 @@ Per Core Principle 14: **LOW never on Opus; CRITICAL never on Haiku.** Weight (f
 
 **Cascade pattern**: orchestrator @ Sonnet medium → executor @ Sonnet/Haiku by weight → final gate @ Opus high when stakes warrant.
 
-**Model resolver**: bare aliases (`haiku`/`sonnet`/`opus`) resolve to full Anthropic ids via [`_shared/model-resolver.md`](https://github.com/kanadhiayash/zeref-os/blob/main/_shared/model-resolver.md). Opus 4.6 pinned for cost-sensitive flagship work (avoids 4.7 +35% tokenizer inflation).
+**Model resolver**: bare aliases (`haiku`/`sonnet`/`opus`) resolve to full Anthropic ids via [`_shared/model-resolver.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/_shared/model-resolver.md). Opus 4.6 pinned for cost-sensitive flagship work (avoids 4.7 +35% tokenizer inflation).
 
 ## Agents (6 — always-on background roles)
 

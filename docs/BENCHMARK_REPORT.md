@@ -6,6 +6,8 @@ _Generated: 2026-07-09. Rubric: [`benchmarks/RUBRIC.md`](benchmarks/RUBRIC.md)._
 
 **PASS** — every axis ≥ 9.0, no axis below 8.0.
 
+The `trust` axis is independently re-graded by the security audit before publication. When the audit score is lower than the deterministic draft, the verified score is the published score.
+
 ## Scores
 
 | Axis | Score | Pass? | Note |
@@ -13,8 +15,8 @@ _Generated: 2026-07-09. Rubric: [`benchmarks/RUBRIC.md`](benchmarks/RUBRIC.md)._
 | portability | 10.00 | ✅ |  |
 | adaptivity | 9.00 | ✅ |  |
 | scalability | 10.00 | ✅ |  |
-| retrieval | 10.00 | ✅ | Deterministic lexical/FTS5 retrieval benchmark; external adapters are fixture-only unless marked verified. |
-| trust | **9.70** | ✅ | Verified by docs/TRUST_AUDIT.md; deterministic draft was 10.00. |
+| retrieval | 10.00 | ✅ |  |
+| trust | 9.70 | ✅ | Verified by TRUST_AUDIT.md; deterministic draft was 10.00. |
 
 ## Portability — 10.00 / 10
 
@@ -52,7 +54,7 @@ _Generated: 2026-07-09. Rubric: [`benchmarks/RUBRIC.md`](benchmarks/RUBRIC.md)._
 |---|---:|---|
 | `fixture_inventory` | 10.00 | 5/5 fixtures present |
 | `continuity` | 10.00 | returns source_ref/confidence/authority/why_returned |
-| `privacy_recall` | 10.00 | raw provider credential scrubbed before recall |
+| `privacy_recall` | 10.00 | raw credential fixture scrubbed before recall |
 | `contradiction` | 10.00 | conflicting same-entity assumptions both returned |
 | `freshness` | 10.00 | updated item is freshest and history records update |
 | `abstention` | 10.00 | unmatched query returns empty result set |
@@ -71,7 +73,7 @@ _Generated: 2026-07-09. Rubric: [`benchmarks/RUBRIC.md`](benchmarks/RUBRIC.md)._
 | `security_md` | 10.00 | no_public_route=True, pvr=True, pgp=True, window=True |
 | `ci_hardening` | 10.00 | 9/9 action refs SHA-pinned (100%); dependabot=True |
 
-> _Verified by docs/TRUST_AUDIT.md; deterministic draft was 10.00._
+> _Deterministic draft score was 10.00. Published trust score is 9.70 per docs/TRUST_AUDIT.md independent audit._
 
 
 ## How to reproduce

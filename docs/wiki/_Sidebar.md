@@ -1,7 +1,7 @@
 # Zeref OS
 
 - [[Home]]
-- **v2.6** · [CHANGELOG](https://github.com/kanadhiayash/zeref-os/blob/main/CHANGELOG.md)
+- **v2.6** · [CHANGELOG](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/CHANGELOG.md)
 
 **Getting Started**
 - [[Installation]]
@@ -17,8 +17,8 @@
 **Reference**
 - [[Glossary]]
 - [[Inspirations]]
-- [README](https://github.com/kanadhiayash/zeref-os)
-- [AGENTS.md](https://github.com/kanadhiayash/zeref-os/blob/main/AGENTS.md)
-- [GITHUB_OS.md](https://github.com/kanadhiayash/zeref-os/blob/main/GITHUB_OS.md)
-- [model-resolver](https://github.com/kanadhiayash/zeref-os/blob/main/_shared/model-resolver.md)
+- [README](https://github.com/kanadhiayash/zeref-memory-engine)
+- [AGENTS.md](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/AGENTS.md)
+- [GITHUB_OS.md](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/GITHUB_OS.md)
+- [model-resolver](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/_shared/model-resolver.md)
 - [Notion Command Center](https://copper-tv-288.notion.site/Zeref-Agent-OS-Command-Center-358d695d836a81af9f6adf30770217c3)
