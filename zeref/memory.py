@@ -22,6 +22,7 @@ MEMORY_DIRS: tuple[str, ...] = (
     "memory/archive",
     "memory/patterns",
     "memory/state",
+    "memory/views",
     "memory/snapshots",
     "memory/raw",
     "memory/sync/outbound",

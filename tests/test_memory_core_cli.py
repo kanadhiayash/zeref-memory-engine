@@ -129,3 +129,23 @@ def test_memory_cli_add_search_get_update_history_explain(repo_root: Path, tmp_p
     explanation = json.loads(explained.stdout)
     assert explanation["why_returned"]
     assert "confidence=medium" in explanation["why_returned"]
+
+    views = _run(repo_root, tmp_path, ["memory", "views", "--json"])
+    assert views.returncode == 0, views.stderr
+    written = json.loads(views.stdout)
+    assert sorted(written) == [
+        "assumptions.md",
+        "decisions.md",
+        "operating-profile.md",
+        "project-profile.md",
+        "risks.md",
+        "unknowns.md",
+    ]
+
+    decisions = (tmp_path / "memory" / "views" / "decisions.md").read_text(encoding="utf-8")
+    assert "Generated from `memory/state/zeref.sqlite`" in decisions
+    assert "memory state decision" in decisions
+    assert "**Source:** docs/memory-core.md" in decisions
+
+    risks = (tmp_path / "memory" / "views" / "risks.md").read_text(encoding="utf-8")
+    assert "_(no `risk` entries)_" in risks
