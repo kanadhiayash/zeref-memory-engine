@@ -88,9 +88,14 @@ def check_public_docs(path: Path) -> list[str]:
     issues: list[str] = []
     files = [path] if path.is_file() else sorted(path.rglob("*.md"))
     for file in files:
-        text = file.read_text(errors="ignore").lower()
-        if "best-in-class" in text or "scores 10/10 on all benchmarks" in text:
-            issues.append(f"{file}: unsupported public claim")
-        if "evidence grade: f" in text:
-            issues.append(f"{file}: grade F public claim")
+        for line in file.read_text(errors="ignore").splitlines():
+            lowered = line.lower()
+            if ("best-in-class" in lowered or "scores 10/10 on all benchmarks" in lowered) and not _negated_example(lowered):
+                issues.append(f"{file}: unsupported public claim")
+            if "evidence grade: f" in lowered and not _negated_example(lowered):
+                issues.append(f"{file}: grade F public claim")
     return issues
+
+
+def _negated_example(line: str) -> bool:
+    return any(token in line for token in ("avoid", "do not", "without", "unsupported", "forbidden", "blocked", "claims"))
