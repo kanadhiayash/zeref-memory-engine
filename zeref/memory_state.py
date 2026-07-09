@@ -1,0 +1,437 @@
+"""Structured local state for Zeref Memory Core.
+
+Markdown remains the human-auditable project memory. This module owns the
+machine-readable local state used for retrieval and explainable recall.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import re
+import sqlite3
+from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+from zeref.lock import MemoryLock, atomic_append
+from zeref.memory import MemoryRoot, STATE_SCHEMA
+from zeref.privacy import scrub
+
+
+VALID_CONFIDENCE = {"high", "medium", "low"}
+VALID_AUTHORITY = {"canonical", "confirmed", "inferred", "unknown"}
+
+
+@dataclass(frozen=True)
+class MemoryItem:
+    id: int
+    kind: str
+    title: str
+    body: str
+    entity: str
+    tags: list[str]
+    source_ref: str
+    confidence: str
+    authority: str
+    created_at: str
+    updated_at: str
+    why_returned: str = ""
+
+
+@dataclass(frozen=True)
+class MemoryEvent:
+    ts: str
+    event: str
+    item_id: int | None
+    payload: dict[str, Any]
+    hash: str
+
+
+class MemoryStore:
+    """SQLite-backed local state store under memory/state/."""
+
+    def __init__(self, memory_root: MemoryRoot):
+        self.memory_root = memory_root
+        self.layout = memory_root.layout
+
+    @classmethod
+    def from_root(cls, root: Path) -> "MemoryStore":
+        return cls(MemoryRoot.from_path(root))
+
+    @classmethod
+    def discover(cls, start: Path | None = None) -> "MemoryStore":
+        return cls(MemoryRoot.discover(start=start))
+
+    def ensure(self) -> None:
+        self.layout.state_dir.mkdir(parents=True, exist_ok=True)
+        self.layout.state_schema.write_text(
+            json.dumps(STATE_SCHEMA, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        if not self.layout.state_events.exists():
+            self.layout.state_events.write_text("", encoding="utf-8")
+
+        with self._connect() as conn:
+            conn.executescript(
+                """
+                CREATE TABLE IF NOT EXISTS memory_items (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    kind TEXT NOT NULL,
+                    title TEXT NOT NULL,
+                    body TEXT NOT NULL,
+                    entity TEXT NOT NULL DEFAULT '',
+                    tags TEXT NOT NULL DEFAULT '[]',
+                    source_ref TEXT NOT NULL DEFAULT '',
+                    confidence TEXT NOT NULL DEFAULT 'medium',
+                    authority TEXT NOT NULL DEFAULT 'unknown',
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL,
+                    archived INTEGER NOT NULL DEFAULT 0
+                );
+
+                CREATE VIRTUAL TABLE IF NOT EXISTS memory_items_fts
+                USING fts5(
+                    title,
+                    body,
+                    entity,
+                    tags,
+                    content='memory_items',
+                    content_rowid='id'
+                );
+
+                CREATE TRIGGER IF NOT EXISTS memory_items_ai AFTER INSERT ON memory_items BEGIN
+                    INSERT INTO memory_items_fts(rowid, title, body, entity, tags)
+                    VALUES (new.id, new.title, new.body, new.entity, new.tags);
+                END;
+
+                CREATE TRIGGER IF NOT EXISTS memory_items_ad AFTER DELETE ON memory_items BEGIN
+                    INSERT INTO memory_items_fts(memory_items_fts, rowid, title, body, entity, tags)
+                    VALUES ('delete', old.id, old.title, old.body, old.entity, old.tags);
+                END;
+
+                CREATE TRIGGER IF NOT EXISTS memory_items_au AFTER UPDATE ON memory_items BEGIN
+                    INSERT INTO memory_items_fts(memory_items_fts, rowid, title, body, entity, tags)
+                    VALUES ('delete', old.id, old.title, old.body, old.entity, old.tags);
+                    INSERT INTO memory_items_fts(rowid, title, body, entity, tags)
+                    VALUES (new.id, new.title, new.body, new.entity, new.tags);
+                END;
+
+                CREATE TABLE IF NOT EXISTS memory_events (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ts TEXT NOT NULL,
+                    event TEXT NOT NULL,
+                    item_id INTEGER,
+                    payload TEXT NOT NULL,
+                    hash TEXT NOT NULL
+                );
+                """
+            )
+
+    def add(
+        self,
+        *,
+        kind: str,
+        title: str,
+        body: str,
+        entity: str = "",
+        tags: list[str] | None = None,
+        source_ref: str = "",
+        confidence: str = "medium",
+        authority: str = "unknown",
+    ) -> MemoryItem:
+        self.ensure()
+        confidence = _validated(confidence, VALID_CONFIDENCE, "confidence")
+        authority = _validated(authority, VALID_AUTHORITY, "authority")
+        tags = [t.strip() for t in (tags or []) if t.strip()]
+        redact = self.memory_root.root / "REDACT.md"
+        title_s = scrub(title, redact, provenance="memory/add/title")[0]
+        body_s = scrub(body, redact, provenance="memory/add/body")[0]
+        entity_s = scrub(entity, redact, provenance="memory/add/entity")[0]
+        source_s = scrub(source_ref, redact, provenance="memory/add/source_ref")[0]
+        tags_s = [scrub(tag, redact, provenance="memory/add/tag")[0] for tag in tags]
+        now = _utc_now()
+
+        with MemoryLock(self.layout.memory_dir):
+            with self._connect() as conn:
+                cur = conn.execute(
+                    """
+                    INSERT INTO memory_items(
+                        kind, title, body, entity, tags, source_ref,
+                        confidence, authority, created_at, updated_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        kind,
+                        title_s,
+                        body_s,
+                        entity_s,
+                        json.dumps(tags_s),
+                        source_s,
+                        confidence,
+                        authority,
+                        now,
+                        now,
+                    ),
+                )
+                item_id = int(cur.lastrowid)
+                event = self._record_event(
+                    conn,
+                    event="memory-add",
+                    item_id=item_id,
+                    payload={"kind": kind, "title": title_s},
+                )
+                conn.commit()
+                atomic_append(self.layout.state_events, json.dumps(asdict(event), sort_keys=True) + "\n")
+
+        item = self.get(item_id)
+        if item is None:
+            raise RuntimeError(f"memory item {item_id} was not readable after insert")
+        return item
+
+    def update(
+        self,
+        item_id: int,
+        *,
+        kind: str | None = None,
+        title: str | None = None,
+        body: str | None = None,
+        entity: str | None = None,
+        tags: list[str] | None = None,
+        source_ref: str | None = None,
+        confidence: str | None = None,
+        authority: str | None = None,
+    ) -> MemoryItem:
+        self.ensure()
+        current = self.get(item_id)
+        if current is None:
+            raise KeyError(f"memory item {item_id} not found")
+
+        redact = self.memory_root.root / "REDACT.md"
+        next_values = {
+            "kind": kind if kind is not None else current.kind,
+            "title": scrub(title, redact, provenance="memory/update/title")[0] if title is not None else current.title,
+            "body": scrub(body, redact, provenance="memory/update/body")[0] if body is not None else current.body,
+            "entity": scrub(entity, redact, provenance="memory/update/entity")[0] if entity is not None else current.entity,
+            "tags": [scrub(tag, redact, provenance="memory/update/tag")[0] for tag in tags] if tags is not None else current.tags,
+            "source_ref": scrub(source_ref, redact, provenance="memory/update/source_ref")[0] if source_ref is not None else current.source_ref,
+            "confidence": _validated(confidence, VALID_CONFIDENCE, "confidence") if confidence is not None else current.confidence,
+            "authority": _validated(authority, VALID_AUTHORITY, "authority") if authority is not None else current.authority,
+            "updated_at": _utc_now(),
+        }
+
+        with MemoryLock(self.layout.memory_dir):
+            with self._connect() as conn:
+                conn.execute(
+                    """
+                    UPDATE memory_items
+                    SET kind=?, title=?, body=?, entity=?, tags=?, source_ref=?,
+                        confidence=?, authority=?, updated_at=?
+                    WHERE id=? AND archived=0
+                    """,
+                    (
+                        next_values["kind"],
+                        next_values["title"],
+                        next_values["body"],
+                        next_values["entity"],
+                        json.dumps(next_values["tags"]),
+                        next_values["source_ref"],
+                        next_values["confidence"],
+                        next_values["authority"],
+                        next_values["updated_at"],
+                        item_id,
+                    ),
+                )
+                event = self._record_event(
+                    conn,
+                    event="memory-update",
+                    item_id=item_id,
+                    payload={"changed": _changed_fields(current, next_values)},
+                )
+                conn.commit()
+                atomic_append(self.layout.state_events, json.dumps(asdict(event), sort_keys=True) + "\n")
+
+        updated = self.get(item_id)
+        if updated is None:
+            raise RuntimeError(f"memory item {item_id} was not readable after update")
+        return updated
+
+    def get(self, item_id: int) -> MemoryItem | None:
+        self.ensure()
+        with self._connect() as conn:
+            row = conn.execute(
+                "SELECT * FROM memory_items WHERE id=? AND archived=0",
+                (item_id,),
+            ).fetchone()
+        return _item_from_row(row) if row else None
+
+    def search(
+        self,
+        query: str,
+        *,
+        entity: str = "",
+        kind: str = "",
+        limit: int = 10,
+    ) -> list[MemoryItem]:
+        self.ensure()
+        fts_query = _fts_query(query)
+        params: list[Any] = []
+
+        if fts_query:
+            sql = """
+                SELECT mi.*, bm25(memory_items_fts) AS rank
+                FROM memory_items_fts
+                JOIN memory_items mi ON mi.id = memory_items_fts.rowid
+                WHERE memory_items_fts MATCH ? AND mi.archived=0
+            """
+            params.append(fts_query)
+        else:
+            sql = "SELECT mi.*, 0 AS rank FROM memory_items mi WHERE mi.archived=0"
+
+        if entity:
+            sql += " AND mi.entity LIKE ?"
+            params.append(f"%{entity}%")
+        if kind:
+            sql += " AND mi.kind=?"
+            params.append(kind)
+
+        sql += " ORDER BY rank ASC, mi.updated_at DESC LIMIT ?"
+        params.append(limit)
+
+        with self._connect() as conn:
+            rows = conn.execute(sql, params).fetchall()
+
+        items: list[MemoryItem] = []
+        for row in rows:
+            item = _item_from_row(row)
+            if item:
+                items.append(_with_reason(item, query=query, entity=entity, kind=kind))
+        return items
+
+    def history(self, item_id: int | None = None, limit: int = 20) -> list[MemoryEvent]:
+        self.ensure()
+        params: list[Any] = []
+        sql = "SELECT ts, event, item_id, payload, hash FROM memory_events"
+        if item_id is not None:
+            sql += " WHERE item_id=?"
+            params.append(item_id)
+        sql += " ORDER BY id DESC LIMIT ?"
+        params.append(limit)
+
+        with self._connect() as conn:
+            rows = conn.execute(sql, params).fetchall()
+
+        return [
+            MemoryEvent(
+                ts=row["ts"],
+                event=row["event"],
+                item_id=row["item_id"],
+                payload=json.loads(row["payload"]),
+                hash=row["hash"],
+            )
+            for row in rows
+        ]
+
+    def explain(self, item_id: int, query: str = "") -> MemoryItem:
+        item = self.get(item_id)
+        if item is None:
+            raise KeyError(f"memory item {item_id} not found")
+        return _with_reason(item, query=query, entity="", kind="")
+
+    def _connect(self) -> sqlite3.Connection:
+        conn = sqlite3.connect(str(self.layout.state_db))
+        conn.row_factory = sqlite3.Row
+        return conn
+
+    def _record_event(
+        self,
+        conn: sqlite3.Connection,
+        *,
+        event: str,
+        item_id: int | None,
+        payload: dict[str, Any],
+    ) -> MemoryEvent:
+        ts = _utc_now()
+        compact_payload = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+        digest = "sha256:" + hashlib.sha256(
+            f"{ts}|{event}|{item_id}|{compact_payload}".encode("utf-8")
+        ).hexdigest()
+        record = MemoryEvent(ts=ts, event=event, item_id=item_id, payload=payload, hash=digest)
+        conn.execute(
+            "INSERT INTO memory_events(ts, event, item_id, payload, hash) VALUES (?, ?, ?, ?, ?)",
+            (record.ts, record.event, record.item_id, compact_payload, record.hash),
+        )
+        return record
+
+
+def item_to_dict(item: MemoryItem) -> dict[str, Any]:
+    return asdict(item)
+
+
+def event_to_dict(event: MemoryEvent) -> dict[str, Any]:
+    return asdict(event)
+
+
+def _utc_now() -> str:
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def _validated(value: str, allowed: set[str], name: str) -> str:
+    if value not in allowed:
+        raise ValueError(f"{name} must be one of: {', '.join(sorted(allowed))}")
+    return value
+
+
+def _fts_query(query: str) -> str:
+    tokens = re.findall(r"[A-Za-z0-9_./:-]+", query)
+    return " OR ".join(f'"{token}"' for token in tokens)
+
+
+def _item_from_row(row: sqlite3.Row | None) -> MemoryItem | None:
+    if row is None:
+        return None
+    return MemoryItem(
+        id=row["id"],
+        kind=row["kind"],
+        title=row["title"],
+        body=row["body"],
+        entity=row["entity"],
+        tags=json.loads(row["tags"] or "[]"),
+        source_ref=row["source_ref"],
+        confidence=row["confidence"],
+        authority=row["authority"],
+        created_at=row["created_at"],
+        updated_at=row["updated_at"],
+    )
+
+
+def _with_reason(item: MemoryItem, *, query: str, entity: str, kind: str) -> MemoryItem:
+    reasons: list[str] = []
+    tokens = [t.lower() for t in re.findall(r"[A-Za-z0-9_./:-]+", query)]
+    haystack = " ".join([item.title, item.body, item.entity, " ".join(item.tags)]).lower()
+    matched = [token for token in tokens if token in haystack]
+    if matched:
+        reasons.append("matched_terms=" + ",".join(matched[:6]))
+    elif query:
+        reasons.append("fts_ranked_match")
+    else:
+        reasons.append("latest_items")
+    if entity:
+        reasons.append(f"entity_filter={entity}")
+    if kind:
+        reasons.append(f"kind_filter={kind}")
+    if item.source_ref:
+        reasons.append(f"source_ref={item.source_ref}")
+    reasons.append(f"confidence={item.confidence}")
+    reasons.append(f"authority={item.authority}")
+    return MemoryItem(**{**asdict(item), "why_returned": "; ".join(reasons)})
+
+
+def _changed_fields(current: MemoryItem, next_values: dict[str, Any]) -> list[str]:
+    changed = []
+    for field in ("kind", "title", "body", "entity", "tags", "source_ref", "confidence", "authority"):
+        if getattr(current, field) != next_values[field]:
+            changed.append(field)
+    return changed
