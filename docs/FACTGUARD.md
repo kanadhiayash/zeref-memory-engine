@@ -5,10 +5,10 @@ FactGuard is a deterministic local scanner for unsupported public claims.
 It flags:
 
 - unsupported superlatives
-- best-in-class or "beats every tool" claims
-- production-ready claims without proof
+- superiority claims without proof
+- release-maturity claims without proof
 - benchmark claims without dated reproducible evidence
-- broad success claims such as "all gates pass"
+- broad success claims with no named evidence
 - factual claims with no source references
 
 Commands:
@@ -16,7 +16,7 @@ Commands:
 ```bash
 zeref factguard scan README.md
 zeref factguard scan docs/
-zeref factguard check --claim "Zeref is production-ready."
+zeref factguard check --claim "Zeref is ready for every team."
 zeref factguard report --format md
 ```
 

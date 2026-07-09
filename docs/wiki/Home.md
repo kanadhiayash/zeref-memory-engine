@@ -6,7 +6,7 @@
 >
 > That is what working with AI assistants is like today. Each new session — Claude, Codex, Gemini, Cursor, Aider — starts blind. Context evaporates the moment the window closes.
 >
-> **Zeref is the persistent memory layer that fixes this.** A per-project Markdown wiki that AI sessions read first, write to safely, and hand off cleanly. Your project memory travels with the project — not the tool.
+> **Zeref is the local-first memory hardening layer for AI agents.** A per-project Markdown wiki plus structured local state that AI sessions read first, write to safely, and hand off cleanly. Your project memory travels with the project — not the tool.
 
 **Current version**: v1.0.0 (first public release under this name) · [`CHANGELOG`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/CHANGELOG.md) · [`BENCHMARK_REPORT`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/docs/BENCHMARK_REPORT.md) · [`TRUST_AUDIT`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/docs/TRUST_AUDIT.md)
 
@@ -16,7 +16,7 @@
   context layer. The legacy product name was "Zeref OS"; the repo
   identifier (`zeref-os`) is retained only for install-URL
   backward-compatibility. The product name is **Zeref Memory Engine**.
-- **v1.0.0 is the first public release** under this name. Architecture
+- **v1.0.0 is the current public release** under this name. Architecture
   carries forward from pre-public v2.6.x. Pre-v1 history is archived to
   [`kanadhiayash/zeref-os-archive`](https://github.com/kanadhiayash/zeref-os-archive).
 - **MIT licensed, no warranty.** Use at your own risk. The privacy
@@ -32,7 +32,7 @@
 - 🔒 **[[Privacy-Model]]** — PRIVACY / REDACT / SHARING_POLICY, modes, connectors, R6 Zero Context Loss
 - 👥 **[[Team-Packs]]** — solo / build / research / red / audit / ship / small / medium / enterprise
 - 🔍 **[[Pattern-Detection]]** — Two-Strikes Rule, pattern-observer, skill drafting
-- 📊 **[[Benchmarks]]** — public 4-axis rubric, results, Opus-graded verdict
+- 📊 **[[Benchmarks]]** — local rubric, results, and fixture adapter status
 - 🛡️ **[[Trust-Audit]]** — independent re-score, deductions, follow-ups
 - ⚠ **[[Risk-Log]]** — accepted risks, mitigations, open items
 - 🧩 **[[Stack]]** — the projects Zeref routes alongside (credits)
@@ -40,7 +40,7 @@
 - 📖 **[[Glossary]]** — boundary file, evidence grade, Two-Strikes Rule, R6, 4-gate chain, model-resolver
 - 🌱 **[[Inspirations]]** — engineering lineage and influences
 
-## What v1.0.0 ships
+## What Zeref ships
 
 Per-project flat `memory/` wiki in plain Markdown · append-only
 `PATTERNS.jsonl` event log with schema validator · point-in-time
@@ -51,10 +51,10 @@ handoff format with caveman-grammar compression · a **4-gate
 auto-activation chain** that classifies every major task on cost weight,
 picks the smallest useful skill stack, probes extended-tool
 reachability, and restructures unstructured prompts before any token
-spend · **46-test pytest suite**, **9 provider-shaped credential
+spend · **pytest suite**, **9 provider-shaped credential
 patterns** in the privacy scrubber, **CI actions pinned to commit
-SHAs**, and a **published 4-axis benchmark verdict** (portability 10 ·
-adaptivity 9 · scalability 10 · trust 9.7).
+SHAs**, and a **local benchmark verdict** (portability 10 ·
+adaptivity 9 · scalability 10 · retrieval 10 · trust 9.7).
 
 ## The 4-gate chain (every major task)
 
