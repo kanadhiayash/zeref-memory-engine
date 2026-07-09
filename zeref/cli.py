@@ -131,9 +131,28 @@ def cmd_init(args: argparse.Namespace) -> int:
     root = Path(args.directory).resolve() if args.directory else Path.cwd()
     print(f"\nInitialising Zeref OS layout at {root}")
 
-    for d in ["memory", "memory/archive", "memory/patterns", "memory/snapshots",
-              "memory/raw", "memory/sync/outbound", "memory/sync/parent",
-              "config", "skills", "skills/drafts"]:
+    for d in [
+        "memory",
+        "memory/archive",
+        "memory/patterns",
+        "memory/snapshots",
+        "memory/raw",
+        "memory/sync/outbound",
+        "memory/sync/parent",
+        "memory/l0_raw",
+        "memory/l1_atoms",
+        "memory/l2_scenes",
+        "memory/l3_profiles",
+        "memory/indexes",
+        "memory/views",
+        "memory/reports",
+        "memory/handoffs",
+        "memory/loops",
+        "memory/archives",
+        "config",
+        "skills",
+        "skills/drafts",
+    ]:
         (root / d).mkdir(parents=True, exist_ok=True)
 
     # Use `is None` so empty-string CLI args (e.g. --parent "") skip the prompt
@@ -181,15 +200,109 @@ def cmd_init(args: argparse.Namespace) -> int:
     pat = root / "memory" / "patterns" / "PATTERNS.jsonl"
     if not pat.exists():
         pat.write_text("")
+    from zeref.memory.atom_store import AtomStore
+    AtomStore(root).ensure_layout()
 
     print(f"\n✔ Scaffolded:")
     print(f"  config/PROJECT.md (name={name}, privacy={privacy}, tier={tier})")
-    print(f"  memory/ flat layout")
+    print(f"  memory/ flat + layered layout")
     print(f"  skills/drafts/ (review queue)")
     if parent:
         print(f"  parent: {parent}")
     print(f"\nNext: edit config/PROJECT.md as needed, then `zeref status`.")
     return 0
+
+
+def cmd_memory(args: argparse.Namespace) -> int:
+    """Structured atom memory commands."""
+    from zeref.memory.atom_store import AtomStore
+    from zeref.memory.schemas import create_atom
+    from zeref.privacy import scrub
+
+    root = _project_root()
+    store = AtomStore(root)
+
+    if args.memory_command == "add":
+        redact = root / "REDACT.md"
+        claim, claim_report = scrub(args.claim, redact, provenance="memory/add/claim")
+        summary_raw = args.summary or args.claim
+        summary, summary_report = scrub(summary_raw, redact, provenance="memory/add/summary")
+        source, source_report = scrub(args.source, redact, provenance="memory/add/source")
+        provenance_raw = args.provenance or "zeref-cli memory add"
+        provenance, provenance_report = scrub(
+            provenance_raw,
+            redact,
+            provenance="memory/add/provenance",
+        )
+        redacted = (
+            claim_report.redacted
+            + summary_report.redacted
+            + source_report.redacted
+            + provenance_report.redacted
+        )
+        if redacted:
+            provenance = f"{provenance} (pii_scrubbed={redacted})"
+
+        atom = create_atom(
+            atom_type=args.type,
+            claim=claim,
+            summary=summary,
+            source=source,
+            source_type=args.source_type,
+            evidence=args.evidence,
+            confidence=args.confidence,
+            status=args.status,
+            entities=args.entity or [],
+            tags=args.tag or [],
+            links=args.link or [],
+            privacy=args.privacy,
+            provenance=provenance,
+        )
+        written = store.append(atom)
+        if args.json:
+            print(json.dumps(written, indent=2, sort_keys=True))
+        else:
+            print(f"✔ Atom appended: {written['id']} ({written['type']})")
+            if redacted:
+                print(f"  PII scrubbed from inputs: {redacted} token(s)")
+        return 0
+
+    if args.memory_command == "list":
+        atoms = store.load(atom_type=args.type, status=args.status)
+        if args.json:
+            print(json.dumps(atoms, indent=2, sort_keys=True))
+        else:
+            for atom in atoms:
+                print(f"{atom['id']}\t{atom['type']}\t{atom['status']}\t{atom['claim']}")
+            if not atoms:
+                print("(no atoms)")
+        return 0
+
+    if args.memory_command == "patch":
+        updates = {}
+        if args.status is not None:
+            updates["status"] = args.status
+        if args.summary is not None:
+            summary, report = scrub(
+                args.summary,
+                root / "REDACT.md",
+                provenance="memory/patch/summary",
+            )
+            updates["summary"] = summary
+            if report.redacted:
+                updates["provenance"] = f"zeref-cli memory patch (pii_scrubbed={report.redacted})"
+        if not updates:
+            print("✘ No patch fields provided.")
+            return 2
+        patched = store.patch(args.id, updates)
+        if args.json:
+            print(json.dumps(patched, indent=2, sort_keys=True))
+        else:
+            print(f"✔ Atom patched: {patched['id']}")
+        return 0
+
+    print("✘ memory subcommand required")
+    return 2
 
 
 def cmd_db_status(args: argparse.Namespace) -> int:
@@ -356,6 +469,44 @@ def _build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("db-status", help="Report backend (sqlite/duckdb) + extras")
 
+    mem = sub.add_parser("memory", help="Structured atom memory commands")
+    mem_sub = mem.add_subparsers(dest="memory_command", required=True)
+
+    mem_add = mem_sub.add_parser("add", help="Append a validated memory atom")
+    mem_add.add_argument("--type", required=True, choices=[
+        "fact", "decision", "risk", "task", "preference",
+        "contradiction", "source", "error", "test", "event",
+    ])
+    mem_add.add_argument("--claim", required=True)
+    mem_add.add_argument("--summary")
+    mem_add.add_argument("--source", required=True)
+    mem_add.add_argument("--source-type", choices=[
+        "user", "file", "tool", "session", "git", "manual", "unknown",
+    ], default="manual")
+    mem_add.add_argument("--evidence", choices=["A", "B", "C", "D", "F", "unverified"], default="unverified")
+    mem_add.add_argument("--confidence", choices=["high", "medium", "low", "unknown"], default="unknown")
+    mem_add.add_argument("--status", choices=["active", "stale", "superseded", "disputed", "archived"], default="active")
+    mem_add.add_argument("--privacy", choices=["public-safe", "private", "local-only", "unknown"], default="unknown")
+    mem_add.add_argument("--provenance")
+    mem_add.add_argument("--entity", action="append")
+    mem_add.add_argument("--tag", action="append")
+    mem_add.add_argument("--link", action="append")
+    mem_add.add_argument("--json", action="store_true")
+
+    mem_list = mem_sub.add_parser("list", help="List memory atoms")
+    mem_list.add_argument("--type", choices=[
+        "fact", "decision", "risk", "task", "preference",
+        "contradiction", "source", "error", "test", "event",
+    ])
+    mem_list.add_argument("--status", choices=["active", "stale", "superseded", "disputed", "archived"])
+    mem_list.add_argument("--json", action="store_true")
+
+    mem_patch = mem_sub.add_parser("patch", help="Patch one memory atom")
+    mem_patch.add_argument("id")
+    mem_patch.add_argument("--status", choices=["active", "stale", "superseded", "disputed", "archived"])
+    mem_patch.add_argument("--summary")
+    mem_patch.add_argument("--json", action="store_true")
+
     return p
 
 
@@ -370,6 +521,7 @@ def main() -> None:
         "audit": cmd_audit,
         "init": cmd_init,
         "db-status": cmd_db_status,
+        "memory": cmd_memory,
     }
     handler = handlers.get(args.command)
     if not handler:
