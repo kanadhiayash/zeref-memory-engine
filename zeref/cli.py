@@ -301,8 +301,67 @@ def cmd_memory(args: argparse.Namespace) -> int:
             print(f"✔ Atom patched: {patched['id']}")
         return 0
 
+    if args.memory_command == "index":
+        from zeref.memory.indexer import rebuild_index
+
+        result = rebuild_index(root)
+        if args.json:
+            print(json.dumps(result, indent=2, sort_keys=True))
+        else:
+            print(f"✔ Indexed {result['atoms_indexed']} atom(s) at {result['path']}")
+        return 0
+
     print("✘ memory subcommand required")
     return 2
+
+
+def cmd_recall(args: argparse.Namespace) -> int:
+    from zeref.memory.recall import recall
+
+    result = recall(
+        _project_root(),
+        args.query,
+        limit=args.limit,
+        atom_type=args.type,
+        status=args.status,
+    )
+    if args.json:
+        print(json.dumps(result, indent=2, sort_keys=True))
+    else:
+        print(result["answer"])
+        print(f"Evidence: {result['evidence_grade']} | Source: {result['source']}")
+        for match in result["matched_atoms"]:
+            atom = match["atom"]
+            print(f"- {atom['id']} [{atom['type']}/{atom['status']}] {atom['claim']}")
+        if result["open_contradictions"]:
+            print("Open contradictions:")
+            for atom in result["open_contradictions"]:
+                print(f"- {atom['id']} {atom['claim']}")
+    return 0
+
+
+def cmd_explain_search(args: argparse.Namespace) -> int:
+    from zeref.memory.recall import explain_search
+
+    result = explain_search(
+        _project_root(),
+        args.query,
+        limit=args.limit,
+        atom_type=args.type,
+        status=args.status,
+    )
+    if args.json:
+        print(json.dumps(result, indent=2, sort_keys=True))
+    else:
+        print(f"Query: {result['query']}")
+        print(f"Tokens: {', '.join(result['tokens'])}")
+        print(f"Source: {result['source']}")
+        for candidate in result["candidates"]:
+            print(
+                f"- {candidate['id']} score={candidate['score']} "
+                f"{candidate['why_selected']}"
+            )
+    return 0
 
 
 def cmd_db_status(args: argparse.Namespace) -> int:
@@ -507,6 +566,29 @@ def _build_parser() -> argparse.ArgumentParser:
     mem_patch.add_argument("--summary")
     mem_patch.add_argument("--json", action="store_true")
 
+    mem_index = mem_sub.add_parser("index", help="Rebuild SQLite memory index")
+    mem_index.add_argument("--json", action="store_true")
+
+    rec = sub.add_parser("recall", help="Recall memory atoms by query")
+    rec.add_argument("query")
+    rec.add_argument("--limit", type=int, default=5)
+    rec.add_argument("--json", action="store_true")
+    rec.add_argument("--type", choices=[
+        "fact", "decision", "risk", "task", "preference",
+        "contradiction", "source", "error", "test", "event",
+    ])
+    rec.add_argument("--status", choices=["active", "stale", "superseded", "disputed", "archived"], default="active")
+
+    exp = sub.add_parser("explain-search", help="Explain memory search ranking")
+    exp.add_argument("query")
+    exp.add_argument("--limit", type=int, default=3)
+    exp.add_argument("--json", action="store_true")
+    exp.add_argument("--type", choices=[
+        "fact", "decision", "risk", "task", "preference",
+        "contradiction", "source", "error", "test", "event",
+    ])
+    exp.add_argument("--status", choices=["active", "stale", "superseded", "disputed", "archived"])
+
     return p
 
 
@@ -522,6 +604,8 @@ def main() -> None:
         "init": cmd_init,
         "db-status": cmd_db_status,
         "memory": cmd_memory,
+        "recall": cmd_recall,
+        "explain-search": cmd_explain_search,
     }
     handler = handlers.get(args.command)
     if not handler:
