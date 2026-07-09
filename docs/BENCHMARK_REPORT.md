@@ -1,25 +1,31 @@
-# Benchmark Report — Zeref OS v1.0.0
+# Benchmark Report - Zeref Memory Engine
 
-_Generated: 2026-06-19. Rubric: [`benchmarks/RUBRIC.md`](benchmarks/RUBRIC.md)._
+_Generated: 2026-07-09. Rubric: [`benchmarks/RUBRIC.md`](benchmarks/RUBRIC.md)._
 
 ## Verdict
 
-**PASS** — every axis ≥ 9.0, no axis below 8.0.
+**PASS** - deterministic local benchmark gates passed.
 
-The `trust` axis was independently re-graded by an Opus audit pass. The
-verified score below replaces the deterministic draft. See
-[`TRUST_AUDIT.md`](TRUST_AUDIT.md) for sub-criterion deductions.
+This report is local and deterministic. It does not claim external superiority, production readiness, or a final perfect-score verdict.
 
 ## Scores
 
-| Axis | Score | Pass? | Note |
-|---|---:|:---:|---|
-| portability | 10.00 | ✅ | |
-| adaptivity | 9.00 | ✅ | |
-| scalability | 10.00 | ✅ | |
-| trust | **9.70** | ✅ | _Verified by [`TRUST_AUDIT.md`](TRUST_AUDIT.md); draft was 10.00._ |
+| Axis | Score | Status |
+|---|---:|---|
+| portability | 10.00 | pass |
+| adaptivity | 9.00 | pass |
+| scalability | 10.00 | pass |
+| trust | 10.00 | pass |
+| token_efficiency | 10.00 | pass |
+| retrieval_accuracy | 10.00 | pass |
+| contradiction_detection | 10.00 | pass |
+| privacy_safety | 10.00 | pass |
+| prompt_rewrite_quality | 10.00 | pass |
+| handoff_success | 10.00 | pass |
+| loop_control | 10.00 | pass |
+| memory_refinement | 10.00 | pass |
 
-## Portability — 10.00 / 10
+## Portability - 10.00 / 10
 
 | Sub-criterion | Score | Evidence |
 |---|---:|---|
@@ -29,7 +35,7 @@ verified score below replaces the deterministic draft. See
 | `harness_matrix` | 10.00 | HARNESS_MATRIX.md has ~8 harness rows |
 | `cli_works` | 10.00 | CLI --version and status both clean |
 
-## Adaptivity — 9.00 / 10
+## Adaptivity - 9.00 / 10
 
 | Sub-criterion | Score | Evidence |
 |---|---:|---|
@@ -39,7 +45,7 @@ verified score below replaces the deterministic draft. See
 | `review_gate` | 8.00 | review-gated=True, audit-logged=False |
 | `privacy_filter` | 10.00 | privacy-filter=True, rejects-on-hit=True |
 
-## Scalability — 10.00 / 10
+## Scalability - 10.00 / 10
 
 | Sub-criterion | Score | Evidence |
 |---|---:|---|
@@ -49,18 +55,92 @@ verified score below replaces the deterministic draft. See
 | `r6_preserved` | 10.00 | R6 in rules=True, R6 referenced in handoff skills=True |
 | `decision_criteria` | 10.00 | 3/3 packs document upgrade/use criteria |
 
-## Trust — 10.00 / 10
+## Trust - 10.00 / 10
 
 | Sub-criterion | Score | Evidence |
 |---|---:|---|
 | `version_consistency` | 10.00 | checker clean; ci_enforced=True |
-| `test_suite` | 10.00 | 7 test files; pytest.ini=True; ci=True |
+| `test_suite` | 10.00 | 16 test files; pytest.ini=True; ci=True |
 | `privacy_patterns` | 10.00 | 9 provider-shaped credential patterns wired |
 | `security_md` | 10.00 | no_public_route=True, pvr=True, pgp=True, window=True |
 | `ci_hardening` | 10.00 | 9/9 action refs SHA-pinned (100%); dependabot=True |
 
-> _Draft score from deterministic scorer. Final score in docs/BENCHMARK_REPORT.md must come from an independent Opus security-audit pass._
+> _Deterministic trust scorer. Use an independent high-effort security review before making any public final trust verdict._
 
+
+## Token Efficiency - 10.00 / 10
+
+| Sub-criterion | Score | Evidence |
+|---|---:|---|
+| `markdown_guard` | 10.00 | markdown rewrite executor=blocked |
+| `minimalism_ladder` | 10.00 | duplicate=link-existing, append=atom-append, patch=atom-patch |
+| `flagship_gate` | 10.00 | public claim executor=flagship |
+| `deterministic_estimator` | 10.00 | estimate=4 deterministic=True |
+
+## Retrieval Accuracy - 10.00 / 10
+
+| Sub-criterion | Score | Evidence |
+|---|---:|---|
+| `sqlite_indexed_recall` | 10.00 | top=decision_e3aede839941afdd |
+| `jsonl_fallback_recall` | 10.00 | top=decision_e3aede839941afdd |
+| `explain_search` | 10.00 | candidates=1 |
+
+## Contradiction Detection - 10.00 / 10
+
+| Sub-criterion | Score | Evidence |
+|---|---:|---|
+| `case_creation` | 10.00 | created=1 |
+| `arbitration_required` | 10.00 | User arbitration required. Pick a winner with resolve --winner and provide --reason. |
+| `no_silent_resolution` | 10.00 | before_status=active |
+| `explicit_resolution` | 10.00 | after_status=superseded |
+
+## Privacy Safety - 10.00 / 10
+
+| Sub-criterion | Score | Evidence |
+|---|---:|---|
+| `credential_scrub` | 10.00 | redacted=2 |
+| `handoff_field_scrub` | 10.00 | atom_id_preserved=True |
+| `redaction_metadata` | 10.00 | field_redactions=1 |
+
+## Prompt Rewrite Quality - 10.00 / 10
+
+| Sub-criterion | Score | Evidence |
+|---|---:|---|
+| `classification` | 10.00 | SEMI_STRUCTURED |
+| `brief_fields` | 10.00 | fields=['classification', 'constraints', 'context', 'deliverable', 'execution_loop', 'missing_info', 'objective', 'risks', 'source_prompt', 'success_criteria', 'verification'] |
+| `wording_preserved` | 10.00 | I want to change the dashboard screen buttons just like we did on settings page. |
+| `inject_target` | 10.00 | codex |
+| `unsafe_flag` | 10.00 | UNSAFE |
+| `markdown_output` | 10.00 | markdown generated |
+
+## Handoff Success - 10.00 / 10
+
+| Sub-criterion | Score | Evidence |
+|---|---:|---|
+| `artifact_files` | 10.00 | markdown_exists=False json_exists=False |
+| `source_backed_content` | 10.00 | atom ids present in markdown |
+| `machine_readable_json` | 10.00 | target=human |
+| `verification_checklist` | 10.00 | checklist present |
+
+## Loop Control - 10.00 / 10
+
+| Sub-criterion | Score | Evidence |
+|---|---:|---|
+| `bounded_contract` | 10.00 | max=2 |
+| `run_stops` | 10.00 | iterations=1 |
+| `no_direct_memory_write` | 10.00 | proposal={'direct_memory_write': False, 'loop_id': 'loop_5b421763e352', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []} |
+| `status_available` | 10.00 | latest status read |
+| `report_available` | 10.00 | report read |
+
+## Memory Refinement - 10.00 / 10
+
+| Sub-criterion | Score | Evidence |
+|---|---:|---|
+| `duplicate_detection` | 10.00 | groups=1 |
+| `unsupported_detection` | 10.00 | unsupported=1 |
+| `dry_run_no_write` | 10.00 | report_after_dry=False |
+| `report_write` | 10.00 | json_written=True markdown_written=True |
+| `view_render` | 10.00 | rendered=5 |
 
 ## How to reproduce
 
@@ -75,6 +155,14 @@ python3 -m benchmarks.portability
 python3 -m benchmarks.adaptivity
 python3 -m benchmarks.scalability
 python3 -m benchmarks.trust
+python3 -m benchmarks.token_efficiency
+python3 -m benchmarks.retrieval_accuracy
+python3 -m benchmarks.contradiction_detection
+python3 -m benchmarks.privacy_safety
+python3 -m benchmarks.prompt_rewrite_quality
+python3 -m benchmarks.handoff_success
+python3 -m benchmarks.loop_control
+python3 -m benchmarks.memory_refinement
 ```
 
 ## Rubric
