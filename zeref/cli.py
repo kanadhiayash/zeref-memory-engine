@@ -250,6 +250,12 @@ def cmd_audit_privacy(args: argparse.Namespace) -> int:
 
 def cmd_audit(args: argparse.Namespace) -> int:
     root = _project_root()
+    if getattr(args, "audit_command", None) == "report":
+        from zeref.audit.reports import audit_report
+
+        print(audit_report(root, since=args.since or "", format=args.format), end="")
+        return 0
+
     script = root / "scripts" / "zeref-validate.py"
     if not script.exists():
         script = root / "scripts" / "zeref-validate-v4.py"
@@ -445,7 +451,11 @@ def _build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--strict", action="store_true",
                     help="Exit non-zero on any unredacted hit (suitable for CI gate)")
 
-    sub.add_parser("audit", help="Structural validation")
+    audit_p = sub.add_parser("audit", help="Structural validation and audit reports")
+    audit_sub = audit_p.add_subparsers(dest="audit_command")
+    audit_report = audit_sub.add_parser("report", help="Generate audit report")
+    audit_report.add_argument("--since", default="")
+    audit_report.add_argument("--format", choices=["text", "md", "json"], default="text")
 
     init_p = sub.add_parser("init", help="Scaffold memory/ + config/ + privacy templates")
     init_p.add_argument("--directory", help="Target dir (default: cwd)")
