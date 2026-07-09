@@ -28,8 +28,9 @@ def test_help_lists_commands(repo_root: Path) -> None:
     r = _run(["--help"], repo_root)
     assert r.returncode == 0
     for cmd in ("status", "write-decision", "grade", "audit-privacy",
-                "audit", "init", "db-status", "memory", "factguard", "evidence",
-                "contradictions", "privacy", "route", "release", "doctor"):
+                "audit", "init", "db-status", "memory", "recall",
+                "explain-search", "factguard", "evidence", "contradictions",
+                "privacy", "route", "release", "doctor"):
         assert cmd in r.stdout, f"--help missing command {cmd!r}: {r.stdout}"
 
 
