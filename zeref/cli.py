@@ -463,6 +463,75 @@ def cmd_evidence(args: argparse.Namespace) -> int:
     return 1
 
 
+def cmd_contradictions(args: argparse.Namespace) -> int:
+    from zeref.guards.contradiction_guard import (
+        archive_conflict,
+        format_conflicts,
+        list_conflicts,
+        resolve_conflict,
+        show_conflict,
+        write_conflicts,
+    )
+    from zeref.memory_state import MemoryStore
+
+    store = MemoryStore.from_root(_project_root())
+    if args.contradictions_command == "scan":
+        conflicts = list_conflicts(store)
+        write_conflicts(store, conflicts)
+        print(format_conflicts(conflicts, format=args.format), end="")
+        return 1 if any(c.severity in {"high", "critical"} for c in conflicts) else 0
+    if args.contradictions_command == "list":
+        conflicts = list_conflicts(store)
+        print(format_conflicts(conflicts, format=args.format), end="")
+        return 0
+    if args.contradictions_command == "show":
+        conflict = show_conflict(store, args.id)
+        if conflict is None:
+            print(f"✘ conflict {args.id} not found")
+            return 1
+        print(json.dumps(conflict.to_dict(), indent=2, sort_keys=True))
+        return 0
+    if args.contradictions_command == "resolve":
+        result = resolve_conflict(store, args.id, winner=args.winner, reason=args.reason)
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
+    if args.contradictions_command == "archive":
+        result = archive_conflict(store, args.id)
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
+    print("✘ unknown contradictions command")
+    return 1
+
+
+def cmd_privacy(args: argparse.Namespace) -> int:
+    from zeref.guards.privacy_guard import classify_text, format_findings, redact_file, scan_path
+
+    root = _project_root()
+    redact_md = root / "REDACT.md"
+    if args.privacy_command == "scan":
+        findings = scan_path(Path(args.path), redact_md_path=redact_md)
+        print(format_findings(findings, format=args.format), end="")
+        return 1 if findings and args.strict else 0
+    if args.privacy_command == "classify":
+        print(json.dumps(classify_text(args.text, redact_md_path=redact_md), indent=2, sort_keys=True))
+        return 0
+    if args.privacy_command == "redact":
+        cleaned, finding = redact_file(Path(args.path), redact_md_path=redact_md)
+        if args.suggest:
+            print(cleaned)
+        elif finding:
+            print(format_findings([finding]), end="")
+        else:
+            print("No PrivacyGuard findings.")
+        return 1 if finding else 0
+    if args.privacy_command == "report":
+        findings = scan_path(root / "docs", redact_md_path=redact_md)
+        print(format_findings(findings, format=args.format), end="")
+        return 1 if findings and args.strict else 0
+    print("✘ unknown privacy command")
+    return 1
+
+
 def _print_item_result(item, *, json_output: bool, verb: str) -> int:
     from zeref.memory_state import item_to_dict
 
@@ -629,6 +698,37 @@ def _build_parser() -> argparse.ArgumentParser:
     ev_upgrade.add_argument("--source", required=True)
     evidence_sub.add_parser("report", help="Report low-evidence memory cards")
 
+    contradictions = sub.add_parser("contradictions", help="Scan and resolve memory conflicts")
+    contradictions_sub = contradictions.add_subparsers(dest="contradictions_command", required=True)
+    con_scan = contradictions_sub.add_parser("scan", help="Scan memory cards for contradictions")
+    con_scan.add_argument("path", nargs="?", default="memory/")
+    con_scan.add_argument("--format", choices=["text", "json"], default="text")
+    con_list = contradictions_sub.add_parser("list", help="List current contradictions")
+    con_list.add_argument("--format", choices=["text", "json"], default="text")
+    con_show = contradictions_sub.add_parser("show", help="Show one contradiction")
+    con_show.add_argument("id")
+    con_resolve = contradictions_sub.add_parser("resolve", help="Resolve a contradiction")
+    con_resolve.add_argument("id")
+    con_resolve.add_argument("--winner", required=True)
+    con_resolve.add_argument("--reason", required=True)
+    con_archive = contradictions_sub.add_parser("archive", help="Archive a contradiction")
+    con_archive.add_argument("id")
+
+    privacy = sub.add_parser("privacy", help="Scan, classify, and redact sensitive text")
+    privacy_sub = privacy.add_subparsers(dest="privacy_command", required=True)
+    privacy_scan = privacy_sub.add_parser("scan", help="Scan a path for sensitive material")
+    privacy_scan.add_argument("path")
+    privacy_scan.add_argument("--format", choices=["text", "json"], default="text")
+    privacy_scan.add_argument("--strict", action="store_true")
+    privacy_redact = privacy_sub.add_parser("redact", help="Print redacted file content or findings")
+    privacy_redact.add_argument("path")
+    privacy_redact.add_argument("--suggest", action="store_true")
+    privacy_classify = privacy_sub.add_parser("classify", help="Classify a text snippet")
+    privacy_classify.add_argument("text")
+    privacy_report = privacy_sub.add_parser("report", help="Scan docs/ for sensitive material")
+    privacy_report.add_argument("--format", choices=["text", "json"], default="text")
+    privacy_report.add_argument("--strict", action="store_true")
+
     return p
 
 
@@ -646,6 +746,8 @@ def main() -> None:
         "memory": cmd_memory,
         "factguard": cmd_factguard,
         "evidence": cmd_evidence,
+        "contradictions": cmd_contradictions,
+        "privacy": cmd_privacy,
     }
     handler = handlers.get(args.command)
     if not handler:
