@@ -1,1 +1,0 @@
-# OPEN_QUESTIONS.md
