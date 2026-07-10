@@ -1,6 +1,7 @@
 # Zeref Memory Engine
 
 <p align="center">
+  <a href="https://github.com/kanadhiayash/zeref-memory-engine/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/version-1.0.0-blueviolet" alt="v1.0.0"></a>
   <img src="assets/zeref-os-hero.png" alt="Zeref Memory Engine thumbnail" width="720">
 </p>
 
@@ -51,7 +52,7 @@ Zeref is not:
 - a model provider,
 - a vector database,
 - a replacement for human review,
-- or a public leaderboard claim.
+- or a public benchmark report claim.
 
 <p align="center">
   <img src="assets/poc-stateless-vs-zeref.png" alt="Stateless AI sessions compared with Zeref-backed sessions" width="720">
@@ -239,7 +240,7 @@ Security and governance docs:
 
 Zeref includes deterministic local benchmark gates and fixture-first adapters for external memory benchmark formats.
 
-Current benchmark reports are local and repo-scoped. They are **not** public leaderboard claims.
+Current benchmark reports are local and repo-scoped. They are **not** public benchmark report claims.
 
 Read:
 
