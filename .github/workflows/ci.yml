@@ -2,11 +2,15 @@ name: Zeref OS CI
 
 on:
   push:
-    branches: [main]
+    branches: [dev, main]
     tags: ['v*']
   pull_request:
-    branches: [main]
+    branches: [dev, main]
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -21,6 +25,8 @@ jobs:
     steps:
       # actions/checkout — pinned to v4.2.2 release SHA
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        fetch-depth: 0
 
       - name: Set up Python
         # actions/setup-python — pinned to v5.3.0 release SHA
