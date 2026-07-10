@@ -53,3 +53,19 @@ npm-debug.log
 .claude/settings.local.json
 .claude/launch.json
 .claude/
+
+# Zeref local runtime memory artifacts
+memory/hot.md
+memory/index.md
+memory/MEMORY.md
+memory/DECISIONS.md
+memory/OPEN_QUESTIONS.md
+memory/RISKS.md
+memory/CONFLICTS.md
+memory/audit/
+memory/patterns/
+memory/reports/
+memory/state/
+memory/views/
+memory/snapshots/
+memory/sync/
