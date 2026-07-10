@@ -69,3 +69,7 @@ memory/state/
 memory/views/
 memory/snapshots/
 memory/sync/
+
+# Local lineage sandbox imports. Foreign repository clones and inventories are
+# generated evidence only and must not enter Zeref core.
+.zeref-sandbox/
