@@ -206,11 +206,11 @@
       "sub": {
         "sqlite_indexed_recall": {
           "score": 10.0,
-          "evidence": "top=decision_a44ef285805e45e1"
+          "evidence": "top=decision_7e075211e6f11b07"
         },
         "jsonl_fallback_recall": {
           "score": 10.0,
-          "evidence": "top=decision_a44ef285805e45e1"
+          "evidence": "top=decision_7e075211e6f11b07"
         },
         "explain_search": {
           "score": 10.0,
@@ -324,7 +324,7 @@
         },
         "no_direct_memory_write": {
           "score": 10.0,
-          "evidence": "proposal={'direct_memory_write': False, 'loop_id': 'loop_e6ba84b254d5', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []}"
+          "evidence": "proposal={'direct_memory_write': False, 'loop_id': 'loop_3f99b1bcaef9', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []}"
         },
         "status_available": {
           "score": 10.0,
