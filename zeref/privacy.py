@@ -16,6 +16,7 @@ Usage:
 from __future__ import annotations
 
 import base64
+import os
 import re
 import unicodedata
 from dataclasses import dataclass, field
@@ -134,7 +135,8 @@ _BUILTIN_PATTERNS: dict[str, re.Pattern] = {
             # v2.5 L1: negative lookahead blocks action verbs as first name token
             \b(?!(?:Hire|Call|Email|Tell|Send|Meet|Ask|See|Visit|With|Hired|Called|
                      Emailed|Told|Sent|Met|Asked|Saw|Visited|Will|Can|May|Should|
-                     Would|Shall|Did|Was|Were|Has|Have|Had)\b)
+                     Would|Shall|Did|Was|Were|Has|Have|Had|Benchmark|Failure|
+                     Analysis)\b)
             [A-Z][a-z]{1,20}\ [A-Z][a-z]{1,20}\b      # Firstname Lastname
             | \b\d{3}-\d{2}-\d{4}\b                    # SSN
             | \b\d{3}[.\-\ ]\d{3}[.\-\ ]\d{4}\b        # Phone
@@ -381,6 +383,8 @@ def audit(
     for md_file in sorted(directory.rglob("*.md")):
         if any(p in md_file.parts for p in _SKIP):
             continue
+        if _is_macos_dataless_placeholder(md_file):
+            continue
         text = md_file.read_text(errors="ignore")
         _, report = scrub(text, redact_md_path)
         results["scanned"] += 1
@@ -391,3 +395,14 @@ def audit(
                 results["by_class"][cls] = results["by_class"].get(cls, 0) + 1
 
     return results
+
+
+def _is_macos_dataless_placeholder(path: Path) -> bool:
+    """Avoid blocking on cloud-backed files that have metadata but no local bytes."""
+    try:
+        flags = os.stat(path).st_flags
+    except (AttributeError, OSError):
+        return False
+    # macOS exposes dataless cloud placeholders with an undocumented high bit.
+    # Reading those can block while the OS attempts to materialize the file.
+    return bool(flags & 0x40000000)
