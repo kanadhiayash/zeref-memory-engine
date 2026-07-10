@@ -1,0 +1,30 @@
+name: Bug report
+description: Report a reproducible Zeref bug
+title: "bug: "
+labels: ["type:bug", "evidence:needs-source"]
+body:
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification output
+      description: Paste relevant command output with secrets removed.
+    validations:
+      required: false

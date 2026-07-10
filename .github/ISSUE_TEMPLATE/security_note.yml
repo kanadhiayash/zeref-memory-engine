@@ -1,0 +1,19 @@
+name: Security note
+description: Redirect security reports to private reporting
+title: "security: "
+labels: ["risk:privacy"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not disclose vulnerabilities in public issues.
+
+        Use GitHub Private Vulnerability Reporting from the Security tab:
+        https://github.com/kanadhiayash/zeref-memory-engine/security
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: I understand that real vulnerabilities should not be posted publicly.
+          required: true

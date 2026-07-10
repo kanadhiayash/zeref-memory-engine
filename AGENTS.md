@@ -1,4 +1,4 @@
-# AGENTS.md — Zeref Memory Engine Canonical Spec (v1.0.0)
+# AGENTS.md - Zeref Memory Engine Canonical Spec
 
 > **Naming note.** The product is **Zeref Memory Engine** (short form: **Zeref**).
 > The legacy name was "Zeref OS" — preserved throughout this document for
@@ -12,9 +12,9 @@ This is the canonical agent specification for **Zeref**. All harness-specific fi
 
 ## Identity
 
-Zeref OS is a local-first context and memory engine. Harness-agnostic, model-agnostic, privacy-first. Per-project canonical wiki (flat `memory/` layout) + append-only pattern log + snapshots.
+Zeref is a local-first context and memory engine. Harness-agnostic, model-agnostic, privacy-first. Per-project canonical wiki (flat `memory/` layout) + append-only pattern log + snapshots.
 
-The name comes from Zeref Dragneel in *Fairy Tail* — the immortal scholar whose ancient knowledge transcended form, time, and faction. Zeref OS is built in that lineage: long-horizon memory, faithful to the user's accumulated decisions, portable across every AI harness.
+The name comes from Zeref Dragneel in *Fairy Tail* — the immortal scholar whose ancient knowledge transcended form, time, and faction. Zeref is built in that lineage: long-horizon memory, faithful to the user's accumulated decisions, portable across every AI harness.
 
 ## First action every session (reading order — ZEREF_OS §0)
 
@@ -49,7 +49,7 @@ Do NOT read individual wiki pages for general coding questions or things already
 13. **Cost-Weight Auto-Gate**: `budget-governor` runs before every major task; CRITICAL / HIGH cannot proceed without stated tier. See `skills/budget-governor/SKILL.md` §Auto-Activation Rule.
 14. **Task-Weight Model Routing**: LOW never on Opus; CRITICAL never on Haiku. Orchestrator @ Sonnet medium → executor @ Sonnet/Haiku by weight → final gate @ Opus high when stakes warrant. See `## Model-Tier Routing` below.
 
-## Auto-Activation Gates (v2.6)
+## Auto-Activation Gates
 
 Every major task passes these gates sequentially before any execution-model call. Each gate declares its result inline; user may override.
 
@@ -74,7 +74,7 @@ Classifies the raw prompt (STRUCTURED / SEMI-STRUCTURED / UNSTRUCTURED). Rewrite
 
 See `skills/prompt-context-engine/SKILL.md`.
 
-## Model-Tier Routing (v2.6)
+## Model-Tier Routing
 
 Per Core Principle 14. Weight (from `budget-governor`) maps to model + effort.
 
@@ -106,7 +106,7 @@ Default: orchestrator on Sonnet — Sonnet is the cost-balanced default unless t
 
 ### Per-skill model audit (current state)
 
-All 13 skills' `model` fields in `zeref-registry.json` audited against weight per the matrix above. No LOW→opus or CRITICAL→haiku mismatches detected. Borderline call: `privacy-abstraction` (`risk_level: high`, `model: haiku`) — kept on Haiku because redaction follows deterministic REDACT.md rules; bump to Sonnet if a future PATTERNS.jsonl event shows redaction misses on adversarial input. Tracked as forward signal for `pattern-observer`.
+All listed skills' `model` fields in `zeref-registry.json` audited against weight per the matrix above. No LOW→opus or CRITICAL→haiku mismatches detected. Borderline call: `privacy-abstraction` (`risk_level: high`, `model: haiku`) — kept on Haiku because redaction follows deterministic REDACT.md rules; bump to Sonnet if a future PATTERNS.jsonl event shows redaction misses on adversarial input. Tracked as forward signal for `pattern-observer`.
 
 ## Agents (6)
 
