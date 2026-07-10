@@ -1,0 +1,57 @@
+{
+  "canonical_store": "memory/state/zeref.sqlite",
+  "event_log": "memory/state/events.jsonl",
+  "schema_version": "memory-state.v1",
+  "tables": {
+    "memory_cards": {
+      "fields": [
+        "id",
+        "type",
+        "title",
+        "claim",
+        "status",
+        "confidence",
+        "evidence_grade",
+        "source_refs",
+        "privacy_class",
+        "created_at",
+        "updated_at",
+        "valid_from",
+        "valid_until",
+        "supersedes",
+        "superseded_by",
+        "tags",
+        "owner"
+      ]
+    },
+    "memory_events": {
+      "append_only_mirror": "memory/state/events.jsonl",
+      "fields": [
+        "id",
+        "ts",
+        "event",
+        "item_id",
+        "payload",
+        "hash"
+      ]
+    },
+    "memory_items": {
+      "fields": [
+        "id",
+        "kind",
+        "title",
+        "body",
+        "entity",
+        "tags",
+        "layer",
+        "source_ref",
+        "confidence",
+        "authority",
+        "created_at",
+        "updated_at",
+        "archived"
+      ],
+      "search_index": "memory_items_fts"
+    }
+  }
+}

@@ -4,11 +4,11 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
     open-pull-requests-limit: 5
     labels:
-      - "dependencies"
-      - "github-actions"
+      - "type:chore"
+      - "area:ci"
+      - "evidence:needs-source"
     commit-message:
       prefix: "chore(ci)"
       include: "scope"
@@ -16,11 +16,12 @@ updates:
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "monthly"
-    open-pull-requests-limit: 3
+      interval: "weekly"
+    open-pull-requests-limit: 5
     labels:
-      - "dependencies"
-      - "python"
+      - "type:chore"
+      - "area:dependencies"
+      - "evidence:needs-source"
     commit-message:
       prefix: "chore(deps)"
       include: "scope"
