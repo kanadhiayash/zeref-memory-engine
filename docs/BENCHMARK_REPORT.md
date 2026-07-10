@@ -111,8 +111,8 @@ Lineage axes validate local intake metadata, implementation registries, and guar
 
 | Sub-criterion | Score | Evidence |
 |---|---:|---|
-| `sqlite_indexed_recall` | 10.00 | top=decision_58a41da65ceb8ea0 |
-| `jsonl_fallback_recall` | 10.00 | top=decision_58a41da65ceb8ea0 |
+| `sqlite_indexed_recall` | 10.00 | top=decision_e8c233d45d4cbeaf |
+| `jsonl_fallback_recall` | 10.00 | top=decision_e8c233d45d4cbeaf |
 | `explain_search` | 10.00 | candidates=1 |
 
 ## Contradiction Detection - 10.00 / 10
@@ -158,7 +158,7 @@ Lineage axes validate local intake metadata, implementation registries, and guar
 |---|---:|---|
 | `bounded_contract` | 10.00 | max=2 |
 | `run_stops` | 10.00 | iterations=1 |
-| `no_direct_memory_write` | 10.00 | proposal={'direct_memory_write': False, 'loop_id': 'loop_f739bd7783a0', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []} |
+| `no_direct_memory_write` | 10.00 | proposal={'direct_memory_write': False, 'loop_id': 'loop_d8c3f974739c', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []} |
 | `status_available` | 10.00 | latest status read |
 | `report_available` | 10.00 | report read |
 
