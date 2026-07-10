@@ -26,16 +26,26 @@ sys.path.insert(0, str(REPO))
 
 from benchmarks import (  # noqa: E402
     adaptivity,
+    adapter_value,
     contradiction_detection,
+    critical_adoption_coverage,
+    foreign_code_containment,
     handoff_success,
+    high_adoption_coverage,
+    license_boundary,
+    lineage_import_coverage,
     loop_control,
     memory_refinement,
+    minimality_pressure,
     portability,
     privacy_safety,
     prompt_rewrite_quality,
+    public_claim_safety,
+    reference_only_guardrails,
     retrieval,
     retrieval_accuracy,
     scalability,
+    security_containment,
     token_efficiency,
     trust,
 )
@@ -55,6 +65,16 @@ AXES = [
     handoff_success,
     loop_control,
     memory_refinement,
+    lineage_import_coverage,
+    foreign_code_containment,
+    critical_adoption_coverage,
+    high_adoption_coverage,
+    reference_only_guardrails,
+    adapter_value,
+    minimality_pressure,
+    security_containment,
+    license_boundary,
+    public_claim_safety,
 ]
 
 
@@ -115,6 +135,10 @@ def _render_report(results: list[dict], rubric_rel: str, passed: bool, failures:
         ("The `trust` axis is independently re-graded by the security audit "
          "before publication. When the audit score is lower than the "
          "deterministic draft, the verified score is the published score."),
+        "",
+        ("Lineage axes validate local intake metadata, implementation registries, "
+         "and guardrails. They are not external-dataset verification of the "
+         "referenced projects."),
         "",
         "## Scores",
         "",
@@ -177,6 +201,16 @@ def _render_report(results: list[dict], rubric_rel: str, passed: bool, failures:
         "python3 -m benchmarks.handoff_success",
         "python3 -m benchmarks.loop_control",
         "python3 -m benchmarks.memory_refinement",
+        "python3 -m benchmarks.lineage_import_coverage",
+        "python3 -m benchmarks.foreign_code_containment",
+        "python3 -m benchmarks.critical_adoption_coverage",
+        "python3 -m benchmarks.high_adoption_coverage",
+        "python3 -m benchmarks.reference_only_guardrails",
+        "python3 -m benchmarks.adapter_value",
+        "python3 -m benchmarks.minimality_pressure",
+        "python3 -m benchmarks.security_containment",
+        "python3 -m benchmarks.license_boundary",
+        "python3 -m benchmarks.public_claim_safety",
         "```",
         "",
         "## Rubric",
