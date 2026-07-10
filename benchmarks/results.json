@@ -159,7 +159,7 @@
         },
         "test_suite": {
           "score": 10.0,
-          "evidence": "27 test files; pytest.ini=True; ci=True"
+          "evidence": "34 test files; pytest.ini=True; ci=True"
         },
         "privacy_patterns": {
           "score": 10.0,
@@ -206,11 +206,11 @@
       "sub": {
         "sqlite_indexed_recall": {
           "score": 10.0,
-          "evidence": "top=decision_7e075211e6f11b07"
+          "evidence": "top=decision_e8c233d45d4cbeaf"
         },
         "jsonl_fallback_recall": {
           "score": 10.0,
-          "evidence": "top=decision_7e075211e6f11b07"
+          "evidence": "top=decision_e8c233d45d4cbeaf"
         },
         "explain_search": {
           "score": 10.0,
@@ -324,7 +324,7 @@
         },
         "no_direct_memory_write": {
           "score": 10.0,
-          "evidence": "proposal={'direct_memory_write': False, 'loop_id': 'loop_3f99b1bcaef9', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []}"
+          "evidence": "proposal={'direct_memory_write': False, 'loop_id': 'loop_d8c3f974739c', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []}"
         },
         "status_available": {
           "score": 10.0,
@@ -359,6 +359,186 @@
         "view_render": {
           "score": 10.0,
           "evidence": "rendered=5"
+        }
+      }
+    },
+    {
+      "axis": "lineage_import_coverage",
+      "score": 10.0,
+      "sub": {
+        "all_rows_validated": {
+          "score": 10.0,
+          "evidence": "64 intake rows validated"
+        },
+        "deduped_source_scopes": {
+          "score": 10.0,
+          "evidence": "sources=59"
+        },
+        "dry_run_no_writes": {
+          "score": 10.0,
+          "evidence": "metadata-only dry-run fixture"
+        }
+      }
+    },
+    {
+      "axis": "foreign_code_containment",
+      "score": 10.0,
+      "sub": {
+        "critical_no_foreign_code": {
+          "score": 10.0,
+          "evidence": "critical gates report no vendored foreign code"
+        },
+        "high_no_core_dependency": {
+          "score": 10.0,
+          "evidence": "21 high rows optional or gated"
+        },
+        "reference_no_runtime_bundle": {
+          "score": 10.0,
+          "evidence": "19 reference rows evidence-only"
+        }
+      }
+    },
+    {
+      "axis": "critical_adoption_coverage",
+      "score": 10.0,
+      "sub": {
+        "all_critical_rows": {
+          "score": 10.0,
+          "evidence": "10 critical rows detected"
+        },
+        "all_implemented": {
+          "score": 10.0,
+          "evidence": "10 critical gates implemented"
+        },
+        "core_or_gate": {
+          "score": 10.0,
+          "evidence": "all critical rows implemented as core or gates"
+        }
+      }
+    },
+    {
+      "axis": "high_adoption_coverage",
+      "score": 10.0,
+      "sub": {
+        "all_high_rows": {
+          "score": 10.0,
+          "evidence": "21 high rows detected"
+        },
+        "all_implemented": {
+          "score": 10.0,
+          "evidence": "21 high boundaries implemented"
+        },
+        "optional_or_gated": {
+          "score": 10.0,
+          "evidence": "all high rows optional or gated"
+        }
+      }
+    },
+    {
+      "axis": "reference_only_guardrails",
+      "score": 10.0,
+      "sub": {
+        "all_reference_rows": {
+          "score": 10.0,
+          "evidence": "19 reference-only rows detected"
+        },
+        "all_guarded": {
+          "score": 10.0,
+          "evidence": "19 reference-only battle tests implemented"
+        },
+        "evidence_only": {
+          "score": 10.0,
+          "evidence": "no reference-only runtime bundles"
+        }
+      }
+    },
+    {
+      "axis": "adapter_value",
+      "score": 10.0,
+      "sub": {
+        "optional_adapters_present": {
+          "score": 10.0,
+          "evidence": "4 optional adapter targets gated"
+        },
+        "fixtures_present": {
+          "score": 10.0,
+          "evidence": "4 benchmark fixture adaptations"
+        },
+        "connector_policy_present": {
+          "score": 10.0,
+          "evidence": "connector boundary represented"
+        }
+      }
+    },
+    {
+      "axis": "minimality_pressure",
+      "score": 10.0,
+      "sub": {
+        "high_not_core": {
+          "score": 10.0,
+          "evidence": "high rows did not become core dependencies"
+        },
+        "reference_not_runtime": {
+          "score": 10.0,
+          "evidence": "reference rows did not enter runtime"
+        },
+        "rejection_preserved": {
+          "score": 10.0,
+          "evidence": "reject verdict preserved"
+        }
+      }
+    },
+    {
+      "axis": "security_containment",
+      "score": 10.0,
+      "sub": {
+        "security_references_contained": {
+          "score": 10.0,
+          "evidence": "raptor/mantishack/hacker-bob evidence-only"
+        },
+        "defensive_fixture_only": {
+          "score": 10.0,
+          "evidence": "Purple Llama adapted as safety fixture only"
+        },
+        "critical_rails_present": {
+          "score": 10.0,
+          "evidence": "critical rail gates included"
+        }
+      }
+    },
+    {
+      "axis": "license_boundary",
+      "score": 10.0,
+      "sub": {
+        "license_metadata_recorded": {
+          "score": 10.0,
+          "evidence": "sources=59"
+        },
+        "concept_source_marked": {
+          "score": 10.0,
+          "evidence": "Software 2.0 marked citation"
+        },
+        "archived_reference_marked": {
+          "score": 10.0,
+          "evidence": "archived PromptBench fixture marked"
+        }
+      }
+    },
+    {
+      "axis": "public_claim_safety",
+      "score": 10.0,
+      "sub": {
+        "no_superiority_verdict": {
+          "score": 10.0,
+          "evidence": "escalation policy avoids superiority claims"
+        },
+        "strict_council_passed": {
+          "score": 10.0,
+          "evidence": "strict council gate passed"
+        },
+        "reference_rows_not_promoted": {
+          "score": 10.0,
+          "evidence": "19 reference-only rows retained"
         }
       }
     }
