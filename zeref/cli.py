@@ -994,6 +994,17 @@ def cmd_lineage(args: argparse.Namespace) -> int:
         result = audit_csv(args.csv)
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0 if result["passed"] else 1
+    if args.lineage_command == "import":
+        from zeref.lineage.importer import import_lineage
+
+        result = import_lineage(
+            args.csv,
+            sandbox=args.sandbox,
+            latest_default=args.latest_default,
+            dry_run=args.dry_run,
+        )
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result["passed"] else 1
     print("✘ unknown lineage command")
     return 1
 
@@ -1352,6 +1363,11 @@ def _build_parser() -> argparse.ArgumentParser:
     lineage_sub = lineage.add_subparsers(dest="lineage_command", required=True)
     lineage_audit = lineage_sub.add_parser("audit", help="Validate lineage intake CSV")
     lineage_audit.add_argument("--csv", required=True)
+    lineage_import = lineage_sub.add_parser("import", help="Resolve and sandbox lineage sources")
+    lineage_import.add_argument("--csv")
+    lineage_import.add_argument("--sandbox", action="store_true", help="Write imports under .zeref-sandbox/lineage")
+    lineage_import.add_argument("--latest-default", action="store_true", help="Resolve each GitHub default branch")
+    lineage_import.add_argument("--dry-run", action="store_true", help="Resolve metadata without cloning or writing")
 
     return p
 
