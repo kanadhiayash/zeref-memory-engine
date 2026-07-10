@@ -1,4 +1,4 @@
-name: Version consistency
+name: ZME Version Consistency
 
 on:
   push:

@@ -1,4 +1,4 @@
-name: Zeref OS CI
+name: ZME CI
 
 on:
   push:

@@ -1,4 +1,4 @@
-name: Privacy audit
+name: ZME Privacy Audit
 
 on:
   push:
