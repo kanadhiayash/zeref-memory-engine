@@ -1,4 +1,4 @@
-name: Branch retention guard
+name: ZRF Branch Retention
 
 # Enforces the "never delete a branch after merge" project policy.
 # Triggered on every push to main and on every PR close event; fails fast if

@@ -1,4 +1,4 @@
-name: ZME Version Consistency
+name: ZRF Version Consistency
 
 on:
   push:
