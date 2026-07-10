@@ -1011,6 +1011,12 @@ def cmd_lineage(args: argparse.Namespace) -> int:
         result = run_council(args.csv, strict=args.strict)
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0 if result["passed"] else 1
+    if args.lineage_command == "critical":
+        from zeref.lineage.critical import audit_critical
+
+        result = audit_critical(args.csv, strict=args.strict)
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result["passed"] else 1
     print("✘ unknown lineage command")
     return 1
 
@@ -1377,6 +1383,9 @@ def _build_parser() -> argparse.ArgumentParser:
     lineage_council = lineage_sub.add_parser("council", help="Produce deterministic lineage council verdicts")
     lineage_council.add_argument("--csv")
     lineage_council.add_argument("--strict", action="store_true")
+    lineage_critical = lineage_sub.add_parser("critical", help="Audit critical lineage implementations")
+    lineage_critical.add_argument("--csv")
+    lineage_critical.add_argument("--strict", action="store_true")
 
     return p
 
