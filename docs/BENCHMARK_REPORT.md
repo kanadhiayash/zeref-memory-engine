@@ -99,8 +99,8 @@ The `trust` axis is independently re-graded by the security audit before publica
 
 | Sub-criterion | Score | Evidence |
 |---|---:|---|
-| `sqlite_indexed_recall` | 10.00 | top=decision_a44ef285805e45e1 |
-| `jsonl_fallback_recall` | 10.00 | top=decision_a44ef285805e45e1 |
+| `sqlite_indexed_recall` | 10.00 | top=decision_7e075211e6f11b07 |
+| `jsonl_fallback_recall` | 10.00 | top=decision_7e075211e6f11b07 |
 | `explain_search` | 10.00 | candidates=1 |
 
 ## Contradiction Detection - 10.00 / 10
@@ -146,7 +146,7 @@ The `trust` axis is independently re-graded by the security audit before publica
 |---|---:|---|
 | `bounded_contract` | 10.00 | max=2 |
 | `run_stops` | 10.00 | iterations=1 |
-| `no_direct_memory_write` | 10.00 | proposal={'direct_memory_write': False, 'loop_id': 'loop_e6ba84b254d5', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []} |
+| `no_direct_memory_write` | 10.00 | proposal={'direct_memory_write': False, 'loop_id': 'loop_3f99b1bcaef9', 'note': 'Loop runtime emits proposals only; durable memory writes require separate commands.', 'proposed_atoms': []} |
 | `status_available` | 10.00 | latest status read |
 | `report_available` | 10.00 | report read |
 
