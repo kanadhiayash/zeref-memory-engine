@@ -1017,6 +1017,12 @@ def cmd_lineage(args: argparse.Namespace) -> int:
         result = audit_critical(args.csv, strict=args.strict)
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0 if result["passed"] else 1
+    if args.lineage_command == "high":
+        from zeref.lineage.high import audit_high
+
+        result = audit_high(args.csv, strict=args.strict)
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result["passed"] else 1
     print("✘ unknown lineage command")
     return 1
 
@@ -1386,6 +1392,9 @@ def _build_parser() -> argparse.ArgumentParser:
     lineage_critical = lineage_sub.add_parser("critical", help="Audit critical lineage implementations")
     lineage_critical.add_argument("--csv")
     lineage_critical.add_argument("--strict", action="store_true")
+    lineage_high = lineage_sub.add_parser("high", help="Audit high-priority lineage boundaries")
+    lineage_high.add_argument("--csv")
+    lineage_high.add_argument("--strict", action="store_true")
 
     return p
 
