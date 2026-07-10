@@ -1005,6 +1005,12 @@ def cmd_lineage(args: argparse.Namespace) -> int:
         )
         print(json.dumps(result, indent=2, sort_keys=True))
         return 0 if result["passed"] else 1
+    if args.lineage_command == "council":
+        from zeref.lineage.council import run_council
+
+        result = run_council(args.csv, strict=args.strict)
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result["passed"] else 1
     print("✘ unknown lineage command")
     return 1
 
@@ -1368,6 +1374,9 @@ def _build_parser() -> argparse.ArgumentParser:
     lineage_import.add_argument("--sandbox", action="store_true", help="Write imports under .zeref-sandbox/lineage")
     lineage_import.add_argument("--latest-default", action="store_true", help="Resolve each GitHub default branch")
     lineage_import.add_argument("--dry-run", action="store_true", help="Resolve metadata without cloning or writing")
+    lineage_council = lineage_sub.add_parser("council", help="Produce deterministic lineage council verdicts")
+    lineage_council.add_argument("--csv")
+    lineage_council.add_argument("--strict", action="store_true")
 
     return p
 
