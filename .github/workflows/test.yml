@@ -1,4 +1,4 @@
-name: Zeref OS Test
+name: ZME Test
 
 on:
   push:
