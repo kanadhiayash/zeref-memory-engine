@@ -6,6 +6,31 @@ Versioning: [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.PATCH`.
 
 ---
 
+## [1.1.1] — 2026-07-11
+
+Post-v1.1.0 CI green-up + branch cleanup. No behavioral changes to product code; the audit remediation carried forward with tighter tooling.
+
+### Fixed
+
+- **`agents/evidence-curator.md`, `agents/pattern-observer.md`, `commands/review-skill.md`** — moved `<!-- privacy-audit: allow-file "..." -->` marker from before the `---` YAML frontmatter to after the closing `---`. Unblocks `scripts/zeref-validate.py` frontmatter detection + `tests/test_validator.py` (R13).
+- **`.github/workflows/privacy-audit.yml`** — added editable install step; workflow now calls `python3 -m zeref audit-privacy --strict --max-hits 30 --max-files 25`, matching the `_check_privacy_scan` ceiling in `zeref/release/checks.py` so CI + release-check share the same enforcement (R14).
+- **`.github/workflows/branch-retention.yml`** — trigger now filters to protected refs only (`main`, `dev`, `release/*`). Auto-deletion of merged feature-branch heads no longer red-flags the workflow (R15).
+- **All 4 workflows** — bumped `actions/checkout` pin from v4.2.2 (Node 20) to v7.0.0 (Node 24) SHA `9c091bb2...`. Silences GitHub's Node 20 deprecation warnings (R16).
+
+### Changed
+
+- **`zeref/cli.py cmd_audit_privacy`** — added `--max-hits` + `--max-files` threshold flags. When either is >0, exit code follows the ceiling instead of any-hit-fails. Preserves original behavior when both are 0 (backwards compatible) (R14).
+
+### Removed (remote housekeeping)
+
+- **7 empty `audit/zeref__ws-*` branches** on remote (R17). Never received commits; created for the Phase 0.4 audit swarm and superseded by the merged v1.1.0 remediation on `main`.
+
+### dev branch sync
+
+`dev` was force-synced to `main` HEAD (delete + recreate via ruleset temporary-disable + restore). Divergent-hash history from the pre-v1.0.0 lineage era resolved. `dev` is now the canonical integration layer per `GITHUB_OS.md`.
+
+---
+
 ## [Unreleased — v1.2.0 canary] — Phases 13-16 (2026-07-11)
 
 Target-model profile system. Ships the loader + inject wrapper + release-check

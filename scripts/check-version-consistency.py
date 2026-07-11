@@ -127,6 +127,11 @@ def main() -> int:
         return 1
 
     # R8 (ZRF-AUDIT-020): also compare against the latest git tag.
+    # Semantics:
+    #   - `tag > VERSION` (backwards drift) — always fail unless docs/PIVOT_LOG.md
+    #     names the lineage restart with a `restart-from-<version>` marker.
+    #   - `tag == VERSION` — fine (post-release state).
+    #   - `tag < VERSION` — fine (unreleased-tag pre-release state; expected between bump and tag).
     # Intentional lineage restarts must be recorded in docs/PIVOT_LOG.md.
     import subprocess
     try:
@@ -137,17 +142,32 @@ def main() -> int:
     except (OSError, subprocess.CalledProcessError):
         tags = []
     latest_tag = next((t.lstrip("v") for t in tags if SEMVER_RE.match(t.lstrip("v"))), None)
-    if latest_tag and latest_tag != expected:
-        pivot = root / "docs" / "PIVOT_LOG.md"
-        if pivot.exists() and f"restart-from-{latest_tag}" in pivot.read_text(errors="ignore"):
-            print(f"\nTag {latest_tag!r} exceeds VERSION {expected!r} — "
-                  f"documented in docs/PIVOT_LOG.md (restart-from-{latest_tag}).")
+
+    def _to_semver_tuple(v: str) -> tuple[int, int, int]:
+        core = v.split("-", 1)[0].split("+", 1)[0]
+        parts = (core.split(".") + ["0", "0", "0"])[:3]
+        return tuple(int(p) if p.isdigit() else 0 for p in parts)  # type: ignore[return-value]
+
+    if latest_tag:
+        tag_tuple = _to_semver_tuple(latest_tag)
+        expected_tuple = _to_semver_tuple(expected)
+        if tag_tuple > expected_tuple:
+            # Backwards drift — either intentional restart (documented) or an error.
+            pivot = root / "docs" / "PIVOT_LOG.md"
+            if pivot.exists() and f"restart-from-{latest_tag}" in pivot.read_text(errors="ignore"):
+                print(f"\nTag {latest_tag!r} exceeds VERSION {expected!r} — "
+                      f"documented in docs/PIVOT_LOG.md (restart-from-{latest_tag}).")
+            else:
+                print(f"\nTag divergence: latest tag {latest_tag!r} exceeds VERSION {expected!r}.",
+                      file=sys.stderr)
+                print("Either bump zeref/VERSION or document the intentional lineage restart in "
+                      "docs/PIVOT_LOG.md with a `restart-from-<version>` marker.", file=sys.stderr)
+                return 1
+        elif tag_tuple < expected_tuple:
+            # Pre-tag state — VERSION advanced beyond last shipped tag. Normal between bump and cut.
+            print(f"\nTag {latest_tag!r} < VERSION {expected!r} — pre-tag state (VERSION bumped, tag pending).")
         else:
-            print(f"\nTag divergence: latest tag {latest_tag!r} exceeds VERSION {expected!r}.",
-                  file=sys.stderr)
-            print("Either bump zeref/VERSION or document the intentional lineage restart in "
-                  "docs/PIVOT_LOG.md with a `restart-from-<version>` marker.", file=sys.stderr)
-            return 1
+            print(f"\nTag {latest_tag!r} matches VERSION.")
 
     print("\nAll surfaces aligned on", expected)
     return 0

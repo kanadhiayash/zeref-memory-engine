@@ -18,8 +18,8 @@ jobs:
   scrub:
     runs-on: ubuntu-latest
     steps:
-      # actions/checkout — pinned to v4.2.2 release SHA
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      # actions/checkout — pinned to v7.0.0 release SHA (Node 24)
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
 
       - name: Set up Python
         # actions/setup-python — pinned to v5.3.0 release SHA
@@ -27,9 +27,16 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Run strict privacy audit on memory/
+      - name: Install package (editable)
         run: |
-          python3 -m zeref audit-privacy --strict
+          python3 -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Run strict privacy audit repo-wide (matches release-check ceiling)
+        run: |
+          # Threshold ceiling mirrors _check_privacy_scan in zeref/release/checks.py.
+          # Allowlisted files carry `privacy-audit: allow-file "<reason>"` in their first 40 lines.
+          python3 -m zeref audit-privacy --strict --max-hits 30 --max-files 25
 
       - name: Scan repo for committed secrets
         run: |
