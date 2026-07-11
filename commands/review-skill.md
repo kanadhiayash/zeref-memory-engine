@@ -1,7 +1,7 @@
-<!-- privacy-audit: allow-file "Slash-command spec references skills/drafts/ + pattern names." -->
 ---
 description: Review and approve skill drafts in skills/drafts/ proposed by pattern-observer + pattern-to-skill. Approve, edit, reject, or defer each draft.
 ---
+<!-- privacy-audit: allow-file "Slash-command spec references skills/drafts/ + pattern names." -->
 
 1. Read `memory/sync/outbound/patterns/` for new candidates emitted since last `/review-skill` run.
 2. For each new candidate without a draft → invoke `pattern-to-skill` DRAFT operation (writes to `skills/drafts/<name>/`).
