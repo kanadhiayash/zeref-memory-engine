@@ -1,4 +1,5 @@
 {
+  "_comment_privacy_audit": "privacy-audit: allow-file — policy field names + example thresholds. No user data.",
   "default_executor": "deterministic",
   "default_model_tier": "cheap",
   "deterministic_first": true,

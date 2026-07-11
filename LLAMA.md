@@ -1,3 +1,5 @@
+<!-- privacy-audit: allow-file "Llama harness stub references AGENTS.md + example paths." -->
+
 # LLAMA.md — Llama-family harness shim (Zeref OS)
 
 **Canonical spec: `AGENTS.md`** — read it first. This file only adds

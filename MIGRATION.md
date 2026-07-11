@@ -1,3 +1,5 @@
+<!-- privacy-audit: allow-file "Migration doc contains example paths + install commands as documentation of the process." -->
+
 # Migration: Zeref v3 → v4
 
 ## TL;DR
@@ -61,8 +63,8 @@ v3 had become a theatrical multi-agent operating system. v4 returns to first pri
 # 1. Back up your v3 wiki first
 cp -r /path/to/v3-project/wiki ~/zeref-v3-backup-$(date +%Y%m%d)
 
-# 2. Install v4
-claude plugin install zeref@zeref
+# 2. Install Zeref Memory Engine (compat identifier retained per D2)
+claude plugin install zeref-os@zeref-os
 
 # 3. Run migration script
 python3 scripts/migrate-v3-to-v4.py --from /path/to/v3-project/wiki --to ./memory
@@ -134,7 +136,7 @@ python3 scripts/migrate-v4.2-to-v4.3.py
 python3 scripts/migrate-v4.2-to-v4.3.py --apply
 
 # 4. Verify
-python3 scripts/zeref-validate-v4.py
+python3 scripts/zeref-validate.py
 git status   # confirm git mv preserved history (look for "R" lines)
 ```
 

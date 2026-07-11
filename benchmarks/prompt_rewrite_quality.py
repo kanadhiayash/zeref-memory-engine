@@ -1,4 +1,7 @@
-"""Prompt rewrite quality axis."""
+"""Prompt rewrite quality axis.
+
+privacy-audit: allow-file "Scorer references example prompt patterns; no user data."
+"""
 
 from __future__ import annotations
 

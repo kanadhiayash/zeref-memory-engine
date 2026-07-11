@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """
+privacy-audit: allow-file "Benchmark harness names axis IDs + example evidence fields; no user data."
+
 benchmarks/run-all.py — Run all axes and emit docs/BENCHMARK_REPORT.md
 plus machine-readable benchmarks/results.json.
 
 Exit code:
-    0  every axis ≥ 9.0 and no axis below 8.0 (the 10/10 pass bar)
+    0  every scored axis ≥ 9.0 (the 10/10 pass bar); skipped axes ignored
     1  otherwise
+Skipped axes (e.g. missing input CSV) are recorded explicitly and do NOT
+inflate the passed-verdict (see ZRF-AUDIT-012).
 
 Usage:
     python3 benchmarks/run-all.py
@@ -79,7 +83,12 @@ AXES = [
 
 
 def _apply_verified_overrides(results: list[dict]) -> list[dict]:
-    """Apply independent audit overrides that may lower deterministic drafts."""
+    """Apply independent audit overrides that may lower deterministic drafts.
+
+    Refuses the override unless docs/TRUST_AUDIT.md carries a Bound-commit-SHA
+    equal to the current HEAD. Prevents stale trust scores from silently applying
+    to newer code (see ZRF-AUDIT-013).
+    """
     trust_audit = REPO / "docs" / "TRUST_AUDIT.md"
     if not trust_audit.exists():
         return results
@@ -91,6 +100,33 @@ def _apply_verified_overrides(results: list[dict]) -> list[dict]:
         re.MULTILINE,
     )
     if not match:
+        return results
+
+    # SHA-binding gate: audit must name the commit it graded.
+    sha_match = re.search(
+        r"^- \*\*Bound-commit-SHA:\*\* `([0-9a-f]{7,40})`",
+        text,
+        re.MULTILINE,
+    )
+    if not sha_match:
+        # No SHA binding — refuse override, keep deterministic draft.
+        return results
+    bound_sha = sha_match.group(1)
+    try:
+        import subprocess
+        head_sha = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=REPO, text=True
+        ).strip()
+    except (OSError, subprocess.CalledProcessError):
+        head_sha = ""
+    if head_sha and not head_sha.startswith(bound_sha):
+        # HEAD moved since the independent audit; refuse override.
+        for result in results:
+            if result.get("axis") == "trust":
+                result.setdefault("note", (
+                    f"TRUST_AUDIT.md Bound-commit-SHA {bound_sha} does not match HEAD "
+                    f"{head_sha[:12]}; deterministic draft score published (see ZRF-AUDIT-013)."
+                ))
         return results
 
     verified_trust = float(match.group(1))

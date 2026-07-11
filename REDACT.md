@@ -1,3 +1,4 @@
+<!-- privacy-audit: allow-file "REDACT.md IS the redaction spec — every pattern description is intentional documentation of the classifier." -->
 ---
 # Concrete sensitive classes — `privacy-abstraction` skill strips these before write
 # `privacy-guardian` checks these before any external transmission

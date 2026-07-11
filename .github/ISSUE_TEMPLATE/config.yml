@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
   - name: Read the docs
-    url: https://github.com/kanadhiayash/zeref-os/blob/main/AGENTS.md
+    url: https://github.com/kanadhiayash/zeref-memory-engine/blob/main/AGENTS.md
     about: AGENTS.md is the canonical Zeref OS spec — start there.
   - name: Migration from v3
-    url: https://github.com/kanadhiayash/zeref-os/blob/main/MIGRATION.md
+    url: https://github.com/kanadhiayash/zeref-memory-engine/blob/main/MIGRATION.md
     about: v3 → v4 migration tooling and steps.
   - name: Installation
-    url: https://github.com/kanadhiayash/zeref-os/blob/main/INSTALL.md
+    url: https://github.com/kanadhiayash/zeref-memory-engine/blob/main/INSTALL.md
     about: Install Zeref OS in Claude Code, Codex, or Gemini CLI.

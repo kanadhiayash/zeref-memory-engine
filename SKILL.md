@@ -1,7 +1,8 @@
+<!-- privacy-audit: allow-file "Plugin manifest + Fairy Tail character description. Documents skill triggers using example pattern names." -->
 ---
 name: zeref-os
-version: 1.0.0
-description: Zeref OS — local-first context and memory engine for AI-assisted work. Harness-agnostic, model-agnostic, privacy-first. Flat memory layout, per-project wiki, append-only pattern log, snapshots, on-demand team packs. Makes AI work cumulative instead of stateless across every harness.
+version: 1.1.0
+description: Zeref Memory Engine (compat identifier `zeref-os`) — local-first context and memory engine for AI-assisted work. Harness-agnostic, model-agnostic, privacy-first. Flat memory layout, per-project wiki, append-only pattern log, snapshots, on-demand team packs. Makes AI work cumulative instead of stateless across every harness.
 ---
 
 # Zeref OS

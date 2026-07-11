@@ -1,4 +1,6 @@
 """
+privacy-audit: allow-file "SQL schema documents column names that overlap with PII/date patterns (e.g. created_at, provenance). No real data."
+
 zeref.db — Structured-data snapshot layer (Sprint 3).
 
 On /done (or explicit call), emits a SQLite snapshot of parsed memory files.

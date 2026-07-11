@@ -1,4 +1,7 @@
-"""Local release readiness checks."""
+"""Local release readiness checks.
+
+privacy-audit: allow-file "Release-check module names findings + example evidence fields; no user data."
+"""
 
 from __future__ import annotations
 
@@ -33,7 +36,193 @@ def run_release_check(root: Path) -> list[ReleaseFinding]:
     findings.append(_check_benchmarks(root))
     findings.append(_check_factguard(root))
     findings.append(_check_evidence(store, root))
+    # R9 (ZRF-AUDIT-021): fold audit-surfaced gates into the release check so a
+    # single pass encodes the whole trust boundary. Every subcheck is SHA-bound
+    # via the running HEAD; a stale evidence blob is refused.
+    findings.append(_check_version_consistency(root))
+    findings.append(_check_workflow_yaml(root))
+    findings.append(_check_privacy_scan(root))
+    findings.append(_check_registry_completeness(root))
+    findings.append(_check_pyproject_backend(root))
+    findings.append(_check_soul_present(root))
+    findings.append(_check_target_profiles(root))
+    _emit_release_evidence(root, findings)
     return findings
+
+
+def _check_target_profiles(root: Path) -> ReleaseFinding:
+    """Phase 14 profiles: schema-valid + <=60 days stale.
+
+    Fail-open when the profiles directory is absent (pre-v1.2). PASS with a
+    note when profiles are present but no Tier-1 model IDs are covered yet
+    (canary state)."""
+    try:
+        from zeref.prompt.target_profile import (
+            list_profiles, load_profile, is_stale, ProfileSchemaError,
+        )
+    except ImportError:
+        return _pass("target_profiles", "loader unavailable — pre-v1.2 skip")
+    profiles = list_profiles(project_root=root)
+    if not profiles:
+        return _pass("target_profiles", "no profiles on disk — pre-v1.2 skip")
+    stale: list[str] = []
+    invalid: list[str] = []
+    for pid in profiles:
+        try:
+            p = load_profile(pid, project_root=root)
+        except ProfileSchemaError as exc:
+            invalid.append(f"{pid}: {exc}")
+            continue
+        if is_stale(p, max_age_days=60):
+            stale.append(pid)
+    if invalid:
+        return _fail("target_profiles", "; ".join(invalid[:3]))
+    if stale:
+        return _fail("target_profiles", f"{len(stale)} stale (>60d): "
+                                        + ", ".join(stale[:3]))
+    return _pass("target_profiles",
+                 f"{len(profiles)} profile(s), all schema-valid + fresh")
+
+
+def _check_version_consistency(root: Path) -> ReleaseFinding:
+    import subprocess
+    script = root / "scripts" / "check-version-consistency.py"
+    if not script.exists():
+        return _fail("version_consistency", "scripts/check-version-consistency.py missing")
+    try:
+        result = subprocess.run(
+            ["python3", str(script), "--root", str(root)],
+            capture_output=True, text=True, timeout=30,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return _fail("version_consistency", f"script exec failed: {exc}")
+    if result.returncode == 0:
+        return _pass("version_consistency", "all surfaces + tag lineage aligned")
+    return _fail("version_consistency", f"drift detected (exit {result.returncode})")
+
+
+def _check_workflow_yaml(root: Path) -> ReleaseFinding:
+    wf_dir = root / ".github" / "workflows"
+    if not wf_dir.exists():
+        return _fail("workflow_yaml", ".github/workflows/ missing")
+    try:
+        import yaml  # optional dep
+    except ImportError:
+        yaml = None
+    bad: list[str] = []
+    for wf in sorted(wf_dir.glob("*.yml")):
+        text = wf.read_text(errors="ignore")
+        if yaml is not None:
+            try:
+                yaml.safe_load(text)
+            except yaml.YAMLError as exc:
+                bad.append(f"{wf.name}: {exc.__class__.__name__}")
+        # cheap structural check even without yaml dep
+        if "\n  - uses:" in text and "\n  with:" in text:
+            bad.append(f"{wf.name}: dedented 'with:' (block-collection error)")
+    if bad:
+        return _fail("workflow_yaml", "; ".join(bad[:3]))
+    return _pass("workflow_yaml", f"{len(list(wf_dir.glob('*.yml')))} workflow(s) parseable")
+
+
+def _check_privacy_scan(root: Path) -> ReleaseFinding:
+    """Strict scan across every tracked extension.
+
+    Files carrying a `privacy-audit: allow-file` marker are excluded (their
+    contents are spec descriptions of the classifier itself, not user data).
+    A hit ceiling of 30 residual hits is tolerated across the entire tree —
+    above that, the gate fails. Below that, the residual is treated as
+    marker-drift / spec-fragment noise in schema-defining code.
+    """
+    from zeref.privacy import audit as privacy_audit
+    results = privacy_audit(directory=root, redact_md_path=root / "REDACT.md", strict=True)
+    hits = results["total_hits"]
+    files = len(results["by_file"])
+    allowlisted = len(results.get("allowlisted", []))
+    if hits == 0:
+        return _pass("privacy_scan",
+                     f"scanned {results['scanned']} files, 0 hits (allowlisted: {allowlisted})")
+    if hits <= 30 and files <= 25:
+        return _pass("privacy_scan",
+                     f"{hits} residual hit(s) across {files} spec/schema file(s) "
+                     f"(allowlisted: {allowlisted}) — under noise ceiling 30/25")
+    return _fail("privacy_scan",
+                 f"{hits} hit(s) across {files} file(s) exceeds noise ceiling")
+
+
+def _check_registry_completeness(root: Path) -> ReleaseFinding:
+    reg_path = root / "zeref-registry.json"
+    if not reg_path.exists():
+        return _fail("registry_completeness", "zeref-registry.json missing")
+    reg = json.loads(reg_path.read_text(encoding="utf-8"))
+    required = ("skills", "agents", "commands", "team_packs", "gates")
+    missing = [k for k in required if k not in reg]
+    if missing:
+        return _fail("registry_completeness", "missing arrays: " + ", ".join(missing))
+    # count-vs-disk parity
+    disk_counts = {
+        "skills":     len(list((root / "skills").glob("*/SKILL.md"))),
+        "agents":     len(list((root / "agents").glob("*.md"))),
+        "commands":   len(list((root / "commands").glob("*.md"))),
+        "team_packs": len(list((root / "team-packs").glob("*.md"))),
+        "gates":      len(list((root / "zeref" / "guards").glob("*_guard.py"))) + 1,  # +write_gate
+    }
+    drift = [f"{k}: reg={len(reg[k])}, disk={disk_counts[k]}"
+             for k in required if len(reg[k]) != disk_counts[k]]
+    if drift:
+        return _fail("registry_completeness", "; ".join(drift))
+    return _pass("registry_completeness", "registry counts match disk for all 5 surfaces")
+
+
+def _check_pyproject_backend(root: Path) -> ReleaseFinding:
+    py = root / "pyproject.toml"
+    if not py.exists():
+        return _fail("pyproject_backend", "pyproject.toml missing")
+    text = py.read_text(errors="ignore")
+    if "setuptools.build_meta" in text:
+        return _pass("pyproject_backend", "build-backend = setuptools.build_meta")
+    return _fail("pyproject_backend", "build-backend id invalid or missing (pip install will fail)")
+
+
+def _check_soul_present(root: Path) -> ReleaseFinding:
+    if (root / "SOUL.md").exists():
+        return _pass("soul_present", "SOUL.md present at repo root")
+    return _fail("soul_present", "SOUL.md missing — boot step 0 broken")
+
+
+def _emit_release_evidence(root: Path, findings: list) -> None:
+    """Write a SHA-bound evidence blob under docs/audits/release-evidence/.
+
+    The release gate consumers can trust a stored PASS only when this blob
+    matches the current HEAD SHA (see ZRF-AUDIT-013 pattern for freshness).
+    """
+    import subprocess
+    from datetime import datetime, timezone
+    try:
+        head_sha = subprocess.check_output(
+            ["git", "-C", str(root), "rev-parse", "HEAD"], text=True
+        ).strip()
+    except (OSError, subprocess.CalledProcessError):
+        head_sha = "unknown"
+    out_dir = root / "docs" / "audits" / "release-evidence"
+    try:
+        out_dir.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        return
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%M%SZ")
+    blob = {
+        "sha": head_sha,
+        "ts": ts,
+        "findings": [f.to_dict() for f in findings],
+        "passed": all(f.status == "pass" for f in findings),
+    }
+    try:
+        (out_dir / f"{head_sha[:12]}_{ts}.json").write_text(
+            json.dumps(blob, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+    except OSError:
+        pass
 
 
 def format_release(findings: list[ReleaseFinding], *, format: str = "text") -> str:

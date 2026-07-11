@@ -6,6 +6,9 @@ labels: [enhancement]
 assignees: []
 ---
 
+> ⚠️ **DO NOT file security issues here.** For security bugs use the private
+> channel in [SECURITY.md](../../SECURITY.md).
+
 ## Problem
 
 <!-- what user pain or workflow gap motivates this -->

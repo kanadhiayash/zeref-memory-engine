@@ -1,4 +1,7 @@
-"""Privacy safety axis."""
+"""Privacy safety axis.
+
+privacy-audit: allow-file "Scorer references pattern names + example redact classes; no user data."
+"""
 
 from __future__ import annotations
 

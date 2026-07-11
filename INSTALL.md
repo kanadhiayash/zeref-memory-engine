@@ -1,3 +1,5 @@
+<!-- privacy-audit: allow-file "Install doc. Documents env-var-shaped tokens (OPENAI_API_KEY, GITHUB_TOKEN) as example config strings. No real credentials." -->
+
 # Install Zeref OS
 
 ## Claude Code (CLI)

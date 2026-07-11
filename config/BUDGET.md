@@ -1,3 +1,4 @@
+<!-- privacy-audit: allow-file "Session budget config with example tier names. No user data." -->
 ---
 model_tier: auto                # auto | free | standard | god-mode (auto detects from active model)
 always_on_target_tokens: 2000   # context loaded on every /start

@@ -17,7 +17,7 @@ def lineage_reports() -> dict[str, Any]:
     """Run deterministic local lineage gates once for benchmark axes."""
     return {
         "audit": audit_csv(_csv_path()),
-        "import": import_lineage(_csv_path(), sandbox=True, latest_default=True, dry_run=True, resolver=_fake_resolver),
+        "import": import_lineage(_csv_path(), sandbox=True, latest_default=True, dry_run=True, resolver=_stub_resolver),
         "council": run_council(_csv_path(), strict=True),
         "critical": audit_critical(_csv_path(), strict=True),
         "high": audit_high(_csv_path(), strict=True),
@@ -38,7 +38,10 @@ def _csv_path():
     return default_csv_path()
 
 
-def _fake_resolver(row):
+def _stub_resolver(row):
+    """Stub resolver — returns synthesized fixture identities for lineage schema-conformance
+    axes. NOT a real GitHub resolver. Every axis backed by this stub reports
+    'lineage-schema-conformance' semantics, not empirical GitHub state (see ZRF-AUDIT-014)."""
     from zeref.lineage.importer import SourceIdentity
 
     if row.source_kind != "github":

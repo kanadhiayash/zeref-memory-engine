@@ -1,4 +1,6 @@
 """
+privacy-audit: allow-file "CLI help text names example commands, env-var-shaped tokens (ZEREF_ALLOW_*, GITHUB_TOKEN) as documentation of the security policy."
+
 zeref.cli — Reference CLI for Zeref OS (Sprint 2).
 
 Commands:
@@ -112,11 +114,18 @@ def cmd_init(args: argparse.Namespace) -> int:
     root = Path(args.directory).resolve() if args.directory else Path.cwd()
     print(f"\nInitialising Zeref OS layout at {root}")
 
-    # Use `is None` so empty-string CLI args (e.g. --parent "") skip the prompt
-    name    = args.name    if args.name    is not None else (input("Project name: ").strip() or "(unnamed)")
-    privacy = args.privacy if args.privacy is not None else (input("Privacy mode [abstract/exact/local-only] (default abstract): ").strip() or "abstract")
-    tier    = args.tier    if args.tier    is not None else (input("Model tier [auto/free/standard/god-mode] (default auto): ").strip() or "auto")
-    parent  = args.parent  if args.parent  is not None else input("Parent project path (Enter if none): ").strip()
+    # Use `is None` so empty-string CLI args (e.g. --parent "") skip the prompt.
+    # Non-TTY stdin (piped install, CI) also skips prompts and uses defaults.
+    import sys as _sys
+    _tty = _sys.stdin.isatty()
+    def _prompt_or_default(prompt: str, default: str) -> str:
+        if not _tty:
+            return default
+        return input(prompt).strip() or default
+    name    = args.name    if args.name    is not None else _prompt_or_default("Project name: ", "(unnamed)")
+    privacy = args.privacy if args.privacy is not None else _prompt_or_default("Privacy mode [abstract/exact/local-only] (default abstract): ", "abstract")
+    tier    = args.tier    if args.tier    is not None else _prompt_or_default("Model tier [auto/free/standard/god-mode] (default auto): ", "auto")
+    parent  = args.parent  if args.parent  is not None else _prompt_or_default("Parent project path (Enter if none): ", "")
     values = normalize_init_values(name=name, privacy=privacy, tier=tier, parent=parent)
     scaffold_project(root, name=name, privacy=privacy, tier=tier, parent=parent)
 
@@ -407,12 +416,19 @@ def cmd_grade(args: argparse.Namespace) -> int:
 
     llm_note = ""
     try:
+        # R3: policy gate + scrub claim before egress (see ZRF-AUDIT-001).
+        from zeref.security import load_policy, require_connector, ConnectorDisabledError, NetworkDeniedError
+        from zeref.privacy import scrub
+        root = _project_root()
+        policy = load_policy(root)
+        require_connector(policy, "litellm", purpose="grade-claim")
+        scrubbed_claim, _rpt = scrub(claim, root / "REDACT.md", provenance="cli/grade/claim")
         import litellm  # type: ignore
         resp = litellm.completion(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": (
                 f"Grade this claim on recency, provenance, corroboration (high/medium/low each). "
-                f"Claim: \"{claim}\"\n"
+                f"Claim: \"{scrubbed_claim}\"\n"
                 f"Reply JSON only: {{\"recency\":\"?\",\"provenance\":\"?\",\"corroboration\":\"?\","
                 f"\"grade\":\"?\",\"reasoning\":\"...\"}}"
             )}],
@@ -424,6 +440,8 @@ def cmd_grade(args: argparse.Namespace) -> int:
             d.get("provenance", provenance), d.get("corroboration", corroboration),
         )
         llm_note = f"\n  LLM reasoning: {d.get('reasoning', '')}"
+    except (ConnectorDisabledError, NetworkDeniedError) as exc:
+        llm_note = f"\n  (LLM egress denied — {exc.__class__.__name__}: {exc}. Heuristic grade used.)"
     except Exception:
         llm_note = "\n  (litellm unavailable — heuristic grade)"
 
@@ -442,10 +460,12 @@ def cmd_audit_privacy(args: argparse.Namespace) -> int:
 
     root = _project_root()
     redact = root / "REDACT.md"
-    directory = Path(args.directory) if args.directory else root / "memory"
+    strict = bool(getattr(args, "strict", False))
+    # In strict mode default to whole-project scan; otherwise scan memory/ only for speed.
+    directory = Path(args.directory) if args.directory else (root if strict else root / "memory")
 
-    print(f"Scanning {directory} …  (REDACT.md: {redact})")
-    results = _audit(directory=directory, redact_md_path=redact)
+    print(f"Scanning {directory} …  (REDACT.md: {redact}, strict={strict})")
+    results = _audit(directory=directory, redact_md_path=redact, strict=strict)
 
     print(f"\nFiles scanned:  {results['scanned']}")
     print(f"Total PII hits: {results['total_hits']}")

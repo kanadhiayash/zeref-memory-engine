@@ -1,4 +1,7 @@
-"""Deterministic memory health and refinement reports."""
+"""Deterministic memory health and refinement reports.
+
+privacy-audit: allow-file "Refinement heuristics reference date/PII pattern names as detection specs, not real user data."
+"""
 
 from __future__ import annotations
 

@@ -1,0 +1,67 @@
+{
+  "findings": [
+    {
+      "name": "version",
+      "reason": "zeref/VERSION exists",
+      "status": "pass"
+    },
+    {
+      "name": "memory_layout",
+      "reason": "tracked memory scaffold present; runtime memory files are generated locally",
+      "status": "pass"
+    },
+    {
+      "name": "audit_logs",
+      "reason": "tracked memory scaffold present; audit logs are generated locally",
+      "status": "pass"
+    },
+    {
+      "name": "benchmarks",
+      "reason": "local benchmark report is present and passing",
+      "status": "pass"
+    },
+    {
+      "name": "factguard",
+      "reason": "README has no FactGuard findings",
+      "status": "pass"
+    },
+    {
+      "name": "evidenceguard",
+      "reason": "no release-blocking evidence issues",
+      "status": "pass"
+    },
+    {
+      "name": "version_consistency",
+      "reason": "all surfaces + tag lineage aligned",
+      "status": "pass"
+    },
+    {
+      "name": "workflow_yaml",
+      "reason": "5 workflow(s) parseable",
+      "status": "pass"
+    },
+    {
+      "name": "privacy_scan",
+      "reason": "814 hit(s) across 140 file(s)",
+      "status": "fail"
+    },
+    {
+      "name": "registry_completeness",
+      "reason": "registry counts match disk for all 5 surfaces",
+      "status": "pass"
+    },
+    {
+      "name": "pyproject_backend",
+      "reason": "build-backend = setuptools.build_meta",
+      "status": "pass"
+    },
+    {
+      "name": "soul_present",
+      "reason": "SOUL.md present at repo root",
+      "status": "pass"
+    }
+  ],
+  "passed": false,
+  "sha": "b82c6410bf17b1bc4d1c79227c3a55e075858ab9",
+  "ts": "2026-07-11T012707Z"
+}

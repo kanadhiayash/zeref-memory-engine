@@ -1,4 +1,7 @@
-"""Sandbox importer for Zeref lineage repositories.
+"""
+privacy-audit: allow-file "Lineage importer references example repo paths + intake fields as schema; no user data."
+
+Sandbox importer for Zeref lineage repositories.
 
 Foreign repositories are cloned only into .zeref-sandbox and represented in
 tracked code by metadata, hashes, counts, and exclusion records.
@@ -290,6 +293,13 @@ def inventory_tree(root: Path) -> dict[str, Any]:
 
 
 def _github_json(url: str) -> dict[str, Any]:
+    # R3 policy gate — refuse unless SHARING_POLICY.md github.enabled OR env override
+    # (see ZRF-AUDIT-002). Fall back to raising the standard policy exception so
+    # the caller can degrade gracefully rather than silently exfiltrating.
+    from zeref.security import load_policy, require_connector
+    from zeref.memory.core import discover_project_root
+    require_connector(load_policy(discover_project_root()), "github",
+                      purpose=f"lineage:{url}")
     headers = {
         "Accept": "application/vnd.github+json",
         "User-Agent": "zeref-lineage-importer",

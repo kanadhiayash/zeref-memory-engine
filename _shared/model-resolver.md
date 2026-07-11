@@ -1,14 +1,18 @@
+<!-- privacy-audit: allow-file "Model-id mapping spec. Documents Anthropic model IDs + API paths as canonical routing, not user data." -->
+
 # Model Resolver
 
 Canonical mapping between bare tier names (legacy / human-friendly) and full Anthropic model IDs (API-callable + version-explicit). Per `_shared/rules.md#R6` + AGENTS.md `## Model-Tier Routing`.
 
 ## Canonical table (full IDs are the source of truth)
 
-| Bare alias | Full model ID (API) | Tier | $/1M in | $/1M out | Tokenizer note |
-|---|---|---|---|---|---|
-| `haiku`  | `claude-haiku-4-5`  | HAIKU  | $1 | $5  | baseline |
-| `sonnet` | `claude-sonnet-4-6` | SONNET | $3 | $15 | baseline |
-| `opus`   | `claude-opus-4-7`   | OPUS   | $5 | $25 | **+35% vs Sonnet** for same English text (Anthropic 2026); pin `claude-opus-4-6` for cost-sensitive flagship work |
+| Bare alias | Full model ID (API) | Tier | $/1M in | $/1M out | Tokenizer note | Target profile |
+|---|---|---|---|---|---|---|
+| `haiku`  | `claude-haiku-4-5`  | HAIKU  | $1 | $5  | baseline | (Tier-2) |
+| `sonnet` | `claude-sonnet-4-6` | SONNET | $3 | $15 | baseline | (Tier-2) |
+| `opus`   | `claude-opus-4-7`   | OPUS   | $5 | $25 | **+35% vs Sonnet** for same English text (Anthropic 2026); pin `claude-opus-4-6` for cost-sensitive flagship work | (Tier-2) |
+| `opus48` | `claude-opus-4-8`   | OPUS   | $5 | $25 | current flagship; largest system prompt (~45k tokens with tools) | [`claude-opus-4-8`](../references/target-model-profiles/claude-opus-4-8.md) |
+| `gpt55-instant` | `gpt-5-5-instant` | INSTANT | $0.4 | $2 | small system prompt (~3.8k); markdown-verbose default | [`gpt-5-5-instant`](../references/target-model-profiles/gpt-5-5-instant.md) |
 
 ## Pin overrides (version-explicit)
 

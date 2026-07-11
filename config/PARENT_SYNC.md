@@ -1,3 +1,4 @@
+<!-- privacy-audit: allow-file "Parent sync config schema; parent_path is a documented field, not a value." -->
 ---
 enabled: false
 parent_path: null   # absolute path to parent project root

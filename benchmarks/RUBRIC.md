@@ -1,3 +1,5 @@
+<!-- privacy-audit: allow-file "Rubric documents axis names + example evidence fields as spec; no user data." -->
+
 # Benchmark Rubric — Zeref OS v1.0.0
 
 Public, versioned, contestable. Every axis is scored 0–10 with explicit

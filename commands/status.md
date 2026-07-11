@@ -15,7 +15,7 @@ Read-only. Do not write to memory or modify config.
    ```
    == Zeref OS Status ==
    Project: <name>
-   Privacy: <mode> | Tier: <Free | Standard | God Mode> | Parent sync: <on|off>
+   Privacy: <mode> | Tier: <Free | Standard | Enterprise> | Parent sync: <on|off>
    Active team: <solo | build | research | red | audit | ship>
 
    Current context (memory/hot.md):
