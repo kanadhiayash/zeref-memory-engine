@@ -6,6 +6,56 @@ Versioning: [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.PATCH`.
 
 ---
 
+## [Unreleased — v1.2.0 canary] — Phases 13-16 (2026-07-11)
+
+Target-model profile system. Ships the loader + inject wrapper + release-check
+subcheck + benchmark axis with 2 canary profiles (Claude Opus 4.8, GPT-5.5 Instant).
+Full Tier-1 batch (10 remaining profiles) pending; v1.2.0 tag holds until full
+batch lands.
+
+### Added
+- `skills/imported/system-prompts-leaks/README.md` — reference-only fleet
+  boundary + refresh cadence for `github.com/asgeirtj/system_prompts_leaks`
+  catalog.
+- `references/target-model-profiles/` — YAML profile schema + first 2 profiles
+  (`claude-opus-4-8.md`, `gpt-5-5-instant.md`) + `README.md`. Derived summaries
+  only; **no source text vendored**.
+- `zeref/prompt/target_profile.py` — typed loader (frozen dataclass), schema
+  validation, freshness gate, cost helpers, skip-list export. Zero deps.
+- `zeref/release/checks.py` — new `target_profiles` subcheck (schema-valid +
+  `<=60d` stale). Fail-open when profiles/ absent.
+- `benchmarks/token_efficiency.py` — new `target_aware_reduction` sub-axis.
+  Canary aggregate: **75% theoretical reduction (Opus 4.8=83%, GPT-5.5=67%)**;
+  scores 10/10 against 15% release-gate floor.
+
+### Changed
+- `zeref/prompt/inject.py` — `inject_prompt(target, profile_id=None)`
+  consults the target profile; emits `_target-profile:<id> — skip: <csv>_`
+  preamble line for caveman-handoff to trust. Fail-open when no profile.
+- `skills/caveman-handoff/SKILL.md` — new "Target-aware skip lists" section.
+  Expected additional 15-30% reduction on Tier-1 targets.
+- `_shared/model-resolver.md` — new Target-profile column; rows for
+  `claude-opus-4-8` + `gpt-5-5-instant`.
+
+### Council decisions (canary-scoped)
+- Inline reconciler synth used for the "ship canary now vs wait for full
+  Tier-1" call. Verdict: **canary now** — the runtime plumbing is the
+  reusable primitive; remaining Tier-1 profiles are mechanical adds. Full
+  12-persona batch deferred to owner opt-in.
+
+### Not shipped in this canary
+- Tier-1 profiles 3-12 (10 remaining). Extraction is mechanical against
+  the schema in `references/target-model-profiles/README.md`.
+- `zeref/memory/cost_router.py` deep integration — kept surgical; callers
+  invoke `estimate_input_tokens` / `relative_cost` from the profile module
+  directly. Deeper wiring lands with the full Tier-1 batch.
+- Empirical (runtime measured) token-reduction numbers — the 75% aggregate
+  is theoretical (derived from `already_knows` × 250-token synthetic
+  category size vs 3000-token baseline). Real-token measurement lands in
+  the Phase-16 v2 pass, after Tier-1 completes.
+
+---
+
 ## [1.1.0] — 2026-07-10
 
 Audit remediation release — closes the Repository-Wide Consistency Audit
