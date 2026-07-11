@@ -17,7 +17,7 @@ Otherwise (normal boot, reading-order per ZEREF_OS §0):
    - Read `REDACT.md` (root) — before any external output
    - Auto-load first 200 lines of `memory/MEMORY.md` (agent-written session notes per §3.4)
    - Tail last 3 entries of `memory/patterns/PATTERNS.jsonl`
-3. Invoke `budget-governor` skill — detect Free / Standard / God Mode tier; report active tier + always-on context size.
+3. Invoke `budget-governor` skill — detect Free / Standard / Enterprise tier; report active tier + always-on context size.
 4. If `memory/sync/outbound/handoff-*/` exists (newest), invoke `handoff-orchestrator` CONSUME.
 5. Report:
    ```
@@ -27,7 +27,7 @@ Otherwise (normal boot, reading-order per ZEREF_OS §0):
    Open questions: <count>
    Conflicts: <count>
    Privacy mode: <mode>
-   Model tier: <Free | Standard | God Mode>
+   Model tier: <Free | Standard | Enterprise>
    Always-on context: ~<N> tokens
 
    What do you want to work on?

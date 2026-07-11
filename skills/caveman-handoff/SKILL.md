@@ -128,6 +128,17 @@ R6 diff (Step 4 Validate) is upgraded: byte-equal check PLUS NFKC-equal check. A
 - **Paraphrasing error strings** — refuse. Quote exact.
 - **Silent omission** — every dropped entity must appear in R6 violation report (and abort).
 
+## Target-aware skip lists (v1.2+)
+
+When the target model has a profile in `references/target-model-profiles/`, the compressor consults its `already_knows` field and drops content the target already carries in its system prompt.
+
+- Loader: `zeref.prompt.target_profile.load_profile(target_id)` returns a `TargetProfile`; `caveman_skip_categories(profile)` returns the skip iterable.
+- Categories the skip list covers: `available_tools_and_signatures`, `todays_date`, `user_platform_generic`, `safety_rules_baseline`, `tool_use_semantics`, `memory_system_semantics`, `artifact_system_semantics`, `copyright_compliance_baseline`, `refusal_style`, `list_vs_prose_defaults`, plus any target-specific additions.
+- Wrapper emits a compact preamble line — `_target-profile:<id> — skip: <csv>_` — that downstream compressors can trust as ground truth.
+- Fail-open: no profile = pre-v1.2 behavior unchanged.
+
+Expected additional token reduction on Tier-1 targets (over baseline caveman): 15-30% depending on target's `system_prompt_tokens`.
+
 ## Safety
 
 - Per `_shared/rules.md#R1`: payload write passes through `memory-keeper` → `privacy-guardian`.
@@ -135,3 +146,4 @@ R6 diff (Step 4 Validate) is upgraded: byte-equal check PLUS NFKC-equal check. A
 - Per `_shared/rules.md#R6` (Zero Context Loss): brief diff is mandatory inline; missing diff = abort.
 - Compression target: 40-60% reduction typical. < 20% reduction → handoff was already terse; emit verbose payload + note.
 - Never reach 100% compression — that means everything was dropped. Cap at 80%.
+- Target-aware skip lists are additive to caveman rules — never bypass R1 privacy scrub or R6 zero-context-loss.

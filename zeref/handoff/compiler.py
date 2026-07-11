@@ -1,4 +1,7 @@
-"""Compile privacy-scrubbed handoff artifacts from atoms."""
+"""Compile privacy-scrubbed handoff artifacts from atoms.
+
+privacy-audit: allow-file "Handoff compiler references example ISO timestamps + provenance fields; no real user data."
+"""
 
 from __future__ import annotations
 

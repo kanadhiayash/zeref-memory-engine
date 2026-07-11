@@ -8,6 +8,7 @@ publication. This file is that re-grade.
 - **Audit run:** 2026-06-19
 - **Auditor model:** Opus 4.7 (main thread, no spawned subagent)
 - **Rubric version:** 1 (2026-06-19)
+- **Bound-commit-SHA:** `33060a1` (independent audit target; re-run required on later HEADs)
 - **Draft score (`benchmarks/trust.py`):** 10.00
 - **Verified score (this audit):** **9.70**
 

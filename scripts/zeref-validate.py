@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """
+privacy-audit: allow-file "Validator error messages document pattern-shaped tokens (schema examples) that trigger the scanner as expected."
+
 zeref-validate.py — Validate Zeref OS plugin structure.
 
 Checks:

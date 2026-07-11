@@ -6,6 +6,136 @@ Versioning: [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.PATCH`.
 
 ---
 
+## [Unreleased — v1.2.0 canary] — Phases 13-16 (2026-07-11)
+
+Target-model profile system. Ships the loader + inject wrapper + release-check
+subcheck + benchmark axis with 2 canary profiles (Claude Opus 4.8, GPT-5.5 Instant).
+Full Tier-1 batch (10 remaining profiles) pending; v1.2.0 tag holds until full
+batch lands.
+
+### Added
+- `skills/imported/system-prompts-leaks/README.md` — reference-only fleet
+  boundary + refresh cadence for `github.com/asgeirtj/system_prompts_leaks`
+  catalog.
+- `references/target-model-profiles/` — YAML profile schema + first 2 profiles
+  (`claude-opus-4-8.md`, `gpt-5-5-instant.md`) + `README.md`. Derived summaries
+  only; **no source text vendored**.
+- `zeref/prompt/target_profile.py` — typed loader (frozen dataclass), schema
+  validation, freshness gate, cost helpers, skip-list export. Zero deps.
+- `zeref/release/checks.py` — new `target_profiles` subcheck (schema-valid +
+  `<=60d` stale). Fail-open when profiles/ absent.
+- `benchmarks/token_efficiency.py` — new `target_aware_reduction` sub-axis.
+  Canary aggregate: **75% theoretical reduction (Opus 4.8=83%, GPT-5.5=67%)**;
+  scores 10/10 against 15% release-gate floor.
+
+### Changed
+- `zeref/prompt/inject.py` — `inject_prompt(target, profile_id=None)`
+  consults the target profile; emits `_target-profile:<id> — skip: <csv>_`
+  preamble line for caveman-handoff to trust. Fail-open when no profile.
+- `skills/caveman-handoff/SKILL.md` — new "Target-aware skip lists" section.
+  Expected additional 15-30% reduction on Tier-1 targets.
+- `_shared/model-resolver.md` — new Target-profile column; rows for
+  `claude-opus-4-8` + `gpt-5-5-instant`.
+
+### Council decisions (canary-scoped)
+- Inline reconciler synth used for the "ship canary now vs wait for full
+  Tier-1" call. Verdict: **canary now** — the runtime plumbing is the
+  reusable primitive; remaining Tier-1 profiles are mechanical adds. Full
+  12-persona batch deferred to owner opt-in.
+
+### Not shipped in this canary
+- Tier-1 profiles 3-12 (10 remaining). Extraction is mechanical against
+  the schema in `references/target-model-profiles/README.md`.
+- `zeref/memory/cost_router.py` deep integration — kept surgical; callers
+  invoke `estimate_input_tokens` / `relative_cost` from the profile module
+  directly. Deeper wiring lands with the full Tier-1 batch.
+- Empirical (runtime measured) token-reduction numbers — the 75% aggregate
+  is theoretical (derived from `already_knows` × 250-token synthetic
+  category size vs 3000-token baseline). Real-token measurement lands in
+  the Phase-16 v2 pass, after Tier-1 completes.
+
+---
+
+## [1.1.0] — 2026-07-10
+
+Audit remediation release — closes the Repository-Wide Consistency Audit
+(`docs/audits/ZEREF_CONSISTENCY_AUDIT.md`) at baseline commit `b82c641`.
+
+### Added
+
+- **`SOUL.md`** — 5 operating principles at repo root; boot step 0 per AGENTS.md §0
+  is now fulfilled (ZRF-AUDIT-015).
+- **`zeref/security/policy.py`** — typed loaders for PRIVACY.md, REDACT.md,
+  SHARING_POLICY.md, config/PERMISSIONS.md; every LLM/network call gates through
+  `require_connector` / `require_network` (ZRF-AUDIT-001, 002, 006, 007).
+  Session-override lanes: `ZEREF_ALLOW_NETWORK=1`, `ZEREF_ALLOW_CONNECTOR=<csv>`.
+- **`zeref-registry.json`** — Registry v1.1 adds `agents[]`, `commands[]`,
+  `team_packs[]`, `gates[]` arrays; `skill-importer` registered
+  (ZRF-AUDIT-016, 017).
+- **`team-packs/faang-mangoes-council.md`** — 12-persona architectural decision
+  panel (opt-in only).
+- **`skills/imported/{gstack,ecc,mantishack,raptor,hacker-bob}/README.md`** —
+  reference-only fleet import boundary docs.
+- **`docs/audits/`** — full audit corpus + remediation artifacts.
+
+### Changed
+
+- **`pyproject.toml`** — `build-backend` corrected from
+  `setuptools.backends.legacy:build` to `setuptools.build_meta`; `pip install .`
+  now works (ZRF-AUDIT-009). Python 3.13 and 3.14 classifiers added.
+- **`zeref/privacy.py`** — `audit()` default target = project root; `--strict`
+  extends scan to `.py / .json / .yml / .yaml / .toml / .jsonl`; `_SKIP`
+  narrowed to `docs/archive` + `tests/fixtures` only (ZRF-AUDIT-005).
+- **`zeref/memory/core.py`** — `discover_project_root` prefers
+  `config/PROJECT.md`, falls back to `AGENTS.md`; `scaffold_project` no
+  longer writes absolute host paths into tracked config
+  (ZRF-AUDIT-003, 010).
+- **`zeref/cli.py`** — `cmd_init` skips prompts under non-TTY stdin; `cmd_grade`
+  now scrubs and gates before LLM egress (ZRF-AUDIT-001, 023).
+- **`zeref/lineage/importer.py`** — every `urlopen` gated through security
+  policy (ZRF-AUDIT-002).
+- **`zeref/release/checks.py`** — 6 → 12 subchecks; SHA-bound evidence blob
+  under `docs/audits/release-evidence/` (ZRF-AUDIT-021, R9).
+- **`.github/workflows/ci.yml`** — YAML block-collection repaired; SemVer tag
+  guard + zeref-scope sweep now execute (ZRF-AUDIT-011).
+- **`scripts/check-version-consistency.py`** — also compares against latest git
+  tag; documented lineage restart via `docs/PIVOT_LOG.md` marker
+  (ZRF-AUDIT-020).
+- **`benchmarks/run-all.py`** — trust axis override requires
+  `docs/TRUST_AUDIT.md` `Bound-commit-SHA` matching HEAD; else deterministic
+  draft published (ZRF-AUDIT-013).
+- **`benchmarks/lineage_common.py`** — `_fake_resolver` renamed to
+  `_stub_resolver` with explicit conformance-scope note (ZRF-AUDIT-014).
+- **`docs/HARNESS_MATRIX.md`** — evidence-state matrix replaces self-attested
+  ✅ marks (ZRF-AUDIT-022, D7).
+- **`.github/ISSUE_TEMPLATE/{bug_report,feature_request}.md`** — security
+  redirect banner added (ZRF-AUDIT-026). `config.yml` URL corrected to
+  `kanadhiayash/zeref-memory-engine` (ZRF-AUDIT-028).
+- Multiple doc drift fixes across `QUICKSTART.md`, `MIGRATION.md`,
+  `docs/HARDENING_OVERVIEW.md`, `docs/wiki/Home.md`, `AGENTS.md`,
+  `commands/{start,status}.md`, `benchmarks/run-all.py` docstring, and
+  `pyproject.toml` classifiers.
+
+### Fixed
+
+- Two absolute-path leaks: `config/PROJECT.md`, `references/shared-anti-hallucination.md`
+  (ZRF-AUDIT-003, 004).
+- Docstring vs code drift in `benchmarks/run-all.py` (ZRF-AUDIT-038).
+- Stale wiki links + hero image URL (ZRF-AUDIT-031).
+- `God Mode` → `Enterprise` tier vocabulary across AGENTS.md + commands
+  (ZRF-AUDIT-036).
+
+### Notes
+
+- Version bump `1.0.0 → 1.1.0` per council-ratified D3 decision.
+- Compatibility identifier retained per council-ratified D2:
+  `zeref-os` for install URLs (`pyproject.name`, `plugin.name`,
+  `marketplace.name`); `zeref:` namespace alias remains available.
+- Tag lineage divergence with `v2.6.x` retained via `restart-from-2.6.1`
+  marker in `docs/PIVOT_LOG.md`.
+
+---
+
 ## [1.0.0] — 2026-06-19
 
 Public launch. Trust-repair pivot — single source of truth for the active

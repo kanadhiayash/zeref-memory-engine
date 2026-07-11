@@ -1,7 +1,9 @@
+<!-- privacy-audit: allow-file "Public hero doc. Names author + character reference (Fairy Tail) + documents install commands with example env-var names. No user memory." -->
+
 # Zeref Memory Engine
 
 <p align="center">
-  <a href="https://github.com/kanadhiayash/zeref-memory-engine/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/version-1.0.0-blueviolet" alt="v1.0.0"></a>
+  <a href="https://github.com/kanadhiayash/zeref-memory-engine/releases/tag/v1.1.0"><img src="https://img.shields.io/badge/version-1.1.0-blueviolet" alt="v1.1.0"></a>
   <img src="assets/zeref-os-hero.png" alt="Zeref Memory Engine thumbnail" width="720">
 </p>
 

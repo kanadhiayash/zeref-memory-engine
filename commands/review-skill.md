@@ -1,3 +1,4 @@
+<!-- privacy-audit: allow-file "Slash-command spec references skills/drafts/ + pattern names." -->
 ---
 description: Review and approve skill drafts in skills/drafts/ proposed by pattern-observer + pattern-to-skill. Approve, edit, reject, or defer each draft.
 ---

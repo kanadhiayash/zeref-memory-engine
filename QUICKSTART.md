@@ -1,14 +1,18 @@
-# Zeref OS — Quickstart (v2.5)
+<!-- privacy-audit: allow-file "Quickstart with example install / env-var / decision commands. No real user data." -->
 
-5 steps from zero to first decision.
+# Zeref Memory Engine — Quickstart
+
+5 steps from zero to first decision. Match [INSTALL.md](INSTALL.md) for the
+canonical install channels.
 
 ---
 
 ## 1. Install
 
 ```bash
-pipx install zeref-os                    # zero-dependency core
-pipx install "zeref-os[all]"             # with litellm, duckdb, pyyaml
+# From the current release (published on PyPI as `zeref-os` for URL compat, per D2):
+pip install zeref-os                    # zero-dependency core
+pip install "zeref-os[all]"             # with litellm, duckdb, pyyaml
 ```
 
 Or from this repo:

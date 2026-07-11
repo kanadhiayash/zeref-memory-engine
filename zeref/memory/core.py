@@ -1,4 +1,7 @@
-"""Memory Core layout helpers for Zeref.
+"""
+privacy-audit: allow-file "Memory scaffold module names example project fields (project_root, created, last_session) as schema documentation; no real data."
+
+Memory Core layout helpers for Zeref.
 
 This module is the narrow boundary for project-root discovery and memory
 scaffolding. Higher-level write, search, and lifecycle behavior should build on
@@ -297,9 +300,15 @@ class MemoryWriter:
 
 
 def discover_project_root(start: Path | None = None, max_depth: int = 10) -> Path:
-    """Walk up from start until AGENTS.md is found, then return that root."""
+    """Walk up from start looking for a Zeref project marker.
+
+    Prefer config/PROJECT.md (always scaffolded by `zeref init`).
+    Fall back to AGENTS.md for the packaging repo (which does not run init).
+    """
     current = (start or Path.cwd()).resolve()
     for _ in range(max_depth):
+        if (current / "config" / "PROJECT.md").exists():
+            return current
         if (current / "AGENTS.md").exists():
             return current
         parent = current.parent
@@ -350,8 +359,10 @@ def scaffold_project(
         directory.mkdir(parents=True, exist_ok=True)
 
     project_path = memory_root.layout.config_dir / "PROJECT.md"
+    # project_root is discovered at runtime from PROJECT.md's own location.
+    # Never write absolute host paths into tracked config — PRIVACY.md internal_paths.
     project_path.write_text(
-        f"---\nproject_name: \"{values['name']}\"\nproject_root: \"{memory_root.root}\"\n"
+        f"---\nproject_name: \"{values['name']}\"\nproject_root: \"<discovered-at-runtime>\"\n"
         f"created: \"{date.today().isoformat()}\"\nlast_session: \"\"\n"
         f"active_agents:\n  - memory-keeper\n"
         f"active_skills:\n  - wiki-maintenance\n  - budget-governor\n  - evidence-grader\n"

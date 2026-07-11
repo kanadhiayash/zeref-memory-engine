@@ -1,3 +1,5 @@
+<!-- privacy-audit: allow-file "Canonical spec text. Names author (Yash Kanadhia) + Fairy Tail character (Zeref Dragneel) + describes credential/PII pattern classes AS spec content. All apparent PII/credential matches are documentation of what the scrubber detects, not leaks." -->
+
 # AGENTS.md - Zeref Memory Engine Canonical Spec
 
 > **Naming note.** The product is **Zeref Memory Engine** (short form: **Zeref**).
@@ -42,7 +44,7 @@ Do NOT read individual wiki pages for general coding questions or things already
 6. **Append-only logs**: `memory/patterns/PATTERNS.jsonl` is never edited
 7. **Progressive activation**: minimal agents auto-load; rest lazy on trigger
 8. **Evidence discipline**: separate facts / assumptions / unknowns / risks
-9. **Token discipline**: `budget-governor` scales verbosity to model tier (Free / Standard / God Mode)
+9. **Token discipline**: `budget-governor` scales verbosity to model tier (Free / Standard / Enterprise)
 10. **Review-first extension**: new skills are drafted to `skills/drafts/`, never auto-activated
 11. **Two-Strikes Rule**: do not codify a rule on the first occurrence of an error. See `references/two-strikes-rule.md`.
 12. **Harness Agnosticism**: AGENTS.md is source of truth; per-harness stubs defer. See `references/harness-translation-map.md`.

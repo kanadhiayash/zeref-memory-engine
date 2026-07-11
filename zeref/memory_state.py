@@ -1,4 +1,7 @@
-"""Structured local state for Zeref Memory Core.
+"""
+privacy-audit: allow-file "State-schema module documents SQL column names + example event payloads as schema; no user data."
+
+Structured local state for Zeref Memory Core.
 
 Markdown remains the human-auditable project memory. This module owns the
 machine-readable local state used for retrieval and explainable recall.

@@ -1,6 +1,6 @@
 # Zeref Memory Engine — Wiki
 
-<p align="center"><img src="https://raw.githubusercontent.com/kanadhiayash/zeref-os/main/assets/zeref-os-hero.png" alt="Zeref Memory Engine" width="640"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/kanadhiayash/zeref-memory-engine/main/assets/zeref-os-hero.png" alt="Zeref Memory Engine" width="640"></p>
 
 > Imagine you are an **architect** working on a major building. Every morning a different contractor shows up. Before they can lay a single brick, you have to re-explain the blueprint, the constraints, the decisions you and the prior contractor made, and what's already been built. Every conversation starts from zero.
 >

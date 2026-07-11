@@ -1,4 +1,7 @@
-"""Retrieval axis — deterministic Memory Core benchmark."""
+"""Retrieval axis — deterministic Memory Core benchmark.
+
+privacy-audit: allow-file "Retrieval scorer references example query patterns + fields; no user data."
+"""
 
 from __future__ import annotations
 

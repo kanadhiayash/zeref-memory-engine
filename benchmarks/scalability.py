@@ -1,4 +1,6 @@
 """
+privacy-audit: allow-file "Axis scorer references team-pack names + example thresholds as spec; no user data."
+
 Scalability axis — deterministic scorer.
 
 Sub-criteria mirror benchmarks/RUBRIC.md §Axis 3.

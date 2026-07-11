@@ -1,3 +1,5 @@
+<!-- privacy-audit: allow-file "Governance spec cites credential-shaped tokens in never-commit list; documents global doctrine paths as documentation." -->
+
 # Zeref OS — Repo Doctrine (per-repo GITHUB_OS)
 
 Per-repo customization of the global `~/Documents/Claude/00_COMMAND/GITHUB_OS.md` doctrine. Global doctrine is the source of truth; this file documents zeref-specific overrides and conventions.

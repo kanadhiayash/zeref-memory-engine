@@ -1,4 +1,7 @@
-"""Deterministic bounded loop runtime."""
+"""Deterministic bounded loop runtime.
+
+privacy-audit: allow-file "Loop runtime documents example event names + timestamp fields as schema; no user data."
+"""
 
 from __future__ import annotations
 
