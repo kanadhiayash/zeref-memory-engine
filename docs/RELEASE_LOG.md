@@ -6,6 +6,7 @@ One row per tagged release on `main`. Source: `CHANGELOG.md`.
 
 | Tag | Date | Summary | Migration |
 |---|---|---|---|
+| `v1.1.1` | 2026-07-11 | CI green-up + branch cleanup. Fixes frontmatter break on 3 files (R13), aligns privacy-audit workflow with release-check ceiling via new `--max-hits`/`--max-files` CLI flags (R14), branch-retention filters to protected refs only (R15), Node 24 SHA bumps (R16), 7 empty audit branches deleted, `dev` synced to `main`. | None — behavior-preserving patch |
 | `v1.1.0` | 2026-07-10 | Audit remediation release — closes the Repository-Wide Consistency Audit (`docs/audits/`). New `SOUL.md`, `zeref/security/policy.py` (runtime enforcement of PRIVACY/SHARING_POLICY/PERMISSIONS), Registry v1.1 (agents+commands+team_packs+gates arrays), fix `pyproject.toml` build-backend, fix `ci.yml` YAML, evidence-state HARNESS_MATRIX, SHA-bound release evidence. | `docs/audits/ZEREF_CONSISTENCY_AUDIT.md` — 40 findings, 15 P0 closed |
 | `v1.0.0` | 2026-06-19 | Public v1.0.0 launch — trust-repair pivot: single version surface, reproducible `tests/`, 11 expanded privacy patterns, private vuln disclosure, SHA-pinned CI, four-axis benchmark harness. Architecture identical to v2.6.1 (carried forward). | `docs/PIVOT_LOG.md` — pre-v1 history archived to `kanadhiayash/zeref-os-archive` |
 

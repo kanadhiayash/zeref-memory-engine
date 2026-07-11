@@ -464,11 +464,15 @@ def cmd_audit_privacy(args: argparse.Namespace) -> int:
     # In strict mode default to whole-project scan; otherwise scan memory/ only for speed.
     directory = Path(args.directory) if args.directory else (root if strict else root / "memory")
 
+    max_hits = int(getattr(args, "max_hits", 0) or 0)
+    max_files = int(getattr(args, "max_files", 0) or 0)
+
     print(f"Scanning {directory} …  (REDACT.md: {redact}, strict={strict})")
     results = _audit(directory=directory, redact_md_path=redact, strict=strict)
 
     print(f"\nFiles scanned:  {results['scanned']}")
     print(f"Total PII hits: {results['total_hits']}")
+    print(f"Allowlisted:    {len(results.get('allowlisted', []))}")
 
     if results["by_class"]:
         print("\nHits by class:")
@@ -482,7 +486,24 @@ def cmd_audit_privacy(args: argparse.Namespace) -> int:
     else:
         print("\n✔ No PII detected.")
 
-    return 0 if results["total_hits"] == 0 else 1
+    hits = results["total_hits"]
+    files_hit = len(results["by_file"])
+
+    # Threshold-mode: mirror _check_privacy_scan in zeref/release/checks.py so CI + release-check share the ceiling.
+    # Fail iff hits exceed --max-hits AND files exceed --max-files. Either 0 disables that dimension of the ceiling.
+    if max_hits > 0 or max_files > 0:
+        if hits == 0:
+            print(f"\n✔ Zero hits under threshold (max_hits={max_hits or '-'}, max_files={max_files or '-'})")
+            return 0
+        over_hits = (max_hits > 0 and hits > max_hits)
+        over_files = (max_files > 0 and files_hit > max_files)
+        if over_hits or over_files:
+            print(f"\n✘ Exceeded noise ceiling: hits={hits}/{max_hits or 'inf'}  files={files_hit}/{max_files or 'inf'}")
+            return 1
+        print(f"\n✔ {hits} residual hit(s) across {files_hit} spec/schema file(s) — under noise ceiling")
+        return 0
+
+    return 0 if hits == 0 else 1
 
 
 def cmd_audit(args: argparse.Namespace) -> int:
@@ -1098,6 +1119,10 @@ def _build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--directory", help="Directory to scan (default: memory/)")
     ap.add_argument("--strict", action="store_true",
                     help="Exit non-zero on any unredacted hit (suitable for CI gate)")
+    ap.add_argument("--max-hits", type=int, default=0,
+                    help="Threshold ceiling: total hits allowed before failing (0=disabled)")
+    ap.add_argument("--max-files", type=int, default=0,
+                    help="Threshold ceiling: files hit allowed before failing (0=disabled)")
 
     audit_p = sub.add_parser("audit", help="Structural validation and audit reports")
     audit_sub = audit_p.add_subparsers(dest="audit_command")
