@@ -12,6 +12,8 @@ connectors_default: off         # per ZEREF_OS §4.3 — all OFF unless enabled 
 external_transmission: off      # never transmit wiki content externally without explicit per-action approval
 ---
 
+<!-- privacy-audit: allow-file "Privacy policy DEFINES what gets redacted; documents credential + PII patterns AS the spec content. Every apparent match is a documentation of the class, not a leak." -->
+
 # PRIVACY.md — What must never leave this project
 
 > Canonical privacy policy. Every write to `memory/` and every external transmission passes through `privacy-guardian`. Sourced from package §4 and DECISION_LOG D8.

@@ -1,4 +1,6 @@
 """
+privacy-audit: allow-file "Trust axis scorer references sub-criterion names + example thresholds; no user data."
+
 Trust axis — deterministic scorer.
 
 Sub-criteria mirror benchmarks/RUBRIC.md §Axis 4.

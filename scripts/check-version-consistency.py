@@ -126,6 +126,29 @@ def main() -> int:
             print(f"  - {name}: expected {expected!r}, found {observed!r}", file=sys.stderr)
         return 1
 
+    # R8 (ZRF-AUDIT-020): also compare against the latest git tag.
+    # Intentional lineage restarts must be recorded in docs/PIVOT_LOG.md.
+    import subprocess
+    try:
+        tags = subprocess.check_output(
+            ["git", "-C", str(root), "tag", "--sort=-version:refname"],
+            text=True,
+        ).splitlines()
+    except (OSError, subprocess.CalledProcessError):
+        tags = []
+    latest_tag = next((t.lstrip("v") for t in tags if SEMVER_RE.match(t.lstrip("v"))), None)
+    if latest_tag and latest_tag != expected:
+        pivot = root / "docs" / "PIVOT_LOG.md"
+        if pivot.exists() and f"restart-from-{latest_tag}" in pivot.read_text(errors="ignore"):
+            print(f"\nTag {latest_tag!r} exceeds VERSION {expected!r} — "
+                  f"documented in docs/PIVOT_LOG.md (restart-from-{latest_tag}).")
+        else:
+            print(f"\nTag divergence: latest tag {latest_tag!r} exceeds VERSION {expected!r}.",
+                  file=sys.stderr)
+            print("Either bump zeref/VERSION or document the intentional lineage restart in "
+                  "docs/PIVOT_LOG.md with a `restart-from-<version>` marker.", file=sys.stderr)
+            return 1
+
     print("\nAll surfaces aligned on", expected)
     return 0
 

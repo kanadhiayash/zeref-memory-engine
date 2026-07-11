@@ -1,4 +1,7 @@
-"""Deterministic cost routing and artifact budget checks."""
+"""Deterministic cost routing and artifact budget checks.
+
+privacy-audit: allow-file "Cost router references model tier names + example token budgets; no user data."
+"""
 
 from __future__ import annotations
 

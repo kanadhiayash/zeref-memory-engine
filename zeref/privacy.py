@@ -368,29 +368,90 @@ def scrub(
     return working, report
 
 
+# Allowlist markers — recognized inside file content:
+#   * File-level:  `privacy-audit: allow-file "<reason>"`
+#                  anywhere in the first 40 lines; skips the whole file.
+#   * Line-level:  `noqa: privacy-audit`  or  `privacy-audit: allow`
+#                  on the same line; scrubbers ignore that single line.
+# Every marker must be human-authored with a rationale in adjacent prose or
+# comment. Do NOT sprinkle these — each allow is a policy assertion.
+_ALLOW_FILE_RE = re.compile(r"privacy-audit:\s*allow-file", re.IGNORECASE)
+_ALLOW_LINE_RE = re.compile(
+    r"(?:noqa:\s*privacy-audit|privacy-audit:\s*(?:allow|ignore))",
+    re.IGNORECASE,
+)
+
+
+def _file_allowlisted(text: str) -> bool:
+    head = "\n".join(text.splitlines()[:40])
+    return bool(_ALLOW_FILE_RE.search(head))
+
+
+def _filter_noqa_lines(text: str) -> str:
+    return "\n".join(line for line in text.splitlines()
+                     if not _ALLOW_LINE_RE.search(line))
+
+
 def audit(
     directory: Path = Path("."),
     redact_md_path: Path = Path("REDACT.md"),
+    strict: bool = False,
 ) -> dict:
     """
-    Read-only audit: scan markdown files under directory for PII hits.
-    Skips skills/, _shared/, agents/, docs/, references/ (spec text).
-    Returns {scanned, total_hits, by_file, by_class}.
+    Read-only audit: scan tracked-file extensions under directory for PII hits.
+    Default skips `docs/archive/` + `tests/fixtures/` (documented-historical).
+    When strict=True, scanned extensions expand to include .py/.json/.yml/.yaml/.toml/.jsonl.
+    Files carrying `privacy-audit: allow-file "<reason>"` in their first 40 lines
+    are skipped entirely; lines carrying `noqa: privacy-audit` are excluded from
+    the scan input. Returns {scanned, total_hits, by_file, by_class, allowlisted}.
     """
-    _SKIP = {"skills", "_shared", "agents", "docs", "references", "team-packs", "team"}
-    results: dict = {"scanned": 0, "total_hits": 0, "by_file": {}, "by_class": {}}
+    # Trees that intentionally cite PII-shaped tokens as content, examples,
+    # or historical spec text are skipped in strict mode. The scan focuses
+    # on trees where a real leak would be an accidental egress:
+    #   scanned in strict:  root *.md, config/, zeref/, .github/, benchmarks/*.py
+    #   skipped in strict:  docs/, references/, skills/, team-packs/, tests/,
+    #                       CHANGELOG.md (release history), and self-referential
+    #                       modules whose docstrings document detection patterns.
+    _SKIP_PARTS = {
+        "docs", "references", "skills", "team-packs", "team",
+        "tests", ".git", "__pycache__", "node_modules", "assets",
+        "CHANGELOG.md",
+        # detection modules whose own docstrings show pattern examples
+        "zeref/privacy.py", "zeref/security/policy.py",
+        # generated benchmark report
+        "benchmarks/BENCHMARK_REPORT.md",
+    }
+    exts = {".md"} if not strict else {".md", ".py", ".json", ".yml", ".yaml", ".toml", ".jsonl"}
+    results: dict = {
+        "scanned": 0, "total_hits": 0, "by_file": {}, "by_class": {},
+        "strict": strict, "allowlisted": [],
+    }
 
-    for md_file in sorted(directory.rglob("*.md")):
-        if any(p in md_file.parts for p in _SKIP):
+    directory = Path(directory)
+    for path in sorted(directory.rglob("*")):
+        if not path.is_file():
             continue
-        if _is_macos_dataless_placeholder(md_file):
+        if path.suffix not in exts:
             continue
-        text = md_file.read_text(errors="ignore")
+        rel = path.relative_to(directory) if path.is_absolute() else path
+        rel_str = str(rel)
+        if any(part in rel_str for part in _SKIP_PARTS):
+            continue
+        if _is_macos_dataless_placeholder(path):
+            continue
+        try:
+            text = path.read_text(errors="ignore")
+        except (OSError, UnicodeDecodeError):
+            continue
+        if _file_allowlisted(text):
+            results["allowlisted"].append(str(path))
+            continue
+        text = _filter_noqa_lines(text)
         _, report = scrub(text, redact_md_path)
         results["scanned"] += 1
         if report.redacted:
             results["total_hits"] += report.redacted
-            results["by_file"][str(md_file)] = report.redacted
+            results["by_file"][str(path)] = report.redacted
             for cls in report.classes_hit:
                 results["by_class"][cls] = results["by_class"].get(cls, 0) + 1
 

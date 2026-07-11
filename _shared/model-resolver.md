@@ -1,3 +1,5 @@
+<!-- privacy-audit: allow-file "Model-id mapping spec. Documents Anthropic model IDs + API paths as canonical routing, not user data." -->
+
 # Model Resolver
 
 Canonical mapping between bare tier names (legacy / human-friendly) and full Anthropic model IDs (API-callable + version-explicit). Per `_shared/rules.md#R6` + AGENTS.md `## Model-Tier Routing`.

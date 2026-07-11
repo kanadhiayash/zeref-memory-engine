@@ -1,7 +1,14 @@
-# Zeref OS — Pivot Log (pre-v1.0.0 history)
+# Zeref Memory Engine — Pivot Log (pre-v1.0.0 history)
+
+> **Version lineage restart** — `restart-from-2.6.1`
+>
+> Tags `v2.6.0` and `v2.6.1` predate the trust-repair pivot. `zeref/VERSION = 1.0.0`
+> (2026-06-19) intentionally restarts the SemVer lineage. The
+> `check-version-consistency.py` script tolerates this divergence because this
+> document names it with the `restart-from-2.6.1` marker.
 
 This file captures the design pivots and version lineage that preceded the
-public **v1.0.0** launch of Zeref OS. The git history corresponding to these
+public **v1.0.0** launch of Zeref Memory Engine. The git history corresponding to these
 versions is preserved in the read-only archive repo
 [`kanadhiayash/zeref-os-archive`](https://github.com/kanadhiayash/zeref-os-archive).
 

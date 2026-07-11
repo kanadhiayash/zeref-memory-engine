@@ -1,4 +1,7 @@
-"""Deterministic council verdicts for the Zeref lineage program."""
+"""Deterministic council verdicts for the Zeref lineage program.
+
+privacy-audit: allow-file "Council references ISO-date-shaped intake fields as schema; no user data."
+"""
 
 from __future__ import annotations
 

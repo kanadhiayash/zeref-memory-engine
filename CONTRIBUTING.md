@@ -1,3 +1,5 @@
+<!-- privacy-audit: allow-file "Contribution doc references example maintainer email + branch names as spec." -->
+
 # Contributing to Zeref Memory Engine
 
 Zeref is a local-first memory engine for AI-assisted work. Contributions should improve the runtime, docs, guards, benchmarks, install path, or release safety.

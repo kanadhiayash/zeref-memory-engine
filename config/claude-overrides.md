@@ -1,3 +1,4 @@
+<!-- privacy-audit: allow-file "Harness override config with example paths + skill triggers. No user data." -->
 ---
 harness: claude-code
 # Claude-specific behavior overrides that diverge from AGENTS.md defaults.

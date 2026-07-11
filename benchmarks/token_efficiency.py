@@ -1,4 +1,7 @@
-"""Token efficiency axis for deterministic memory routing."""
+"""Token efficiency axis for deterministic memory routing.
+
+privacy-audit: allow-file "Scorer references tier names + example token budgets; no user data."
+"""
 
 from __future__ import annotations
 

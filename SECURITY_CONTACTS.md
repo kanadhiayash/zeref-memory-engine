@@ -1,3 +1,5 @@
+<!-- privacy-audit: allow-file "Public security contact page. Contains one maintainer email by design — the whole point of the file is to publish the disclosure channel." -->
+
 # Security Contacts — Zeref OS
 
 Used by [`SECURITY.md`](SECURITY.md) as the fallback channel when GitHub

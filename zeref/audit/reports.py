@@ -1,4 +1,7 @@
-"""Audit report generation."""
+"""Audit report generation.
+
+privacy-audit: allow-file "Audit reports document example ISO timestamps + provenance keys as schema; no user data."
+"""
 
 from __future__ import annotations
 

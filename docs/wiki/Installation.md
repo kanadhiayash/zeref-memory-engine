@@ -5,7 +5,7 @@
 > compatibility. **Zeref is not an operating system** — it is a persistent
 > memory and context layer that plugs into your existing AI harness.
 
-Zeref v1.0.0 installs as a Claude Code plugin. Other harnesses (Cursor, Aider, Windsurf, Gemini, Codex, Llama-family) read AGENTS.md directly via per-harness stubs.
+Zeref v1.1.0 installs as a Claude Code plugin. Other harnesses (Cursor, Aider, Windsurf, Gemini, Codex, Llama-family) read AGENTS.md directly via per-harness stubs.
 
 ## Claude Code (primary)
 
@@ -22,7 +22,7 @@ The plugin lands at `~/.claude/plugins/cache/zeref-os/zeref-os/`.
 
 ```bash
 claude plugin list | grep zeref-os
-# zeref-os@zeref-os  v1.0.0  enabled
+# zeref-os@zeref-os  v1.1.0  enabled
 
 cd ~/my-project
 claude

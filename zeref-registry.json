@@ -1,7 +1,8 @@
 {
   "$schema": "https://zeref-os.dev/registry.schema.json",
-  "version": "1.0.0",
-  "generated": "2026-06-19",
+  "_comment_privacy_audit": "privacy-audit: allow-file — registry names skill/agent/command identifiers as canonical spec; no user data.",
+  "version": "1.1.0",
+  "generated": "2026-07-10",
   "skills": [
     {
       "skill": "wiki-maintenance",
@@ -304,6 +305,61 @@
       "support_skills": [],
       "model": "claude-haiku-4-5",
       "model_alias": "haiku"
+    },
+    {
+      "skill": "skill-importer",
+      "triggers": [
+        "import external skill pack",
+        "/import-skill",
+        "sandbox-import from ~/.claude/skills",
+        "sandbox-import from ~/security-workspace"
+      ],
+      "deliverables": [
+        "skills/imported/<pack>/README.md (reference-only pointer)",
+        "LICENSE-BOUNDARY.md capture",
+        "foreign_code_containment benchmark green"
+      ],
+      "risk_level": "high",
+      "support_skills": ["privacy-abstraction"],
+      "model": "claude-sonnet-4-6",
+      "model_alias": "sonnet"
     }
+  ],
+  "agents": [
+    {"agent": "memory-keeper",       "path": "agents/memory-keeper.md",       "runtime_backed": true,  "role": "single-writer"},
+    {"agent": "privacy-guardian",    "path": "agents/privacy-guardian.md",    "runtime_backed": true,  "role": "scrub-egress-gate"},
+    {"agent": "sync-coordinator",    "path": "agents/sync-coordinator.md",    "runtime_backed": false, "role": "permissions-map"},
+    {"agent": "evidence-curator",    "path": "agents/evidence-curator.md",    "runtime_backed": true,  "role": "grade-arbitrator"},
+    {"agent": "pattern-observer",    "path": "agents/pattern-observer.md",    "runtime_backed": false, "role": "two-strikes-scanner"},
+    {"agent": "handoff-orchestrator","path": "agents/handoff-orchestrator.md","runtime_backed": true,  "role": "cross-model-packager"}
+  ],
+  "commands": [
+    {"command": "start",              "path": "commands/start.md"},
+    {"command": "done",               "path": "commands/done.md"},
+    {"command": "stop",               "path": "commands/stop.md"},
+    {"command": "status",             "path": "commands/status.md"},
+    {"command": "sync-parent",        "path": "commands/sync-parent.md"},
+    {"command": "reset-permissions",  "path": "commands/reset-permissions.md"},
+    {"command": "review-skill",       "path": "commands/review-skill.md"},
+    {"command": "team",               "path": "commands/team.md"}
+  ],
+  "team_packs": [
+    {"pack": "solo",                    "type": "role",     "path": "team-packs/solo.md"},
+    {"pack": "build",                   "type": "role",     "path": "team-packs/build.md"},
+    {"pack": "research",                "type": "role",     "path": "team-packs/research.md"},
+    {"pack": "red",                     "type": "role",     "path": "team-packs/red.md"},
+    {"pack": "audit",                   "type": "role",     "path": "team-packs/audit.md"},
+    {"pack": "ship",                    "type": "role",     "path": "team-packs/ship.md"},
+    {"pack": "small",                   "type": "profile",  "path": "team-packs/small.md"},
+    {"pack": "medium",                  "type": "profile",  "path": "team-packs/medium.md"},
+    {"pack": "enterprise",              "type": "profile",  "path": "team-packs/enterprise.md"},
+    {"pack": "faang-mangoes-council",   "type": "panel",    "path": "team-packs/faang-mangoes-council.md"}
+  ],
+  "gates": [
+    {"gate": "privacy-guard",       "path": "zeref/guards/privacy_guard.py"},
+    {"gate": "contradiction-guard", "path": "zeref/guards/contradiction_guard.py"},
+    {"gate": "evidence-guard",      "path": "zeref/guards/evidence_guard.py"},
+    {"gate": "fact-guard",          "path": "zeref/guards/fact_guard.py"},
+    {"gate": "write-gate",          "path": "zeref/guards/write_gate.py"}
   ]
 }

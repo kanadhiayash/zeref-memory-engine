@@ -6,6 +6,10 @@ labels: [bug]
 assignees: []
 ---
 
+> ⚠️ **DO NOT report security issues here.** Public issue reports for security bugs
+> expose them before they can be fixed. See [SECURITY.md](../../SECURITY.md) for the
+> private disclosure channel (GitHub Private Vulnerability Reporting).
+
 ## Environment
 
 - Zeref OS version: <!-- e.g. v4.2.0 -->

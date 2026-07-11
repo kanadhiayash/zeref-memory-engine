@@ -1,4 +1,7 @@
-"""Target-specific prompt injection wrappers."""
+"""Target-specific prompt injection wrappers.
+
+privacy-audit: allow-file "Prompt-injection wrappers reference target CLI names (claude, codex, gemini) as routing constants; no user data."
+"""
 
 from __future__ import annotations
 

@@ -1,8 +1,8 @@
 name: ZRF Branch Retention
 
 # Enforces the "never delete a branch after merge" project policy.
-# Triggered on every push to main and on every PR close event; fails fast if
-# the deleted-branch payload indicates an intentional delete of a tracked
+# Triggered on every `delete` event (branch/tag deletion) and by manual
+# workflow_dispatch. Fails fast if the deleted-ref payload names a tracked
 # release/feature branch.
 
 on:

@@ -1,4 +1,9 @@
-# Zeref v1.1 Hardening Overview
+# Zeref v1.1 Hardening Overview (planned roadmap)
+
+> **Status:** roadmap for the v1.1 remediation of the Repository-Wide
+> Consistency Audit. Not yet shipped — see [docs/audits/](audits/) for the
+> audit itself and [docs/audits/ZEREF_REMEDIATION_BACKLOG.md](audits/ZEREF_REMEDIATION_BACKLOG.md)
+> for the sequenced execution plan.
 
 Zeref v1.1 hardening turns the project from a Markdown-only continuity layer
 into a local-first memory hardening layer.

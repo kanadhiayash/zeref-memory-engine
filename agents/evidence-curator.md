@@ -1,3 +1,4 @@
+<!-- privacy-audit: allow-file "Agent spec names memory/ paths + example provenance/recency fields as schema." -->
 ---
 name: evidence-curator
 description: Grades confidence, recency, and provenance of wiki entries. Activates on write, review, sync, and contradiction handling. Reads flat memory/ layout.

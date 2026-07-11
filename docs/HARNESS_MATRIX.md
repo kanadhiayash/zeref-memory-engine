@@ -1,46 +1,69 @@
-# Harness Matrix — Zeref OS v1.0.0
+# Harness Matrix — Zeref Memory Engine
 
-Portability evidence: which harnesses Zeref OS has been booted in, what
-worked, what didn't.
+Portability evidence per harness. Evidence-state (not ✅ marks) per [ZRF-AUDIT-022] +
+D7 (ratified 2026-07-10): only harnesses with a host-observed boot log are `verified`.
+Everything else is `documented-only` until a host log ships.
 
-Schema:
-- **Boot:** does the harness pick up `AGENTS.md` and the per-harness stub?
-- **Memory read:** does `memory/hot.md` get loaded first?
-- **Tool surface:** can the harness call `python3 -m zeref status` and the
-  rest of the CLI?
-- **Handoff:** can the harness produce `STATE.json` + `SUMMARY.md` + `NEXT.md`?
+Evidence states:
 
-| Harness | Stub | Boot | Memory read | Tool surface | Handoff | Notes |
-|---|---|:---:|:---:|:---:|:---:|---|
-| Claude Code | `CLAUDE.md` | ✅ | ✅ | ✅ | ✅ | Reference harness. Plugin: `claude plugin install zeref-os@zeref-os`. |
-| Codex | `CODEX.md` | ✅ | ✅ | ✅ | ⚠ | Slash-command syntax depends on Codex CLI version; raw `python3 -m zeref` always works. |
-| Cursor | `.cursor/rules/zeref.mdc` | ✅ | ✅ | ✅ | ✅ | `git clone … .zeref && cp .zeref/.cursor/rules/zeref.mdc .cursor/rules/`. |
-| Windsurf | `.windsurfrules` | ✅ | ✅ | ✅ | ✅ | `cp .zeref/.windsurfrules .`. |
-| Aider | `.aider.conf.yml.example` | ✅ | ✅ | ✅ | ⚠ | Handoff requires shelling out to `python3 -m zeref`. |
-| Gemini CLI / Antigravity | `GEMINI.md` | ✅ | ✅ | ✅ | ⚠ | Same as Codex — depends on CLI version. |
-| Llama-family (Ollama, vLLM, Open WebUI) | `LLAMA.md` | ⚠ | ⚠ | ✅ via shell-tool | ⚠ | Reading order enforced via system prompt wrapper. |
-| Hermes, Amp, Zed, Perplexity | — (read `AGENTS.md` directly) | ✅ | ✅ | ✅ | ⚠ | No stub needed; harnesses follow `AGENTS.md` directly. |
+- **verified** — host executed the boot sequence AND memory-read AND handoff AND privacy-scan
+  during a recorded session; log path cited.
+- **partially-verified** — one or two of the four stages executed; others documented-only.
+- **documented-only** — stubs shipped and CLI wiring exists, but no host log observed.
+- **unsupported** — the host cannot boot Zeref reliably; explicit exclusion.
+- **blocked** — host unavailable in the audit environment; state unknown.
 
-Legend:
-- ✅ — verified in v1.0.0 smoke-test loop.
-- ⚠ — works in principle, requires the wrapping harness to surface the
-  command. Not a Zeref OS defect.
+| Harness | Stub | Boot | Memory read | Tool surface | Handoff | Evidence state | Log reference |
+|---|---|:---:|:---:|:---:|:---:|:---|:---|
+| Claude Code | `CLAUDE.md` | yes | yes | yes | yes | **verified** | `docs/audits/ZEREF_CONSISTENCY_AUDIT.md` §Verification (audit branch `claude/zeref-consistency-audit-ed392b`) |
+| Codex | `CODEX.md` | doc | doc | via `python3 -m zeref` | doc | **documented-only** | stubs present; no host log |
+| Cursor | `.cursor/rules/zeref.mdc` | doc | doc | via `python3 -m zeref` | doc | **documented-only** | stubs present; no host log |
+| Windsurf | `.windsurfrules` | doc | doc | via `python3 -m zeref` | doc | **documented-only** | stubs present; no host log |
+| Aider | `.aider.conf.yml.example` | doc | doc | via `python3 -m zeref` | doc | **documented-only** | stub `.example` only — user must copy to `.aider.conf.yml` |
+| Gemini CLI / Antigravity | `GEMINI.md` | doc | doc | via `python3 -m zeref` | doc | **documented-only** | stubs present; no host log |
+| Llama family (Ollama, vLLM, Open WebUI) | `LLAMA.md` | doc | doc | via `python3 -m zeref` | doc | **documented-only** | system-prompt wrapper approach; requires host testing |
+| Hermes, Amp, Zed, Perplexity | none (reads `AGENTS.md`) | doc | doc | via `python3 -m zeref` | doc | **documented-only** | no dedicated stub |
 
-## Verification commands
+## Boot-sequence verification (per [AGENTS.md](../AGENTS.md) §0)
 
-Each cell above was verified by `scripts/harness-probe.py` plus a manual
-smoke-test of `python3 -m zeref status` and one `write-decision` round
-trip inside the host harness's terminal pane.
+Recorded in the Zeref project memory of the harness under `memory/patterns/PATTERNS.jsonl`
+as a `harness-boot-verified` event. Fields:
+
+```
+{"ts": "...", "harness": "<name>", "version": "<host-version>",
+ "steps_verified": ["soul", "project", "hot", "index", "privacy", "redact", "memory", "patterns"],
+ "signature": "sha256:<log-hash>"}
+```
+
+An entry with all 8 steps + a signed log promotes the harness to `verified`.
+
+## Verification commands (per host)
 
 ```bash
 # in any harness, from your project root:
-python3 scripts/harness-probe.py
-python3 -m zeref status
+python3 scripts/harness-probe.py                 # file-presence check (does not prove boot)
+python3 -m zeref status                          # discovery + memory read
 python3 -m zeref write-decision \
   --title "Harness smoke test" --why "Verifying boot" \
-  --evidence "harness-matrix" --grade medium
-python3 -m zeref audit-privacy --strict
+  --evidence "harness-matrix" --grade medium     # single-writer + scrub + audit log
+python3 -m zeref audit-privacy --strict          # policy-vs-enforcement
+python3 -m zeref handoff compile                 # cross-model packager
 ```
 
-If the harness's stub is missing on a fresh checkout, the probe reports
-which one and exits non-zero with `--all`.
+The `harness-probe.py` file-presence check alone does NOT constitute a `verified` state
+per D7 — a `verified` row requires the four smoke commands executed in the host's
+terminal pane, with the PATTERNS.jsonl `harness-boot-verified` event as evidence.
+
+## How to add a new harness
+
+1. Create the stub file (`<HARNESS>.md` or host-specific rule file).
+2. Boot the host in a Zeref-initialized project.
+3. Run the four smoke commands above.
+4. Verify a `harness-boot-verified` event lands in `memory/patterns/PATTERNS.jsonl`.
+5. Add the row to this matrix with the log reference.
+6. Update `docs/HARNESS_MATRIX.md` in the same PR as the stub file.
+
+## Legacy note
+
+The prior `v1.0.0` matrix used ✅/⚠ marks that were self-attested — this file replaces
+that convention with the evidence-state schema described here (per ZRF-AUDIT-022 finding).
