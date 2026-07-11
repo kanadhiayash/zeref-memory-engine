@@ -45,8 +45,43 @@ def run_release_check(root: Path) -> list[ReleaseFinding]:
     findings.append(_check_registry_completeness(root))
     findings.append(_check_pyproject_backend(root))
     findings.append(_check_soul_present(root))
+    findings.append(_check_target_profiles(root))
     _emit_release_evidence(root, findings)
     return findings
+
+
+def _check_target_profiles(root: Path) -> ReleaseFinding:
+    """Phase 14 profiles: schema-valid + <=60 days stale.
+
+    Fail-open when the profiles directory is absent (pre-v1.2). PASS with a
+    note when profiles are present but no Tier-1 model IDs are covered yet
+    (canary state)."""
+    try:
+        from zeref.prompt.target_profile import (
+            list_profiles, load_profile, is_stale, ProfileSchemaError,
+        )
+    except ImportError:
+        return _pass("target_profiles", "loader unavailable — pre-v1.2 skip")
+    profiles = list_profiles(project_root=root)
+    if not profiles:
+        return _pass("target_profiles", "no profiles on disk — pre-v1.2 skip")
+    stale: list[str] = []
+    invalid: list[str] = []
+    for pid in profiles:
+        try:
+            p = load_profile(pid, project_root=root)
+        except ProfileSchemaError as exc:
+            invalid.append(f"{pid}: {exc}")
+            continue
+        if is_stale(p, max_age_days=60):
+            stale.append(pid)
+    if invalid:
+        return _fail("target_profiles", "; ".join(invalid[:3]))
+    if stale:
+        return _fail("target_profiles", f"{len(stale)} stale (>60d): "
+                                        + ", ".join(stale[:3]))
+    return _pass("target_profiles",
+                 f"{len(profiles)} profile(s), all schema-valid + fresh")
 
 
 def _check_version_consistency(root: Path) -> ReleaseFinding:
