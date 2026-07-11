@@ -54,12 +54,21 @@ jobs:
 
       - name: Zeref-scope sweep (no non-zeref bleed)
         run: |
+          # List changed files vs origin/main; empty file if no diff.
           git diff origin/main..HEAD --name-only > /tmp/zeref-scope.txt || true
-          allowed='^(AGENTS\.md|CHANGELOG|CHANGELOG-LEGACY|CLAUDE\.md|CODEOWNERS|CONTRIBUTING\.md|GEMINI\.md|GITHUB_OS\.md|INSTALL\.md|LICENSE|MIGRATION\.md|PRIVACY\.md|README\.md|REDACT\.md|SECURITY\.md|SECURITY_CONTACTS\.md|SHARING_POLICY\.md|SKILL\.md|SOUL\.md|QUICKSTART\.md|TASKS\.md|CODEX\.md|LLAMA\.md|dashboard\.html|pyproject\.toml|pytest\.ini|zeref-registry\.json|_shared/|agents/|assets/|benchmarks/|commands/|config/|docs/|memory/|references/|scripts/|skills/|team-packs/|tests/|zeref/|\.claude-plugin/|\.cursor/|\.github/|\.windsurfrules|\.aider\.conf\.yml)'
-          if [ -s /tmp/zeref-scope.txt ]; then
-            unscoped=$(awk "!/$allowed/" /tmp/zeref-scope.txt)
-            if [ -n "$unscoped" ]; then
-              echo "Non-zeref files detected:"; echo "$unscoped"; exit 1
-            fi
+          # If no diff, nothing to check.
+          if [ ! -s /tmp/zeref-scope.txt ]; then
+            echo "Scope OK (no changed files vs origin/main)"
+            exit 0
+          fi
+          # Allowed patterns: any changed file must match one of these anchored patterns.
+          # Uses grep -E to avoid awk's regex-delimiter conflicts with `/` inside the pattern.
+          allowed='^(AGENTS\.md|CHANGELOG.*|CLAUDE\.md|CODEOWNERS|CONTRIBUTING\.md|GEMINI\.md|GITHUB_OS\.md|INSTALL\.md|LICENSE|MIGRATION\.md|PRIVACY\.md|README\.md|REDACT\.md|SECURITY\.md|SECURITY_CONTACTS\.md|SHARING_POLICY\.md|SKILL\.md|SOUL\.md|QUICKSTART\.md|TASKS\.md|CODEX\.md|LLAMA\.md|dashboard\.html|pyproject\.toml|pytest\.ini|zeref-registry\.json|_shared/.*|agents/.*|assets/.*|benchmarks/.*|commands/.*|config/.*|docs/.*|memory/.*|references/.*|scripts/.*|skills/.*|team-packs/.*|team/.*|tests/.*|zeref/.*|\.claude-plugin/.*|\.cursor/.*|\.github/.*|\.gitignore|\.gitattributes|\.windsurfrules|\.aider\.conf\.yml.*)$'
+          # unscoped = lines that DO NOT match the allowed pattern.
+          unscoped=$(grep -Ev "$allowed" /tmp/zeref-scope.txt || true)
+          if [ -n "$unscoped" ]; then
+            echo "Non-zeref files detected:"
+            echo "$unscoped"
+            exit 1
           fi
           echo "Scope OK"
