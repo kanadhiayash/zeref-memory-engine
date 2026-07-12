@@ -55,6 +55,8 @@ _KNOWN_EVENT_TYPES: set[str] = {
     "capability.approved", "capability.benchmarked", "capability.activated",
     "capability.deactivated", "capability.revoked", "capability.digest_drift",
     "capability.invoked",
+    # adapters (PR 5)
+    "adapter.probed", "adapter.unhealthy",
     # team runs
     "run.created", "run.compiled", "run.authorized", "run.started",
     "run.paused", "run.resumed", "run.completed", "run.failed", "run.cancelled",
