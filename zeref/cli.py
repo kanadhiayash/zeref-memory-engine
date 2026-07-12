@@ -1463,6 +1463,9 @@ def _build_parser() -> argparse.ArgumentParser:
     route_policy_sub.add_parser("validate", help="Validate route policy")
     route_sub.add_parser("report", help="Generate route report")
 
+    from zeref import cli_capability
+    cli_capability.register(sub)
+
     policy = sub.add_parser("policy", help="vNext policy engine (precedence + autonomy)")
     policy_sub = policy.add_subparsers(dest="policy_command", required=True)
     policy_sub.add_parser("show", help="Print the merged policy stack")
@@ -1573,6 +1576,7 @@ def main() -> None:
         "contradictions": cmd_contradictions,
         "privacy": cmd_privacy,
         "route": cmd_route,
+        "capability": lambda a: __import__("zeref.cli_capability", fromlist=["handle"]).handle(a),
         "policy": cmd_policy,
         "state": cmd_state,
         "release": cmd_release,
