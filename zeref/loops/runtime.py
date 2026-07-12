@@ -18,7 +18,7 @@ def run_loop(
     root: Path | str,
     goal: str,
     *,
-    team_pack: str = "small",
+    team_pack: str = "lean",
     max_iterations: int = 3,
 ) -> dict[str, Any]:
     contract = create_loop_contract(

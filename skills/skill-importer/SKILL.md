@@ -3,7 +3,8 @@ name: skill-importer
 description: Pull a skill from the user's broader skill directory into this Zeref project. Provenance-tracked, review-first — imports never auto-activate. Compatible with sandbox reference-only mode (see skills/imported/*/README.md).
 skill: skill-importer
 version: "1.1.0"
-model: claude-sonnet-4-6
+model: sonnet
+reasoning_class: balanced
 model_alias: sonnet
 risk_level: medium
 triggers:

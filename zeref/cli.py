@@ -424,8 +424,10 @@ def cmd_grade(args: argparse.Namespace) -> int:
         require_connector(policy, "litellm", purpose="grade-claim")
         scrubbed_claim, _rpt = scrub(claim, root / "REDACT.md", provenance="cli/grade/claim")
         import litellm  # type: ignore
+        from zeref.adapters.providers import resolve_model
         resp = litellm.completion(
-            model="gpt-4o-mini",
+            # Claim grading is a LOW-criticality task → "fast" reasoning class.
+            model=resolve_model("fast", provider="openai").model_id,
             messages=[{"role": "user", "content": (
                 f"Grade this claim on recency, provenance, corroboration (high/medium/low each). "
                 f"Claim: \"{scrubbed_claim}\"\n"
@@ -1414,12 +1416,12 @@ def _build_parser() -> argparse.ArgumentParser:
     loop_sub = loop.add_subparsers(dest="loop_command", required=True)
     loop_plan = loop_sub.add_parser("plan", help="Create a loop contract")
     loop_plan.add_argument("goal")
-    loop_plan.add_argument("--team", default="small")
+    loop_plan.add_argument("--team", default="lean")
     loop_plan.add_argument("--max-iterations", type=int, default=3)
     loop_plan.add_argument("--json", action="store_true")
     loop_run = loop_sub.add_parser("run", help="Run a bounded deterministic loop")
     loop_run.add_argument("goal")
-    loop_run.add_argument("--team", default="small")
+    loop_run.add_argument("--team", default="lean")
     loop_run.add_argument("--max-iterations", type=int, default=3)
     loop_run.add_argument("--json", action="store_true")
     loop_status = loop_sub.add_parser("status", help="Show latest loop status")

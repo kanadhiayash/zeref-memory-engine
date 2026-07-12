@@ -39,4 +39,4 @@ No source vendored. MCP invoked out-of-band. This directory documents the bounda
 
 ## Council pack membership
 
-Registered in [team-packs/faang-mangoes-council.md](../../../team-packs/faang-mangoes-council.md) as an on-demand red-team consultant. Not activated by default.
+Previously registered in the retired persona council pack (removed in 2.0.0-alpha.1 — see [`docs/archive/`](../../../docs/archive/) for the migration record); now tracked as an external capability reference only. Not activated by default.
