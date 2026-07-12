@@ -1,0 +1,28 @@
+schema: zeref.mission/v1
+id: solo
+version: 1
+
+triggers:
+  - quick
+  - small change
+  - single file
+
+required_seats:
+  - id: operator
+    provides:
+      - single-task-execution
+      - verification
+    permissions:
+      write: project
+    reasoning_class: balanced
+
+execution_graph:
+  - operator
+
+required_outputs:
+  - changed_files
+  - verification_note
+
+completion:
+  all_steps_pass: true
+  unresolved_critical_findings: 0
