@@ -175,7 +175,7 @@ def snapshot(
     Parse memory/ and emit structured snapshot (SQLite + optional Parquet).
 
     Returns: {snapshot_dir, decisions, events, conflicts, db_path, parquet}.
-    Markdown stays canonical; snapshot is derived, never primary.
+    vNext canonical store (ADR-0001): SQLite is canonical current state; this v1 snapshot layer is a compatibility shim, superseded by zeref/storage/.
     """
     if output_dir is None:
         output_dir = memory_dir / "snapshots" / date.today().isoformat()
