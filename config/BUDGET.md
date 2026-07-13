@@ -18,22 +18,22 @@ The `budget-governor` skill scales output verbosity and read patterns to the act
 
 ## Tier table
 
-| Tier | Model target | Zeref OS behavior | Per-skill cap |
-|---|---|---|---|
-| **Free** | Gemini Flash, local Ollama, Mistral | Aggressive compaction, minimal wiki writes, short `/status` outputs | 4 000 tok |
-| **Standard** | GPT-4o mini, Claude Haiku, Gemini Flash 3.5 | Normal operation, full wiki writes, standard conflict scans | 8 000 tok |
-| **God Mode** | GPT-4o, Claude Opus / Sonnet, Gemini 3.5 Pro | Full parent-child sync, deep conflict analysis, pattern retrospectives | 16 000 tok |
+| Tier | Reasoning class | Example models | Zeref OS behavior | Per-skill cap |
+|---|---|---|---|---|
+| **Free** | `fast` | Gemini Flash, local Ollama, Mistral (provider examples) | Aggressive compaction, minimal wiki writes, short `/status` outputs | 4 000 tok |
+| **Standard** | `balanced` | GPT-4o mini (provider example), `balanced` class (sonnet alias) | Normal operation, full wiki writes, standard conflict scans | 8 000 tok |
+| **God Mode** | `deep` / `frontier` | GPT-4o (provider example), `deep` class (opus alias), `frontier` class | Full parent-child sync, deep conflict analysis, pattern retrospectives | 16 000 tok |
 
-## Auto-detection
+## Auto-detection (provider adapter mapping)
 
-| Detected model substring | Mapped tier |
+| Detected model substring | Reasoning class → Tier |
 |---|---|
-| `claude-opus-*`, `claude-sonnet-*`, `gpt-4o`, `gemini-3.5-pro` | God Mode |
-| `gpt-4o-mini`, `claude-haiku-*`, `gemini-flash-3.5` | Standard |
-| `gemini-flash`, `mistral-*`, `ollama/*` | Free |
+| `claude-opus-*`, `claude-sonnet-*`, `gpt-4o`, `gemini-3.5-pro` | `deep` / `balanced` → God Mode |
+| `gpt-4o-mini`, `claude-haiku-*`, `gemini-flash-3.5` | `fast` / `balanced` → Standard |
+| `gemini-flash`, `mistral-*`, `ollama/*` | `fast` → Free |
 | unknown | Standard (safe default) |
 
-Override above by setting `model_tier:` to `free` / `standard` / `god-mode`.
+**Note:** Provider adapters in `zeref/adapters/providers/` map reasoning classes to concrete model IDs per provider. Override tier above by setting `model_tier:` to `free` / `standard` / `god-mode`.
 
 ## Targets
 

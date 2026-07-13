@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from zeref.core.deprecations import resolve_alias
 from zeref.lock import MemoryLock, atomic_write
 
 
@@ -15,7 +16,7 @@ def create_loop_contract(
     root: Path | str,
     goal: str,
     *,
-    team_pack: str = "small",
+    team_pack: str = "lean",
     max_iterations: int = 3,
     verification_method: str = "deterministic simulation",
     memory_mode: str = "observe-only",
@@ -24,6 +25,7 @@ def create_loop_contract(
         raise ValueError("max_iterations must be at least 1")
     if memory_mode not in {"observe-only", "document", "learn", "audit"}:
         raise ValueError(f"unsupported memory_mode: {memory_mode}")
+    team_pack = resolve_alias(team_pack)
     root_path = Path(root)
     ts = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     loop_id = _loop_id(goal, team_pack, ts)

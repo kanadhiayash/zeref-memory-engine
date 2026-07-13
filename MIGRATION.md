@@ -155,3 +155,60 @@ git status   # confirm git mv preserved history (look for "R" lines)
 The migration is one-way for path nomenclature. The pre-migration snapshot lives in `memory/snapshots/pre-v4.3-<iso>/` for rollback. Original `config/PRIVACY.md` and `memory/logs/session-events.jsonl` are archived in `memory/archive/` (never hard-deleted per D9).
 
 After migration, run `/start` to boot under the new layout. The existing wiki content carries over unchanged — only paths and reading order change.
+
+---
+
+# Migration: Zeref v1.x → 2.0.0-alpha.1
+
+## TL;DR
+
+2.0.0-alpha.1 is a breaking architectural pivot, not a minor patch — the vNext architecture reset (PR 1 of `ZEREF_VNEXT_AGENTIC_OPERATIONS_UPGRADE_PLAN.md`). The FAANG-MANGOES council is removed with no replacement in this PR. Provider model ids are no longer canonical anywhere except `zeref/adapters/providers/`. Old tier/policy/component names still work through a one-cycle alias layer, but should be migrated now — the alias layer is removed in 2.1.0.
+
+## What's gone
+
+- **FAANG-MANGOES council** — `team-packs/faang-mangoes-council.md`, its registry entry, and all references in `SOUL.md` / imported-skill READMEs. No alias. See `docs/adr/ADR-0003-council-removal.md` and `docs/archive/faang-mangoes-council-removal.md`.
+- Anthropic-specific model names as canonical fields anywhere outside `zeref/adapters/providers/`.
+
+## Alias table (works now, removed in 2.1.0)
+
+| Old name | New name | Category |
+|---|---|---|
+| `small` | `lean` | execution-policy |
+| `medium` | `balanced` | execution-policy |
+| `enterprise` | `assured` | execution-policy |
+| `skill-router` | `capability-resolver` | component |
+| `fleet-activator` | `capability-prober` | component |
+| `skill-importer` | `capability-manager` | component |
+| `haiku` | `fast` | reasoning-class |
+| `sonnet` | `balanced` | reasoning-class |
+| `opus` | `deep` | reasoning-class |
+
+Full detail, including the `resolve_alias()` mechanism and what is *not* aliased: `docs/DEPRECATIONS.md`.
+
+## Registry field changes
+
+`zeref-registry.json` skill entries: `model` / `model_alias` fields are replaced by:
+
+- `reasoning_class` — one of `fast`, `balanced`, `deep`, `frontier`, `local`, `private`. See `docs/GLOSSARY.md`.
+- `status` — one of `runtime` (executing, tested code) or `contract` (schema/spec, not yet runtime-backed). See the "Component status taxonomy" section of `docs/audits/ZEREF_COMPONENT_INVENTORY.md`.
+
+Registry version is now `2.0.0-alpha.1`.
+
+## Where model pins moved
+
+Concrete provider model ids (which model backs `deep`, `frontier`, etc.) moved out of core code, the registry, and mission/skill files entirely. They now live only in `zeref/adapters/providers/<provider>.json` (e.g. `anthropic.json`, `openai.json`), resolved through `zeref.adapters.providers.resolve_model()`. If you had a script or config pinning a model id directly, point it at the provider adapter file instead — do not reintroduce a hardcoded model id elsewhere.
+
+## How to migrate
+
+1. Read `docs/DEPRECATIONS.md` and replace old names (`small`/`medium`/`enterprise`, `skill-router`/`fleet-activator`/`skill-importer`, `haiku`/`sonnet`/`opus`) in your own configs, scripts, and docs. The alias layer keeps them working meanwhile, but each resolution emits a one-time `DeprecationWarning`.
+2. If anything referenced `team-packs/faang-mangoes-council.md` or `docs/audits/council/`, remove that reference — there is no replacement in this PR. An optional evaluator-adapter replacement is planned for a later PR (§11 of the architecture plan) and remains experimental until benchmarked.
+3. If anything read `model`/`model_alias` off registry entries, switch to `reasoning_class` + `status`.
+4. Re-run `python3 scripts/zeref-validate.py` to confirm registry and frontmatter consistency after migrating.
+
+## Backward compatibility
+
+Partial. Name aliasing works through 2.0.x and is removed in 2.1.0. Council removal and the provider-model-id relocation have no compatibility shim — they are hard breaks effective immediately in 2.0.0-alpha.1.
+
+## Roadmap
+
+Team-pack file renames (`team-packs/small.md` → `lean.md`, etc.) and the full `team-packs/*.md` → `missions/*.yaml` restructure are **not** part of this PR — they land with the missions PR (PR 6) per the architecture plan §5.1 and §20. The alias layer above resolves names today; it does not move files.

@@ -6,6 +6,34 @@ Versioning: [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.PATCH`.
 
 ---
 
+## [2.0.0-alpha.1] — 2026-07-12
+
+vNext architecture reset, PR 1 of the `ZEREF_VNEXT_AGENTIC_OPERATIONS_UPGRADE_PLAN.md` sequence. Breaking architectural pivot — see `MIGRATION.md`. Not a documentation refresh: terminology, registry shape, and one runtime enforcement path all change.
+
+### Removed
+
+- **FAANG-MANGOES council** — `team-packs/faang-mangoes-council.md` deleted completely: pack, registry entry (`zeref-registry.json` `team_packs` 10 → 9), and all references from `SOUL.md` and imported-skill READMEs. No alias or compatibility shim — hard removal, not a rename. See `docs/adr/ADR-0003-council-removal.md` and the historical record at `docs/archive/faang-mangoes-council-removal.md`. Its reusable protocol ideas move to an optional, experimental evaluator adapter (`Council of High Intelligence`) in a later PR (§11 of the plan) — not a hardcoded Zeref council.
+
+### Added
+
+- **`zeref/core/reasoning.py`** — six provider-neutral reasoning classes (`fast`, `balanced`, `deep`, `frontier`, `local`, `private`). Criticality → class map: `LOW`→`fast`, `MEDIUM`→`balanced`, `HIGH`→`deep`, `CRITICAL`→`frontier`. `frontier` is CRITICAL-only, enforced in code via `ReasoningPolicyError` (`validate_request`), not left to prose convention.
+- **`zeref/adapters/providers/`** — `JsonProviderAdapter` + declarative `<provider>.json` files (`anthropic.json`, `openai.json`) map reasoning classes to concrete provider model ids and effort levels. This is now the *only* place a provider model id may be canonical. `resolve_model()` in `zeref/adapters/providers/__init__.py` is the resolution entry point.
+- **`zeref/core/deprecations.py`** — one-cycle alias layer (`resolve_alias`) for the terminology pivot: `small`→`lean`, `medium`→`balanced`, `enterprise`→`assured`, `skill-router`→`capability-resolver`, `fleet-activator`→`capability-prober`, `skill-importer`→`capability-manager`, `haiku`→`fast`, `sonnet`→`balanced`, `opus`→`deep`. Warns once per process via `DeprecationWarning`; removal target 2.1.0. See `docs/DEPRECATIONS.md`.
+- **`zeref-registry.json`** — skill entries now carry `reasoning_class` + `status` (`runtime`|`contract`) fields, replacing the old `model`/`model_alias` fields. Registry version bumped to `2.0.0-alpha.1`.
+- **`docs/GLOSSARY.md`, `docs/DEPRECATIONS.md`, `docs/adr/ADR-0001` through `ADR-0005`** — final vNext glossary, deprecation map, and architecture decision records for the canonical store invariant, reasoning classes/provider adapters, council removal, capability lifecycle, and policy precedence.
+
+### Changed
+
+- **`AGENTS.md`** — "Model-Tier Routing" section replaced by "Reasoning-Class Routing": weight → reasoning class → effort table, cascade pattern, and hard constraints now reference `zeref/core/reasoning.py` and `zeref/adapters/providers/` instead of naming Anthropic tiers directly.
+- **`zeref/prompt/inject.py`, `zeref/cli.py`** — provider ids moved out of inline logic into `zeref/adapters/harness_targets.json` and `zeref/adapters/providers/`.
+- **Version** — `2.0.0-alpha.1` across `zeref/VERSION`, `pyproject.toml`, `zeref-registry.json`, `.claude-plugin/plugin.json`, README badge, `docs/RELEASE_LOG.md`, `docs/wiki/Installation.md`. This is presented as a breaking architectural release, not a minor patch, per the plan's versioning guidance (§19.4).
+
+### Migration
+
+Breaking. See `MIGRATION.md` for the full 1.x → 2.0.0-alpha.1 migration section, including the alias table and registry field changes.
+
+---
+
 ## [1.1.1] — 2026-07-11
 
 Post-v1.1.0 CI green-up + branch cleanup. No behavioral changes to product code; the audit remediation carried forward with tighter tooling.

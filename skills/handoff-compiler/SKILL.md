@@ -5,7 +5,8 @@ trigger:
   - handoff-orchestrator invokes
   - /stop with handoff requested
   - user says "handoff to ..."
-model: claude-sonnet-4-6
+model: sonnet
+reasoning_class: balanced
 max_turns: 15
 ---
 

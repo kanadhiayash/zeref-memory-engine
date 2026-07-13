@@ -1,7 +1,8 @@
 ---
 name: memory-keeper
 description: Single writer to flat memory/ layout. Reads boundary-first (hot.md → index.md → page). Logs every write to memory/patterns/PATTERNS.jsonl. Detects contradictions and routes them to memory/CONFLICTS.md.
-model: claude-haiku-4-5
+model: haiku            # harness alias; canonical class below
+reasoning_class: fast   # provider mapping: zeref/adapters/providers/
 max_turns: 30
 ---
 
