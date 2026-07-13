@@ -49,7 +49,7 @@ Do NOT read individual wiki pages for general coding questions or things already
 11. **Two-Strikes Rule**: do not codify a rule on the first occurrence of an error. See `references/two-strikes-rule.md`.
 12. **Harness Agnosticism**: AGENTS.md is source of truth; per-harness stubs defer. See `references/harness-translation-map.md`.
 13. **Cost-Weight Auto-Gate**: `budget-governor` runs before every major task; CRITICAL / HIGH cannot proceed without stated tier. See `skills/budget-governor/SKILL.md` §Auto-Activation Rule.
-14. **Task-Weight Model Routing**: LOW never on Opus; CRITICAL never on Haiku. Orchestrator @ Sonnet medium → executor @ Sonnet/Haiku by weight → final gate @ Opus high when stakes warrant. See `## Model-Tier Routing` below.
+14. **Task-Weight Reasoning Routing**: weight maps to a provider-neutral reasoning class — LOW→`fast`, MEDIUM→`balanced`, HIGH→`deep`, CRITICAL→`frontier`. `frontier` is CRITICAL-only; LOW never above `fast`. Concrete model ids live only in `zeref/adapters/providers/`. See `## Reasoning-Class Routing` below.
 
 ## Auto-Activation Gates
 
@@ -76,39 +76,47 @@ Classifies the raw prompt (STRUCTURED / SEMI-STRUCTURED / UNSTRUCTURED). Rewrite
 
 See `skills/prompt-context-engine/SKILL.md`.
 
-## Model-Tier Routing
+## Reasoning-Class Routing
 
-Per Core Principle 14. Weight (from `budget-governor`) maps to model + effort.
+Per Core Principle 14. Weight (from `budget-governor`) maps to a provider-neutral
+reasoning class (`zeref/core/reasoning.py`). Provider adapters
+(`zeref/adapters/providers/<provider>.json`) map classes to concrete models at
+the edge — core surfaces never name provider models.
 
-| Weight | Model | Effort | Typical $ / task | Examples |
+| Weight | Reasoning class | Effort | Typical $ / task | Examples |
 |---|---|---|---|---|
-| **CRITICAL** | `claude-opus-4-7` | high | $0.50 – $5.00 | `pattern-to-skill` draft, parent-sync export, architecture decision |
-| **HIGH** | `claude-sonnet-4-6` | medium | $0.10 – $0.50 | `contradiction-resolution`, `handoff-compiler`, `project-setup` interview, `prompt-context-engine` restructure |
-| **MEDIUM** | `claude-sonnet-4-6` low / `claude-haiku-4-5` medium | low / medium | $0.02 – $0.10 | `wiki-maintenance` consolidation, `evidence-grader` on 5-20 claims, `privacy-abstraction` rewrite |
-| **LOW** | `claude-haiku-4-5` | low | < $0.02 | `budget-governor` gate, `skill-router` gate, `fleet-activator` probe, single-fact lookup |
+| **CRITICAL** | `frontier` | high | $0.50 – $5.00 | `pattern-to-skill` draft, parent-sync export, architecture decision |
+| **HIGH** | `deep` | medium | $0.10 – $0.50 | `contradiction-resolution`, `handoff-compiler`, `project-setup` interview, `prompt-context-engine` restructure |
+| **MEDIUM** | `balanced` | low / medium | $0.02 – $0.10 | `wiki-maintenance` consolidation, `evidence-grader` on 5-20 claims, `privacy-abstraction` rewrite |
+| **LOW** | `fast` | low | < $0.02 | `budget-governor` gate, `capability-resolver` gate, `capability-prober` probe, single-fact lookup |
+
+Placement classes `local` and `private` constrain where a task may run, not
+how much it may spend; they are permitted at any weight.
 
 ### Cascade pattern (multi-step tasks)
 
 ```
-orchestrator @ Sonnet medium     ← plans + decomposes
+orchestrator @ balanced          ← plans + decomposes
     ↓
-executor @ Sonnet|Haiku by weight ← does the work per sub-task
+executor @ balanced|fast by weight ← does the work per sub-task
     ↓
-final gate @ Opus high            ← only when stakes warrant (irreversible writes, security, architecture)
+final gate @ frontier (high)      ← only when stakes warrant (irreversible writes, security, architecture)
 ```
 
-Default: orchestrator on Sonnet — Sonnet is the cost-balanced default unless task weight escalates or de-escalates.
+Default: orchestrator on `balanced` — the cost-balanced default unless task
+weight escalates or de-escalates. The top class exists for critical, ambitious
+work only; everything routine rides the cheapest class that clears its QA gate.
 
-### Hard constraints
+### Hard constraints (enforced by `zeref.core.reasoning.validate_request`)
 
-- **LOW never on Opus** — flag mismatch via `budget-governor` Step 4. Propose Haiku downgrade.
-- **CRITICAL never on Haiku** — hard block. Refuse execution until escalated to Sonnet (acceptable) or Opus (preferred).
-- **HIGH on Haiku** — warn, allow if user confirms. Common when budget is tight.
-- **MEDIUM on Opus** — warn, allow. Often the right call when stakes are unclear; `budget-governor` will log for retrospective tuning by `pattern-observer`.
+- **LOW never above `fast`** — flag mismatch via `budget-governor` Step 4. Propose downgrade.
+- **CRITICAL never below `balanced`; `frontier` reserved for CRITICAL** — hard block in code, not prose.
+- **HIGH on `fast`** — warn, allow if user confirms. Common when budget is tight.
+- **MEDIUM on `deep`** — warn, allow. Often the right call when stakes are unclear; `budget-governor` will log for retrospective tuning by `pattern-observer`.
 
-### Per-skill model audit (current state)
+### Per-skill routing audit (current state)
 
-All listed skills' `model` fields in `zeref-registry.json` audited against weight per the matrix above. No LOW→opus or CRITICAL→haiku mismatches detected. Borderline call: `privacy-abstraction` (`risk_level: high`, `model: haiku`) — kept on Haiku because redaction follows deterministic REDACT.md rules; bump to Sonnet if a future PATTERNS.jsonl event shows redaction misses on adversarial input. Tracked as forward signal for `pattern-observer`.
+All skills' `reasoning_class` fields in `zeref-registry.json` audited against weight per the matrix above. No LOW→`deep`+ or CRITICAL→`fast` mismatches detected. Borderline call: `privacy-abstraction` (`risk_level: high`, `reasoning_class: fast`) — kept on `fast` because redaction follows deterministic REDACT.md rules; bump to `balanced` if a future PATTERNS.jsonl event shows redaction misses on adversarial input. Tracked as forward signal for `pattern-observer`.
 
 ## Agents (6)
 

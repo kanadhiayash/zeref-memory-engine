@@ -5,7 +5,8 @@ trigger:
   - memory-keeper detects conflict during write
   - /done — surface snoozed conflicts
   - user says "review conflicts"
-model: claude-sonnet-4-6
+model: sonnet
+reasoning_class: balanced
 max_turns: 25
 ---
 

@@ -40,4 +40,4 @@ This directory contains **no** vendored gstack source. Zeref invokes gstack skil
 
 ## Council pack membership
 
-gstack is registered in [team-packs/faang-mangoes-council.md](../../../team-packs/faang-mangoes-council.md) as a support surface for the Documentation Archaeologist and Runtime Auditor roles.
+Previously registered in the retired persona council pack (removed in 2.0.0-alpha.1 — see [`docs/archive/`](../../../docs/archive/) for the migration record); now tracked as an external capability reference only (support surface for documentation/runtime-audit work).

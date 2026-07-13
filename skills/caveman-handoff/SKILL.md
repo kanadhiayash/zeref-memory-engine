@@ -7,7 +7,8 @@ trigger:
   - "compress this handoff"
   - "caveman mode handoff"
   - handoff-compiler invokes for cross-model package
-model: claude-haiku-4-5
+model: haiku
+reasoning_class: fast
 max_turns: 6
 ---
 

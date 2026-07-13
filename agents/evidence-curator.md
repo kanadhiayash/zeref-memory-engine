@@ -1,7 +1,8 @@
 ---
 name: evidence-curator
 description: Grades confidence, recency, and provenance of wiki entries. Activates on write, review, sync, and contradiction handling. Reads flat memory/ layout.
-model: claude-haiku-4-5
+model: haiku            # harness alias; canonical class below
+reasoning_class: fast   # provider mapping: zeref/adapters/providers/
 max_turns: 10
 ---
 <!-- privacy-audit: allow-file "Agent spec names memory/ paths + example provenance/recency fields as schema." -->

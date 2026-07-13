@@ -17,11 +17,13 @@ overrides:
 
 > Per ZEREF_OS §12 file structure. Claude-Code-specific quirks live here so AGENTS.md stays harness-agnostic.
 
+**Model resolution:** Concrete model ids resolve via `zeref/adapters/providers/anthropic.json` (reasoning classes: fast/balanced/deep/frontier).
+
 ## Model selection
 
-- **memory-keeper** writes use Haiku for cost/speed (high-frequency, low-reasoning).
-- **project-setup** uses Sonnet for the interview (conversational, moderate reasoning).
-- **pattern-to-skill** draft generation uses Opus (creative synthesis from event log).
+- **memory-keeper** writes use the `fast` class (haiku alias) for cost/speed (high-frequency, low-reasoning).
+- **project-setup** uses the `balanced` class (sonnet alias) for the interview (conversational, moderate reasoning).
+- **pattern-to-skill** draft generation uses the `deep` class (opus alias) for creative synthesis from event log.
 
 ## Skill / command surface
 

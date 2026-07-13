@@ -1,7 +1,8 @@
 ---
 name: sync-coordinator
 description: Manages permissions, tool visibility, parent sync orchestration. Activates on /start, /stop, /sync-parent. Reads config/PERMISSIONS.md, config/PARENT_SYNC.md, and root SHARING_POLICY.md.
-model: claude-haiku-4-5
+model: haiku            # harness alias; canonical class below
+reasoning_class: fast   # provider mapping: zeref/adapters/providers/
 max_turns: 20
 ---
 

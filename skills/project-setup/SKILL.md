@@ -10,7 +10,8 @@ trigger:
   - "missing config"
   - "redo setup"
   - "reset project config" (re-run of setup for existing project)
-model: claude-sonnet-4-6
+model: sonnet
+reasoning_class: balanced
 max_turns: 20
 ---
 

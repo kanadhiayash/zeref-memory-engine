@@ -11,7 +11,8 @@ trigger:
   - "refresh hot.md"
   - "wiki lint"
   - /wiki-maintenance
-model: claude-haiku-4-5
+model: haiku
+reasoning_class: fast
 max_turns: 15
 ---
 

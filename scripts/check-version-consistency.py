@@ -77,6 +77,9 @@ def _check_plugin(root: Path, expected: str) -> tuple[str, str | None]:
 def _check_readme(root: Path, expected: str) -> tuple[str, str | None]:
     text = _read(root, "README.md")
     m = re.search(r"version-(\d+\.\d+\.\d+(?:[-+][\w.\-]+)?)-blueviolet", text)
+    if m:
+        # shields.io escapes a literal dash as "--" inside badge segments
+        return ("README.md:badge", m.group(1).replace("--", "-"))
     return ("README.md:badge", m.group(1) if m else None)
 
 

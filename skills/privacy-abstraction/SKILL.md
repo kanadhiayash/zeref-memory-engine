@@ -3,7 +3,8 @@ name: privacy-abstraction
 description: Rewrites payloads to remove PII, internal paths, credentials per root REDACT.md classes and PRIVACY.md mode. Called by privacy-guardian before writes when mode = abstract.
 trigger:
   - privacy-guardian invokes (mode = abstract)
-model: claude-haiku-4-5
+model: haiku
+reasoning_class: fast
 max_turns: 10
 ---
 

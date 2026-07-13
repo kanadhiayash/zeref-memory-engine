@@ -1,7 +1,7 @@
 {
   "$schema": "https://zeref-os.dev/registry.schema.json",
   "_comment_privacy_audit": "privacy-audit: allow-file — registry names skill/agent/command identifiers as canonical spec; no user data.",
-  "version": "1.1.1",
+  "version": "2.0.0-alpha.1",
   "generated": "2026-07-11",
   "skills": [
     {
@@ -20,14 +20,14 @@
         "memory/index.md domain row updated",
         "duplicate decisions merged",
         "broken cross-references reported",
-        "memory/hot.md refreshed (\u2264500 words)"
+        "memory/hot.md refreshed (≤500 words)"
       ],
       "risk_level": "medium",
       "support_skills": [
         "memory-import-export"
       ],
-      "model": "claude-haiku-4-5",
-      "model_alias": "haiku"
+      "reasoning_class": "fast",
+      "status": "contract"
     },
     {
       "skill": "budget-governor",
@@ -49,8 +49,8 @@
       "support_skills": [
         "wiki-maintenance"
       ],
-      "model": "claude-haiku-4-5",
-      "model_alias": "haiku"
+      "reasoning_class": "fast",
+      "status": "contract"
     },
     {
       "skill": "project-setup",
@@ -73,8 +73,8 @@
       ],
       "risk_level": "medium",
       "support_skills": [],
-      "model": "claude-sonnet-4-6",
-      "model_alias": "sonnet"
+      "reasoning_class": "balanced",
+      "status": "runtime"
     },
     {
       "skill": "contradiction-resolution",
@@ -95,8 +95,8 @@
       "support_skills": [
         "evidence-grader"
       ],
-      "model": "claude-sonnet-4-6",
-      "model_alias": "sonnet"
+      "reasoning_class": "balanced",
+      "status": "runtime"
     },
     {
       "skill": "evidence-grader",
@@ -115,8 +115,8 @@
       ],
       "risk_level": "low",
       "support_skills": [],
-      "model": "claude-haiku-4-5",
-      "model_alias": "haiku"
+      "reasoning_class": "fast",
+      "status": "runtime"
     },
     {
       "skill": "handoff-compiler",
@@ -137,8 +137,8 @@
       "support_skills": [
         "privacy-abstraction"
       ],
-      "model": "claude-sonnet-4-6",
-      "model_alias": "sonnet"
+      "reasoning_class": "balanced",
+      "status": "runtime"
     },
     {
       "skill": "memory-import-export",
@@ -159,8 +159,8 @@
       "support_skills": [
         "privacy-abstraction"
       ],
-      "model": "claude-sonnet-4-6",
-      "model_alias": "sonnet"
+      "reasoning_class": "balanced",
+      "status": "contract"
     },
     {
       "skill": "parent-sync",
@@ -179,8 +179,8 @@
         "evidence-grader",
         "privacy-abstraction"
       ],
-      "model": "claude-sonnet-4-6",
-      "model_alias": "sonnet"
+      "reasoning_class": "balanced",
+      "status": "contract"
     },
     {
       "skill": "pattern-to-skill",
@@ -192,14 +192,14 @@
       "deliverables": [
         "skills/drafts/<name>/SKILL.md created",
         "PROVENANCE.md created in draft dir",
-        "skill NOT auto-activated \u2014 awaits /review-skill"
+        "skill NOT auto-activated — awaits /review-skill"
       ],
       "risk_level": "high",
       "support_skills": [
         "privacy-abstraction"
       ],
-      "model": "claude-opus-4-7",
-      "model_alias": "opus"
+      "reasoning_class": "deep",
+      "status": "contract"
     },
     {
       "skill": "skill-router",
@@ -220,8 +220,8 @@
         "fleet-activator",
         "budget-governor"
       ],
-      "model": "claude-haiku-4-5",
-      "model_alias": "haiku"
+      "reasoning_class": "fast",
+      "status": "contract"
     },
     {
       "skill": "fleet-activator",
@@ -239,8 +239,8 @@
       ],
       "risk_level": "low",
       "support_skills": [],
-      "model": "claude-haiku-4-5",
-      "model_alias": "haiku"
+      "reasoning_class": "fast",
+      "status": "contract"
     },
     {
       "skill": "prompt-context-engine",
@@ -262,8 +262,8 @@
         "budget-governor",
         "skill-router"
       ],
-      "model": "claude-sonnet-4-6",
-      "model_alias": "sonnet"
+      "reasoning_class": "balanced",
+      "status": "runtime"
     },
     {
       "skill": "caveman-handoff",
@@ -286,8 +286,8 @@
         "prompt-context-engine",
         "privacy-abstraction"
       ],
-      "model": "claude-haiku-4-5",
-      "model_alias": "haiku"
+      "reasoning_class": "fast",
+      "status": "contract"
     },
     {
       "skill": "privacy-abstraction",
@@ -303,8 +303,8 @@
       ],
       "risk_level": "high",
       "support_skills": [],
-      "model": "claude-haiku-4-5",
-      "model_alias": "haiku"
+      "reasoning_class": "fast",
+      "status": "runtime"
     },
     {
       "skill": "skill-importer",
@@ -320,46 +320,158 @@
         "foreign_code_containment benchmark green"
       ],
       "risk_level": "high",
-      "support_skills": ["privacy-abstraction"],
-      "model": "claude-sonnet-4-6",
-      "model_alias": "sonnet"
+      "support_skills": [
+        "privacy-abstraction"
+      ],
+      "reasoning_class": "balanced",
+      "status": "contract"
     }
   ],
   "agents": [
-    {"agent": "memory-keeper",       "path": "agents/memory-keeper.md",       "runtime_backed": true,  "role": "single-writer"},
-    {"agent": "privacy-guardian",    "path": "agents/privacy-guardian.md",    "runtime_backed": true,  "role": "scrub-egress-gate"},
-    {"agent": "sync-coordinator",    "path": "agents/sync-coordinator.md",    "runtime_backed": false, "role": "permissions-map"},
-    {"agent": "evidence-curator",    "path": "agents/evidence-curator.md",    "runtime_backed": true,  "role": "grade-arbitrator"},
-    {"agent": "pattern-observer",    "path": "agents/pattern-observer.md",    "runtime_backed": false, "role": "two-strikes-scanner"},
-    {"agent": "handoff-orchestrator","path": "agents/handoff-orchestrator.md","runtime_backed": true,  "role": "cross-model-packager"}
+    {
+      "agent": "memory-keeper",
+      "path": "agents/memory-keeper.md",
+      "runtime_backed": true,
+      "role": "single-writer",
+      "status": "contract"
+    },
+    {
+      "agent": "privacy-guardian",
+      "path": "agents/privacy-guardian.md",
+      "runtime_backed": true,
+      "role": "scrub-egress-gate",
+      "status": "contract"
+    },
+    {
+      "agent": "sync-coordinator",
+      "path": "agents/sync-coordinator.md",
+      "runtime_backed": false,
+      "role": "permissions-map",
+      "status": "contract"
+    },
+    {
+      "agent": "evidence-curator",
+      "path": "agents/evidence-curator.md",
+      "runtime_backed": true,
+      "role": "grade-arbitrator",
+      "status": "contract"
+    },
+    {
+      "agent": "pattern-observer",
+      "path": "agents/pattern-observer.md",
+      "runtime_backed": false,
+      "role": "two-strikes-scanner",
+      "status": "contract"
+    },
+    {
+      "agent": "handoff-orchestrator",
+      "path": "agents/handoff-orchestrator.md",
+      "runtime_backed": true,
+      "role": "cross-model-packager",
+      "status": "contract"
+    }
   ],
   "commands": [
-    {"command": "start",              "path": "commands/start.md"},
-    {"command": "done",               "path": "commands/done.md"},
-    {"command": "stop",               "path": "commands/stop.md"},
-    {"command": "status",             "path": "commands/status.md"},
-    {"command": "sync-parent",        "path": "commands/sync-parent.md"},
-    {"command": "reset-permissions",  "path": "commands/reset-permissions.md"},
-    {"command": "review-skill",       "path": "commands/review-skill.md"},
-    {"command": "team",               "path": "commands/team.md"}
+    {
+      "command": "start",
+      "path": "commands/start.md"
+    },
+    {
+      "command": "done",
+      "path": "commands/done.md"
+    },
+    {
+      "command": "stop",
+      "path": "commands/stop.md"
+    },
+    {
+      "command": "status",
+      "path": "commands/status.md"
+    },
+    {
+      "command": "sync-parent",
+      "path": "commands/sync-parent.md"
+    },
+    {
+      "command": "reset-permissions",
+      "path": "commands/reset-permissions.md"
+    },
+    {
+      "command": "review-skill",
+      "path": "commands/review-skill.md"
+    },
+    {
+      "command": "team",
+      "path": "commands/team.md"
+    }
   ],
   "team_packs": [
-    {"pack": "solo",                    "type": "role",     "path": "team-packs/solo.md"},
-    {"pack": "build",                   "type": "role",     "path": "team-packs/build.md"},
-    {"pack": "research",                "type": "role",     "path": "team-packs/research.md"},
-    {"pack": "red",                     "type": "role",     "path": "team-packs/red.md"},
-    {"pack": "audit",                   "type": "role",     "path": "team-packs/audit.md"},
-    {"pack": "ship",                    "type": "role",     "path": "team-packs/ship.md"},
-    {"pack": "small",                   "type": "profile",  "path": "team-packs/small.md"},
-    {"pack": "medium",                  "type": "profile",  "path": "team-packs/medium.md"},
-    {"pack": "enterprise",              "type": "profile",  "path": "team-packs/enterprise.md"},
-    {"pack": "faang-mangoes-council",   "type": "panel",    "path": "team-packs/faang-mangoes-council.md"}
+    {
+      "pack": "solo",
+      "type": "role",
+      "path": "team-packs/solo.md"
+    },
+    {
+      "pack": "build",
+      "type": "role",
+      "path": "team-packs/build.md"
+    },
+    {
+      "pack": "research",
+      "type": "role",
+      "path": "team-packs/research.md"
+    },
+    {
+      "pack": "red",
+      "type": "role",
+      "path": "team-packs/red.md"
+    },
+    {
+      "pack": "audit",
+      "type": "role",
+      "path": "team-packs/audit.md"
+    },
+    {
+      "pack": "ship",
+      "type": "role",
+      "path": "team-packs/ship.md"
+    },
+    {
+      "pack": "small",
+      "type": "profile",
+      "path": "team-packs/small.md"
+    },
+    {
+      "pack": "medium",
+      "type": "profile",
+      "path": "team-packs/medium.md"
+    },
+    {
+      "pack": "enterprise",
+      "type": "profile",
+      "path": "team-packs/enterprise.md"
+    }
   ],
   "gates": [
-    {"gate": "privacy-guard",       "path": "zeref/guards/privacy_guard.py"},
-    {"gate": "contradiction-guard", "path": "zeref/guards/contradiction_guard.py"},
-    {"gate": "evidence-guard",      "path": "zeref/guards/evidence_guard.py"},
-    {"gate": "fact-guard",          "path": "zeref/guards/fact_guard.py"},
-    {"gate": "write-gate",          "path": "zeref/guards/write_gate.py"}
+    {
+      "gate": "privacy-guard",
+      "path": "zeref/guards/privacy_guard.py"
+    },
+    {
+      "gate": "contradiction-guard",
+      "path": "zeref/guards/contradiction_guard.py"
+    },
+    {
+      "gate": "evidence-guard",
+      "path": "zeref/guards/evidence_guard.py"
+    },
+    {
+      "gate": "fact-guard",
+      "path": "zeref/guards/fact_guard.py"
+    },
+    {
+      "gate": "write-gate",
+      "path": "zeref/guards/write_gate.py"
+    }
   ]
 }
