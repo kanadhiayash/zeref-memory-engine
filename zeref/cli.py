@@ -1022,6 +1022,49 @@ def cmd_release(args: argparse.Namespace) -> int:
     return 1
 
 
+def cmd_state(args: argparse.Namespace) -> int:
+    """vNext canonical state: migrate | rebuild | verify (ADR-0001)."""
+    from zeref.storage import StateDB, EventLog
+    from zeref.storage import views as views_mod
+
+    root = _project_root()
+    db = StateDB(root)
+    sub = getattr(args, "state_command", None)
+
+    if sub == "migrate":
+        applied = db.migrate()
+        print(f"schema version: {db.schema_version()}")
+        if applied:
+            print("applied: " + ", ".join(applied))
+        else:
+            print("already up to date")
+        print(f"tables: {len(db.tables())}")
+        return 0
+
+    if sub == "verify":
+        db.migrate()
+        log = EventLog(root, mirror_conn=db.connect())
+        try:
+            log.verify_chain()
+        except Exception as e:  # noqa: BLE001
+            print(f"CHAIN INVALID: {e}")
+            return 2
+        print("chain OK")
+        return 0
+
+    if sub == "rebuild":
+        db.migrate()
+        conn = db.connect()
+        log = EventLog(root, mirror_conn=conn)
+        n = log.replay_into(conn)
+        written = views_mod.render_all(root, conn)
+        print(f"replayed {n} event(s); regenerated {len(written)} view(s)")
+        return 0
+
+    print("usage: zeref state {migrate|rebuild|verify}", file=sys.stderr)
+    return 1
+
+
 def cmd_doctor(args: argparse.Namespace) -> int:
     from zeref.release.doctor import doctor_passed, format_doctor, run_doctor
 
@@ -1381,6 +1424,12 @@ def _build_parser() -> argparse.ArgumentParser:
     route_policy_sub.add_parser("validate", help="Validate route policy")
     route_sub.add_parser("report", help="Generate route report")
 
+    state = sub.add_parser("state", help="vNext canonical state (SQLite v2)")
+    state_sub = state.add_subparsers(dest="state_command", required=True)
+    state_sub.add_parser("migrate", help="Apply pending SQLite v2 migrations")
+    state_sub.add_parser("rebuild", help="Replay JSONL events; regenerate views")
+    state_sub.add_parser("verify",  help="Verify JSONL hash chain")
+
     release = sub.add_parser("release", help="Run release readiness checks")
     release_sub = release.add_subparsers(dest="release_command", required=True)
     release_check = release_sub.add_parser("check", help="Run local release checks")
@@ -1476,6 +1525,7 @@ def main() -> None:
         "contradictions": cmd_contradictions,
         "privacy": cmd_privacy,
         "route": cmd_route,
+        "state": cmd_state,
         "release": cmd_release,
         "doctor": cmd_doctor,
         "prompt": cmd_prompt,

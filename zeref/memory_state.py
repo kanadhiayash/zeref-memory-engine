@@ -789,7 +789,7 @@ def _render_view(*, title: str, kind: str, items: list[MemoryItem]) -> str:
     lines = [
         f"# {title}",
         "",
-        "_Generated from `memory/state/zeref.sqlite`. Markdown views are derived and human-auditable; structured state remains canonical for retrieval._",
+        "_Generated from `memory/state/zeref.sqlite`. Markdown views are generated (never canonical); SQLite is canonical current state per ADR-0001._",
         "",
     ]
     if not items:
