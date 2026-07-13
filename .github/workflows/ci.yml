@@ -63,7 +63,7 @@ jobs:
           fi
           # Allowed patterns: any changed file must match one of these anchored patterns.
           # Uses grep -E to avoid awk's regex-delimiter conflicts with `/` inside the pattern.
-          allowed='^(AGENTS\.md|CHANGELOG.*|CLAUDE\.md|CODEOWNERS|CONTRIBUTING\.md|GEMINI\.md|GITHUB_OS\.md|INSTALL\.md|LICENSE|MIGRATION\.md|PRIVACY\.md|README\.md|REDACT\.md|SECURITY\.md|SECURITY_CONTACTS\.md|SHARING_POLICY\.md|SKILL\.md|SOUL\.md|QUICKSTART\.md|TASKS\.md|CODEX\.md|LLAMA\.md|dashboard\.html|pyproject\.toml|pytest\.ini|zeref-registry\.json|_shared/.*|agents/.*|assets/.*|benchmarks/.*|commands/.*|config/.*|docs/.*|memory/.*|references/.*|scripts/.*|skills/.*|team-packs/.*|team/.*|tests/.*|zeref/.*|\.claude-plugin/.*|\.cursor/.*|\.github/.*|\.gitignore|\.gitattributes|\.windsurfrules|\.aider\.conf\.yml.*)$'
+          allowed='^(AGENTS\.md|CHANGELOG.*|CLAUDE\.md|CODEOWNERS|CONTRIBUTING\.md|GEMINI\.md|GITHUB_OS\.md|INSTALL\.md|LICENSE|MIGRATION\.md|PRIVACY\.md|README\.md|REDACT\.md|SECURITY\.md|SECURITY_CONTACTS\.md|SHARING_POLICY\.md|SKILL\.md|SOUL\.md|QUICKSTART\.md|TASKS\.md|CODEX\.md|LLAMA\.md|dashboard\.html|pyproject\.toml|pytest\.ini|zeref-registry\.json|_shared/.*|agents/.*|assets/.*|benchmarks/.*|commands/.*|config/.*|docs/.*|memory/.*|missions/.*|policies/.*|references/.*|registry/.*|scripts/.*|skills/.*|team-packs/.*|team/.*|tests/.*|zeref/.*|\.claude-plugin/.*|\.cursor/.*|\.github/.*|\.gitignore|\.gitattributes|\.windsurfrules|\.aider\.conf\.yml.*)$'
           # unscoped = lines that DO NOT match the allowed pattern.
           unscoped=$(grep -Ev "$allowed" /tmp/zeref-scope.txt || true)
           if [ -n "$unscoped" ]; then
