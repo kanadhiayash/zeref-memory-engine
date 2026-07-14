@@ -58,11 +58,6 @@
       "status": "runtime"
     },
     {
-      "id": "zeref.evaluators",
-      "purpose": "council + model-jury",
-      "status": "adapter"
-    },
-    {
       "id": "zeref.adapters.harnesses",
       "purpose": "codex/claude/gemini/kimi/hermes/odysseus",
       "status": "adapter"

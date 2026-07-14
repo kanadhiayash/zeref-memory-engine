@@ -15,7 +15,6 @@ def run() -> dict:
     return lineage_axis("minimality_pressure", {
         "high_not_core": (high["counts"]["optional_or_gated"] == high["counts"]["high_rows"], "high rows did not become core dependencies"),
         "reference_not_runtime": (reference["counts"]["evidence_only"] == reference["counts"]["reference_only_rows"], "reference rows did not enter runtime"),
-        "rejection_preserved": (reports["council"]["counts"]["verdicts"].get("reject", 0) == 1, "reject verdict preserved"),
     })
 
 

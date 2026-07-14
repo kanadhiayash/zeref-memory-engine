@@ -11,7 +11,6 @@ from benchmarks import (
     license_boundary,
     lineage_import_coverage,
     minimality_pressure,
-    public_claim_safety,
     reference_only_guardrails,
     security_containment,
 )
@@ -31,7 +30,6 @@ LINEAGE_AXES = [
     minimality_pressure,
     security_containment,
     license_boundary,
-    public_claim_safety,
 ]
 
 
@@ -53,7 +51,6 @@ def test_lineage_benchmark_axes_pass(tmp_path: Path, monkeypatch) -> None:
         "minimality_pressure",
         "security_containment",
         "license_boundary",
-        "public_claim_safety",
     }
 
 
