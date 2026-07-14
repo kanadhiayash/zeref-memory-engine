@@ -55,6 +55,12 @@ def register(sub) -> None:
     ex = csub.add_parser("gate", help="Assert a capability is executable (exit 0) or raise (exit 2)")
     ex.add_argument("capability_id")
 
+    pr = csub.add_parser("probe", help="Health-check the adapter for a capability")
+    pr.add_argument("capability_id")
+
+    ad = csub.add_parser("adapters", help="List registered capability adapters")
+    ad.add_argument("--json", action="store_true")
+
 
 def handle(args: argparse.Namespace) -> int:
     root = _root()
@@ -145,6 +151,30 @@ def handle(args: argparse.Namespace) -> int:
             print(f"DENY: {e}")
             return 2
         print(f"OK: {args.capability_id} is executable")
+        return 0
+
+    if cmd == "probe":
+        from zeref.adapters.capabilities import probe
+        report = probe(root, args.capability_id)
+        print(json.dumps({
+            "adapter": report.adapter,
+            "detected_version": report.detected_version,
+            "enforcement_level": report.enforcement_level.value,
+            "supported_features": list(report.supported_features),
+            "healthy": report.healthy,
+            "failure_reason": report.failure_reason,
+        }, indent=2))
+        return 0 if report.healthy else 2
+
+    if cmd == "adapters":
+        from zeref.adapters.capabilities import list_adapters
+        rows = list_adapters()
+        if args.json:
+            print(json.dumps(rows, indent=2))
+        else:
+            for r in rows:
+                types = ",".join(r["supported_types"])
+                print(f"{r['enforcement_level']}  {r['name']:<20} [{types}]")
         return 0
 
     return 1
