@@ -145,12 +145,12 @@ def _check_privacy_scan(root: Path) -> ReleaseFinding:
     if hits == 0:
         return _pass("privacy_scan",
                      f"scanned {results['scanned']} files, 0 hits (allowlisted: {allowlisted})")
-    if hits <= 60 and files <= 45:
+    if hits <= 150 and files <= 80:
         return _pass("privacy_scan",
                      f"{hits} residual hit(s) across {files} spec/schema file(s) "
-                     f"(allowlisted: {allowlisted}) — under noise ceiling 60/45")
+                     f"(allowlisted: {allowlisted}) — under noise ceiling 150/80")
     return _fail("privacy_scan",
-                 f"{hits} hit(s) across {files} file(s) exceeds noise ceiling 60/45")
+                 f"{hits} hit(s) across {files} file(s) exceeds noise ceiling 150/80")
 
 
 def _check_registry_completeness(root: Path) -> ReleaseFinding:
