@@ -5,6 +5,18 @@
 .Spotlight-V100
 .Trashes
 Thumbs.db
+Icon?
+
+# macOS Finder / cloud-sync duplicate artifacts (e.g. "core 2.py", "index 3.md").
+# These are copy-collision cruft, never real source. Guard added by the WS0
+# consistency baseline after 71 such files accumulated in the working tree.
+* [0-9].py
+* [0-9].json
+* [0-9].md
+* [0-9].txt
+* [0-9].yml
+* [0-9].yaml
+* [0-9].csv
 
 # Obsidian
 .obsidian/
