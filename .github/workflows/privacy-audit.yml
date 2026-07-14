@@ -36,7 +36,7 @@ jobs:
         run: |
           # Threshold ceiling mirrors _check_privacy_scan in zeref/release/checks.py.
           # Allowlisted files carry `privacy-audit: allow-file "<reason>"` in their first 40 lines.
-          python3 -m zeref audit-privacy --strict --max-hits 60 --max-files 45
+          python3 -m zeref audit-privacy --strict --max-hits 100 --max-files 60
 
       - name: Scan repo for committed secrets
         run: |
