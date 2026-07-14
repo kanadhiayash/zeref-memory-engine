@@ -101,7 +101,7 @@ class MCPServerAdapter:
         request = json.dumps({
             "jsonrpc": "2.0", "id": 1, "method": "initialize",
             "params": {"protocolVersion": "2024-11-05", "capabilities": {},
-                       "clientInfo": {"name": "zeref", "version": "2.0.0-alpha.1"}},
+                       "clientInfo": {"name": "zeref", "version": "2.0.0-alpha.2"}},
         })
         try:
             proc = subprocess.Popen(
