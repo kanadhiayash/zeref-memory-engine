@@ -1022,6 +1022,45 @@ def cmd_release(args: argparse.Namespace) -> int:
     return 1
 
 
+def cmd_policy(args: argparse.Namespace) -> int:
+    """vNext policy engine: show | check (ADR-0005)."""
+    from zeref.policy import (
+        Action, ActionKind, AutonomyMode, evaluate, load_policy_stack,
+    )
+    root = _project_root()
+    sub = getattr(args, "policy_command", None)
+    if sub == "show":
+        stack = load_policy_stack(root)
+        for layer in stack:
+            print(f"[{layer.name}]")
+            if layer.denies:
+                print("  deny: " + ", ".join(k.value for k in sorted(layer.denies, key=lambda x: x.value)))
+            if layer.allows:
+                print("  allow: " + ", ".join(k.value for k in sorted(layer.allows, key=lambda x: x.value)))
+        return 0
+    if sub == "check":
+        try:
+            kind = ActionKind(args.kind)
+        except ValueError:
+            print(f"unknown action kind: {args.kind}", file=sys.stderr)
+            return 1
+        try:
+            mode = AutonomyMode(args.mode)
+        except ValueError:
+            print(f"unknown autonomy mode: {args.mode}", file=sys.stderr)
+            return 1
+        stack = load_policy_stack(root)
+        d = evaluate(Action(kind, target=args.target or ""), stack, mode=mode)
+        print(json.dumps({
+            "verdict": d.verdict.value,
+            "reason": d.reason,
+            "deciding_layer": d.deciding_layer,
+        }, indent=2))
+        return 0 if d.allowed else 2
+    print("usage: zeref policy {show|check}", file=sys.stderr)
+    return 1
+
+
 def cmd_state(args: argparse.Namespace) -> int:
     """vNext canonical state: migrate | rebuild | verify (ADR-0001)."""
     from zeref.storage import StateDB, EventLog
@@ -1424,6 +1463,15 @@ def _build_parser() -> argparse.ArgumentParser:
     route_policy_sub.add_parser("validate", help="Validate route policy")
     route_sub.add_parser("report", help="Generate route report")
 
+    policy = sub.add_parser("policy", help="vNext policy engine (precedence + autonomy)")
+    policy_sub = policy.add_subparsers(dest="policy_command", required=True)
+    policy_sub.add_parser("show", help="Print the merged policy stack")
+    p_check = policy_sub.add_parser("check", help="Evaluate one action against the current stack")
+    p_check.add_argument("kind", help="ActionKind value, e.g. 'network', 'fs.write'")
+    p_check.add_argument("--target", default=None)
+    p_check.add_argument("--mode", default="auto-safe",
+                         choices=["suggest", "auto-safe", "policy-bound"])
+
     state = sub.add_parser("state", help="vNext canonical state (SQLite v2)")
     state_sub = state.add_subparsers(dest="state_command", required=True)
     state_sub.add_parser("migrate", help="Apply pending SQLite v2 migrations")
@@ -1525,6 +1573,7 @@ def main() -> None:
         "contradictions": cmd_contradictions,
         "privacy": cmd_privacy,
         "route": cmd_route,
+        "policy": cmd_policy,
         "state": cmd_state,
         "release": cmd_release,
         "doctor": cmd_doctor,
