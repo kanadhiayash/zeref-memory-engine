@@ -138,7 +138,7 @@ def _implementation_form(row_id: int) -> str:
 def _gate_status(row_id: int) -> dict[str, Any]:
     root = Path.cwd()
     checks = {
-        1: _paths_exist(root, ["AGENTS.md", "README.md", "zeref/lineage/intake.py", "zeref/lineage/council.py"]),
+        1: _paths_exist(root, ["AGENTS.md", "README.md", "zeref/lineage/intake.py"]),
         3: _paths_exist(root, ["memory/README.md", "zeref/memory/core.py", "zeref/guards/write_gate.py"]),
         11: {"passed": {"active", "stale", "superseded", "disputed", "archived"}.issubset(STATUS_VALUES), "detail": sorted(STATUS_VALUES)},
         12: _paths_exist(root, [".gitignore", "zeref/lineage/importer.py"]),

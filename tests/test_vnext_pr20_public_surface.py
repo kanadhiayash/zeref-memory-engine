@@ -49,11 +49,11 @@ def test_plugin_manifest_version() -> None:
 
 REGISTRY_FILES = (
     "components.json", "missions.json", "adapters.json",
-    "evaluators.json", "codecs.json", "capabilities.json",
+    "codecs.json", "capabilities.json",
 )
 
 
-def test_generate_all_writes_six_registry_files(tmp_path: Path) -> None:
+def test_generate_all_writes_registry_files(tmp_path: Path) -> None:
     # Seed missions + policies dirs for the missions registry to load.
     import shutil
     for name in ("missions", "policies"):
@@ -85,7 +85,7 @@ def test_generated_components_schema_shape() -> None:
     ids = {c["id"] for c in data["components"]}
     for expected in ("zeref.storage", "zeref.policy", "zeref.capabilities",
                      "zeref.runtime", "zeref.teams", "zeref.codecs",
-                     "zeref.evidence", "zeref.evaluators",
+                     "zeref.evidence",
                      "zeref.benchmark.program"):
         assert expected in ids
     for row in data["components"]:

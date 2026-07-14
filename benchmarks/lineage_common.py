@@ -5,7 +5,6 @@ from __future__ import annotations
 from typing import Any
 
 from benchmarks.helpers import axis_result
-from zeref.lineage.council import run_council
 from zeref.lineage.critical import audit_critical
 from zeref.lineage.high import audit_high
 from zeref.lineage.importer import import_lineage
@@ -18,7 +17,6 @@ def lineage_reports() -> dict[str, Any]:
     return {
         "audit": audit_csv(_csv_path()),
         "import": import_lineage(_csv_path(), sandbox=True, latest_default=True, dry_run=True, resolver=_stub_resolver),
-        "council": run_council(_csv_path(), strict=True),
         "critical": audit_critical(_csv_path(), strict=True),
         "high": audit_high(_csv_path(), strict=True),
         "reference": audit_reference_only(_csv_path(), strict=True),
