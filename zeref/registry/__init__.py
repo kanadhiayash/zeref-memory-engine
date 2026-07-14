@@ -11,7 +11,6 @@ from zeref.registry.generator import (
     generate_components,
     generate_missions,
     generate_adapters,
-    generate_evaluators,
     generate_codecs,
     generate_capabilities,
 )
@@ -19,6 +18,6 @@ from zeref.registry.generator import (
 __all__ = [
     "RegistryGenerationError",
     "generate_all", "generate_components", "generate_missions",
-    "generate_adapters", "generate_evaluators", "generate_codecs",
+    "generate_adapters", "generate_codecs",
     "generate_capabilities",
 ]

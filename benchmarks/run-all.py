@@ -44,7 +44,6 @@ from benchmarks import (  # noqa: E402
     portability,
     privacy_safety,
     prompt_rewrite_quality,
-    public_claim_safety,
     reference_only_guardrails,
     retrieval,
     retrieval_accuracy,
@@ -78,7 +77,6 @@ AXES = [
     minimality_pressure,
     security_containment,
     license_boundary,
-    public_claim_safety,
 ]
 
 
@@ -246,7 +244,6 @@ def _render_report(results: list[dict], rubric_rel: str, passed: bool, failures:
         "python3 -m benchmarks.minimality_pressure",
         "python3 -m benchmarks.security_containment",
         "python3 -m benchmarks.license_boundary",
-        "python3 -m benchmarks.public_claim_safety",
         "```",
         "",
         "## Rubric",

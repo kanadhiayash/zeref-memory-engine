@@ -56,7 +56,6 @@ def generate_components(root: Path) -> Path:
         {"id": "zeref.codecs",       "status": "runtime",     "purpose": "codec registry + selector"},
         {"id": "zeref.context",      "status": "runtime",     "purpose": "6-section context packet"},
         {"id": "zeref.evidence",     "status": "runtime",     "purpose": "quality vs robustness"},
-        {"id": "zeref.evaluators",   "status": "adapter",     "purpose": "council + model-jury"},
         {"id": "zeref.adapters.harnesses", "status": "adapter", "purpose": "codex/claude/gemini/kimi/hermes/odysseus"},
         {"id": "zeref.adapters.providers", "status": "adapter", "purpose": "anthropic/openai/xai config"},
         {"id": "zeref.benchmark.program", "status": "runtime", "purpose": "benchmark registry + §16.10 artifacts"},
@@ -96,13 +95,6 @@ def generate_adapters(root: Path) -> Path:
     return _write(root / "registry" / "adapters.json", payload)
 
 
-def generate_evaluators(root: Path) -> Path:
-    from zeref.evaluators import list_evaluators
-    return _write(root / "registry" / "evaluators.json",
-                  {"schema": "zeref.registry-evaluators/v1",
-                   "evaluators": list_evaluators()})
-
-
 def generate_codecs(root: Path) -> Path:
     from zeref.codecs import list_codecs
     return _write(root / "registry" / "codecs.json",
@@ -128,7 +120,6 @@ def generate_all(root: Path | str) -> list[Path]:
         generate_components(root),
         generate_missions(root),
         generate_adapters(root),
-        generate_evaluators(root),
         generate_codecs(root),
         generate_capabilities(root),
     ]
