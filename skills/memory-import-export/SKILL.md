@@ -5,7 +5,8 @@ trigger:
   - user says "import memory from ..."
   - user says "export memory to ..."
   - /migrate
-model: claude-sonnet-4-6
+model: sonnet
+reasoning_class: balanced
 max_turns: 20
 ---
 

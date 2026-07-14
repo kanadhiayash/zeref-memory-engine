@@ -7,7 +7,8 @@ trigger:
   - after budget-governor gate passes
   - "what skills should run for this"
   - "route this task"
-model: claude-haiku-4-5
+model: haiku
+reasoning_class: fast
 max_turns: 8
 ---
 

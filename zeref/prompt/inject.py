@@ -24,24 +24,15 @@ TARGET_HEADERS = {
 }
 
 
-# Map a wrapper `target=` value → a target-model profile id when the wrapper
-# lands on a specific model. Multiple wrapper aliases can map to the same
-# profile (e.g. "claude" wrapper may consume Opus 4.8 or Sonnet 5 profile,
-# picked by explicit `profile_id=` arg or by session config). Fail-open when
-# no profile is known.
-_DEFAULT_PROFILE_FOR_TARGET = {
-    "claude": "claude-opus-4-8",
-    "codex": "codex-gpt-5-5",
-    "cursor": "cursor",
-    "github": None,   # not a model target
-    "human": None,    # not a model target
-}
-
-
+# Wrapper `target=` → default target-model profile id mapping is adapter
+# data (zeref/adapters/harness_targets.json); core keeps no model ids.
+# Fail-open when no profile is known.
 def _profile_for_target(target: str, override: str | None) -> TargetProfile | None:
     if override:
         return maybe_load_profile(override)
-    default = _DEFAULT_PROFILE_FOR_TARGET.get(target)
+    from zeref.adapters import default_profile_for_target
+
+    default = default_profile_for_target(target)
     if not default:
         return None
     return maybe_load_profile(default)

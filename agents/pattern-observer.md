@@ -1,7 +1,8 @@
 ---
 name: pattern-observer
 description: Background agent. Scans memory/patterns/PATTERNS.jsonl over rolling 48-80h window. Detects ≥3 semantically similar events (n-gram similarity ≥0.8). Surfaces candidate skills via pattern-to-skill (drafts land in skills/drafts/).
-model: claude-haiku-4-5
+model: haiku            # harness alias; canonical class below
+reasoning_class: fast   # provider mapping: zeref/adapters/providers/
 max_turns: 20
 ---
 <!-- privacy-audit: allow-file "Agent spec documents PATTERNS.jsonl schema fields + example triggers; no user data." -->

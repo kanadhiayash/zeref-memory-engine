@@ -2,6 +2,19 @@
 
 Baseline: `b82c6410bf17b1bc4d1c79227c3a55e075858ab9`. Counts derived, never copied.
 
+## Component status taxonomy (vNext)
+
+Per `ZEREF_VNEXT_AGENTIC_OPERATIONS_UPGRADE_PLAN.md` §1.2 and `docs/GLOSSARY.md`, every component is labeled one of:
+
+| Status | Meaning |
+|---|---|
+| `runtime` | Backed by executing code with test coverage. |
+| `adapter` | A provider/harness/capability bridge — thin, declarative, swappable. |
+| `contract` | A schema, manifest, or markdown spec describing required behavior, not yet (or not necessarily) runtime-backed. |
+| `experimental` | Implemented but not yet benchmarked past its acceptance threshold; may regress or be removed. |
+
+`zeref-registry.json` skill entries now carry this as a `status` field (`runtime`|`contract` observed so far) alongside `reasoning_class`, replacing the old `model`/`model_alias` fields. See `docs/adr/ADR-0002-reasoning-classes-and-provider-adapters.md` and `MIGRATION.md`. The rest of this document is a pre-vNext audit baseline and is not rewritten below.
+
 ## Derived counts (WS-B verified)
 
 | Surface | Baseline | Post-Phase-0.3 | Doc claim | Delta |

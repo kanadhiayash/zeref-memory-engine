@@ -5,7 +5,8 @@ trigger:
   - user says "grade this claim"
   - wiki-maintenance consolidation
   - parent-sync filter step
-model: claude-haiku-4-5
+model: haiku
+reasoning_class: fast
 max_turns: 10
 ---
 

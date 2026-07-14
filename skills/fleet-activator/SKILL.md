@@ -7,7 +7,8 @@ trigger:
   - "is ECC reachable"
   - "check fleet reachability"
   - before any /ecc / /graphify / /browse invocation
-model: claude-haiku-4-5
+model: haiku
+reasoning_class: fast
 max_turns: 6
 ---
 

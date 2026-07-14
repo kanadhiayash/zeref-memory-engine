@@ -12,7 +12,8 @@ trigger:
   - "check tier"
   - "what tier am i on"
   - model change detected (re-resolve tier)
-model: claude-haiku-4-5
+model: haiku
+reasoning_class: fast
 max_turns: 10
 ---
 
@@ -24,17 +25,17 @@ Auto-gate #1 of the v2.6 four-gate execution chain. No major task proceeds witho
 
 ## Tier table (2026 Anthropic pricing — authoritative)
 
-| Tier | Model | $/1M input | $/1M output | Zeref OS behavior | Per-skill cap | Legacy alias |
+| Tier | Reasoning Class | $/1M input | $/1M output | Zeref OS behavior | Per-skill cap | Legacy alias |
 |---|---|---|---|---|---|---|
-| **HAIKU** | `claude-haiku-4-5` | $1 | $5 | Aggressive compaction, minimal wiki writes, short `/status` outputs | 4 000 tok | Free |
-| **SONNET** | `claude-sonnet-4-6` | $3 | $15 | Normal operation, full wiki writes, standard conflict scans | 8 000 tok | Standard |
-| **OPUS** | `claude-opus-4-7` | $5 | $25 | Full parent-child sync, deep conflict analysis, pattern retrospectives | 16 000 tok | God Mode |
+| **HAIKU** | `fast` (haiku alias) | $1 | $5 | Aggressive compaction, minimal wiki writes, short `/status` outputs | 4 000 tok | Free |
+| **SONNET** | `balanced` (sonnet alias) | $3 | $15 | Normal operation, full wiki writes, standard conflict scans | 8 000 tok | Standard |
+| **OPUS** | `deep` (opus alias) | $5 | $25 | Full parent-child sync, deep conflict analysis, pattern retrospectives | 16 000 tok | God Mode |
 
 Notes:
 - Thinking tokens billed as output tokens (Anthropic 2026).
-- Opus 4.7 tokenizer ~+35% vs Sonnet for same English text — flag inflation when pinning Opus for cost-sensitive work; Opus 4.6 remains the cost-sensitive flagship.
+- Opus deep-reasoning (~claude-opus-4-8) tokenizer ~+35% vs Sonnet for same English text — flag inflation when pinning deep for cost-sensitive work; balanced remains the cost-sensitive flagship.
 - Prompt cache reads = 0.1x input cost. Batch API = 0.5x both.
-- Free / Standard / God Mode are accepted aliases for HAIKU / SONNET / OPUS.
+- Free / Standard / God Mode are accepted aliases for HAIKU / SONNET / OPUS (maps to fast/balanced/deep).
 
 User can override tier in `config/BUDGET.md` `model_tier:` field.
 

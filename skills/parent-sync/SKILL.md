@@ -4,7 +4,8 @@ description: Stages approved summaries + decisions in memory/sync/outbound/, pus
 trigger:
   - approved /stop with parent sync enabled
   - /sync-parent (manual)
-model: claude-sonnet-4-6
+model: sonnet
+reasoning_class: balanced
 max_turns: 25
 ---
 

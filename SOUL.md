@@ -54,8 +54,7 @@ Nothing runs that the user did not ask for or that the pattern log did not
 justify. Cost, complexity, and blast radius all belong to the user's choice.
 
 Enforcement: `agents/pattern-observer.md`; `skills/pattern-to-skill/SKILL.md`;
-`team-packs/*.md` opt-in via `/team <name>`; council packs (like FAANG MANGOES)
-convene only on explicit request.
+`team-packs/*.md` opt-in via `/team <name>`.
 
 ---
 
@@ -66,8 +65,8 @@ convene only on explicit request.
   the review comment.
 - **New skills prove alignment.** A new skill draft in `skills/drafts/` must
   name which of the 5 principles it upholds and which it risks straining.
-- **Council decisions map here.** Every architectural decision surfaced by
-  the FAANG MANGOES council is judged against the 5 principles.
+- **Architectural decisions map here.** Every load-bearing architectural
+  decision (ADRs in `docs/adr/`) is judged against the 5 principles.
 
 ## When to update SOUL.md
 

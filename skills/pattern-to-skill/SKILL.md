@@ -4,7 +4,8 @@ description: Drafts new skill files from candidates emitted by pattern-observer.
 trigger:
   - /review-skill picks up a candidate
   - user says "draft a skill from this pattern"
-model: claude-opus-4-7
+model: opus
+reasoning_class: deep
 max_turns: 30
 ---
 

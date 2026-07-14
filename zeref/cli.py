@@ -424,8 +424,10 @@ def cmd_grade(args: argparse.Namespace) -> int:
         require_connector(policy, "litellm", purpose="grade-claim")
         scrubbed_claim, _rpt = scrub(claim, root / "REDACT.md", provenance="cli/grade/claim")
         import litellm  # type: ignore
+        from zeref.adapters.providers import resolve_model
         resp = litellm.completion(
-            model="gpt-4o-mini",
+            # Claim grading is a LOW-criticality task → "fast" reasoning class.
+            model=resolve_model("fast", provider="openai").model_id,
             messages=[{"role": "user", "content": (
                 f"Grade this claim on recency, provenance, corroboration (high/medium/low each). "
                 f"Claim: \"{scrubbed_claim}\"\n"
@@ -1020,6 +1022,150 @@ def cmd_release(args: argparse.Namespace) -> int:
     return 1
 
 
+def cmd_team(args: argparse.Namespace) -> int:
+    """vNext team compiler: compile | plan-show (PR 7)."""
+    root = _project_root()
+    sub = getattr(args, "team_command", None)
+
+    if sub == "compile":
+        from zeref.teams import (
+            NoEligibleCapabilityError, SelfReviewError, compile_team,
+        )
+        task_id = args.task_id or ("task_" + args.mission)
+        try:
+            plan = compile_team(
+                root, task_id=task_id, mission_id=args.mission,
+                policy_id=args.policy, active_harness=args.harness,
+            )
+        except (NoEligibleCapabilityError, SelfReviewError) as e:
+            print(f"compile failed: {e}", file=sys.stderr)
+            return 2
+        print(json.dumps(plan.to_dict(), indent=2))
+        return 0
+
+    if sub == "plan-show":
+        from zeref.storage import StateDB
+        db = StateDB(root); db.migrate()
+        conn = db.connect()
+        row = conn.execute(
+            "SELECT task_id, mission_id, policy, state, created_at "
+            "FROM team_runs WHERE id=?",
+            (args.run_id,),
+        ).fetchone()
+        if row is None:
+            print(f"unknown run_id {args.run_id!r}", file=sys.stderr)
+            db.close()
+            return 1
+        task_id, mission, policy, state, created = row
+        assignments = conn.execute(
+            "SELECT seat_id, capability_id, score FROM team_assignments "
+            "WHERE run_id=? ORDER BY seat_id",
+            (args.run_id,),
+        ).fetchall()
+        steps = conn.execute(
+            "SELECT step_name, state FROM execution_steps "
+            "WHERE run_id=? ORDER BY id",
+            (args.run_id,),
+        ).fetchall()
+        db.close()
+        print(json.dumps({
+            "run_id": args.run_id, "task_id": task_id,
+            "mission": mission, "policy": policy, "state": state,
+            "created_at": created,
+            "assignments": [
+                {"seat_id": s, "capability_id": c, "score": sc}
+                for s, c, sc in assignments
+            ],
+            "steps": [{"step": s, "state": st} for s, st in steps],
+        }, indent=2))
+        return 0
+
+    print("usage: zeref team {compile|plan-show}", file=sys.stderr)
+    return 1
+
+
+def cmd_policy(args: argparse.Namespace) -> int:
+    """vNext policy engine: show | check (ADR-0005)."""
+    from zeref.policy import (
+        Action, ActionKind, AutonomyMode, evaluate, load_policy_stack,
+    )
+    root = _project_root()
+    sub = getattr(args, "policy_command", None)
+    if sub == "show":
+        stack = load_policy_stack(root)
+        for layer in stack:
+            print(f"[{layer.name}]")
+            if layer.denies:
+                print("  deny: " + ", ".join(k.value for k in sorted(layer.denies, key=lambda x: x.value)))
+            if layer.allows:
+                print("  allow: " + ", ".join(k.value for k in sorted(layer.allows, key=lambda x: x.value)))
+        return 0
+    if sub == "check":
+        try:
+            kind = ActionKind(args.kind)
+        except ValueError:
+            print(f"unknown action kind: {args.kind}", file=sys.stderr)
+            return 1
+        try:
+            mode = AutonomyMode(args.mode)
+        except ValueError:
+            print(f"unknown autonomy mode: {args.mode}", file=sys.stderr)
+            return 1
+        stack = load_policy_stack(root)
+        d = evaluate(Action(kind, target=args.target or ""), stack, mode=mode)
+        print(json.dumps({
+            "verdict": d.verdict.value,
+            "reason": d.reason,
+            "deciding_layer": d.deciding_layer,
+        }, indent=2))
+        return 0 if d.allowed else 2
+    print("usage: zeref policy {show|check}", file=sys.stderr)
+    return 1
+
+
+def cmd_state(args: argparse.Namespace) -> int:
+    """vNext canonical state: migrate | rebuild | verify (ADR-0001)."""
+    from zeref.storage import StateDB, EventLog
+    from zeref.storage import views as views_mod
+
+    root = _project_root()
+    db = StateDB(root)
+    sub = getattr(args, "state_command", None)
+
+    if sub == "migrate":
+        applied = db.migrate()
+        print(f"schema version: {db.schema_version()}")
+        if applied:
+            print("applied: " + ", ".join(applied))
+        else:
+            print("already up to date")
+        print(f"tables: {len(db.tables())}")
+        return 0
+
+    if sub == "verify":
+        db.migrate()
+        log = EventLog(root, mirror_conn=db.connect())
+        try:
+            log.verify_chain()
+        except Exception as e:  # noqa: BLE001
+            print(f"CHAIN INVALID: {e}")
+            return 2
+        print("chain OK")
+        return 0
+
+    if sub == "rebuild":
+        db.migrate()
+        conn = db.connect()
+        log = EventLog(root, mirror_conn=conn)
+        n = log.replay_into(conn)
+        written = views_mod.render_all(root, conn)
+        print(f"replayed {n} event(s); regenerated {len(written)} view(s)")
+        return 0
+
+    print("usage: zeref state {migrate|rebuild|verify}", file=sys.stderr)
+    return 1
+
+
 def cmd_doctor(args: argparse.Namespace) -> int:
     from zeref.release.doctor import doctor_passed, format_doctor, run_doctor
 
@@ -1379,6 +1525,34 @@ def _build_parser() -> argparse.ArgumentParser:
     route_policy_sub.add_parser("validate", help="Validate route policy")
     route_sub.add_parser("report", help="Generate route report")
 
+    from zeref import cli_capability
+    cli_capability.register(sub)
+
+    policy = sub.add_parser("policy", help="vNext policy engine (precedence + autonomy)")
+    policy_sub = policy.add_subparsers(dest="policy_command", required=True)
+    policy_sub.add_parser("show", help="Print the merged policy stack")
+    p_check = policy_sub.add_parser("check", help="Evaluate one action against the current stack")
+    p_check.add_argument("kind", help="ActionKind value, e.g. 'network', 'fs.write'")
+    p_check.add_argument("--target", default=None)
+    p_check.add_argument("--mode", default="auto-safe",
+                         choices=["suggest", "auto-safe", "policy-bound"])
+
+    team = sub.add_parser("team", help="vNext team compiler (PR 7)")
+    team_sub = team.add_subparsers(dest="team_command", required=True)
+    t_compile = team_sub.add_parser("compile", help="Compile a team plan for a mission")
+    t_compile.add_argument("mission")
+    t_compile.add_argument("--task-id", default=None)
+    t_compile.add_argument("--policy", default="balanced")
+    t_compile.add_argument("--harness", default="claude-code")
+    t_show = team_sub.add_parser("plan-show", help="Print a persisted team plan")
+    t_show.add_argument("run_id")
+
+    state = sub.add_parser("state", help="vNext canonical state (SQLite v2)")
+    state_sub = state.add_subparsers(dest="state_command", required=True)
+    state_sub.add_parser("migrate", help="Apply pending SQLite v2 migrations")
+    state_sub.add_parser("rebuild", help="Replay JSONL events; regenerate views")
+    state_sub.add_parser("verify",  help="Verify JSONL hash chain")
+
     release = sub.add_parser("release", help="Run release readiness checks")
     release_sub = release.add_subparsers(dest="release_command", required=True)
     release_check = release_sub.add_parser("check", help="Run local release checks")
@@ -1414,12 +1588,12 @@ def _build_parser() -> argparse.ArgumentParser:
     loop_sub = loop.add_subparsers(dest="loop_command", required=True)
     loop_plan = loop_sub.add_parser("plan", help="Create a loop contract")
     loop_plan.add_argument("goal")
-    loop_plan.add_argument("--team", default="small")
+    loop_plan.add_argument("--team", default="lean")
     loop_plan.add_argument("--max-iterations", type=int, default=3)
     loop_plan.add_argument("--json", action="store_true")
     loop_run = loop_sub.add_parser("run", help="Run a bounded deterministic loop")
     loop_run.add_argument("goal")
-    loop_run.add_argument("--team", default="small")
+    loop_run.add_argument("--team", default="lean")
     loop_run.add_argument("--max-iterations", type=int, default=3)
     loop_run.add_argument("--json", action="store_true")
     loop_status = loop_sub.add_parser("status", help="Show latest loop status")
@@ -1474,6 +1648,10 @@ def main() -> None:
         "contradictions": cmd_contradictions,
         "privacy": cmd_privacy,
         "route": cmd_route,
+        "capability": lambda a: __import__("zeref.cli_capability", fromlist=["handle"]).handle(a),
+        "policy": cmd_policy,
+        "team": cmd_team,
+        "state": cmd_state,
         "release": cmd_release,
         "doctor": cmd_doctor,
         "prompt": cmd_prompt,
