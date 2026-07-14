@@ -1022,6 +1022,157 @@ def cmd_release(args: argparse.Namespace) -> int:
     return 1
 
 
+def cmd_team(args: argparse.Namespace) -> int:
+    """vNext team compiler: compile | plan-show (PR 7)."""
+    root = _project_root()
+    sub = getattr(args, "team_command", None)
+
+    if sub == "compile":
+        from zeref.teams import (
+            NoEligibleCapabilityError, SelfReviewError, compile_team,
+        )
+        task_id = args.task_id or ("task_" + args.mission)
+        try:
+            plan = compile_team(
+                root, task_id=task_id, mission_id=args.mission,
+                policy_id=args.policy, active_harness=args.harness,
+            )
+        except (NoEligibleCapabilityError, SelfReviewError) as e:
+            print(f"compile failed: {e}", file=sys.stderr)
+            return 2
+        print(json.dumps(plan.to_dict(), indent=2))
+        return 0
+
+    if sub == "run":
+        from zeref.policy import AutonomyMode
+        from zeref.runtime import Supervisor
+        sup = Supervisor(root, args.run_id, mode=AutonomyMode(args.mode))
+        try:
+            result = sup.run()
+        finally:
+            sup.close()
+        print(json.dumps({
+            "run_id": result.run_id, "state": result.state,
+            "completed_steps": result.completed_steps,
+            "paused_reason": result.paused_reason,
+            "budget": result.budget,
+        }, indent=2))
+        return 0 if result.state == "COMPLETED" else 2
+
+    if sub == "resume":
+        from zeref.policy import AutonomyMode
+        from zeref.runtime import resume
+        result = resume(root, args.run_id, mode=AutonomyMode(args.mode))
+        print(json.dumps({
+            "run_id": result.run_id, "state": result.state,
+            "completed_steps": result.completed_steps,
+            "paused_reason": result.paused_reason,
+            "budget": result.budget,
+        }, indent=2))
+        return 0 if result.state == "COMPLETED" else 2
+
+    if sub == "status":
+        from zeref.storage import StateDB
+        db = StateDB(root); db.migrate()
+        row = db.connect().execute(
+            "SELECT state, mission_id, policy, created_at, ended_at "
+            "FROM team_runs WHERE id=?", (args.run_id,),
+        ).fetchone()
+        db.close()
+        if row is None:
+            print(f"unknown run {args.run_id}", file=sys.stderr); return 1
+        state, mission, policy, created, ended = row
+        print(json.dumps({
+            "run_id": args.run_id, "state": state, "mission": mission,
+            "policy": policy, "created_at": created, "ended_at": ended,
+        }, indent=2))
+        return 0
+
+    if sub == "cancel":
+        from zeref.storage import EventEnvelope, EventLog, StateDB
+        db = StateDB(root); db.migrate()
+        conn = db.connect()
+        conn.execute(
+            "UPDATE team_runs SET state='CANCELLED', ended_at=? WHERE id=?",
+            (__import__("datetime").datetime.utcnow().isoformat(timespec="seconds"),
+             args.run_id),
+        )
+        conn.commit()
+        EventLog(root, mirror_conn=conn).append(EventEnvelope(
+            event_type="run.cancelled", actor="cli",
+            target=f"run:{args.run_id}", payload={},
+        ))
+        db.close()
+        print(f"cancelled: {args.run_id}")
+        return 0
+
+    if sub == "report":
+        from zeref.storage import StateDB
+        db = StateDB(root); db.migrate()
+        conn = db.connect()
+        row = conn.execute(
+            "SELECT state, mission_id, policy, created_at, ended_at, "
+            "cost_usd, tokens_input, tokens_output "
+            "FROM team_runs WHERE id=?", (args.run_id,),
+        ).fetchone()
+        if row is None:
+            print(f"unknown run {args.run_id}", file=sys.stderr); db.close(); return 1
+        state, mission, policy, created, ended, usd, tin, tout = row
+        steps = conn.execute(
+            "SELECT step_name, state, retries FROM execution_steps "
+            "WHERE run_id=? ORDER BY rowid", (args.run_id,),
+        ).fetchall()
+        db.close()
+        print(json.dumps({
+            "run_id": args.run_id, "mission": mission, "policy": policy,
+            "state": state, "created_at": created, "ended_at": ended,
+            "cost_usd": usd, "tokens_input": tin, "tokens_output": tout,
+            "steps": [{"step": s, "state": st, "retries": r}
+                      for s, st, r in steps],
+        }, indent=2))
+        return 0
+
+    if sub == "plan-show":
+        from zeref.storage import StateDB
+        db = StateDB(root); db.migrate()
+        conn = db.connect()
+        row = conn.execute(
+            "SELECT task_id, mission_id, policy, state, created_at "
+            "FROM team_runs WHERE id=?",
+            (args.run_id,),
+        ).fetchone()
+        if row is None:
+            print(f"unknown run_id {args.run_id!r}", file=sys.stderr)
+            db.close()
+            return 1
+        task_id, mission, policy, state, created = row
+        assignments = conn.execute(
+            "SELECT seat_id, capability_id, score FROM team_assignments "
+            "WHERE run_id=? ORDER BY seat_id",
+            (args.run_id,),
+        ).fetchall()
+        steps = conn.execute(
+            "SELECT step_name, state FROM execution_steps "
+            "WHERE run_id=? ORDER BY rowid",
+            (args.run_id,),
+        ).fetchall()
+        db.close()
+        print(json.dumps({
+            "run_id": args.run_id, "task_id": task_id,
+            "mission": mission, "policy": policy, "state": state,
+            "created_at": created,
+            "assignments": [
+                {"seat_id": s, "capability_id": c, "score": sc}
+                for s, c, sc in assignments
+            ],
+            "steps": [{"step": s, "state": st} for s, st in steps],
+        }, indent=2))
+        return 0
+
+    print("usage: zeref team {compile|plan-show}", file=sys.stderr)
+    return 1
+
+
 def cmd_policy(args: argparse.Namespace) -> int:
     """vNext policy engine: show | check (ADR-0005)."""
     from zeref.policy import (
@@ -1475,6 +1626,30 @@ def _build_parser() -> argparse.ArgumentParser:
     p_check.add_argument("--mode", default="auto-safe",
                          choices=["suggest", "auto-safe", "policy-bound"])
 
+    team = sub.add_parser("team", help="vNext team compiler (PR 7)")
+    team_sub = team.add_subparsers(dest="team_command", required=True)
+    t_compile = team_sub.add_parser("compile", help="Compile a team plan for a mission")
+    t_compile.add_argument("mission")
+    t_compile.add_argument("--task-id", default=None)
+    t_compile.add_argument("--policy", default="balanced")
+    t_compile.add_argument("--harness", default="claude-code")
+    t_show = team_sub.add_parser("plan-show", help="Print a persisted team plan")
+    t_show.add_argument("run_id")
+    t_run = team_sub.add_parser("run", help="Run a compiled team plan (PR 8)")
+    t_run.add_argument("run_id")
+    t_run.add_argument("--mode", default="auto-safe",
+                       choices=["suggest", "auto-safe", "policy-bound"])
+    t_status = team_sub.add_parser("status", help="Show a run's current state")
+    t_status.add_argument("run_id")
+    t_resume = team_sub.add_parser("resume", help="Resume a paused/interrupted run")
+    t_resume.add_argument("run_id")
+    t_resume.add_argument("--mode", default="auto-safe",
+                          choices=["suggest", "auto-safe", "policy-bound"])
+    t_cancel = team_sub.add_parser("cancel", help="Cancel a run (terminal)")
+    t_cancel.add_argument("run_id")
+    t_report = team_sub.add_parser("report", help="Emit a run's completion report")
+    t_report.add_argument("run_id")
+
     state = sub.add_parser("state", help="vNext canonical state (SQLite v2)")
     state_sub = state.add_subparsers(dest="state_command", required=True)
     state_sub.add_parser("migrate", help="Apply pending SQLite v2 migrations")
@@ -1578,6 +1753,7 @@ def main() -> None:
         "route": cmd_route,
         "capability": lambda a: __import__("zeref.cli_capability", fromlist=["handle"]).handle(a),
         "policy": cmd_policy,
+        "team": cmd_team,
         "state": cmd_state,
         "release": cmd_release,
         "doctor": cmd_doctor,
