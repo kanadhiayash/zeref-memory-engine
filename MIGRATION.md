@@ -190,7 +190,7 @@ Full detail, including the `resolve_alias()` mechanism and what is *not* aliased
 `zeref-registry.json` skill entries: `model` / `model_alias` fields are replaced by:
 
 - `reasoning_class` — one of `fast`, `balanced`, `deep`, `frontier`, `local`, `private`. See `docs/GLOSSARY.md`.
-- `status` — one of `runtime` (executing, tested code) or `contract` (schema/spec, not yet runtime-backed). See the "Component status taxonomy" section of `docs/audits/ZEREF_COMPONENT_INVENTORY.md`.
+- `status` — one of `runtime` (executing, tested code) or `contract` (schema/spec, not yet runtime-backed). See the "Component status taxonomy" section of `ZEREF_COMPONENT_INVENTORY.md` (private `zeref-operator-records` repo).
 
 Registry version is now `2.0.0-alpha.1`.
 
