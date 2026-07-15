@@ -307,6 +307,7 @@ def cmd_handoff(args: argparse.Namespace) -> int:
         _project_root(),
         target=args.handoff_command,
         objective=args.objective,
+        include_private=bool(getattr(args, "include_private", False)),
     )
     if args.json:
         print(json.dumps(result, indent=2, sort_keys=True))
@@ -491,7 +492,32 @@ def cmd_audit_privacy(args: argparse.Namespace) -> int:
     hits = results["total_hits"]
     files_hit = len(results["by_file"])
 
-    # Threshold-mode: mirror _check_privacy_scan in zeref/release/checks.py so CI + release-check share the ceiling.
+    # Severity-class mode (WS2): mirrors _check_privacy_scan in
+    # zeref/release/checks.py. Classes named in --fail-classes have ZERO
+    # tolerance — any hit fails, regardless of count. This supersedes the
+    # count ceilings below for CI use.
+    fail_classes = [
+        cls.strip()
+        for cls in str(getattr(args, "fail_classes", "") or "").split(",")
+        if cls.strip()
+    ]
+    if fail_classes:
+        hits_by_class = results.get("hits_by_class", {})
+        blocking = {cls: hits_by_class.get(cls, 0) for cls in fail_classes
+                    if hits_by_class.get(cls, 0) > 0}
+        if blocking:
+            detail = ", ".join(f"{cls}={cnt}" for cls, cnt in sorted(blocking.items()))
+            offenders = sorted(results.get("credential_files", {}))[:5]
+            print(f"\n✘ Zero-tolerance class hit: {detail}")
+            for offender in offenders:
+                print(f"    {offender}")
+            return 1
+        informational = hits
+        print(f"\n✔ 0 hits in zero-tolerance class(es) {','.join(fail_classes)} "
+              f"({informational} informational hit(s) in non-blocking classes)")
+        return 0
+
+    # Legacy threshold-mode (pre-WS2 ceiling semantics, kept for compatibility).
     # Fail iff hits exceed --max-hits AND files exceed --max-files. Either 0 disables that dimension of the ceiling.
     if max_hits > 0 or max_files > 0:
         if hits == 0:
@@ -1259,10 +1285,13 @@ def _build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--directory", help="Directory to scan (default: memory/)")
     ap.add_argument("--strict", action="store_true",
                     help="Exit non-zero on any unredacted hit (suitable for CI gate)")
+    ap.add_argument("--fail-classes", default="",
+                    help="Comma-separated redaction classes with ZERO tolerance "
+                         "(e.g. 'credentials'); any hit in these classes fails the scan")
     ap.add_argument("--max-hits", type=int, default=0,
-                    help="Threshold ceiling: total hits allowed before failing (0=disabled)")
+                    help="Legacy threshold ceiling: total hits allowed before failing (0=disabled)")
     ap.add_argument("--max-files", type=int, default=0,
-                    help="Threshold ceiling: files hit allowed before failing (0=disabled)")
+                    help="Legacy threshold ceiling: files hit allowed before failing (0=disabled)")
 
     audit_p = sub.add_parser("audit", help="Structural validation and audit reports")
     audit_sub = audit_p.add_subparsers(dest="audit_command")
@@ -1576,6 +1605,9 @@ def _build_parser() -> argparse.ArgumentParser:
     for target in ["codex", "claude", "cursor", "github", "human"]:
         handoff_target = handoff_sub.add_parser(target, help=f"Write {target} handoff")
         handoff_target.add_argument("--objective", default="Continue from current Zeref memory state.")
+        handoff_target.add_argument("--include-private", action="store_true",
+                                    help="Also export 'private'/'unknown' atoms (audited override); "
+                                         "'local-only' atoms are never exported")
         handoff_target.add_argument("--json", action="store_true")
 
     loop = sub.add_parser("loop", help="Plan and run bounded observe-only loops")
