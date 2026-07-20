@@ -76,4 +76,7 @@ def axis_result(axis: str, subs: dict[str, tuple[float, str]]) -> dict[str, Any]
 
 def print_json_result(result: dict[str, Any]) -> int:
     print(json.dumps(result, indent=2, sort_keys=True))
+    if result.get("skipped"):
+        # Skipped axes are reported explicitly; they neither pass nor fail.
+        return 0
     return 0 if result["score"] >= 9.0 else 1

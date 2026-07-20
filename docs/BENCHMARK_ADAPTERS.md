@@ -1,4 +1,10 @@
-# Benchmark Adapters
+# Benchmark Adapters (fixture-only — internal quality axes)
+
+> **Internal quality axes — fixture-based self-checks. NOT external benchmark
+> results.** These adapters only prove Zeref can run offline fixtures shaped
+> like each benchmark family. Real external-dataset loaders, baselines, and
+> the provenance-bound harness live in
+> [`benchmarks/external/`](../benchmarks/external/README.md).
 
 Zeref includes fixture-first adapter interfaces for:
 

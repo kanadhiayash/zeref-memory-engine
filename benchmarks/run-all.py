@@ -2,14 +2,19 @@
 """
 privacy-audit: allow-file "Benchmark harness names axis IDs + example evidence fields; no user data."
 
-benchmarks/run-all.py — Run all axes and emit docs/BENCHMARK_REPORT.md
-plus machine-readable benchmarks/results.json.
+benchmarks/run-all.py — Run all INTERNAL QUALITY AXES and emit
+docs/BENCHMARK_REPORT.md plus machine-readable benchmarks/results.json.
+
+These axes are fixture-based self-checks of local invariants. They are NOT
+external benchmark results and must never be presented as rankings against
+other systems. External-dataset benchmarking lives under benchmarks/external/.
 
 Exit code:
-    0  every scored axis ≥ 9.0 (the 10/10 pass bar); skipped axes ignored
+    0  every scored axis ≥ 9.0 (the internal pass bar); skipped axes ignored
     1  otherwise
-Skipped axes (e.g. missing input CSV) are recorded explicitly and do NOT
-inflate the passed-verdict (see ZRF-AUDIT-012).
+Skipped axes (e.g. missing lineage intake CSV on a clean clone) are recorded
+explicitly in the report and results.json and do NOT inflate the
+passed-verdict (see ZRF-AUDIT-012).
 
 Usage:
     python3 benchmarks/run-all.py
@@ -154,15 +159,21 @@ def _apply_verified_overrides(results: list[dict]) -> list[dict]:
 def _render_report(results: list[dict], rubric_rel: str, passed: bool, failures: list[dict]) -> str:
     today = date.today().isoformat()  # noqa: DTZ011 — public report only
     lines = [
-        "# Benchmark Report - Zeref Memory Engine",
+        "# Internal Quality Axes Report - Zeref Memory Engine",
+        "",
+        "> **Internal quality axes — fixture-based self-checks. NOT external benchmark results.**",
+        "> These axes verify local invariants against committed fixtures. They do not measure",
+        "> performance on any external dataset and must not be quoted as benchmark scores.",
+        "> External-dataset benchmarking lives in [`benchmarks/external/`](../benchmarks/external/README.md);",
+        "> no external scores are claimed until full-dataset runs are published.",
         "",
         f"_Generated: {today}. Rubric: [`{rubric_rel}`]({rubric_rel})._",
         "",
         "## Verdict",
         "",
-        ("**PASS** - deterministic local benchmark gates passed."
+        ("**PASS** - deterministic internal quality gates passed."
          if passed else
-         "**FAIL** - at least one deterministic benchmark gate failed."),
+         "**FAIL** - at least one deterministic internal quality gate failed."),
         "",
         "This report is local and deterministic. It does not claim external superiority, production readiness, or a final perfect-score verdict.",
         "",
@@ -180,10 +191,25 @@ def _render_report(results: list[dict], rubric_rel: str, passed: bool, failures:
         "|---|---:|---|---|",
     ]
     for r in results:
+        if r.get("skipped"):
+            lines.append(f"| {r['axis']} | — | SKIPPED | {r.get('reason', 'skipped')} |")
+            continue
         ok = "pass" if r["score"] >= 9.0 else ("review" if r["score"] >= 8.0 else "fail")
         note = r.get("summary_note", "")
         lines.append(f"| {r['axis']} | {r['score']:.2f} | {ok} | {note} |")
     lines.append("")
+
+    skipped_axes = [r for r in results if r.get("skipped")]
+    if skipped_axes:
+        lines += [
+            "## Skipped axes",
+            "",
+            "Skipped axes are reported explicitly and never count as passing evidence.",
+            "",
+        ]
+        for r in skipped_axes:
+            lines.append(f"- `{r['axis']}`: {r.get('reason', 'skipped')}")
+        lines.append("")
 
     if failures:
         lines += [
@@ -200,6 +226,14 @@ def _render_report(results: list[dict], rubric_rel: str, passed: bool, failures:
         lines.append("")
 
     for r in results:
+        if r.get("skipped"):
+            lines += [
+                f"## {r['axis'].replace('_', ' ').title()} - SKIPPED",
+                "",
+                f"> _{r.get('reason', 'skipped')}_",
+                "",
+            ]
+            continue
         lines += [
             f"## {r['axis'].replace('_', ' ').title()} - {r['score']:.2f} / 10",
             "",
@@ -263,7 +297,8 @@ def main() -> int:
 
     results = _apply_verified_overrides([axis.run() for axis in AXES])
 
-    failures = collect_failures(results)
+    scored = [r for r in results if not r.get("skipped")]
+    failures = collect_failures(scored)
     passed = not failures
 
     report = _render_report(results, args.rubric, passed, failures)
@@ -271,9 +306,11 @@ def main() -> int:
     failure_report = write_failure_report(REPO, failures)
     (REPO / args.out_json).write_text(
         json.dumps({
+            "label": "internal quality axes — fixture-based self-checks, not external benchmarks",
             "passed": passed,
             "pass_bar": {"axis_min": 9.0},
             "axes": results,
+            "skipped_axes": [r["axis"] for r in results if r.get("skipped")],
             "failures": failures,
             "failure_report": str(failure_report.relative_to(REPO)),
         }, indent=2),
@@ -281,9 +318,13 @@ def main() -> int:
     )
 
     for r in results:
-        print(f"{r['axis']:<14} {r['score']:.2f}")
+        if r.get("skipped"):
+            print(f"{r['axis']:<14} SKIPPED ({r.get('reason', '')[:60]}...)")
+        else:
+            print(f"{r['axis']:<14} {r['score']:.2f}")
     print("-" * 24)
-    print("VERDICT:", "PASS" if passed else "FAIL")
+    print("VERDICT:", "PASS" if passed else "FAIL",
+          "(internal quality axes; not external benchmark results)")
     return 0 if passed else 1
 
 
