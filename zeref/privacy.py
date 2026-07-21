@@ -671,7 +671,7 @@ def audit(
 ) -> dict:
     """
     Read-only audit: scan tracked-file extensions under directory for PII hits.
-    Default skips `docs/archive/` + `tests/fixtures/` (documented-historical).
+    Default skips `tests/fixtures/` (documented-historical).
     When strict=True, scanned extensions expand to include .py/.json/.yml/.yaml/.toml/.jsonl.
     Files carrying `privacy-audit: allow-file "<reason>"` in their first 40 lines
     are skipped entirely; lines carrying `noqa: privacy-audit` are excluded from

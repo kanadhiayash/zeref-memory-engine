@@ -2,7 +2,7 @@
 pack: raptor
 mode: reference-only
 classification: restricted
-source_path: "~/security-workspace/raptor/"
+source_path: "operator-configured local path"
 license: unknown-verify-with-owner
 outbound_write: forbidden
 foreign_code_containment: pass
@@ -15,7 +15,7 @@ scope: autonomous-security-research
 
 ## Origin
 
-raptor is a user-local autonomous security research harness under `~/security-workspace/raptor/`. Scope is authorized security research and vulnerability triage.
+raptor is a user-local autonomous security research harness kept at an operator-configured path outside this repo. Scope is authorized security research and vulnerability triage.
 
 ## Classification: restricted
 
@@ -27,7 +27,7 @@ Same rules as [mantishack](../mantishack/README.md):
 
 ## Boundary
 
-No source vendored. raptor is invoked out-of-band via `cd ~/security-workspace/raptor && claude`. This directory documents the boundary only.
+No source vendored. raptor is invoked out-of-band from its own local checkout. This directory documents the boundary only.
 
 ## Audit-scope use in this session
 
@@ -42,4 +42,4 @@ No source vendored. raptor is invoked out-of-band via `cd ~/security-workspace/r
 
 ## Council pack membership
 
-Previously registered in the retired persona council pack (removed in 2.0.0-alpha.1 — see [`docs/archive/`](../../../docs/archive/) for the migration record); now tracked as an external capability reference only. Not activated by default.
+Previously registered in a persona pack that was retired in 2.0.0-alpha.1; now tracked as an external capability reference only. Not activated by default.

@@ -1,6 +1,6 @@
-# Glossary — Zeref vNext
+# Glossary
 
-Canonical term definitions for Zeref ≥ 2.0.0-alpha.1. Source of truth: `ZEREF_VNEXT_AGENTIC_OPERATIONS_UPGRADE_PLAN.md`. If a term here conflicts with an older doc, this file wins — file an issue against the stale doc.
+Canonical term definitions. Where a term names a code construct, the module is cited and the code is authoritative. If a term here conflicts with another doc, this file wins — file an issue against the other doc.
 
 | Term | Definition |
 |---|---|
@@ -12,7 +12,7 @@ Canonical term definitions for Zeref ≥ 2.0.0-alpha.1. Source of truth: `ZEREF_
 | — `local` | Placement constraint: run on-device / offline. Not a cost tier; permitted at any criticality. |
 | — `private` | Placement constraint: run in a privacy-restricted execution context. Not a cost tier; permitted at any criticality. |
 | **Provider adapter** | The only place a concrete vendor model id may appear. A declarative `<provider>.json` file (`zeref/adapters/providers/`) mapping each reasoning class to a model id + effort for one provider. Loaded via `JsonProviderAdapter` and resolved with `resolve_model()`. |
-| **Harness** | The external AI CLI/IDE surface Zeref plugs into (Claude Code, Codex, Gemini CLI, Cursor, Windsurf, Aider, etc.). Zeref is not itself a harness — it is the memory/governance layer a harness reads and writes through. |
+| **Harness** | The external AI CLI/IDE surface Zeref plugs into. Registered harness adapters: `claude-code`, `codex`, `gemini-cli`, `hermes`, `kimi-code`, `odysseus`, `grok`. Zeref is not itself a harness — it is the memory/governance layer a harness reads and writes through. |
 | **Capability** | Any external unit of specialist execution Zeref can discover and govern: skill, agent, plugin, MCP server, CLI, repository tool, script, workflow, evaluator, or API service. |
 | **Capability lifecycle states** | The only path from discovery to execution. No state may be skipped and no execution happens before `approved`. |
 | — `discovered` | Found by a discovery-root scan; not yet inspected. |
@@ -25,7 +25,7 @@ Canonical term definitions for Zeref ≥ 2.0.0-alpha.1. Source of truth: `ZEREF_
 | — `revoked` | Trust withdrawn; execution blocked until re-approved. |
 | — `compromised` | Failed a trust or security check; blocked and flagged for review. |
 | **Mission blueprint** | A schema (`zeref.mission/v1`) declaring the functional seats, required outputs, execution graph, and completion criteria for a task type (e.g. `build`, `research`, `red`, `audit`, `ship`, `solo`). Defines *what* is needed, never *who* by fixed name. |
-| **Execution policy** | A named envelope controlling cost, parallelism, assurance, and autonomy for a compiled team: `lean` (fast, minimal verification), `balanced` (typical project work, one independent verifier), `assured` (release/security/migration-grade, multiple independent verifiers, adversarial review required). Provider-neutral; replaces the old `small`/`medium`/`enterprise` names. |
+| **Execution policy** | A named envelope controlling cost, parallelism, assurance, and autonomy for a compiled team. Envelopes ship as size team packs in `team-packs/`: `small` (tightest budget, lowest default tier, memory writer only), `medium` (typical project work, top tier reserved for critical-weight tasks), `enterprise` (widest budget, all background agents, adversarial verification panels enabled). An envelope raises the cost ceiling; it does not grant capability, and reasoning-class entitlement still applies. |
 | **Compiled team** | The concrete, persisted plan produced by matching a mission blueprint against approved capabilities under an execution policy: seat assignments, versions/digests, permissions, execution graph, retry/timeout/stop rules, verification requirements, cost envelope, and codec selection. |
 | **Enforcement level** | The honesty label on how strongly Zeref can actually govern a given integration — never claimed beyond what the active execution path supports. |
 | — `A` — Embedded | Zeref intercepts or authorizes operations through native hooks, plugins, lifecycle callbacks, or controlled subprocesses. |

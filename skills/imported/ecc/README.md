@@ -42,4 +42,4 @@ No source vendored. Zeref invokes ecc skills and MCP tools only through the host
 
 ## Council pack membership
 
-Previously registered in the retired persona council pack (removed in 2.0.0-alpha.1 — see [`docs/archive/`](../../../docs/archive/) for the migration record); now tracked as an external capability reference only (primary MCP surface for the GitHub-side operational tooling).
+Previously registered in a persona pack that was retired in 2.0.0-alpha.1; now tracked as an external capability reference only (primary MCP surface for the GitHub-side operational tooling).

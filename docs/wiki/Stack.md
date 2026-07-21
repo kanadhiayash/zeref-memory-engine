@@ -1,90 +1,52 @@
-# Stack — The projects Zeref routes alongside
+# Stack — projects Zeref sits alongside
 
-Zeref Memory Engine is the persistent-memory layer. These projects do
-the rest of the work in my own day-to-day stack. Categorisation reflects
-how Zeref routes to them (team packs, fleet probes, harness shims) —
-your usage may differ.
+Zeref is the memory layer. These are projects that do other parts of the job in the maintainer's own working setup.
 
-If your project belongs here and isn't listed, open an issue and you'll
-be added.
+This is a credits and context list, not an integration matrix. Zeref does not bundle, vendor, or require any of them, and listing a project here is not a claim that Zeref invokes it. Your setup will differ.
 
-## Foundations + lineage
+If your project belongs here and is missing, open an issue.
 
-- **[karpathy / "Software 2.0" gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)**
-  — conceptual lineage for AI-first engineering.
-- **[kanadhiayash / zeref-os](https://github.com/kanadhiayash/zeref-memory-engine)**
-  — this repo (the memory layer everything below routes through).
+## Memory and knowledge graphs
 
-## Memory + knowledge graph
+- **[AgriciDaniel / claude-obsidian](https://github.com/AgriciDaniel/claude-obsidian)** — Obsidian vault integration. Complements flat-Markdown memory for long-running domain knowledge.
+- **[safishamsi / graphify](https://github.com/safishamsi/graphify)** — turns code, docs, papers, and videos into a persistent knowledge graph. Useful where cross-file reasoning exceeds what flat Markdown supports.
 
-- **[AgriciDaniel / claude-obsidian](https://github.com/AgriciDaniel/claude-obsidian)**
-  — Obsidian vault integration. Pairs with Zeref's flat-Markdown memory
-  for long-running structured domain knowledge.
-- **[safishamsi / graphify](https://github.com/safishamsi/graphify)**
-  — turn any input (code, docs, papers, videos) into a persistent
-  knowledge graph. Invoked when Zeref needs cross-file reasoning beyond
-  flat Markdown.
+## Operating skills and harnesses
 
-## Operating doctrines + harnesses
+- **[garrytan / gstack](https://github.com/garrytan/gstack)** — operating skills for shipping, reviewing, browsing, and QA. Where Zeref carries memory, gstack carries motion.
+- **[JuliusBrussee / caveman](https://github.com/JuliusBrussee/caveman)** — grammar-based prompt compression.
+- **[affaan-m / ECC](https://github.com/affaan-m/ECC)** — multi-perspective review patterns.
 
-- **[garrytan / gstack](https://github.com/garrytan/gstack)** —
-  operating skills for shipping, reviewing, browsing, QA-ing inside
-  Claude Code. Where Zeref carries memory, gstack carries motion.
-- **[JuliusBrussee / caveman](https://github.com/JuliusBrussee/caveman)**
-  — caveman-grammar compression. Same grammar Zeref's `caveman-handoff`
-  skill uses for cross-model handoff.
-- **[affaan-m / ECC](https://github.com/affaan-m/ECC)** —
-  Engineering Council of Claude. Multi-perspective review patterns
-  Zeref invokes when team pack is `red` or `audit`.
+## Security research
 
-## Security workspaces
+- **[gadievron / raptor](https://github.com/gadievron/raptor)** — autonomous security research harness.
+- **[deonmenezes / mantishack](https://github.com/deonmenezes/mantishack)** — offensive security research.
+- **[vmihalis / hacker-bob](https://github.com/vmihalis/hacker-bob)** — MCP-driven bug-bounty agent.
+- **[Z4nzu / hackingtool](https://github.com/Z4nzu/hackingtool)** — toolkit for authorised security testing.
 
-Routed through `team-packs/red.md` (read-only by default).
+## Design and interface
 
-- **[gadievron / raptor](https://github.com/gadievron/raptor)** —
-  autonomous security research harness.
-- **[deonmenezes / mantishack](https://github.com/deonmenezes/mantishack)**
-  — offensive security research.
-- **[vmihalis / hacker-bob](https://github.com/vmihalis/hacker-bob)** —
-  MCP-driven bug-bounty agent.
-- **[Z4nzu / hackingtool](https://github.com/Z4nzu/hackingtool)** —
-  toolkit for authorised security testing.
+- **[pbakaus / impeccable](https://github.com/pbakaus/impeccable)** — copy editing for production interfaces.
+- **[nextlevelbuilder / ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)** — UI/UX skill pack.
+- **[Leonxlnx / taste-skill](https://github.com/Leonxlnx/taste-skill)** — aesthetic-judgment skill.
+- **[motiondivision / motion](https://github.com/motiondivision/motion)** — React motion library.
+- **[heroui-inc / heroui](https://github.com/heroui-inc/heroui)** — component library.
+- **[nowork-studio / NotFair](https://github.com/nowork-studio/NotFair)** — interface kit.
 
-## Design + UX
+## Content and sites
 
-- **[pbakaus / impeccable](https://github.com/pbakaus/impeccable)** —
-  copy editing for production interfaces.
-- **[nextlevelbuilder / ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)**
-  — UI/UX skill pack.
-- **[Leonxlnx / taste-skill](https://github.com/Leonxlnx/taste-skill)**
-  — aesthetic-judgment skill.
-- **[motiondivision / motion](https://github.com/motiondivision/motion)**
-  — canonical React motion library.
-- **[heroui-inc / heroui](https://github.com/heroui-inc/heroui)** —
-  component library.
-- **[nowork-studio / NotFair](https://github.com/nowork-studio/NotFair)**
-  — interface kit.
+- **[gohugoio / hugo](https://github.com/gohugoio/hugo)** — static-site generator.
+- **[firecrawl / firecrawl](https://github.com/firecrawl/firecrawl)** — site to structured-data pipeline.
 
-## Content + sites
+## Output quality
 
-- **[gohugoio / hugo](https://github.com/gohugoio/hugo)** — static-site
-  generator for shipping written work.
-- **[firecrawl / firecrawl](https://github.com/firecrawl/firecrawl)** —
-  site → structured-data pipeline. Pairs with Zeref's `memory/raw/`
-  ingest path.
-
-## AI agent quality
-
-- **[hardikpandya / stop-slop](https://github.com/hardikpandya/stop-slop)**
-  — AI output quality discipline.
-- **[0xNyk / council-of-high-intelligence](https://github.com/0xNyk/council-of-high-intelligence)**
-  — multi-agent review patterns.
+- **[hardikpandya / stop-slop](https://github.com/hardikpandya/stop-slop)** — AI output quality discipline.
+- **[0xNyk / council-of-high-intelligence](https://github.com/0xNyk/council-of-high-intelligence)** — multi-agent review patterns.
 
 ## Tool integrations
 
-- **[ComposioHQ / composio](https://github.com/ComposioHQ/composio)** —
-  tool / MCP connector layer Zeref recommends but does not bundle.
+- **[ComposioHQ / composio](https://github.com/ComposioHQ/composio)** — tool and MCP connector layer. Recommended, not bundled.
 
 ---
 
-[← back to Home](Home.md)
+[[Home]] · [[Inspirations]]

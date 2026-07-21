@@ -312,7 +312,7 @@
         "import external skill pack",
         "/import-skill",
         "sandbox-import from ~/.claude/skills",
-        "sandbox-import from ~/security-workspace"
+        "sandbox-import from an operator-configured local path"
       ],
       "deliverables": [
         "skills/imported/<pack>/README.md (reference-only pointer)",

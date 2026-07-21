@@ -1,6 +1,6 @@
 <!-- privacy-audit: allow-file "Install doc. Documents env-var-shaped tokens (OPENAI_API_KEY, GITHUB_TOKEN) as example config strings. No real credentials." -->
 
-# Install Zeref OS
+# Install Zeref Memory Engine
 
 ## Claude Code (CLI)
 
@@ -81,7 +81,7 @@ python3 .zeref/scripts/zeref-validate.py
 Expect output like the following (counts are derived from the tree and
 `zeref-registry.json` at run time, so exact numbers track the current release):
 ```
-Zeref OS validator — /path/to/your/project
+Zeref validator — /path/to/your/project
 Skills:           15/15 (from zeref-registry.json)
 Agents:           6/6 (filesystem vs registry)
 Commands:         8/8 (filesystem vs registry)
@@ -93,14 +93,6 @@ Harness stubs:    3/3
 Memory layout:    flat
 ✔ Validation passed
 ```
-
-## Migrating from an earlier local version
-
-If you experimented with pre-1.0 Zeref OS releases (v1.x Skills Fleet, v2.x Agent OS, v3.x specialist, v4.x context-and-memory engine) locally, see `MIGRATION.md`:
-
-- **Pre-v4 → v4**: `scripts/migrate-v3-to-v4.py` (preserves your v3 wiki content)
-- **v4.0–v4.2 → v4.3 (flat memory layout)**: `scripts/migrate-v4.2-to-v4.3.py`
-- **v4.3 → Zeref OS v1.0.0**: no data migration needed — reinstall the plugin under the new name (`zeref-os@zeref-os`). All `memory/`, `PRIVACY.md`, `REDACT.md`, `SHARING_POLICY.md`, `config/` files keep their paths.
 
 ## Uninstall
 

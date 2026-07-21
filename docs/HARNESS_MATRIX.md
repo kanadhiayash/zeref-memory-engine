@@ -15,7 +15,7 @@ Evidence states:
 
 | Harness | Stub | Boot | Memory read | Tool surface | Handoff | Evidence state | Log reference |
 |---|---|:---:|:---:|:---:|:---:|:---|:---|
-| Claude Code | `CLAUDE.md` | yes | yes | yes | yes | **verified** | `ZEREF_CONSISTENCY_AUDIT.md` §Verification, private `zeref-operator-records` repo (audit branch `claude/zeref-consistency-audit-ed392b`) |
+| Claude Code | `CLAUDE.md` | yes | yes | yes | yes | **verified** | verified against a host log; record maintained outside this repository |
 | Codex | `CODEX.md` | doc | doc | via `python3 -m zeref` | doc | **documented-only** | stubs present; no host log |
 | Cursor | `.cursor/rules/zeref.mdc` | doc | doc | via `python3 -m zeref` | doc | **documented-only** | stubs present; no host log |
 | Windsurf | `.windsurfrules` | doc | doc | via `python3 -m zeref` | doc | **documented-only** | stubs present; no host log |

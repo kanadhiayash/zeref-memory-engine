@@ -1,15 +1,12 @@
 # Installation
 
-> Product name: **Zeref Memory Engine** (short form: **Zeref**).
-> Repo / plugin identifier `zeref-os` is retained for install-URL backward
-> compatibility. **Zeref is not an operating system** — it is a persistent
-> memory and context layer that plugs into your existing AI harness.
+> **Zeref is not an operating system.** It is a local-first memory and context layer that plugs into an AI harness you already use. The repository and plugin identifier is `zeref-os`; the product is **Zeref Memory Engine**.
 
-Zeref v2.0.0-alpha.2 installs as a Claude Code plugin. Other harnesses (Cursor, Aider, Windsurf, Gemini, Codex, Llama-family) read AGENTS.md directly via per-harness stubs.
+Zeref v2.0.0-alpha.2 installs as a Claude Code plugin. Other harnesses read `AGENTS.md` directly through a thin per-harness stub.
 
-## Claude Code (primary)
+## Claude Code
 
-### Quick install
+### Install
 
 ```bash
 claude plugin marketplace add kanadhiayash/zeref-os
@@ -29,98 +26,63 @@ claude
 > /zeref-os:start
 ```
 
-Expected output:
+A successful boot reports the project name, the last session timestamp, counts of active decisions, open questions, and unresolved conflicts, the active privacy mode, and the always-on context size.
 
-```
-Project: <name>
-Last session: <iso> (or "never" on first run)
-Active decisions: <N>
-Open questions: <N>
-Conflicts: <N>
-Privacy mode: abstract
-Model tier: Sonnet (auto-detected)
-Always-on context: ~3k tokens
-
-What do you want to work on?
-```
-
-### Run validator
+### Run the validator
 
 ```bash
 cd ~/.claude/plugins/cache/zeref-os/zeref-os
 python3 scripts/zeref-validate.py
 ```
 
-Expected:
-
-```
-Zeref OS validator — <plugin path>
-Skills:           14/14 (from zeref-registry.json)
-Agents:           6/6
-Commands:         8/8
-Team packs:       6/6
-Config:           5/5
-Root privacy:     3/3 (PRIVACY, REDACT, SHARING_POLICY)
-v4x canon:        6/6
-Harness stubs:    3/3
-Memory layout:    flat
-PATTERNS lint:    0 finding(s)
-
-✔ Validation passed
-```
+The validator checks that every registered skill, agent, command, and team pack resolves on disk, that the root privacy files are present, that harness stubs are intact, that the memory layout is well-formed, and that the append-only event log passes its schema lint. It prints a per-surface tally and exits non-zero on any finding.
 
 ## Other harnesses
 
-Each harness reads its own stub; the stub defers to `AGENTS.md`.
+Each harness reads its own stub, and every stub defers to `AGENTS.md`.
 
-### Codex (native)
+| Harness | Reads |
+|---|---|
+| Claude Code | `AGENTS.md` (via plugin) |
+| Codex | `AGENTS.md` natively |
+| Cursor | `.cursor/rules/zeref.mdc` |
+| Gemini CLI | `GEMINI.md` |
+| Hermes | `AGENTS.md` natively |
+| Kimi Code | `AGENTS.md` natively |
+| Odysseus | `AGENTS.md` natively |
+| Grok | `GROK.md` |
 
-Codex reads `AGENTS.md` natively. Just point it at the project root.
+Adapters report an enforcement level — embedded, sidecar/proxy, or context-only — so you can see how much Zeref can actually govern each one. See [[Architecture]].
 
-### Cursor
+Full per-harness detail: [`references/harness-translation-map.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/references/harness-translation-map.md).
 
-Cursor reads `.cursor/rules/zeref.mdc`. The stub instructs Cursor to load `AGENTS.md`.
+## Standalone (any harness)
+
+Clone into the project and point your tool at the contract:
 
 ```bash
-ls .cursor/rules/zeref.mdc
+git clone https://github.com/kanadhiayash/zeref-memory-engine.git .zeref
 ```
 
-### Windsurf
-
-Windsurf reads `.windsurfrules`. Same pattern.
-
-### Aider
-
-Aider reads `.aider.conf.yml`. An example is at `.aider.conf.yml.example` — copy + adjust.
-
-```bash
-cp .aider.conf.yml.example .aider.conf.yml
+```text
+.zeref/AGENTS.md
 ```
-
-### Gemini CLI / Antigravity
-
-Reads `GEMINI.md` natively. Defers to `AGENTS.md`.
-
-### Hermes / Amp / Zed / Perplexity
-
-AGENTS.md-native. No additional stub required.
-
-Full table: [`references/harness-translation-map.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/references/harness-translation-map.md).
 
 ## Per-project setup
 
-On first `/zeref-os:start` in a fresh project (no `config/PROJECT.md`):
+On the first `/zeref-os:start` in a project with no `config/PROJECT.md`, the `project-setup` skill runs an interview and captures:
 
-1. `project-setup` skill auto-invokes
-2. Interview captures: project name, parent project (optional), privacy mode (default `abstract`), model tier (auto-detect), budget warn-at threshold
-3. Writes: `config/PROJECT.md`, `PRIVACY.md`, `REDACT.md`, `SHARING_POLICY.md`, `config/PERMISSIONS.md`, `config/PARENT_SYNC.md` (if parent), `config/BUDGET.md`
-4. Prompts re-run `/zeref-os:start` to boot the session
+- project name and optional parent project
+- privacy mode (defaults to `abstract`)
+- budget warning threshold
 
-If user cancels mid-interview: Zeref OS boots in **READ-ONLY mode** until the schema completes.
+It then writes `config/PROJECT.md`, the root privacy files (`PRIVACY.md`, `REDACT.md`, `SHARING_POLICY.md`), `config/PERMISSIONS.md`, `config/BUDGET.md`, and — if a parent was named — `config/PARENT_SYNC.md`.
 
-## Optional: install Python runtime
+If you cancel mid-interview, Zeref boots read-only until the configuration is complete. It does not guess at values you did not supply.
 
-`zeref/` Python runtime provides CLI + structured queries:
+## Python runtime
+
+The `zeref/` runtime provides the CLI and structured queries:
 
 ```bash
 cd ~/.claude/plugins/cache/zeref-os/zeref-os
@@ -128,16 +90,28 @@ pip install -e .
 python3 -m zeref --help
 ```
 
-Available commands:
+Core commands:
 
 ```
-zeref status              # print hot.md summary
-zeref write-decision      # append to DECISIONS.md (with PII scrub)
-zeref grade <claim>       # invoke evidence-grader logic
-zeref audit               # structural validation + privacy audit
-zeref init                # scaffold memory + config
-zeref db-status           # report backend (sqlite/duckdb) + parquet availability
+zeref status              summarize current memory state
+zeref write-decision      append a decision through the guarded write path
+zeref grade <claim>       grade evidence for a claim
+zeref audit               structural validation and privacy audit
+zeref init                scaffold memory and config
+zeref db-status           report storage backend availability
 ```
+
+## Verify the install end to end
+
+```bash
+python3 -m zeref --version
+python3 scripts/zeref-validate.py
+python3 scripts/check-version-consistency.py
+python3 -m pytest -q
+python3 benchmarks/run-all.py
+```
+
+The version is read from `zeref/VERSION`, which is the single source of truth; `check-version-consistency.py` fails if any surface disagrees with it.
 
 ## Uninstall
 
@@ -145,7 +119,7 @@ zeref db-status           # report backend (sqlite/duckdb) + parquet availabilit
 claude plugin uninstall zeref-os@zeref-os
 ```
 
-`memory/` and `config/` files in your project remain intact (per R2 non-deletion). To fully purge:
+Your project's `memory/` and `config/` files are left intact — Zeref archives rather than hard-deletes. To purge them yourself:
 
 ```bash
 rm -rf memory/ config/PROJECT.md PRIVACY.md REDACT.md SHARING_POLICY.md
@@ -155,15 +129,16 @@ rm -rf memory/ config/PROJECT.md PRIVACY.md REDACT.md SHARING_POLICY.md
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| `unknown event type 'X'` in PATTERNS lint | Custom event type added | Either add to `EVENT_SCHEMA` in `scripts/zeref-validate.py` OR rename event |
-| `memory/sync/outbound/handoff-*.md` missing on cross-model handoff | `caveman-handoff` skipped | Confirm `_shared/model-resolver.md` is present + brief diff complete |
-| Gate output missing from PATTERNS.jsonl | Agent skipping gates | Validator warning surfaces this advisory; check session for skipped gates |
-| Cyrillic-а in path detected, blocking handoff | NFKC + homoglyph guard fired | Replace with ASCII; user confirm if intentional |
+| `unknown event type` in event-log lint | A custom event type was written | Add it to the event schema in `scripts/zeref-validate.py`, or rename the event |
+| Handoff artifact not produced on tool switch | Handoff compilation was skipped | Confirm the session ended through `/stop` and that the target is one of the five supported |
+| Handoff blocked on a path containing a look-alike character | Homoglyph guard fired during normalization | Replace with ASCII, or confirm explicitly if intentional |
+| Validator reports a missing surface | Partial install or renamed directory | Re-run the install; adapters and skills must resolve from the registry |
+| Version check fails | A surface disagrees with `zeref/VERSION` | Update the surface; never add a second source of version truth |
 
 ## Related
 
-- [[Architecture]] — full system overview
+- [[Architecture]] — system overview
+- [[Memory-Model]] — what lands on disk
+- [[Privacy-Model]] — configure privacy before first write
 - [[FAQ]] — common questions
-- [`AGENTS.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/AGENTS.md) — canonical spec
-- [`references/harness-translation-map.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/references/harness-translation-map.md) — per-harness install
-- [Notion Command Center](https://copper-tv-288.notion.site/Zeref-Agent-OS-Command-Center-358d695d836a81af9f6adf30770217c3)
+- [`AGENTS.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/AGENTS.md) — canonical contract

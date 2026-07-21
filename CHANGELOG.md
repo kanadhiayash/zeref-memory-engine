@@ -25,11 +25,11 @@ Consistency and claim-accuracy hardening release. No runtime behavior change.
 
 ## [2.0.0-alpha.1] — 2026-07-12
 
-vNext architecture reset, PR 1 of the `ZEREF_VNEXT_AGENTIC_OPERATIONS_UPGRADE_PLAN.md` sequence. Breaking architectural pivot — see `MIGRATION.md`. Not a documentation refresh: terminology, registry shape, and one runtime enforcement path all change.
+vNext architecture reset, PR 1 of the `ZEREF_VNEXT_AGENTIC_OPERATIONS_UPGRADE_PLAN.md` sequence. Breaking architectural pivot. Not a documentation refresh: terminology, registry shape, and one runtime enforcement path all change.
 
 ### Removed
 
-- **FAANG-MANGOES council** — `team-packs/faang-mangoes-council.md` deleted completely: pack, registry entry (`zeref-registry.json` `team_packs` 10 → 9), and all references from `SOUL.md` and imported-skill READMEs. No alias or compatibility shim — hard removal, not a rename. See `docs/adr/ADR-0003-council-removal.md` and the historical record at `docs/archive/faang-mangoes-council-removal.md`. Its reusable protocol ideas move to an optional, experimental evaluator adapter (`Council of High Intelligence`) in a later PR (§11 of the plan) — not a hardcoded Zeref council.
+- **FAANG-MANGOES council** — `team-packs/faang-mangoes-council.md` deleted completely: pack, registry entry (`zeref-registry.json` `team_packs` 10 → 9), and all references from `SOUL.md` and imported-skill READMEs. No alias or compatibility shim — hard removal, not a rename. See `docs/adr/ADR-0003-council-removal.md`. Its reusable protocol ideas move to an optional, experimental evaluator adapter (`Council of High Intelligence`) in a later PR (§11 of the plan) — not a hardcoded Zeref council.
 
 ### Added
 
@@ -47,7 +47,7 @@ vNext architecture reset, PR 1 of the `ZEREF_VNEXT_AGENTIC_OPERATIONS_UPGRADE_PL
 
 ### Migration
 
-Breaking. See `MIGRATION.md` for the full 1.x → 2.0.0-alpha.1 migration section, including the alias table and registry field changes.
+Breaking: the 1.x → 2.0.0-alpha.1 migration changes the alias table and registry fields.
 
 ---
 
@@ -128,9 +128,9 @@ batch lands.
 
 ## [1.1.0] — 2026-07-10
 
-Audit remediation release — closes the Repository-Wide Consistency Audit
-(`ZEREF_CONSISTENCY_AUDIT.md`, moved to the private `zeref-operator-records`
-repo per the 2026-07-13 audit) at baseline commit `b82c641`.
+Audit remediation release — closes the Repository-Wide Consistency Audit.
+The audit record is maintained as an operator record outside this repository.
+Baseline commit `b82c641`.
 
 ### Added
 
@@ -214,7 +214,7 @@ version, operationally verified guarantees on every public surface. The
 v2.6.x architecture (4-gate Auto-Activation, 14 skills, 6 agents,
 R6 Zero Context Loss, three privacy modes, flat memory layout) is carried
 forward unchanged. Pre-v1 history is archived to
-`kanadhiayash/zeref-os-archive` — see [`docs/PIVOT_LOG.md`](docs/PIVOT_LOG.md).
+`kanadhiayash/zeref-os-archive`.
 
 ### Added
 
@@ -392,7 +392,7 @@ token spend.
 
 ### Migration
 
-Additive. No breaking changes from v2.5.x. See `MIGRATION.md`.
+Additive. No breaking changes from v2.5.x.
 
 ---
 

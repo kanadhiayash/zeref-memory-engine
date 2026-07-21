@@ -38,7 +38,7 @@ This skill is the destination side of "adaptivity". When the user says
    - `~/.claude/skills/`
    - `~/.codex/skills/`
    - `~/.cursor/skills/`
-   - `~/Documents/Claude/00_SKILLS/` (Yash-style vault)
+   - Any operator-configured skill vault path.
    - Any path explicitly named by the user.
 2. **Read source.** Load `SKILL.md` and any sibling files (`PROVENANCE.md`,
    reference docs).
