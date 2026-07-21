@@ -5,10 +5,13 @@ from __future__ import annotations
 import sys
 
 from benchmarks.helpers import print_json_result
-from benchmarks.lineage_common import lineage_axis, lineage_reports
+from benchmarks.lineage_common import intake_skip, lineage_axis, lineage_reports
 
 
 def run() -> dict:
+    skipped = intake_skip("license_boundary")
+    if skipped:
+        return skipped
     imported = lineage_reports()["import"]
     sources = [source["identity"] for source in imported["sources"]]
     return lineage_axis("license_boundary", {

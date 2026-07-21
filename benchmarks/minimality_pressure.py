@@ -5,10 +5,13 @@ from __future__ import annotations
 import sys
 
 from benchmarks.helpers import print_json_result
-from benchmarks.lineage_common import lineage_axis, lineage_reports
+from benchmarks.lineage_common import intake_skip, lineage_axis, lineage_reports
 
 
 def run() -> dict:
+    skipped = intake_skip("minimality_pressure")
+    if skipped:
+        return skipped
     reports = lineage_reports()
     high = reports["high"]
     reference = reports["reference"]
