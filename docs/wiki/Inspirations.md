@@ -1,76 +1,57 @@
 # Inspirations
 
-Zeref OS draws from multiple lineages. Naming the influences makes the design legible and helps situate the project in the broader landscape.
+Naming the influences makes the design legible and situates the project honestly. None of the ideas below are original to Zeref; the contribution is the combination and the enforcement.
 
-## Naming — Zeref Dragneel (Fairy Tail)
+## The name
 
-The project is named after **Zeref Dragneel** from *Fairy Tail* — the immortal scholar whose ancient knowledge transcended form, time, and faction. He carried centuries of context with him; he never started from zero.
+Zeref is named after a fictional scholar whose accumulated knowledge outlasted any single era — someone who never started from zero.
 
-That is the design north star. **AI sessions today start from zero, every time.** You re-explain your project every conversation. You lose decisions to context window resets. You can't switch from Claude to Codex to Gemini to Cursor without abandoning your project memory.
+That is the design target. AI sessions today start from zero every time: you re-explain the project, lose decisions to context resets, and abandon accumulated memory when you switch tools. Long-horizon memory that stays faithful to a user's decisions and travels across harnesses is the thing worth building.
 
-Zeref OS is built in that lineage: **long-horizon memory, faithful to the user's accumulated decisions, portable across every AI harness**.
+## A single canonical contract
 
-## Engineering lineage
+Influenced by [agents.md](https://agents.md) and the cross-harness AGENTS convention. Source of truth lives in Markdown, not vendor-specific configuration, and every harness reads the same file or a thin stub that defers to it.
 
-### AGENTS.md as canonical interface
+The alternative — per-tool configuration that drifts apart — fails quietly, which is the worst way to fail.
 
-Heavily influenced by [agents.md](https://agents.md) and the cross-harness AGENTS convention. Source of truth lives in markdown, not vendor-specific config. Every harness reads the same file (or a thin stub that defers).
+## Append-only event logs
 
-### Append-only event logs
+The event log follows the event-sourcing tradition (Datomic, Kafka): append, never edit, replay to reconstruct. Pattern detection reads the log as a stream rather than querying mutable state.
 
-`memory/patterns/PATTERNS.jsonl` follows the event-sourcing tradition (Datomic, Kafka). Append-only; never edited; replay reconstructs state. Pattern detection scans the log as a stream.
+An append-only history means the question "what did we believe last month, and why?" stays answerable.
 
-### Two-Strikes Rule
+## Local-first software
 
-Original to Zeref OS but inspired by lean / agile retrospective practice: don't codify a rule on the first error. Wait for the second. Prevents brittle premature rules.
+Directly indebted to [Local-first software](https://www.inkandswitch.com/local-first/) (Ink & Switch). Your data on your disk, in your version control. Tools synthesize on top of it rather than owning it.
 
-### Privacy-deterministic (not LLM-judged)
+The practical consequence is that a vendor going away, changing terms, or losing your account does not take your project memory with it.
 
-LLMs are not privacy enforcers. Deterministic regex + Unicode normalization + base64 decode + homoglyph tables enforce REDACT classes. Heavily influenced by [secure-by-design](https://www.cisa.gov/securebydesign) principles and records-management discipline.
+## Deterministic privacy, not model judgment
 
-### Local-first
+Language models are not privacy enforcers. A model asked to redact can be talked out of redacting; a regex cannot. Redaction is therefore regex, Unicode normalization, homoglyph folding, and base64 decoding — running in code, before the write.
 
-[Local-first software](https://www.inkandswitch.com/local-first/) (Ink & Switch). Your data on your disk. Your tools synthesize on top. No vendor lock-in.
+Influenced by [secure-by-design](https://www.cisa.gov/securebydesign) principles and records-management discipline: make the safe path the default path, and make the unsafe path require a deliberate act.
 
-### Cross-model handoff (caveman-handoff)
+## Human arbitration over automatic resolution
 
-Draws from caveman / grammar-prompting research and structured token-compression patterns. Drop articles / filler / pleasantries; preserve technical substance verbatim. Token reduction varies by content; entity preservation is the design goal (unmeasured claim removed per 2026-07-13 audit).
+Automated conflict resolution is where memory systems quietly become unreliable. Picking the newer claim, or the better-graded one, looks like a policy but is really a guess with a rule attached.
 
-## Doctrinal lineage
+Zeref surfaces both sides and waits. The design bet is that a human deciding occasionally beats a machine deciding invisibly every time.
 
-### Per-repo doctrine
+## The Two-Strikes Rule
 
-`GITHUB_OS.md` customizes a global GitHub Operating System: branch naming (`<type>/zeref__<desc>`), Conventional Commits with scope, trunk-based with protected `main`, SemVer tags on `main` only.
+Original to Zeref in this form, inspired by retrospective practice: do not codify a rule on the first occurrence of an error. One occurrence is noise; two is a pattern. Codifying on the first produces brittle rules that encode a coincidence.
 
-### v4.x design canon
+## Prompt compression for handoff
 
-`references/v4x-canon/ZEREF_OS.md` is the immediate ancestor — the universal behavioral constitution that v1.0.0 inherited from v4.3. Read-only; never edited.
+Draws on grammar-prompting and structured token-compression work: drop articles, filler, and pleasantries; preserve technical substance verbatim. Compression ratio varies by content, and entity preservation — not a fixed reduction figure — is the design goal.
 
-## Cultural influences
+## Repository doctrine
 
-### Karpathy on AI engineering
-
-Andrej Karpathy's writing on building AI systems (eval-first, version everything, treat prompts as code).
-
-### "Eventually, draw a line"
-
-The v1.0.0 rebrand decision — iteration is necessary; permanence is also necessary. After years of rework, the v1.0.0 line was the deliberate stop.
-
-### Hybrid stack discipline
-
-Force multipliers used during build: ECC (eval-harness, security-scan, agent-eval), gstack (qa, review, ship), Graphify (knowledge graph), agent-skills (security-and-hardening, code-simplification). Zeref OS doesn't try to be all of these — it orchestrates them.
-
-## What Zeref OS is NOT
-
-- **Not a CEO persona** — context engine, not a leader.
-- **Not a fleet of specialist skills** — 14 disciplined skills.
-- **Not an always-on multi-agent council** — team packs are on-demand only, max 4 agents.
-- **Not bundled with MCP tools** — recommendation-only; all connectors OFF by default.
-- **Not a hosted service** — no Zeref OS server.
-- **Not vendor-locked** — bring any model; any harness.
+Branch naming, Conventional Commits with scope, trunk-based development with a protected default branch, and semantic version tags. Conventional rather than novel, which is the point: doctrine that a new contributor already knows is doctrine they will follow.
 
 ## Related
 
-- [[Architecture]] — the shape that settled
-- [[Memory-Model]] — how memory lives on disk
-- [`GITHUB_OS.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/GITHUB_OS.md) — per-repo doctrine
+- [[Architecture]] — how these ideas are implemented
+- [[Stack]] — projects Zeref sits alongside
+- [[Home]]

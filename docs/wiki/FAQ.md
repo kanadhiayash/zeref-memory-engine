@@ -1,97 +1,113 @@
 # FAQ
 
-### What are the Auto-Activation Gates?
+Direct answers to the questions engineers ask before adopting Zeref.
 
-Four sequential gates that fire before any execution-model call on a major task:
+## How do I give an AI agent persistent project memory?
 
-1. `[budget-governor]` — classifies task weight (CRITICAL / HIGH / MEDIUM / LOW), resolves model tier, enforces match.
-2. `[skill-router]` — picks smallest-useful-stack (1 lead + 2-3 support + 1 QA, max 5 skills).
-3. `[fleet-activator]` companion — probes extended tools (ECC, claude-obsidian, Graphify, gstack, …).
-4. `[prompt-context-engine]` — classifies prompt STRUCTURED / SEMI-STRUCTURED / UNSTRUCTURED; restructures if needed.
+Point every AI tool you use at the same `AGENTS.md` in your project root, and let Zeref own the files underneath it. `AGENTS.md` is the behavior contract: what a session reads first, what it may write, and what it must stop and ask about.
 
-Plus `[caveman-handoff]` at handoff. Each gate declares output inline; user can override before token spend.
+Because the contract and the memory both live in the repo, adding a second or third tool needs no syncing step. Each session starts with your decisions, open questions, risks, and conflicts already loaded.
 
-See [[Architecture]] §Auto-Activation Gates.
+## What is local-first LLM memory?
 
-### Why declare gates inline instead of running silently?
+Local-first LLM memory keeps the canonical copy on your machine, in your version control, rather than in a vendor account. Zeref keeps current state in SQLite, append-only history in JSONL, and human-readable views in Markdown — all inside the project directory.
 
-Two reasons: silent gates can't be redirected mid-session, and the inline declaration is a grep-able audit trail of every cost / stack / classification decision.
+Nothing is transmitted unless you enable it. Connectors are off by default, and `local-only` mode blocks external transmission outright.
 
-### What is R6 Zero Context Loss?
+## Is my data sent anywhere?
 
-Shared rule R6 in `_shared/rules.md`. Every fact / entity / constraint from the raw prompt must survive into restructured briefs, routing decisions, handoff packages, parent-sync staging, and skill drafts. Verified by diff.
+No, not by default. Memory is written to disk in your project. External sharing is governed by `SHARING_POLICY.md` and requires explicit per-action approval.
 
-### Will Zeref OS work with my AI tool?
+Setting privacy mode to `local-only` blocks outbound sync, connector traffic, and handoff push entirely.
 
-If your tool can read `AGENTS.md` (Claude Code, Codex, Cursor, Gemini, Aider, Windsurf, Hermes, Amp, Zed, Perplexity), yes. Per-harness stub in the repo handles the rest.
+## How do I share context between Claude Code, Cursor, and Codex?
 
-### Is my data sent anywhere?
+Compile a handoff artifact in one tool and open it in the next. The handoff compiler supports five targets: `codex`, `claude`, `cursor`, `github`, and `human`.
 
-No. Zeref OS is local-first. Memory lives in plain markdown in your project repo. Connectors are OFF by default in `SHARING_POLICY.md` and require explicit per-action approval to enable.
+Export fails closed. Only atoms explicitly classed public-safe are exported by default; anything unclassified is treated as private and withheld; anything classed local-only never leaves the machine even when private export is requested.
 
-`local-only` privacy mode blocks all external transmission (parent sync, MCP connectors, handoff push).
+## What is agent memory that survives context loss?
 
-### What does "boundary-first read" mean?
+Memory that gets re-read rather than re-explained. Because it is on disk instead of in a context window, closing a session, switching models, or exhausting a context limit does not destroy it.
 
-Don't load the whole wiki to find one fact. Read `memory/hot.md` (≤500 words) first; consult `memory/index.md` only if hot is insufficient; then load only the named section of the named page. Caps always-on context to ~3-4k tokens regardless of project size.
+The next session performs a boundary-first read and resumes from stored state.
 
-### How does Zeref OS know I'm running Claude vs GPT vs Gemini?
+## How do I stop an AI assistant from forgetting project decisions?
 
-`budget-governor` auto-detects active model from harness env vars. Resolves to a tier (HAIKU / SONNET / OPUS or HAIKU-equivalent / SONNET-equivalent / OPUS-equivalent for non-Anthropic) and scales verbosity + per-skill caps accordingly. The model-resolver canonicalizes bare aliases to full Anthropic ids.
+Store decisions where the assistant reads them at session start, and make contradicting one an event that requires your judgment. Zeref records each decision with provenance and an evidence grade.
 
-### What happens if I commit to a conflict?
+When a later claim conflicts, the write halts rather than overwriting. Both sides are recorded and queued for you to arbitrate.
 
-`contradiction-resolution` skill halts the write, appends both sides to `memory/CONFLICTS.md`, and asks you to arbitrate (immediately or at `/done`). Never silently resolved. Four anti-patterns refused: recency-wins, grade-wins, silent-drop, indefinite-snooze.
+## What does "boundary-first read" mean?
 
-### Can two sessions write to the same memory file at once?
+It means never loading the whole wiki to find one fact. Read `memory/hot.md` first; consult `memory/index.md` only if hot is insufficient; then load only the named section of the named page.
 
-No. `memory-keeper` is the single writer (Core Principle 5). `zeref/lock.py::MemoryLock` adds an advisory lock; the second writer aborts with a clear error.
+The result is that always-on context stays bounded regardless of how large or old the project gets.
 
-### What is the Two-Strikes Rule?
+## What happens when a new claim contradicts a stored one?
 
-Don't codify a rule on the first occurrence of an error. Wait for the second. First occurrence → log to `memory/MEMORY.md` as "trap noticed." Second occurrence → promote to a rule. Prevents brittle premature codification.
+The write halts, both sides are appended to `memory/CONFLICTS.md` with their provenance, and you arbitrate — immediately or at the end of the session.
 
-### How are team packs different from skill stacks?
+Four resolution shortcuts are refused by design: recency-wins, grade-wins, silent-drop, and indefinite-snooze. Each of those decides the question while appearing not to.
 
-- **Team pack** (`/team build`): on-demand multi-agent configuration. Roster of up to 4 agents.
-- **Skill stack** (from `skill-router` Gate #2): the specific lead + 2-3 support + 1 QA picked for the current task.
+## Which AI tools does Zeref work with?
 
-When a team pack is active, `skill-router` picks the stack from the pack's roster.
+Any harness that can read a Markdown instruction file can participate. Adapters are registered for Claude Code, Codex, Gemini CLI, Hermes, Kimi Code, Odysseus, and Grok.
 
-### How do I add a new skill?
+Each adapter declares an enforcement level — embedded, sidecar/proxy, or context-only — so the docs never claim more control than the integration actually has.
 
-**Don't write it manually.** Let `pattern-observer` surface a candidate from repeated work, then `pattern-to-skill` drafts it, then you approve via `/review-skill`. Per Core Principle 10 (Review-First Extension).
+## Which model providers does Zeref support?
 
-If you must write manually: put it in `skills/<name>/SKILL.md` with proper frontmatter, add an entry to `zeref-registry.json` (with `model` + `model_alias` fields), update AGENTS.md Skills table, run `python3 scripts/zeref-validate.py`.
+Zeref does not call model APIs at all; it is a memory engine, not an inference layer. What it does is decide which *class* of model a task is entitled to.
 
-### How do I disable pattern detection?
+Core code names reasoning classes (`fast`, `balanced`, `deep`, `frontier`, plus the `local` and `private` placement constraints) and never vendor model IDs. Concrete IDs are resolved at the edge from declarative JSON descriptors in `zeref/adapters/providers/`, shipped for `anthropic` and `openai`. Adding a provider is a config file, not a code change.
 
-`config/BUDGET.md` → set `pattern_detection: false`.
+## Can two sessions write to the same memory file at once?
 
-### Will the 4-gate chain slow me down?
+No. Writes go through a single-writer path with an advisory lock in `zeref/lock.py`; a second concurrent writer aborts with a clear error rather than interleaving.
 
-Negligibly. Each gate is HAIKU-tier (LOW weight) and emits ≤500 tokens. Gate cost << execution cost. The user experience: each gate prints one inline `[name]` line before execution starts.
+Writes are atomic, so an interrupted write does not leave a half-written file.
 
-You can skip gates for trivial tasks (single-fact lookup, simple edit) by stating "execute verbatim" or "no restructure" — `prompt-context-engine` honors the skip phrase.
+## How does redaction work?
 
-### What if I disagree with a gate's classification?
+Deterministically, in code. `zeref/privacy.py` applies redaction rules before a write; nothing depends on a model choosing to be careful.
 
-Override before execution. Example: `[budget-governor]` flags MISMATCH on `(CRITICAL, HAIKU)` — type the dual-key override directive:
+Input is NFKC-normalized, homoglyphs are folded to ASCII, and base64 payloads are decoded before pattern matching, so a credential cannot slip past a rule by changing its encoding.
 
-```
-OVERRIDE: CRITICAL on HAIKU — reason=spec writing, accept lower quality
-```
+## Does Zeref publish benchmark scores?
 
-Dual-key required for cost-tier overrides; single-key "override" rejected.
+No. Loaders exist for five public suites — LoCoMo, LongMemEval, PersonaMem, RULER, and HELMET — but no dataset runs have been performed and no scores exist.
 
-### Where do session decisions get logged?
+The internal suite under `benchmarks/` scores the repo against its own rubric on internal quality axes used as release gates. Those are not benchmark rankings and are not comparable to another system's numbers.
 
-Two places:
-1. `memory/DECISIONS.md` — per-session arbitrations (single writer: `memory-keeper`).
-2. `CHANGELOG.md` — shipped releases.
+## What are the guards?
+
+Five checks on the write path: `fact_guard`, `evidence_guard`, `privacy_guard`, `contradiction_guard`, and `write_gate`. A claim that fails any of them does not reach the store.
+
+`fact_guard` rejects unsupported superlatives and unsourced absolutes — which is why this documentation avoids them.
+
+## How do I add a new skill?
+
+Prefer not to write one by hand. Let `pattern-observer` surface a candidate from repeated work, let `pattern-to-skill` draft it, then approve it via `/review-skill`. Drafts land in `skills/drafts/` and are never auto-activated.
+
+If you do write one manually, add it under `skills/<name>/SKILL.md` with proper frontmatter, register it, and run `python3 scripts/zeref-validate.py`.
+
+## How are team packs different from skill stacks?
+
+A team pack is an on-demand multi-agent configuration you activate with `/team`. A skill stack is the specific set of skills selected for the task at hand.
+
+When a pack is active, the stack is drawn from that pack's roster. See [[Team-Packs]].
+
+## Where do decisions get logged?
+
+Confirmed decisions go to `memory/DECISIONS.md` with provenance and an evidence grade. Shipped releases are recorded in `CHANGELOG.md`.
+
+Conflicts awaiting your arbitration live separately in `memory/CONFLICTS.md`.
 
 ## Related
 
-- [[Installation]] — per-harness setup
+- [[Installation]] — setup and verification
 - [[Architecture]] — full system
+- [[Memory-Model]] — store invariant and read discipline
+- [[Privacy-Model]] — modes and redaction classes
 - [[Glossary]] — terms used here

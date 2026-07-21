@@ -1,205 +1,192 @@
 # Architecture
 
-Zeref OS has six surfaces: **agents** (always-on roles), **skills** (on-trigger procedures), **commands** (user-facing slash entries), **team packs** (on-demand multi-agent configurations), **Auto-Activation Gates** (4-gate chain per major task), and **Model-Tier Routing** (weight → model matrix).
+Zeref sits between an AI harness and a project's memory files. The harness supplies the model and the editor. Zeref supplies the memory, the guards, and the policy that decides what may be written and what may leave the machine.
 
-`AGENTS.md` is the source of truth. Every harness-specific file is a thin stub. **14 Core Principles**, **6 agents**, **14 skills**, **8 commands**, **6 team packs**, **4 Auto-Activation Gates** active.
+`AGENTS.md` is the canonical behavior contract. Every harness-specific file is a thin stub that defers to it.
 
-_Placeholder: `assets/poc-gate-output.png` — sample inline gate declaration on a real task._
-
-## Overview diagram
+## Overview
 
 ```mermaid
 flowchart TB
-  User((User)) -->|/zeref-os:command| Harness
-  Harness -->|reads| AG["AGENTS.md (canonical)<br/>14 Core Principles · 4-Gate Auto-Activation"]
-  AG --> Gates
+  User(["Engineer"]) --> Harness["AI harness"]
+  Harness --> AG["AGENTS.md — canonical contract"]
 
-  subgraph Gates["Auto-Activation Gates — every major task"]
-    G1["Gate #1<br/>budget-governor<br/>weight + tier"]
-    G2["Gate #2<br/>skill-router<br/>smallest stack"]
-    GFA["fleet-activator<br/>tool reachability"]
-    G3["Gate #3<br/>prompt-context-engine<br/>STRUCTURED brief + R6"]
-    G1 --> G2 --> GFA --> G3
+  AG --> Read["Boundary-first read<br/>hot → index → page section"]
+  Read --> Exec["Session work"]
+  Exec --> Guards
+
+  subgraph Guards["Guarded write path"]
+    direction LR
+    FG[fact_guard] --> EG[evidence_guard] --> PG[privacy_guard] --> CG[contradiction_guard] --> WG[write_gate]
   end
 
-  Gates --> Execution
-  AG --> Agents
-  AG --> Commands
-  AG --> TeamPacks
+  CG -.->|conflict| CONF["CONFLICTS.md<br/>human arbitration"]
+  Guards --> Store
 
-  subgraph Execution["execution (declared stack from Gate #2)"]
-    EXE[lead skill + 2-3 support + 1 QA]
+  subgraph Store["Canonical store"]
+    SQL["SQLite — current state"]
+    JL["JSONL — append-only history"]
+    MD["Markdown — generated views"]
   end
 
-  subgraph Agents["6 agents — always-on"]
-    MK[memory-keeper]
-    PG[privacy-guardian]
-    SC[sync-coordinator]
-    EC[evidence-curator]
-    PO[pattern-observer]
-    HO[handoff-orchestrator]
+  Store --> HO["Handoff compiler<br/>scrubbed, fail-closed"]
+  HO --> Next["Next session / next tool"]
+
+  AG --> Adapters
+  subgraph Adapters["Harness adapters"]
+    A1[claude-code] & A2[codex] & A3[gemini-cli] & A4[hermes] & A5[kimi-code] & A6[odysseus] & A7[grok]
   end
-
-  subgraph Skills["14 skills — on-trigger (★ = v2.6 new)"]
-    PS[project-setup]
-    WM[wiki-maintenance]
-    CR[contradiction-resolution]
-    PA[privacy-abstraction]
-    PSY[parent-sync]
-    P2S[pattern-to-skill]
-    MIE[memory-import-export]
-    BG["★ budget-governor (Gate #1)"]
-    SR["★ skill-router (Gate #2)"]
-    FA["★ fleet-activator"]
-    PCE["★ prompt-context-engine (Gate #3)"]
-    HC[handoff-compiler]
-    CH["★ caveman-handoff"]
-    EG[evidence-grader]
-  end
-
-  subgraph Commands["8 commands"]
-    CMD1["/start"]
-    CMD2["/done"]
-    CMD3["/stop"]
-    CMD4["/status"]
-    CMD5["/team"]
-    CMD6["/sync-parent"]
-    CMD7["/reset-permissions"]
-    CMD8["/review-skill"]
-  end
-
-  subgraph TeamPacks["6 team packs — on-demand (max 4 agents)"]
-    TP1[solo]
-    TP2[build]
-    TP3[research]
-    TP4["red (read-only)"]
-    TP5[audit]
-    TP6[ship]
-  end
-
-  MK <--> Mem[(memory/ flat layout)]
-  PG -. enforces .-> Mem
-  PO -. logs .-> PJ["PATTERNS.jsonl<br/>schema validator"]
-  G1 -. event .-> PJ
-  G2 -. event .-> PJ
-  G3 -. event .-> PJ
-  CH -. R6 chain .-> HO
-  EXE -. write .-> MK
-
-  classDef gate fill:#e1d5ff,stroke:#5b21b6,color:#000
-  class G1,G2,G3,GFA,BG,SR,FA,PCE,CH gate
 ```
 
-## Auto-Activation Gates (4-gate chain)
+## The canonical store invariant
 
-Every major task passes 4 sequential gates **before any execution-model token spend**. Each gate declares output inline; user can override.
+"What is the source of truth?" has exactly one answer, and every other surface is derived from it.
 
-| # | Gate | Output line format | Hard block |
-|---|---|---|---|
-| 1 | `budget-governor` | `[budget-governor] weight=<W> tier=<T> match=<OK\|MISMATCH> budget_remaining=$<n>` | CRITICAL never on Haiku; LOW flagged on Opus |
-| 2 | `skill-router` | `[skill-router] domain=<D> lead=<L> support=[s1,s2] qa=<Q> ext=<E\|none>` | Stack > 5 skills rejected; fan-out refused |
-| (companion) | `fleet-activator` | `[fleet-activator] <tool>: reachable\|UNREACHABLE-EMPTY-DIR\|UNREACHABLE-MISSING` | Marker-file check per tool (anti probe-spoof) |
-| 3 | `prompt-context-engine` | `[prompt-context-engine] class=<C> action=<proceed\|assume\|restructure> brief_tokens=<n> injection_detected=<bool>` | Injection markers wrapped in `<context type="untrusted-input">` + `<sentinel>`; 60s irreversibility cool-down |
-| (handoff) | `caveman-handoff` | `[caveman-handoff] orig=<n>tok compressed=<m>tok ratio=<r>% model_from=<X> model_to=<Y>` | NFKC normalize + homoglyph guard; R6 diff byte-equal AND NFKC-equal |
-
-Each gate emits a typed event to `memory/patterns/PATTERNS.jsonl`. Validator parses event allowlist + per-event JSON-schema + value-enum checks. See `scripts/zeref-validate.py::lint_patterns_log()`.
-
-## Model-Tier Routing
-
-Per Core Principle 14: **LOW never on Opus; CRITICAL never on Haiku.** Weight (from `budget-governor`) maps to model + effort.
-
-| Weight | Model | Effort | Typical $ / task | Examples |
-|---|---|---|---|---|
-| **CRITICAL** | `claude-opus-4-7` | high | $0.50 – $5.00 | `pattern-to-skill` draft, parent-sync export, architecture decision |
-| **HIGH** | `claude-sonnet-4-6` | medium | $0.10 – $0.50 | `contradiction-resolution`, `handoff-compiler`, `project-setup` interview, `prompt-context-engine` restructure |
-| **MEDIUM** | `claude-sonnet-4-6` low / `claude-haiku-4-5` medium | low / medium | $0.02 – $0.10 | `wiki-maintenance`, `evidence-grader`, `privacy-abstraction` |
-| **LOW** | `claude-haiku-4-5` | low | < $0.02 | `budget-governor` gate, `skill-router` gate, `fleet-activator` probe, single-fact lookup |
-
-**Cascade pattern**: orchestrator @ Sonnet medium → executor @ Sonnet/Haiku by weight → final gate @ Opus high when stakes warrant.
-
-**Model resolver**: bare aliases (`haiku`/`sonnet`/`opus`) resolve to full Anthropic ids via [`_shared/model-resolver.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/_shared/model-resolver.md). Opus 4.6 pinned for cost-sensitive flagship work (avoids 4.7 +35% tokenizer inflation).
-
-## Agents (6 — always-on background roles)
-
-| Agent | Auto-load | Role | Default model |
-|---|---|---|---|
-| `memory-keeper` | yes | Single writer to `memory/` wiki files. Reads boundary-first. Logs every write. Enforces R1 single-writer chain. | `claude-haiku-4-5` |
-| `privacy-guardian` | conditional | Enforces `PRIVACY.md` mode + `REDACT.md` classes + `SHARING_POLICY.md` allowlist. Filters every external transmission. | `claude-haiku-4-5` |
-| `sync-coordinator` | on `/start` / `/stop` / `/sync-parent` | Permissions, tool visibility, parent push orchestration. | `claude-haiku-4-5` |
-| `evidence-curator` | conditional | Grades confidence (high/medium/low/unverified), recency, provenance of every entry. | `claude-haiku-4-5` |
-| `pattern-observer` | background | Watches `PATTERNS.jsonl` for repeated work (48-80h window, Jaccard ≥0.8, ≥3 occurrences) — surfaces candidate skills via `pattern-to-skill`. | `claude-haiku-4-5` |
-| `handoff-orchestrator` | on `/stop` / model switch | Packages cross-harness handoff. Hands off to `caveman-handoff` for compression. | `claude-sonnet-4-6` |
-
-## Skills (14 — on-trigger procedures)
-
-★ = new in v2.6.
-
-| Skill | Activation | Tier |
+| Layer | Role | Editable by hand |
 |---|---|---|
-| `project-setup` | First `/start` or missing config | SONNET (HIGH — interview) |
-| `wiki-maintenance` | After writes; consolidation | HAIKU (MEDIUM) |
-| `contradiction-resolution` | When `memory-keeper` flags conflict | SONNET (HIGH — arbitration) |
-| `privacy-abstraction` | Before writes when mode = `abstract` | HAIKU (MEDIUM, deterministic rules) |
-| `parent-sync` | Approved `/stop` or `/sync-parent` | SONNET (HIGH — irreversible push) |
-| `pattern-to-skill` | Threshold hit in `pattern-observer` | OPUS (CRITICAL — code synthesis) |
-| `memory-import-export` | Explicit migration request | SONNET (HIGH — schema crossing) |
-| `budget-governor` ★ **Gate #1** | Auto-gate: every major task | HAIKU (LOW — classification) |
-| `skill-router` ★ **Gate #2** | Auto-gate: every major task, after budget gate | HAIKU (LOW — routing) |
-| `fleet-activator` ★ | Companion to `skill-router` when extended-tool hint present | HAIKU (LOW — probe) |
-| `prompt-context-engine` ★ **Gate #3** | Auto-gate: every major task, after skill-router | SONNET (HIGH — restructure) |
-| `handoff-compiler` | Session end or model switch | SONNET (HIGH — cross-harness) |
-| `caveman-handoff` ★ | Companion to `handoff-compiler` for cross-model compression | HAIKU (LOW — mechanical compression) |
-| `evidence-grader` | On write, review, sync, conflict | HAIKU (LOW-MEDIUM) |
+| SQLite | Canonical current state. | No |
+| JSONL | Canonical append-only history. | No — appended, never rewritten |
+| Markdown | Generated human-readable view. Carries a do-not-edit header. | No |
+| TOON | Optional generated model-input view. | No |
 
-## Commands (8)
+Recorded in [`docs/adr/ADR-0001-canonical-store.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/docs/adr/ADR-0001-canonical-store.md).
 
-```
-/start              Boot session; restore context (hot.md → index.md per §0)
-/done               Persist work; refresh hot.md; conflict scan; snapshot
-/stop               End session; optional parent push; optional handoff compile
-/status             Read-only state report
-/team [type]        Activate on-demand team pack
-/sync-parent        Manual parent rollup
-/reset-permissions  Clear session overrides
-/review-skill       Review pattern-detected skill drafts in skills/drafts/
-```
+## The guarded write path
 
-## Team packs (6)
+Five guards live in `zeref/guards/`. A claim that fails any one of them does not reach the store.
 
-See [[Team-Packs]] for full descriptions.
+| Guard | Rejects |
+|---|---|
+| `fact_guard` | Unsupported superlatives and unsourced absolute claims. |
+| `evidence_guard` | Claims whose evidence is missing or graded below the required threshold. |
+| `privacy_guard` | Payloads carrying redactable content for the active privacy mode. |
+| `contradiction_guard` | Claims that conflict with stored state — routed to arbitration rather than dropped. |
+| `write_gate` | Anything that has not cleared the preceding guards. |
 
-| Team | Roster | Use |
+The ordering matters: a claim is checked for support before it is checked for evidence, scrubbed before it is compared against stored state, and admitted only at the end.
+
+### Contradiction handling
+
+When the contradiction guard fires, the write halts. Both the incoming claim and the stored one are recorded with their provenance in `memory/CONFLICTS.md`, and the conflict waits for a human.
+
+Four resolutions are refused by design:
+
+| Refused shortcut | Why |
+|---|---|
+| Recency-wins | Newer is not truer. |
+| Grade-wins | A better-sourced claim can still be the wrong one for this project. |
+| Silent-drop | Discards information without a decision being made. |
+| Indefinite-snooze | Defers forever, which is a decision wearing a delay's clothing. |
+
+### Evidence grading
+
+Two scores are stored separately and never collapsed into one. **Evidence quality** grades the source — provenance, directness, recency, authority, corroboration, reproducibility. **Review robustness** grades the deliberation — method diversity, independent agreement, recorded dissent.
+
+Agreement among reviewers never upgrades weak source evidence to a strong grade. Confidence in a process is not evidence about the world.
+
+## Boundary-first reads
+
+A session does not load a project to answer a question about the project.
+
+1. Read `memory/hot.md` — current context, kept short.
+2. Read `memory/index.md` only if hot is insufficient — locate the relevant domain.
+3. Read only the named section of the named page.
+4. Never load a full page just to scan it.
+
+Read cost is a function of the question, not of how long the project has been running. See [[Memory-Model]].
+
+## Harness adapters
+
+An adapter detects a harness, reports its health, and projects context into the file that harness reads. The registry covers `claude-code`, `codex`, `gemini-cli`, `hermes`, `kimi-code`, `odysseus`, and `grok`.
+
+Adapter modules are imported lazily. An adapter whose module is absent surfaces as `detected=false` with a stated reason rather than raising an import error, so a partial install degrades legibly instead of crashing.
+
+### Enforcement levels
+
+Every integration declares how strongly Zeref can actually govern it. The label is part of the contract, so no doc claims control that the execution path does not support.
+
+| Level | Meaning |
+|---|---|
+| Embedded | Zeref intercepts or authorizes operations through native hooks, plugins, lifecycle callbacks, or controlled subprocesses. |
+| Sidecar / proxy | Zeref enforces only work explicitly routed through its own CLI, MCP server, API, or proxy. |
+| Context-only | Zeref can generate instructions and memory context but cannot guarantee enforcement. |
+
+## Handoff compilation
+
+Handoff artifacts are compiled from stored atoms and scrubbed on the way out. Five targets are supported: `codex`, `claude`, `cursor`, `github`, and `human`.
+
+Export is fail-closed by privacy class:
+
+| Class | Default export | With private export requested |
 |---|---|---|
-| solo | 1 primary + memory engine | default |
-| build | Planner + Implementer + Reviewer | multi-module features |
-| research | Investigator + Synthesizer + Fact-checker | tech evaluation |
-| red | Attacker + Security reviewer + Constraint checker + Evidence recorder (read-only) | adversarial review |
-| audit | Reader + Linter + Quality gate | pre-ship QA |
-| ship | Changelog drafter + Release reviewer + Deploy verifier | release prep |
+| `public-safe` | Exported | Exported |
+| `private` | Withheld | Exported |
+| `unknown` | Withheld | Exported |
+| `local-only` | Never exported | Never exported |
 
-Max 4 agents per pack. Outputs always land in `team/` (never inline-only).
+Treating `unknown` exactly like `private` is deliberate: an atom whose privacy class was never asserted must not leak merely because nobody classified it.
 
-## Core principles (14, per AGENTS.md)
+## Reasoning classes and model routing
 
-1. **Local-first** — canonical state is markdown on disk
-2. **Privacy-first** — every write through `privacy-guardian`
-3. **Boundary-first reads** — hot → index → page section
-4. **Human arbitration** — contradictions surface, never silent
-5. **Single-writer per resource** — only `memory-keeper` writes to wiki files
-6. **Append-only logs** — `PATTERNS.jsonl` is never edited
-7. **Progressive activation** — minimal agents auto-load; rest lazy
-8. **Evidence discipline** — separate facts / assumptions / unknowns / risks
-9. **Token discipline** — verbosity scales to model tier
-10. **Review-first extension** — drafts to `skills/drafts/`, never auto-activated
-11. **Two-Strikes Rule** — no rule on first occurrence of an error
-12. **Harness Agnosticism** — AGENTS.md is source of truth
-13. ★ **Cost-Weight Auto-Gate** — `budget-governor` runs before every major task; CRITICAL cannot proceed without stated tier
-14. ★ **Task-Weight Model Routing** — LOW never on Opus; CRITICAL never on Haiku
+Core code and canonical schemas never name a vendor model. A task carries a criticality; criticality resolves to a reasoning class; a provider descriptor maps the class to a concrete model at the edge.
 
-## Shared rules (`_shared/rules.md`)
+| Criticality | Entitled class |
+|---|---|
+| LOW | `fast` |
+| MEDIUM | `balanced` |
+| HIGH | `deep` |
+| CRITICAL | `frontier` |
 
-- **R1** Single-Writer + Privacy Gate — all `memory/` writes pass through `memory-keeper` → `privacy-guardian`
-- **R2** Non-Deletion — archive content; never hard-delete
-- **R3** Privacy Gate on External Output — `privacy-abstraction` rewrites payload when mode = abstract; blocks when local-only
-- **R4** Never Invent — leave blank with `# TODO`, never fabricate
-- **R6** ★ Zero Context Loss — every fact / entity / constraint from raw prompt survives restructure / routing / handoff; verified by diff
+`local` and `private` are placement constraints — run on-device, or run in a privacy-restricted context — rather than cost tiers, and are permitted at any criticality.
+
+Entitlement is enforced in `zeref/core/reasoning.py`, not in prose. A request may always downgrade to a cheaper class and never upgrade; `frontier` requires CRITICAL. A violation raises `ReasoningPolicyError` rather than emitting a warning.
+
+Provider descriptors are declarative JSON files in `zeref/adapters/providers/`, one per provider, shipped for `anthropic` and `openai`. Each maps reasoning classes to model IDs and optional effort levels. Adding a provider means adding a JSON file.
+
+**Zeref does not call model APIs.** It decides what class of model a task is entitled to; the harness performs the inference.
+
+## Benchmarks
+
+Two distinct things live under `benchmarks/`.
+
+**Internal quality axes.** A deterministic suite scores this repository against its own rubric on axes including portability, adaptivity, scalability, retrieval, and trust. These are internal quality axes used as release gates — not benchmark rankings, and not comparable to another system's numbers.
+
+**External benchmark scaffolding.** Loaders exist for five public suites — LoCoMo, LongMemEval, PersonaMem, RULER, and HELMET — in `benchmarks/external/loaders/`. No dataset runs have been performed and no scores exist. The loaders and baselines are scaffolding only, and their presence implies no result, ranking, or comparison.
+
+Suites that were considered and are not supported are listed with reasons in [`benchmarks/external/UNSUPPORTED.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/benchmarks/external/UNSUPPORTED.md).
+
+## Release gating
+
+Release checks execute the test suite and the internal benchmark suite live rather than reading a stored verdict.
+
+The trust axis accepts an independent re-grade only when that re-grade names the commit it graded. If the recorded commit does not match `HEAD`, the override is refused and the deterministic draft publishes instead — a stale grade cannot silently apply to newer code. See [`docs/TRUST_AUDIT.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/docs/TRUST_AUDIT.md).
+
+## Component status taxonomy
+
+Every component carries a label so nothing claims capability it does not have.
+
+| Status | Meaning |
+|---|---|
+| `runtime` | Backed by executing code with test coverage. |
+| `adapter` | A provider, harness, or capability bridge — thin, declarative, swappable. |
+| `contract` | A schema, manifest, or spec describing required behavior, not necessarily runtime-backed. |
+| `experimental` | Implemented but not yet benchmarked past its acceptance threshold; may regress or be removed. |
+
+## Surfaces
+
+| Surface | Contents |
+|---|---|
+| `agents/` | Background roles: memory writer, privacy guardian, evidence curator, pattern observer, sync coordinator, handoff orchestrator. |
+| `skills/` | On-trigger procedures: routing, contradiction resolution, evidence grading, handoff compilation, privacy abstraction, skill drafting. |
+| `commands/` | User-facing command contracts. |
+| `team-packs/` | On-demand multi-agent configurations. See [[Team-Packs]]. |
+| `zeref/` | Python runtime — guards, adapters, store, privacy, locking, CLI. |
+| `benchmarks/` | Internal quality suite and external loader scaffolding. |
+
+## Related
+
+- [[Memory-Model]] — layout, read discipline, event log
+- [[Privacy-Model]] — modes, classes, export policy
+- [[Team-Packs]] — multi-agent configurations
+- [[Pattern-Detection]] — review-first extension
+- [[Glossary]] — canonical terms
