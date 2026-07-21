@@ -1,9 +1,25 @@
 """
-zeref.privacy — Deterministic PII abstraction module (Sprint 2).
+zeref.privacy — Deterministic PII abstraction module (Sprint 2, hardened WS2).
 
 Replaces prose-only privacy-abstraction skill with code-level enforcement.
-Reads REDACT.md classes; applies unicode-normalize → base64-decode →
-homoglyph-normalize → regex-redact pipeline in that order.
+Reads REDACT.md classes and applies a raw-first, decode-as-additive pipeline:
+
+    1. raw surface          — credential patterns run on the UNTOUCHED input
+                              before any normalization or decoding can mutate
+                              a token body out from under the detectors.
+    2. normalized surface   — NFKC + homoglyph fold, credentials re-scanned.
+    3. whitespace surface   — anchored provider prefixes re-scanned with all
+                              whitespace collapsed (catches tokens split by
+                              spaces or newlines); matches map back to, and
+                              redact, the original span.
+    4. encoded surfaces     — base64/hex blobs are decoded into a validated
+                              side container and PROBED for credentials; on a
+                              hit the original encoded blob is redacted. The
+                              decoded text is never substituted back into the
+                              working string. Nested encodings are followed
+                              to a bounded depth.
+    5. class redaction      — remaining enabled REDACT.md classes (pii,
+                              email, paths, ...) run on the normalized text.
 
 Usage:
     from zeref.privacy import scrub, audit
@@ -16,6 +32,7 @@ Usage:
 from __future__ import annotations
 
 import base64
+import binascii
 import os
 import re
 import unicodedata
@@ -37,6 +54,9 @@ _HOMOGLYPHS: dict[str, str] = {
     "і": "i",   # Cyrillic і  U+0456
     "ӏ": "l",   # Cyrillic ӏ  U+04CF
     "у": "y",   # Cyrillic у  U+0443
+    "ѕ": "s",   # Cyrillic ѕ  U+0455 (dze) — defends sk-/xoxb-style lowercase prefixes
+    "ј": "j",   # Cyrillic ј  U+0458
+    "һ": "h",   # Cyrillic һ  U+04BB — defends ghp_/github_pat_ prefixes
     # uppercase Cyrillic — needed to defend AKIA/AIza/PEM-style uppercase patterns
     "А": "A",   # Cyrillic А  U+0410
     "В": "B",   # Cyrillic В  U+0412
@@ -122,10 +142,22 @@ _PROVIDER_PATTERNS: dict[str, re.Pattern] = {
 # Built-in regex patterns per REDACT.md class
 # ---------------------------------------------------------------------------
 _BUILTIN_PATTERNS: dict[str, re.Pattern] = {
+    # Generic labelled-credential pattern. Precision requirements (WS2):
+    #   * keyword starts at a word boundary,
+    #   * an explicit separator (whitespace / colon / equals / quote) must
+    #     follow the keyword — underscore/hyphen joins are identifiers
+    #     ("tokens_input_max"), not leaks,
+    #   * the value must contain at least one digit — real high-entropy
+    #     secrets essentially always do, prose words ("token estimate")
+    #     essentially never do.
+    # These make a zero-tolerance credentials gate viable without carpeting
+    # runtime modules in allowlist markers. Provider-shaped tokens are
+    # handled by the always-on _PROVIDER_PATTERNS regardless of this one.
     "credentials": re.compile(
         r"""(?xi)
-        (?:api[_\-]?key|token|secret|password|passwd|bearer|auth)
-        [_\-\s:='"]{0,4}
+        \b(?:api[_\-]?key|token|secret|password|passwd|bearer|auth)
+        [\s:='"]{1,4}
+        (?=[A-Za-z0-9+/=\-_]*\d)
         [A-Za-z0-9+/=\-_]{8,}
         """,
     ),
@@ -293,20 +325,208 @@ def _homoglyph_normalize(text: str) -> str:
     return "".join(_HOMOGLYPHS.get(ch, ch) for ch in text)
 
 
-def _decode_base64_fragments(text: str) -> str:
-    """Decode base64-looking blobs (>=16 chars) so downstream regex can catch embedded PII."""
-    def _try(m: re.Match) -> str:
+# Encoded-surface scanning (WS2). Candidate blobs are decoded into a validated
+# side container and probed for credentials; the ORIGINAL encoded blob is what
+# gets redacted on a hit. Decoded text is never substituted into the working
+# string — the historical substitution step let an attacker (or an unlucky
+# numeric token body) mutate a credential before the detectors ran.
+_ENCODED_RUN_RE = re.compile(r"[A-Za-z0-9+/_\-]{16,}={0,2}")
+_HEX_RUN_RE = re.compile(r"(?<![0-9a-fA-F])(?:[0-9a-fA-F]{2}){12,}(?![0-9a-fA-F])")
+_ENCODED_MAX_DEPTH = 3
+_URLSAFE_TO_STANDARD = str.maketrans("-_", "+/")
+
+
+def _validate_decoded_container(raw: bytes) -> Optional[str]:
+    """Accept decoded bytes only when they form plausible embedded text.
+
+    Requires strict UTF-8 and printable characters (tab/newline tolerated) so
+    that random binary — hashes, compressed data, honest base64 payloads —
+    never enters the credential probe.
+    """
+    try:
+        decoded = raw.decode("utf-8", errors="strict")
+    except UnicodeDecodeError:
+        return None
+    if len(decoded) < 8:
+        return None
+    if not all(ch.isprintable() or ch in "\t\n\r" for ch in decoded):
+        return None
+    return decoded
+
+
+def _decode_base64_container(blob: str) -> Optional[str]:
+    """Decode a base64-looking run (standard or urlsafe alphabet) or return None."""
+    body = blob.rstrip("=")
+    padded = body + "=" * (-len(body) % 4)
+    candidates = [padded]
+    translated = padded.translate(_URLSAFE_TO_STANDARD)
+    if translated != padded:
+        candidates.append(translated)
+    for candidate in candidates:
         try:
-            decoded = base64.b64decode(m.group(0) + "==").decode("utf-8", errors="ignore")
-            return decoded if decoded.isprintable() and len(decoded) > 3 else m.group(0)
-        except Exception:
-            return m.group(0)
-    return re.sub(r"[A-Za-z0-9+/]{16,}={0,2}", _try, text)
+            raw = base64.b64decode(candidate, validate=True)
+        except (binascii.Error, ValueError):
+            continue
+        return _validate_decoded_container(raw)
+    return None
+
+
+def _decode_hex_container(blob: str) -> Optional[str]:
+    """Decode a hex-looking run or return None."""
+    try:
+        raw = bytes.fromhex(blob)
+    except ValueError:
+        return None
+    return _validate_decoded_container(raw)
+
+
+def _probe_for_credentials(decoded: str, remaining_decodes: int) -> bool:
+    """Return True when decoded text contains a credential on any surface.
+
+    Checks the raw decoded text and its normalized fold against provider
+    patterns and the generic credentials pattern, then recurses into any
+    encoded runs nested inside the decoded text. `remaining_decodes` bounds
+    how many further decode levels may be spent on nested encodings.
+    """
+    surfaces = [decoded]
+    normalized = _homoglyph_normalize(_unicode_normalize(decoded))
+    if normalized != decoded:
+        surfaces.append(normalized)
+    for surface in surfaces:
+        for pattern in _PROVIDER_PATTERNS.values():
+            if pattern.search(surface):
+                return True
+        if _BUILTIN_PATTERNS["credentials"].search(surface):
+            return True
+    if remaining_decodes > 0:
+        for match in _ENCODED_RUN_RE.finditer(decoded):
+            inner = _decode_base64_container(match.group(0))
+            if inner is not None and _probe_for_credentials(inner, remaining_decodes - 1):
+                return True
+        for match in _HEX_RUN_RE.finditer(decoded):
+            inner = _decode_hex_container(match.group(0))
+            if inner is not None and _probe_for_credentials(inner, remaining_decodes - 1):
+                return True
+    return False
+
+
+def _scan_encoded_surfaces(text: str, max_depth: int = _ENCODED_MAX_DEPTH) -> list[tuple[int, int]]:
+    """Find encoded blobs whose decoded content contains credentials.
+
+    Returns (start, end) spans in `text` covering the encoded blobs to redact.
+    Purely additive: nothing in `text` is modified here.
+    """
+    spans: list[tuple[int, int]] = []
+    for regex, decoder in ((_ENCODED_RUN_RE, _decode_base64_container),
+                           (_HEX_RUN_RE, _decode_hex_container)):
+        for match in regex.finditer(text):
+            decoded = decoder(match.group(0))
+            # One decode level is spent reaching `decoded`; the probe may
+            # spend the rest on nested encodings (3 levels total).
+            if decoded is not None and _probe_for_credentials(decoded, max_depth - 1):
+                spans.append((match.start(), match.end()))
+    return _merge_spans(spans)
+
+
+# Whitespace-collapsed surface (WS2). Only anchored, high-precision provider
+# prefixes participate — the generic credentials pattern relies on separators
+# and label words, and collapsing whitespace under it would invite false
+# positives. PEM blocks and natural-language forms are likewise excluded
+# because their patterns are whitespace-aware by construction.
+_WS_SCAN_PROVIDERS: tuple[str, ...] = (
+    "credentials_openai_project",
+    "credentials_openai_bare",
+    "credentials_github_pat",
+    "credentials_github_ghp",
+    "credentials_slack_bot",
+    "credentials_google_api",
+    "credentials_aws_access_key",
+)
+
+
+def _scan_whitespace_collapsed(text: str) -> list[tuple[int, int]]:
+    """Find provider tokens that survive only because whitespace splits them.
+
+    Collapses all whitespace while keeping an index map back to `text`, runs
+    the anchored provider patterns over the collapsed view, and returns spans
+    in the ORIGINAL text (including the interior whitespace) for any match
+    whose original span actually contains whitespace — matches without any
+    are already handled by the raw/normalized surfaces.
+    """
+    collapsed_chars: list[str] = []
+    index_map: list[int] = []
+    for position, ch in enumerate(text):
+        if not ch.isspace():
+            collapsed_chars.append(ch)
+            index_map.append(position)
+    collapsed = "".join(collapsed_chars)
+    spans: list[tuple[int, int]] = []
+    for name in _WS_SCAN_PROVIDERS:
+        for match in _PROVIDER_PATTERNS[name].finditer(collapsed):
+            start, end = match.span()
+            if end <= start:
+                continue
+            orig_start = index_map[start]
+            orig_end = index_map[end - 1] + 1
+            if any(text[j].isspace() for j in range(orig_start, orig_end)):
+                spans.append((orig_start, orig_end))
+    return _merge_spans(spans)
+
+
+def _merge_spans(spans: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    """Merge overlapping/adjacent (start, end) spans; result sorted ascending."""
+    if not spans:
+        return []
+    ordered = sorted(spans)
+    merged = [ordered[0]]
+    for start, end in ordered[1:]:
+        last_start, last_end = merged[-1]
+        if start <= last_end:
+            merged[-1] = (last_start, max(last_end, end))
+        else:
+            merged.append((start, end))
+    return merged
+
+
+def _redact_spans(text: str, spans: list[tuple[int, int]], replacement: str) -> str:
+    """Replace each span (assumed merged + sorted) with `replacement`."""
+    for start, end in reversed(spans):
+        text = text[:start] + replacement + text[end:]
+    return text
 
 
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+def _record_credential_hits(report: ScrubReport, class_name: str, count: int,
+                            replacement: str) -> None:
+    report.redacted += count
+    if "credentials" not in report.classes_hit:
+        report.classes_hit.append("credentials")
+    report.audit_trail.append({
+        "class": class_name,
+        "count": count,
+        "replacement": replacement,
+    })
+
+
+def _scan_credentials_surface(working: str, report: ScrubReport,
+                              generic_pattern: Optional[re.Pattern],
+                              generic_replacement: str) -> str:
+    """Run provider patterns + the generic credentials pattern on one surface."""
+    for name, pattern in _PROVIDER_PATTERNS.items():
+        matches = list(pattern.finditer(working))
+        if matches:
+            _record_credential_hits(report, name, len(matches), "[REDACTED:credentials]")
+            working = pattern.sub("[REDACTED:credentials]", working)
+    if generic_pattern is not None:
+        matches = list(generic_pattern.finditer(working))
+        if matches:
+            _record_credential_hits(report, "credentials", len(matches), generic_replacement)
+            working = generic_pattern.sub(generic_replacement, working)
+    return working
+
+
 def scrub(
     text: str,
     redact_md_path: Path = Path("REDACT.md"),
@@ -315,7 +535,14 @@ def scrub(
     """
     Scrub PII from text using the deterministic pipeline.
 
-    Pipeline: unicode-normalize → homoglyph-normalize → base64-decode → regex-redact.
+    Detection order is raw-first, decode-as-additive (see module docstring):
+    credentials are scanned on the untouched input, again after NFKC +
+    homoglyph normalization, again on a whitespace-collapsed view (anchored
+    provider prefixes only), and finally encoded blobs (base64/hex, nested up
+    to 3 levels) are decoded into a side container and probed — a hit redacts
+    the original encoded blob, never substituting decoded text into the
+    output. Remaining REDACT.md classes run on the normalized text.
+
     credentials class is ALWAYS applied regardless of REDACT.md enabled flag.
 
     Returns (cleaned_text, ScrubReport).
@@ -323,28 +550,51 @@ def scrub(
     classes = _load_redact_md(redact_md_path)
     report = ScrubReport(provenance=provenance)
 
-    # Stage 1 — normalise text surface
-    working = _unicode_normalize(text)
+    # Resolve the generic credentials pattern/replacement (always-on; may be
+    # customized by REDACT.md).
+    credentials_cls = next((cls for cls in classes if cls.name == "credentials"), None)
+    if credentials_cls is not None and credentials_cls.pattern:
+        generic_pattern: Optional[re.Pattern] = re.compile(
+            credentials_cls.pattern, re.IGNORECASE | re.VERBOSE
+        )
+    else:
+        generic_pattern = _BUILTIN_PATTERNS.get("credentials")
+    generic_replacement = (
+        credentials_cls.replacement if credentials_cls is not None
+        else "[REDACTED:credentials]"
+    )
+
+    # Surface 1 — RAW input. Runs before any normalization or decoding so a
+    # token body that also parses as base64/hex cannot be mutated out from
+    # under the detectors.
+    working = _scan_credentials_surface(text, report, generic_pattern, generic_replacement)
+
+    # Surface 2 — normalized (NFKC + homoglyph fold), credentials re-scanned.
+    working = _unicode_normalize(working)
     working = _homoglyph_normalize(working)
-    working = _decode_base64_fragments(working)
+    working = _scan_credentials_surface(working, report, generic_pattern, generic_replacement)
 
-    # Stage 1.5 — provider-shaped credential tokens (always-on, high-precision)
-    for name, pattern in _PROVIDER_PATTERNS.items():
-        matches = list(pattern.finditer(working))
-        if matches:
-            report.redacted += len(matches)
-            if "credentials" not in report.classes_hit:
-                report.classes_hit.append("credentials")
-            report.audit_trail.append({
-                "class": name,
-                "count": len(matches),
-                "replacement": "[REDACTED:credentials]",
-            })
-            working = pattern.sub("[REDACTED:credentials]", working)
+    # Surface 3 — whitespace-collapsed view, anchored provider prefixes only.
+    ws_spans = _scan_whitespace_collapsed(working)
+    if ws_spans:
+        _record_credential_hits(
+            report, "credentials_whitespace_split", len(ws_spans), "[REDACTED:credentials]"
+        )
+        working = _redact_spans(working, ws_spans, "[REDACTED:credentials]")
 
-    # Stage 2 — apply enabled classes; credentials always-on
+    # Surface 4 — encoded blobs (additive probe; original blob is redacted).
+    encoded_spans = _scan_encoded_surfaces(working)
+    if encoded_spans:
+        _record_credential_hits(
+            report, "credentials_encoded", len(encoded_spans), "[REDACTED:credentials]"
+        )
+        working = _redact_spans(working, encoded_spans, "[REDACTED:credentials]")
+
+    # Surface 5 — remaining enabled classes (credentials already applied above).
     for cls in classes:
-        if not cls.enabled and cls.name != "credentials":
+        if cls.name == "credentials":
+            continue
+        if not cls.enabled:
             continue
         pattern = (
             re.compile(cls.pattern, re.IGNORECASE | re.VERBOSE)
@@ -425,6 +675,12 @@ def audit(
     results: dict = {
         "scanned": 0, "total_hits": 0, "by_file": {}, "by_class": {},
         "strict": strict, "allowlisted": [],
+        # Severity-class accounting (WS2): total HIT counts per class (unlike
+        # by_class, which counts affected files), with provider-shaped
+        # subclasses folded into "credentials". credential_files maps each
+        # file containing credentials-class hits to its hit count — release
+        # gates treat any entry here as a hard failure.
+        "hits_by_class": {}, "credential_files": {},
     }
 
     directory = Path(directory)
@@ -454,6 +710,19 @@ def audit(
             results["by_file"][str(path)] = report.redacted
             for cls in report.classes_hit:
                 results["by_class"][cls] = results["by_class"].get(cls, 0) + 1
+            for entry in report.audit_trail:
+                severity_class = (
+                    "credentials"
+                    if str(entry["class"]).startswith("credentials")
+                    else str(entry["class"])
+                )
+                results["hits_by_class"][severity_class] = (
+                    results["hits_by_class"].get(severity_class, 0) + entry["count"]
+                )
+                if severity_class == "credentials":
+                    results["credential_files"][str(path)] = (
+                        results["credential_files"].get(str(path), 0) + entry["count"]
+                    )
 
     return results
 

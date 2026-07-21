@@ -32,11 +32,13 @@ jobs:
           python3 -m pip install --upgrade pip
           pip install -e .
 
-      - name: Run strict privacy audit repo-wide (matches release-check ceiling)
+      - name: Run strict privacy audit repo-wide (severity-class gate)
         run: |
-          # Threshold ceiling mirrors _check_privacy_scan in zeref/release/checks.py.
-          # Allowlisted files carry `privacy-audit: allow-file "<reason>"` in their first 40 lines.
-          python3 -m zeref audit-privacy --strict --max-hits 150 --max-files 80
+          # Severity model mirrors _check_privacy_scan in zeref/release/checks.py:
+          # credentials-class hits have ZERO tolerance; other classes are informational.
+          # Allowlisted files carry `privacy-audit: allow-file "<reason>"` in their first
+          # 40 lines; single lines can carry `noqa: privacy-audit`.
+          python3 -m zeref audit-privacy --strict --fail-classes credentials
 
       - name: Scan repo for committed secrets
         run: |
