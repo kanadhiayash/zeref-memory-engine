@@ -40,4 +40,4 @@ This directory contains **no** vendored gstack source. Zeref invokes gstack skil
 
 ## Council pack membership
 
-Previously registered in the retired persona council pack (removed in 2.0.0-alpha.1 — see [`docs/archive/`](../../../docs/archive/) for the migration record); now tracked as an external capability reference only (support surface for documentation/runtime-audit work).
+Previously registered in a persona pack that was retired in 2.0.0-alpha.1; now tracked as an external capability reference only (support surface for documentation/runtime-audit work).

@@ -39,8 +39,8 @@ from zeref.loops.contract import create_loop_contract
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 # Text/code surfaces that must never mention the retired "faang-mangoes"
-# council. Historical references are allowed to live in CHANGELOG.md,
-# docs/audits/, and docs/archive/ — none of those are scanned here.
+# council. Historical references are allowed to live in CHANGELOG.md and
+# docs/audits/ — neither of those is scanned here.
 LIVE_SURFACES: tuple[str, ...] = (
     "zeref",
     "zeref-registry.json",
@@ -115,7 +115,7 @@ def test_no_council_references_in_live_surfaces() -> None:
 
     assert not offenders, (
         "residual 'mangoes'/'faang-mangoes' references found in live surfaces "
-        "(historical refs belong only in CHANGELOG.md, docs/audits/, docs/archive/):\n"
+        "(historical refs belong only in CHANGELOG.md, docs/audits/):\n"
         + "\n".join(sorted(offenders))
     )
 

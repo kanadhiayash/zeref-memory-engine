@@ -22,7 +22,7 @@ Per the architecture plan §3.2, the *reusable* protocol ideas the council explo
 
 ## Consequences
 
-- Historical references remain only in a clearly marked archive record (`docs/archive/faang-mangoes-council-removal.md`), `CHANGELOG.md`, and `docs/audits/` — never in a runtime path, registry, or public-facing capability list.
+- Historical references remain only in `CHANGELOG.md` — never in a runtime path, registry, or public-facing capability list.
 - Any script, doc, or automation still pointing at `team-packs/faang-mangoes-council.md`, `docs/audits/council/`, or the `faang-mangoes-council` registry entry is now stale and must be updated or deleted.
 - The replacement evaluator (PR 11) is explicitly optional and experimental — nothing in Zeref may depend on it being present, and nothing may claim council-graded evidence is stronger than its underlying source evidence (evidence quality and review robustness remain separately scored per §11.1 of the plan).
 - No new persona-panel-style team pack may be introduced without amending this ADR.

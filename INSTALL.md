@@ -96,7 +96,7 @@ Memory layout:    flat
 
 ## Migrating from an earlier local version
 
-If you experimented with pre-1.0 Zeref OS releases (v1.x Skills Fleet, v2.x Agent OS, v3.x specialist, v4.x context-and-memory engine) locally, see `MIGRATION.md`:
+If you experimented with pre-1.0 Zeref OS releases (v1.x Skills Fleet, v2.x Agent OS, v3.x specialist, v4.x context-and-memory engine) locally, the migration path is:
 
 - **Pre-v4 → v4**: `scripts/migrate-v3-to-v4.py` (preserves your v3 wiki content)
 - **v4.0–v4.2 → v4.3 (flat memory layout)**: `scripts/migrate-v4.2-to-v4.3.py`

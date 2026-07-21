@@ -7,10 +7,13 @@ across version bumps and future operator-record splits:
 1. Live public surfaces (README badge, docs/wiki/Installation.md) name the
    version that `zeref/VERSION` declares, and don't advertise some *other*
    `vX.Y.Z`-shaped version as the product's current release.
-2. No operator-record files (command logs, model-use ledgers, raw audit
-   findings, Linear seed files, release-evidence dumps) are tracked back
-   under docs/ — this repo's tracked audit history now lives in the
-   private `zeref-operator-records` repo (see docs/audits/README.md).
+2. No operator-record files are tracked back under docs/. Operator records
+   are maintained outside this repository (see docs/audits/README.md), so
+   this guard matches them by *shape* rather than by an enumerated roster:
+   anything under a release-evidence directory, anything under docs/audits/
+   besides the pointer stub, and any date-stamped artifact filename (the
+   operator-record naming grammar carries an ISO date; published doc
+   surfaces do not).
    Only git-tracked files count: zeref/release/checks.py legitimately
    writes local evidence blobs under docs/audits/release-evidence/ at
    runtime, and .gitignore keeps them out of the public tree.
@@ -18,7 +21,6 @@ across version bumps and future operator-record splits:
 
 from __future__ import annotations
 
-import fnmatch
 import re
 import subprocess
 from pathlib import Path
@@ -29,25 +31,20 @@ VERSION_RE = re.compile(r"\bv(\d+\.\d+\.\d+(?:-[0-9A-Za-z.]+)?)\b")
 # and are expected to mention the current version.
 LIVE_VERSION_SURFACES = ("README.md", "docs/wiki/Installation.md")
 
-# Operator-record filename patterns that must not be tracked under docs/
-# after the WS6 public/private split (2026-07-14). Mirrors the "Move to a
-# private maintainer repository" section of the 2026-07-13 cleanup audit.
-OPERATOR_RECORD_PATTERNS = (
-    "ZEREF_COMMAND_LOG*",
-    "OPUS_LEDGER*",
-    "linear-seed*",
-    "ZEREF_FINDINGS*",
-    "ZEREF_REMEDIATION_BACKLOG*",
-    "ZEREF_AUDIT_BASELINE*",
-    "ZEREF_CONSISTENCY_AUDIT*",
-    "ZEREF_CONTRACT_GRAPH*",
-    "ZEREF_COMPONENT_INVENTORY*",
-    "ZEREF_PRIOR_AUDIT_RECONCILIATION*",
-    "DECISIONS_RATIFIED*",
-    "POST_AUDIT_VERIFICATION*",
-    "RETROSPECTIVE*",
-    "release-evidence/*",
-)
+# Structural signatures of an operator record. Deliberately shape-based, not
+# a roster of artifact names: the guard must keep working for records this
+# repo has never seen, and naming them here would republish what the split
+# was meant to remove.
+#
+# 1. Evidence dumps live in a release-evidence directory at any depth.
+# 2. docs/audits/ is a pointer stub only — see AUDITS_STUB.
+# 3. Operator records are date-stamped per the artifact naming grammar
+#    (`..._<state>_<owner>_<yyyy-mm-dd>_v<major.minor>`); published doc
+#    surfaces are versionless and carry no date in the filename.
+EVIDENCE_DIR_SEGMENT = "release-evidence"
+AUDITS_DIR = "docs/audits/"
+AUDITS_STUB = "docs/audits/README.md"
+DATE_STAMPED_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
 
 
 def _current_version(repo_root: Path) -> str:
@@ -83,7 +80,7 @@ def test_live_surfaces_mention_current_version_and_no_other(repo_root: Path) -> 
             f"{rel} advertises other version string(s) as current: "
             f"{sorted(stale)}. Only v{current} (from zeref/VERSION) should "
             "appear as a current-release claim; historical version mentions "
-            "belong in CHANGELOG.md / docs/RELEASE_LOG.md, not live surfaces."
+            "belong in CHANGELOG.md, not live surfaces."
         )
 
 
@@ -93,18 +90,18 @@ def test_no_operator_records_tracked_under_docs(repo_root: Path) -> None:
 
     hits: list[str] = []
     for rel in tracked:
-        name = Path(rel).name
-        tail = "/".join(Path(rel).parts[-2:])
-        if any(
-            fnmatch.fnmatch(name, pat) or fnmatch.fnmatch(tail, pat)
-            for pat in OPERATOR_RECORD_PATTERNS
-        ):
+        parts = Path(rel).parts
+        if EVIDENCE_DIR_SEGMENT in parts:
+            hits.append(rel)
+        elif rel.startswith(AUDITS_DIR) and rel != AUDITS_STUB:
+            hits.append(rel)
+        elif DATE_STAMPED_RE.search(Path(rel).name):
             hits.append(rel)
 
     assert not hits, (
-        "operator-record file(s) tracked back under docs/ — these belong in "
-        "the private zeref-operator-records repo per the 2026-07-13 audit "
-        f"(WS6 split): {sorted(hits)}"
+        "operator-record-shaped file(s) tracked under docs/: "
+        f"{sorted(hits)}. Operator records are maintained outside this "
+        "repository and must not re-enter the public tree."
     )
 
 
@@ -113,10 +110,10 @@ def test_audits_dir_tracks_only_the_stub_pointer(repo_root: Path) -> None:
         rel for rel in _tracked_docs_files(repo_root)
         if rel.startswith("docs/audits/")
     ]
-    assert tracked == ["docs/audits/README.md"], (
-        "docs/audits/ should track only the private-repo pointer stub "
-        f"README.md after the WS6 split; tracked: {tracked}"
+    assert tracked == [AUDITS_STUB], (
+        "docs/audits/ should track only the pointer stub README.md; "
+        f"tracked: {tracked}"
     )
 
     stub = (repo_root / "docs" / "audits" / "README.md").read_text(encoding="utf-8")
-    assert "zeref-operator-records" in stub
+    assert "maintained outside this repository" in stub

@@ -87,8 +87,8 @@ memory/snapshots/
 memory/sync/
 
 # Release-check evidence blobs are generated locally by zeref/release/checks.py.
-# Raw evidence dumps are operator records (private zeref-operator-records repo)
-# and must not re-enter the public tree (2026-07-13 audit, WS6).
+# Raw evidence dumps are operator records kept outside this repository
+# and must not re-enter the public tree.
 docs/audits/release-evidence/
 
 # Local lineage sandbox imports. Foreign repository clones and inventories are

@@ -255,8 +255,6 @@ Full table + adding-a-harness procedure: `references/harness-translation-map.md`
 - v3 → v4: `scripts/migrate-v3-to-v4.py`
 - v4.2 → v4.3 (this version): `scripts/migrate-v4.2-to-v4.3.py` (flat memory layout, root privacy templates, PATTERNS.jsonl cutover)
 
-See `MIGRATION.md`.
-
 ## What Zeref OS is NOT (and what those mean)
 
 - **Not itself a harness.** Zeref OS plugs *into* the user's harness (Claude Code, Cursor, Codex, Gemini, Windsurf, Aider). It is the memory layer they read — not a replacement for the harness.

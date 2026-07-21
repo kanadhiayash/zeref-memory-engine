@@ -22,14 +22,14 @@ Provide skill-router with a reliable reachability report before any extended-too
 
 | Tool | Probe location | Probe method | If unreachable, emulate via |
 |---|---|---|---|
-| **ECC** | `~/Documents/Claude/11_MY-STACK/ECC-main/` OR `~/.claude/plugins/cache/ecc/ecc/` | `test -d` on either path; if either exists → reachable | `agent-skills:*` skills (review, build, test) |
+| **ECC** | a user-configured local path OR `~/.claude/plugins/cache/ecc/ecc/` | `test -d` on either path; if either exists → reachable | `agent-skills:*` skills (review, build, test) |
 | **claude-obsidian** | `~/.claude/plugins/` plus a name match for `claude-obsidian` | directory scan | `wiki-maintenance` + `memory-keeper` (degraded — no Obsidian vault sync) |
 | **Graphify** | `~/.claude/skills/graphify/SKILL.md` | `test -f` | `evidence-grader` + manual claim mapping (no graph) |
 | **browser-harness** | MCP tool registry for `mcp__claude-in-chrome__*` | tool-name lookup | gstack `/browse` if present; else flag "no browser surface" |
 | **notebooklm** | `~/.claude/plugins/` name match + plugin registry scan | directory + registry lookup | `/deep-research` skill (less audio-friendly) |
 | **gstack** | `~/.claude/skills/` for any `gstack-*` SKILL.md OR `/browse` / `/ship` skill presence in available-skills list | skill-list scan | ECC + manual workflow |
 
-Verified on Yash's machine (2026-06-08): ECC at `~/Documents/Claude/11_MY-STACK/ECC-main/` confirmed; Graphify at `~/.claude/skills/graphify/SKILL.md` per global CLAUDE.md. Re-probe at each invocation — paths may move.
+Probe locations are environment-specific. Re-probe at each invocation — paths may move.
 
 ## Auto-Activation Rule
 
@@ -40,7 +40,7 @@ Invoked by `skill-router` Step 4 when any "Extended-tool hint" is present in the
 3. **Build report**:
    ```
    [fleet-activator]
-     ECC: reachable (path=~/Documents/Claude/11_MY-STACK/ECC-main/)
+     ECC: reachable (path=~/.claude/plugins/cache/ecc/ecc/)
      Graphify: reachable (path=~/.claude/skills/graphify/SKILL.md)
      browser-harness: UNREACHABLE — emulating via gstack /browse
    ```

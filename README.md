@@ -308,12 +308,9 @@ gh repo edit kanadhiayash/zeref-memory-engine \
 | [`AGENTS.md`](AGENTS.md) | Canonical agent and harness behavior. |
 | [`INSTALL.md`](INSTALL.md) | Install instructions. |
 | [`docs/GETTING_STARTED.md`](docs/GETTING_STARTED.md) | Local setup and verification. |
-| [`docs/HARDENING_OVERVIEW.md`](docs/HARDENING_OVERVIEW.md) | Hardening surfaces. |
 | [`docs/PUBLIC_SAFE_COPY.md`](docs/PUBLIC_SAFE_COPY.md) | Public claim rules. |
 | [`docs/RELEASE_GATES.md`](docs/RELEASE_GATES.md) | Release readiness checks. |
-| [`docs/RISK_LOG.md`](docs/RISK_LOG.md) | Known risks and mitigations. |
 | [`docs/TRUST_AUDIT.md`](docs/TRUST_AUDIT.md) | Trust posture notes. |
-| [`docs/archive/README.md`](docs/archive/README.md) | Public-safe archive index. |
 
 <p align="center">
   <img src="assets/poc-wiki.png" alt="Zeref documentation and wiki" width="720">
