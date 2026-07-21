@@ -17,6 +17,11 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
+# macOS/cloud-sync copy artifacts ("test_foo 2.py") are gitignored, but they
+# still land on disk and pytest would collect them as real test modules —
+# stale duplicates that fail against current code. Never collect them.
+collect_ignore_glob = ["* [0-9].py"]
+
 
 @pytest.fixture(scope="session")
 def repo_root() -> Path:
