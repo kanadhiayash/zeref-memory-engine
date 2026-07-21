@@ -3,7 +3,7 @@
 # Zeref Memory Engine
 
 <p align="center">
-  <a href="https://github.com/kanadhiayash/zeref-memory-engine/releases/tag/v2.0.0-alpha.1"><img src="https://img.shields.io/badge/version-2.0.0--alpha.1-blueviolet" alt="v2.0.0-alpha.1"></a>
+  <a href="https://github.com/kanadhiayash/zeref-memory-engine/releases/tag/v2.0.0-alpha.2"><img src="https://img.shields.io/badge/version-2.0.0--alpha.2-blueviolet" alt="v2.0.0-alpha.2"></a>
   <img src="assets/zeref-os-hero.png" alt="Zeref Memory Engine thumbnail" width="720">
 </p>
 

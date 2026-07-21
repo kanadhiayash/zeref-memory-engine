@@ -1,5 +1,10 @@
 # Trust Axis — Independent Audit (v1.0.0)
 
+> **Scope note (2026-07-14):** this audit is bound to the v1.0.0 commit named
+> below and has not been re-run against 2.x. Its scores and the PASS verdict
+> are repo-local re-grades of the deterministic scorer — not external or
+> third-party validation. Re-run required before any release that cites it.
+
 The deterministic scorer at `benchmarks/trust.py` produced a draft score
 of **10.00**. Per [`benchmarks/RUBRIC.md`](../benchmarks/RUBRIC.md) §Axis 4,
 that score must be re-graded by an independent skeptical reader before

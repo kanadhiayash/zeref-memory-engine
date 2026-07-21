@@ -28,7 +28,7 @@ Terms used throughout Zeref OS. Page references go to other wiki pages.
 
 ## C
 
-**Caveman compression** — `caveman-handoff` skill: drop articles / filler / pleasantries / hedging; preserve file paths / errors / code byte-identical; 40-60% reduction typical. Includes NFKC + homoglyph guard on path strings.
+**Caveman compression** — `caveman-handoff` skill: drop articles / filler / pleasantries / hedging; preserve file paths / errors / code byte-identical; reduction varies by content (no fixed ratio claimed). Includes NFKC + homoglyph guard on path strings.
 
 **Classification** — Prompt classification by `prompt-context-engine`: STRUCTURED / SEMI-STRUCTURED / UNSTRUCTURED.
 

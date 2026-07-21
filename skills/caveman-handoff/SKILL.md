@@ -1,6 +1,6 @@
 ---
 name: caveman-handoff
-description: Companion to handoff-compiler. Compresses session handoff into caveman-grammar payload (drop articles / filler / pleasantries / hedging; preserve technical substance, file paths, exact errors verbatim, code blocks unchanged). Survives cross-model + cross-harness switches with ~40-60% token reduction. Carries prompt-context-engine brief diff to satisfy R6 zero-context-loss.
+description: Companion to handoff-compiler. Compresses session handoff into caveman-grammar payload (drop articles / filler / pleasantries / hedging; preserve technical substance, file paths, exact errors verbatim, code blocks unchanged). Survives cross-model + cross-harness switches with compressed handoffs; reduction varies by content (unmeasured; no benchmark backs a fixed ratio). Carries prompt-context-engine brief diff to satisfy R6 zero-context-loss.
 trigger:
   - "/stop with handoff requested"
   - model switch detected
@@ -138,13 +138,13 @@ When the target model has a profile in `references/target-model-profiles/`, the 
 - Wrapper emits a compact preamble line — `_target-profile:<id> — skip: <csv>_` — that downstream compressors can trust as ground truth.
 - Fail-open: no profile = pre-v1.2 behavior unchanged.
 
-Expected additional token reduction on Tier-1 targets (over baseline caveman): 15-30% depending on target's `system_prompt_tokens`.
+Expected additional token reduction on Tier-1 targets (over baseline caveman): varies with the target's `system_prompt_tokens` (estimate, not benchmarked).
 
 ## Safety
 
 - Per `_shared/rules.md#R1`: payload write passes through `memory-keeper` → `privacy-guardian`.
 - Per `_shared/rules.md#R3`: outbound handoff is external — full privacy gate before any sync push.
 - Per `_shared/rules.md#R6` (Zero Context Loss): brief diff is mandatory inline; missing diff = abort.
-- Compression target: 40-60% reduction typical. < 20% reduction → handoff was already terse; emit verbose payload + note.
+- Compression goal (assumption, not a measured guarantee): meaningful reduction; actual ratio varies by content. < 20% reduction → handoff was already terse; emit verbose payload + note.
 - Never reach 100% compression — that means everything was dropped. Cap at 80%.
 - Target-aware skip lists are additive to caveman rules — never bypass R1 privacy scrub or R6 zero-context-loss.
