@@ -37,4 +37,4 @@ This is a warn-and-translate layer, not a hard failure — old configs, scripts,
 
 ## What is not aliased
 
-- `faang-mangoes-council` has no alias — it is a hard removal, not a rename. See `docs/adr/ADR-0003-council-removal.md` and `docs/archive/faang-mangoes-council-removal.md`.
+- `faang-mangoes-council` has no alias — it is a hard removal, not a rename. See `docs/adr/ADR-0003-council-removal.md`.

@@ -11,7 +11,6 @@ Surfaces verified:
     - .claude-plugin/plugin.json:.version
     - README.md:badge URL + alt text
     - docs/wiki/Installation.md:grep example
-    - docs/RELEASE_LOG.md:top "Releases" row
 
 Exit code:
     0  all surfaces agree
@@ -89,12 +88,6 @@ def _check_wiki_install(root: Path, expected: str) -> tuple[str, str | None]:
     return ("docs/wiki/Installation.md", m.group(1) if m else None)
 
 
-def _check_release_log(root: Path, expected: str) -> tuple[str, str | None]:
-    text = _read(root, "docs/RELEASE_LOG.md")
-    m = re.search(r"`v(\d+\.\d+\.\d+(?:[-+][\w.\-]+)?)`", text)
-    return ("docs/RELEASE_LOG.md:top row", m.group(1) if m else None)
-
-
 CHECKS = [
     _check_pyproject,
     _check_init,
@@ -102,7 +95,6 @@ CHECKS = [
     _check_plugin,
     _check_readme,
     _check_wiki_install,
-    _check_release_log,
 ]
 
 
@@ -131,11 +123,11 @@ def main() -> int:
 
     # R8 (ZRF-AUDIT-020): also compare against the latest git tag.
     # Semantics:
-    #   - `tag > VERSION` (backwards drift) — always fail unless docs/PIVOT_LOG.md
+    #   - `tag > VERSION` (backwards drift) — always fail unless CHANGELOG.md
     #     names the lineage restart with a `restart-from-<version>` marker.
     #   - `tag == VERSION` — fine (post-release state).
     #   - `tag < VERSION` — fine (unreleased-tag pre-release state; expected between bump and tag).
-    # Intentional lineage restarts must be recorded in docs/PIVOT_LOG.md.
+    # Intentional lineage restarts must be recorded in CHANGELOG.md.
     import subprocess
     try:
         tags = subprocess.check_output(
@@ -156,15 +148,15 @@ def main() -> int:
         expected_tuple = _to_semver_tuple(expected)
         if tag_tuple > expected_tuple:
             # Backwards drift — either intentional restart (documented) or an error.
-            pivot = root / "docs" / "PIVOT_LOG.md"
-            if pivot.exists() and f"restart-from-{latest_tag}" in pivot.read_text(errors="ignore"):
+            changelog = root / "CHANGELOG.md"
+            if changelog.exists() and f"restart-from-{latest_tag}" in changelog.read_text(errors="ignore"):
                 print(f"\nTag {latest_tag!r} exceeds VERSION {expected!r} — "
-                      f"documented in docs/PIVOT_LOG.md (restart-from-{latest_tag}).")
+                      f"documented in CHANGELOG.md (restart-from-{latest_tag}).")
             else:
                 print(f"\nTag divergence: latest tag {latest_tag!r} exceeds VERSION {expected!r}.",
                       file=sys.stderr)
                 print("Either bump zeref/VERSION or document the intentional lineage restart in "
-                      "docs/PIVOT_LOG.md with a `restart-from-<version>` marker.", file=sys.stderr)
+                      "CHANGELOG.md with a `restart-from-<version>` marker.", file=sys.stderr)
                 return 1
         elif tag_tuple < expected_tuple:
             # Pre-tag state — VERSION advanced beyond last shipped tag. Normal between bump and cut.

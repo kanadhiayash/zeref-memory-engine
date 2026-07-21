@@ -1,20 +1,19 @@
-<!-- privacy-audit: allow-file "Governance spec cites credential-shaped tokens in never-commit list; documents global doctrine paths as documentation." -->
+<!-- privacy-audit: allow-file "Governance spec cites credential-shaped tokens in never-commit list." -->
 
 # Zeref OS — Repo Doctrine (per-repo GITHUB_OS)
 
-Per-repo customization of the global `~/Documents/Claude/00_COMMAND/GITHUB_OS.md` doctrine. Global doctrine is the source of truth; this file documents zeref-specific overrides and conventions.
+Git and release conventions for this repository.
 
 ## Source of truth
 
-- **Global**: `~/Documents/Claude/00_COMMAND/GITHUB_OS.md` (Yash GitHub Operating System)
-- **Knowledge-OS naming**: `~/Documents/Claude/00_COMMAND/yash_faang_architecture_brief.md` (FAANG brief §Naming convention standard)
 - **Canonical spec**: `AGENTS.md` (root of this repo) — Zeref OS behavioral constitution
+- **This file**: git, release, and classification conventions for the repo
 
-## Zeref-specific overrides
+## Conventions
 
 ### Branch naming
 
-Per global GITHUB_OS §3.2: `<type>/zeref__<short-description>`.
+`<type>/zeref__<short-description>`.
 
 Examples:
 - `feat/zeref__skill-router-v2`
@@ -23,7 +22,7 @@ Examples:
 
 ### Tags
 
-Per global GITHUB_OS §3.4: SemVer `v<major>.<minor>.<patch>` on `main` only.
+SemVer `v<major>.<minor>.<patch>` on `main` only.
 
 ### Commits
 
@@ -53,25 +52,20 @@ Per AGENTS.md §0 reading order:
 - `memory/{hot.md,index.md,DECISIONS.md,RISKS.md}` refreshed at every release
 - `memory/patterns/PATTERNS.jsonl` records session-start + gate events + wiki-writes (validator allowlist enforced)
 
-### Knowledge-OS artifact naming (new files only)
+### Artifact naming (new files only)
 
-Per FAANG brief: `[scope]_[subject]_[type]_[state]_[owner]_[yyyy-mm-dd]_v[major.minor]`.
-
-Applied to:
-- Release log (`docs/RELEASE_LOG.md`): tabular form per row
+`[scope]_[subject]_[type]_[state]_[owner]_[yyyy-mm-dd]_v[major.minor]`.
 
 Existing repo files (SKILL.md, AGENTS.md, CHANGELOG.md, etc.) keep their established Zeref-OS conventions.
 
 ### Classification
 
-Per FAANG brief §Classification levels:
-- `public`: README.md, CHANGELOG*.md, GitHub Releases, docs/RELEASE_LOG.md, AGENTS.md, SKILL.md, PRIVACY.md/REDACT.md/SHARING_POLICY.md
+- `public`: README.md, CHANGELOG*.md, GitHub Releases, AGENTS.md, SKILL.md, PRIVACY.md/REDACT.md/SHARING_POLICY.md
 - `internal`: memory/*, agents/, scripts/, tests/, zeref/, _shared/
 - `restricted`: never committed (no credentials / PII / client data)
 
 ## Repo-specific paths
 
-- Worktree: `~/Documents/Claude/00_SKILLS/zeref-os/.claude/worktrees/<branch>/`
 - Plugin manifest: `.claude-plugin/plugin.json`
 - Harness stubs: `CLAUDE.md` / `GEMINI.md` / `.cursor/rules/zeref.mdc` / `.windsurfrules` / `.aider.conf.yml.example`
 

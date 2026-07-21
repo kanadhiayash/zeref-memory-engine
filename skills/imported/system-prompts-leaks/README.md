@@ -54,4 +54,4 @@ The reverse is equally load-bearing: knowing each target's refusal signature and
 
 ## Council pack membership
 
-Previously registered in the retired persona council pack (removed in 2.0.0-alpha.1 — see [`docs/archive/`](../../../docs/archive/) for the migration record); now tracked as an external capability reference only (primary evidence surface for token-routing decisions in v1.2+). Not activated by default.
+Previously registered in a persona pack that was retired in 2.0.0-alpha.1; now tracked as an external capability reference only (primary evidence surface for token-routing decisions in v1.2+). Not activated by default.

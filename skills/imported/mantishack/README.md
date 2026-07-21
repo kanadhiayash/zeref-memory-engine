@@ -2,7 +2,7 @@
 pack: mantishack
 mode: reference-only
 classification: restricted
-source_path: "~/security-workspace/mantishack/"
+source_path: "operator-configured local path"
 license: unknown-verify-with-owner
 outbound_write: forbidden
 foreign_code_containment: pass
@@ -15,7 +15,7 @@ scope: offensive-security-research
 
 ## Origin
 
-mantishack is a user-local offensive-security research harness under `~/security-workspace/mantishack/`. Access is scoped to authorized security research, CTF work, and defensive validation only.
+mantishack is a user-local offensive-security research harness kept at an operator-configured path outside this repo. Access is scoped to authorized security research, CTF work, and defensive validation only.
 
 ## Classification: restricted
 
@@ -29,7 +29,7 @@ Restricted means:
 
 ## Boundary
 
-No source vendored. mantishack is invoked out-of-band via `cd ~/security-workspace/mantishack && claude`. This directory exists only to document the boundary and register the pack for council membership.
+No source vendored. mantishack is invoked out-of-band from its own local checkout. This directory exists only to document the boundary.
 
 ## Audit-scope use in this session
 
@@ -42,6 +42,6 @@ No source vendored. mantishack is invoked out-of-band via `cd ~/security-workspa
 - Committing mantishack output into `zeref-memory-engine`.
 - Any offensive test against third-party infrastructure without prior written authorization.
 
-## Council pack membership
+## Pack membership
 
-Previously registered in the retired persona council pack (removed in 2.0.0-alpha.1 — see [`docs/archive/`](../../../docs/archive/) for the migration record); now tracked as an external capability reference only. Not activated by default.
+Previously registered in a persona pack that was retired in 2.0.0-alpha.1; now tracked as an external capability reference only. Not activated by default.

@@ -130,8 +130,6 @@ Terms used throughout Zeref OS. Page references go to other wiki pages.
 
 **R6 (Zero Context Loss)** — Every fact / entity / constraint from raw prompt must survive restructure / routing / handoff. Verified by diff.
 
-**RELEASE_LOG.md** — `docs/RELEASE_LOG.md`. One row per tagged release.
-
 **Release branch** — `release/v<major>.<minor>`. Frozen-baseline snapshot. Never receives further commits after creation.
 
 ## S

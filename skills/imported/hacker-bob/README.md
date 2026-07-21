@@ -2,7 +2,7 @@
 pack: hacker-bob
 mode: reference-only
 classification: restricted
-source_path: "~/security-workspace/ (MCP)"
+source_path: "operator-configured local path (MCP)"
 license: unknown-verify-with-owner
 outbound_write: forbidden
 foreign_code_containment: pass
@@ -15,7 +15,7 @@ scope: bug-bounty-hunting
 
 ## Origin
 
-hacker-bob is a user-local MCP server for bug-bounty hunting, invoked from `~/security-workspace/`. Scope is authorized bounty-program engagements only.
+hacker-bob is a user-local MCP server for bug-bounty hunting, invoked from an operator-configured path outside this repo. Scope is authorized bounty-program engagements only.
 
 ## Classification: restricted
 
@@ -39,4 +39,4 @@ No source vendored. MCP invoked out-of-band. This directory documents the bounda
 
 ## Council pack membership
 
-Previously registered in the retired persona council pack (removed in 2.0.0-alpha.1 — see [`docs/archive/`](../../../docs/archive/) for the migration record); now tracked as an external capability reference only. Not activated by default.
+Previously registered in a persona pack that was retired in 2.0.0-alpha.1; now tracked as an external capability reference only. Not activated by default.
