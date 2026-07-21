@@ -27,12 +27,35 @@ def search_atoms(
     root_path = Path(root)
     db_path = root_path / INDEX_PATH
     tokens = tokenize(query)
-    if db_path.exists() and tokens:
+    if db_path.exists() and tokens and not _index_stale(root_path, db_path):
         try:
             return _search_sqlite(db_path, query, tokens, limit, atom_type, status)
         except sqlite3.Error:
             pass
     return _search_jsonl(root_path, query, tokens, limit, atom_type, status)
+
+
+def _index_stale(root: Path, db_path: Path) -> bool:
+    """True when any atom file changed at/after the index was built.
+
+    Guarantees add -> search coherence: a freshly appended atom is never
+    hidden behind a stale SQLite index; we fall back to the canonical JSONL
+    scan until `zeref memory index` rebuilds it.
+    """
+    try:
+        index_mtime = db_path.stat().st_mtime
+    except OSError:
+        return True
+    atom_dir = root / "memory" / "l1_atoms"
+    if not atom_dir.exists():
+        return False
+    for path in atom_dir.glob("*.jsonl"):
+        try:
+            if path.stat().st_mtime >= index_mtime:
+                return True
+        except OSError:
+            continue
+    return False
 
 
 def _search_sqlite(
