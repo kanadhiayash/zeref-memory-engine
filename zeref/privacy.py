@@ -642,6 +642,28 @@ def _filter_noqa_lines(text: str) -> str:
                      if not _ALLOW_LINE_RE.search(line))
 
 
+def _tracked_files(directory: Path) -> set[Path] | None:
+    """Resolved paths of git-tracked files under `directory`.
+
+    Returns None when `directory` is not a git checkout (or git is
+    unavailable), which callers treat as "scan everything".
+    """
+    import subprocess
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(directory), "ls-files", "-z"],
+            capture_output=True, timeout=30, check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if proc.returncode != 0:
+        return None
+    names = [n for n in proc.stdout.decode("utf-8", "ignore").split("\0") if n]
+    if not names:
+        return None
+    return {(directory / n).resolve() for n in names}
+
+
 def audit(
     directory: Path = Path("."),
     redact_md_path: Path = Path("REDACT.md"),
@@ -666,6 +688,14 @@ def audit(
         "docs", "references", "skills", "team-packs", "team",
         "tests", ".git", "__pycache__", "node_modules", "assets",
         "CHANGELOG.md",
+        # Third-party and generated trees. These are not authored surfaces:
+        # dependency source legitimately contains credential-shaped example
+        # strings, and scanning them made the release gate fail purely because
+        # a local virtualenv existed. Agent worktrees hold full repo copies,
+        # so scanning them double-counts every finding.
+        ".venv", "venv", "site-packages", ".tox", ".nox",
+        "build", "dist", ".egg-info", ".claude",
+        ".pytest_cache", ".mypy_cache", ".ruff_cache",
         # detection modules whose own docstrings show pattern examples
         "zeref/privacy.py", "zeref/security/policy.py",
         # generated benchmark report
@@ -684,10 +714,19 @@ def audit(
     }
 
     directory = Path(directory)
+    tracked = _tracked_files(directory)
     for path in sorted(directory.rglob("*")):
         if not path.is_file():
             continue
         if path.suffix not in exts:
+            continue
+        # Inside a git checkout, assess only tracked content. A release gate
+        # answers "is what we publish clean?" — untracked local files (audit
+        # inputs, scratch notes, downloaded fixtures) are never published, so
+        # flagging them blocks releases over material that cannot leak. When
+        # the directory is not a git repo (scaffolded temp dirs, fresh inits)
+        # `tracked` is None and every file is scanned, as before.
+        if tracked is not None and path.resolve() not in tracked:
             continue
         rel = path.relative_to(directory) if path.is_absolute() else path
         rel_str = str(rel)
