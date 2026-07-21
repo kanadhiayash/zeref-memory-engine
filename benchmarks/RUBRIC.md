@@ -1,9 +1,19 @@
 <!-- privacy-audit: allow-file "Rubric documents axis names + example evidence fields as spec; no user data." -->
 
-# Benchmark Rubric — Zeref OS v1.0.0
+# Internal Quality Axes Rubric — Zeref OS v1.0.0
+
+> **Internal quality axes — fixture-based self-checks. NOT external benchmark
+> results.** Every axis below scores local invariants against committed
+> fixtures and repository state. None of these numbers measure performance on
+> an external dataset, and they must never be quoted as benchmark rankings.
+> External-dataset benchmarking (LoCoMo, LongMemEval, PersonaMem, RULER,
+> HELMET) lives in [`benchmarks/external/`](external/README.md); no external
+> scores are claimed until full-dataset runs are published.
 
 Public, versioned, contestable. Every axis is scored 0–10 with explicit
 sub-criteria. The pass bar is **every axis ≥ 9.0 with no axis below 8.0**.
+Axes whose local input data is absent (e.g. the lineage intake CSV on a clean
+clone) are SKIPPED with an explicit reason and never count as passing.
 
 External re-scoring is invited via PR. See `CONTRIBUTING.md` for the
 process.

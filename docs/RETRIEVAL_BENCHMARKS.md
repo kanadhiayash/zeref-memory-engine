@@ -1,7 +1,12 @@
-# Retrieval Benchmarks
+# Retrieval Internal Quality Axes
 
-Zeref Memory Core retrieval is measured with deterministic local fixtures in
-`benchmarks/fixtures/retrieval_cases.json` and `benchmarks/retrieval.py`.
+> **Internal quality axes — fixture-based self-checks. NOT external benchmark
+> results.** External-dataset benchmarking lives in
+> [`benchmarks/external/`](../benchmarks/external/README.md); no external
+> scores are claimed until full-dataset runs are published.
+
+Zeref Memory Core retrieval is self-checked with deterministic local fixtures
+in `benchmarks/fixtures/retrieval_cases.json` and `benchmarks/retrieval.py`.
 
 ## What Is Measured
 

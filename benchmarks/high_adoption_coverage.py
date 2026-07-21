@@ -5,10 +5,13 @@ from __future__ import annotations
 import sys
 
 from benchmarks.helpers import print_json_result
-from benchmarks.lineage_common import lineage_axis, lineage_reports
+from benchmarks.lineage_common import intake_skip, lineage_axis, lineage_reports
 
 
 def run() -> dict:
+    skipped = intake_skip("high_adoption_coverage")
+    if skipped:
+        return skipped
     high = lineage_reports()["high"]
     return lineage_axis("high_adoption_coverage", {
         "all_high_rows": (high["counts"]["high_rows"] == 21, "21 high rows detected"),
