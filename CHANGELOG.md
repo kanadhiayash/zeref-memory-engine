@@ -6,6 +6,23 @@ Versioning: [Semantic Versioning](https://semver.org/) — `MAJOR.MINOR.PATCH`.
 
 ---
 
+## [2.0.0-alpha.2] — 2026-07-14 — Hardening: consistency + claim accuracy
+
+Consistency and claim-accuracy hardening release. No runtime behavior change.
+
+### Changed
+
+- **Council removal completed** — the FAANG-MANGOES Council subsystem removal (started in 2.0.0-alpha.1) is finished: remaining dependents rewired and the subsystem deleted (#129).
+- **Sync-cruft guard** — repository guard against macOS/cloud-sync duplicate artifacts (#128).
+- **Claim-accuracy sweep** — live public surfaces (README, top-level docs, wiki, skill docs) no longer carry unsupported quantitative claims: the "~40-60% token reduction" handoff-compression figure is replaced with "compressed handoffs; reduction varies by content", and stale validator-output examples are updated to current counts. Fixture-based external-benchmark adapters (LoCoMo, LongMemEval, BEAM, PersonaMem) remain explicitly fixture-only; full dataset runs are pending.
+- **Validator** — `scripts/zeref-validate.py` derives agent/command/team-pack counts from the tree and cross-checks skill directories against `zeref-registry.json`, instead of reporting hardcoded expected counts that mask drift.
+
+### Version
+
+- `2.0.0-alpha.2` across `zeref/VERSION`, `pyproject.toml`, `zeref-registry.json`, `.claude-plugin/plugin.json`, README badge, `docs/RELEASE_LOG.md`, `docs/wiki/Installation.md`.
+
+---
+
 ## [2.0.0-alpha.1] — 2026-07-12
 
 vNext architecture reset, PR 1 of the `ZEREF_VNEXT_AGENTIC_OPERATIONS_UPGRADE_PLAN.md` sequence. Breaking architectural pivot — see `MIGRATION.md`. Not a documentation refresh: terminology, registry shape, and one runtime enforcement path all change.
@@ -112,7 +129,8 @@ batch lands.
 ## [1.1.0] — 2026-07-10
 
 Audit remediation release — closes the Repository-Wide Consistency Audit
-(`docs/audits/ZEREF_CONSISTENCY_AUDIT.md`) at baseline commit `b82c641`.
+(`ZEREF_CONSISTENCY_AUDIT.md`, moved to the private `zeref-operator-records`
+repo per the 2026-07-13 audit) at baseline commit `b82c641`.
 
 ### Added
 

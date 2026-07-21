@@ -5,6 +5,18 @@
 .Spotlight-V100
 .Trashes
 Thumbs.db
+Icon?
+
+# macOS Finder / cloud-sync duplicate artifacts (e.g. "core 2.py", "index 3.md").
+# These are copy-collision cruft, never real source. Guard added by the WS0
+# consistency baseline after 71 such files accumulated in the working tree.
+* [0-9].py
+* [0-9].json
+* [0-9].md
+* [0-9].txt
+* [0-9].yml
+* [0-9].yaml
+* [0-9].csv
 
 # Obsidian
 .obsidian/
@@ -39,6 +51,10 @@ __pycache__/
 .env
 .venv/
 venv/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
 
 # Node
 node_modules/
@@ -69,6 +85,11 @@ memory/state/
 memory/views/
 memory/snapshots/
 memory/sync/
+
+# Release-check evidence blobs are generated locally by zeref/release/checks.py.
+# Raw evidence dumps are operator records (private zeref-operator-records repo)
+# and must not re-enter the public tree (2026-07-13 audit, WS6).
+docs/audits/release-evidence/
 
 # Local lineage sandbox imports. Foreign repository clones and inventories are
 # generated evidence only and must not enter Zeref core.

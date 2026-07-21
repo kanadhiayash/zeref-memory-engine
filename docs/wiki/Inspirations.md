@@ -34,7 +34,7 @@ LLMs are not privacy enforcers. Deterministic regex + Unicode normalization + ba
 
 ### Cross-model handoff (caveman-handoff)
 
-Draws from caveman / grammar-prompting research and structured token-compression patterns. Drop articles / filler / pleasantries; preserve technical substance verbatim. ~40-60% token reduction without entity loss.
+Draws from caveman / grammar-prompting research and structured token-compression patterns. Drop articles / filler / pleasantries; preserve technical substance verbatim. Token reduction varies by content; entity preservation is the design goal (unmeasured claim removed per 2026-07-13 audit).
 
 ## Doctrinal lineage
 

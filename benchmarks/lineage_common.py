@@ -1,11 +1,11 @@
-"""Shared lineage benchmark helpers."""
+"""Shared lineage internal-quality-axis helpers."""
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from benchmarks.helpers import axis_result
-from zeref.lineage.council import run_council
 from zeref.lineage.critical import audit_critical
 from zeref.lineage.high import audit_high
 from zeref.lineage.importer import import_lineage
@@ -18,10 +18,38 @@ def lineage_reports() -> dict[str, Any]:
     return {
         "audit": audit_csv(_csv_path()),
         "import": import_lineage(_csv_path(), sandbox=True, latest_default=True, dry_run=True, resolver=_stub_resolver),
-        "council": run_council(_csv_path(), strict=True),
         "critical": audit_critical(_csv_path(), strict=True),
         "high": audit_high(_csv_path(), strict=True),
         "reference": audit_reference_only(_csv_path(), strict=True),
+    }
+
+
+def intake_skip(axis: str) -> dict[str, Any] | None:
+    """Return a visible SKIP result when the lineage intake CSV is absent.
+
+    The 64-row intake CSV describes the real lineage program and is NOT
+    committed to this repository. Committing a synthetic CSV that satisfies
+    the hard-coded expectations (64 rows, 10 critical, 21 high, 19
+    reference-only) would let these axes report perfect scores against
+    fabricated data. Skipping with an explicit reason is the honest
+    behavior (ZRF-AUDIT-012): skipped axes are reported in the output and
+    never count as passing evidence.
+    """
+    path = Path(_csv_path())
+    if path.exists():
+        return None
+    return {
+        "axis": axis,
+        "score": None,
+        "skipped": True,
+        "reason": (
+            f"lineage intake CSV not found at {path}. The 64-row intake "
+            "dataset is local-only and intentionally not committed. Set "
+            "ZEREF_LINEAGE_INTAKE_CSV or place the CSV at the repo root to "
+            "run this axis. Skipped axes are reported explicitly and do not "
+            "count as passing (ZRF-AUDIT-012)."
+        ),
+        "sub": {},
     }
 
 

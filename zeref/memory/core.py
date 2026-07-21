@@ -390,6 +390,73 @@ def scaffold_project(
             encoding="utf-8",
         )
 
+    # WS4 (issue #122): `zeref doctor` requires REDACT.md, SHARING_POLICY.md,
+    # and config/PERMISSIONS.md — a fresh init must satisfy its own doctor.
+    redact_path = memory_root.root / "REDACT.md"
+    if not redact_path.exists():
+        redact_path.write_text(
+            "---\n"
+            "# Sensitive classes stripped before memory writes / external output.\n"
+            "classes:\n"
+            "  credentials:\n"
+            "    enabled: true\n"
+            "    patterns:\n"
+            "      - api_keys\n"
+            "      - oauth_tokens\n"
+            "      - ssh_private_keys\n"
+            "      - database_connection_strings\n"
+            "  pii:\n"
+            "    enabled: true\n"
+            "    patterns:\n"
+            "      - email_addresses\n"
+            "      - phone_numbers\n"
+            "      - government_ids\n"
+            "  internal_paths:\n"
+            "    enabled: true\n"
+            "    patterns:\n"
+            "      - absolute_filesystem_paths\n"
+            "      - hostnames\n"
+            "---\n\n# REDACT.md\n\n"
+            "Default redaction classes scaffolded by `zeref init`. "
+            "Tune per project.\n",
+            encoding="utf-8",
+        )
+
+    sharing_path = memory_root.root / "SHARING_POLICY.md"
+    if not sharing_path.exists():
+        sharing_path.write_text(
+            "---\n"
+            "# Per-connector sharing allowlist — everything OFF by default.\n"
+            "defaults:\n"
+            "  read_project_context: false\n"
+            "  write_external: false\n"
+            "connectors: {}\n"
+            "---\n\n# SHARING_POLICY.md\n\n"
+            "No connectors enabled. Add entries under `connectors:` with\n"
+            "`enabled: true` only after deliberate review.\n",
+            encoding="utf-8",
+        )
+
+    permissions_path = memory_root.layout.config_dir / "PERMISSIONS.md"
+    if not permissions_path.exists():
+        permissions_path.write_text(
+            "---\n"
+            "defaults:\n"
+            "  filesystem:\n"
+            "    - read: project-root\n"
+            "    - write: memory/\n"
+            "  network:\n"
+            "    - denied\n"
+            "  mcp_servers: []\n"
+            "session_overrides:\n"
+            "---\n\n# Permissions\n\n"
+            "Network egress is denied by default (fail-closed). To enable it,\n"
+            "change the `network:` entry to `- allowed` AND set\n"
+            "`external_transmission: on` in PRIVACY.md, or export\n"
+            "`ZEREF_ALLOW_NETWORK=1` for a single session.\n",
+            encoding="utf-8",
+        )
+
     _write_memory_files(memory_root.layout)
     return memory_root
 

@@ -97,15 +97,36 @@ def _load_privacy(project_root: Path) -> tuple[str, bool, tuple[str, ...]]:
 
 
 def _load_permissions(project_root: Path) -> bool:
-    """Return True if network is denied (default: denied)."""
+    """Return True if network is denied (default: denied, fail-closed).
+
+    config/PERMISSIONS.md can enable network egress by declaring either
+    `network: allowed` inline or `- allowed` as the first entry under a
+    `network:` list key. Any explicit `denied` entry wins over `allowed`.
+    A missing or unreadable file denies. This is the file lane referenced by
+    `require_network`'s error message; PRIVACY.md `external_transmission`
+    must ALSO be on for the file lane to authorize a call.
+    """
     perms = project_root / "config" / "PERMISSIONS.md"
     if not perms.exists():
         return True
-    text = perms.read_text(errors="ignore")
-    if re.search(r"^\s*-\s*denied\s*$", text, re.MULTILINE) and "network:" in text:
+    try:
+        text = perms.read_text(errors="ignore")
+    except OSError:
         return True
-    if "network: denied" in text.lower():
+    lowered = text.lower()
+    block = re.search(
+        r"^\s*network:\s*$\n(?P<body>(?:^\s+-\s*[a-z_-]+\s*$\n?)+)",
+        lowered,
+        re.MULTILINE,
+    )
+    if "network: denied" in lowered:
         return True
+    if block and re.search(r"-\s*denied\b", block.group("body")):
+        return True
+    if "network: allowed" in lowered:
+        return False
+    if block and re.search(r"-\s*allowed\b", block.group("body")):
+        return False
     return True
 
 

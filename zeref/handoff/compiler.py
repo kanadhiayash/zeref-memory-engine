@@ -18,17 +18,39 @@ from zeref.privacy import scrub
 
 TARGETS = {"codex", "claude", "cursor", "github", "human"}
 
+# Privacy classes exported by default. Everything else fails closed:
+#   * "private"    — excluded by default; exported only with include_private=True.
+#   * "unknown"    — treated exactly like "private" (fail closed): an atom
+#                    whose privacy class was never asserted must not leak
+#                    just because nobody classified it.
+#   * "local-only" — NEVER exported, even with include_private=True; its
+#                    contract is that it never leaves this machine.
+_EXPORT_DEFAULT = {"public-safe"}
+_EXPORT_WITH_PRIVATE = {"public-safe", "private", "unknown"}
+
 
 def compile_handoff(
     root: Path | str = Path("."),
     *,
     target: str,
     objective: str = "Continue from current Zeref memory state.",
+    include_private: bool = False,
 ) -> dict[str, Any]:
+    """Compile a scrubbed handoff artifact for `target`.
+
+    Atoms are filtered by their `privacy` class before anything is rendered:
+    only "public-safe" atoms are exported by default. Passing
+    include_private=True additionally exports "private" and "unknown" atoms
+    and emits an audit event recording the override; "local-only" atoms are
+    never exported under any flag.
+    """
     if target not in TARGETS:
         raise ValueError(f"unsupported handoff target: {target}")
     root_path = Path(root)
-    atoms = AtomStore(root_path).load(status="active")
+    all_atoms = AtomStore(root_path).load(status="active")
+    atoms, excluded_atoms = _filter_exportable_atoms(all_atoms, include_private=include_private)
+    if include_private:
+        _log_private_export(root_path, target=target, atoms=atoms)
     health = build_health_report(root_path)
     ts = datetime.now(timezone.utc).replace(microsecond=0).strftime("%Y%m%dT%H%M%SZ")
     basename = f"{target}-{ts}"
@@ -56,9 +78,61 @@ def compile_handoff(
         "json": str(json_path),
         "privacy": {
             "field_redactions": field_redactions,
+            "include_private": include_private,
+            "excluded_atoms": excluded_atoms,
         },
         "summary": handoff["current_state"],
     }
+
+
+def _filter_exportable_atoms(
+    atoms: list[dict[str, Any]],
+    *,
+    include_private: bool,
+) -> tuple[list[dict[str, Any]], dict[str, int]]:
+    """Split atoms into (exportable, excluded-count-by-privacy-class).
+
+    Fails closed: an atom with a missing or unrecognized privacy value is
+    treated as "unknown" and follows the "private" rules.
+    """
+    allowed = _EXPORT_WITH_PRIVATE if include_private else _EXPORT_DEFAULT
+    exportable: list[dict[str, Any]] = []
+    excluded: dict[str, int] = {}
+    for atom in atoms:
+        privacy = atom.get("privacy", "unknown")
+        if privacy not in ("public-safe", "private", "local-only", "unknown"):
+            privacy = "unknown"
+        if privacy in allowed:
+            exportable.append(atom)
+        else:
+            excluded[privacy] = excluded.get(privacy, 0) + 1
+    return exportable, excluded
+
+
+def _log_private_export(root_path: Path, *, target: str, atoms: list[dict[str, Any]]) -> None:
+    """Record an include_private override in the redaction audit log.
+
+    The event is emitted whenever the override flag is used, so the audit
+    trail shows the operator's intent even when no private atom happened to
+    exist at the time.
+    """
+    from zeref.audit.logger import AuditLogger
+
+    private_ids = [
+        atom["id"] for atom in atoms
+        if atom.get("privacy", "unknown") in ("private", "unknown")
+    ]
+    AuditLogger.from_root(root_path).append(
+        event_type="redaction",
+        status="override",
+        reason=f"handoff compiled with include_private=True for target '{target}'",
+        guards_run=["handoff_privacy_filter"],
+        payload={
+            "target": target,
+            "private_atoms_included": len(private_ids),
+            "private_atom_ids": private_ids,
+        },
+    )
 
 
 def _handoff_payload(

@@ -69,7 +69,7 @@ adaptivity 9 · scalability 10 · retrieval 10 · trust 9.7).
        ↓
                         execute (declared stack, declared brief, declared tier)
        ↓
-[caveman-handoff]       compress cross-model handoff (40-60% reduction; NFKC + R6 diff)
+[caveman-handoff]       compress cross-model handoff (reduction varies by content; NFKC + R6 diff)
 ```
 
 Each gate declares its result inline. User can override before token spend. Per AGENTS.md `## Auto-Activation Gates`.

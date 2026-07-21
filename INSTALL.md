@@ -78,13 +78,14 @@ Re-run `/zeref-os:start` after to boot the session. Default privacy mode is **ab
 python3 .zeref/scripts/zeref-validate.py
 ```
 
-Expect:
+Expect output like the following (counts are derived from the tree and
+`zeref-registry.json` at run time, so exact numbers track the current release):
 ```
 Zeref OS validator — /path/to/your/project
-Skills:           10/10
-Agents:           6/6
-Commands:         8/8
-Team packs:       6/6
+Skills:           15/15 (from zeref-registry.json)
+Agents:           6/6 (filesystem vs registry)
+Commands:         8/8 (filesystem vs registry)
+Team packs:       9/9 (filesystem vs registry)
 Config:           5/5
 Root privacy:     3/3 (PRIVACY, REDACT, SHARING_POLICY)
 v4x canon:        6/6

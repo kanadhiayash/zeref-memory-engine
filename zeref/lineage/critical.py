@@ -138,14 +138,14 @@ def _implementation_form(row_id: int) -> str:
 def _gate_status(row_id: int) -> dict[str, Any]:
     root = Path.cwd()
     checks = {
-        1: _paths_exist(root, ["AGENTS.md", "README.md", "zeref/lineage/intake.py", "zeref/lineage/council.py"]),
+        1: _paths_exist(root, ["AGENTS.md", "README.md", "zeref/lineage/intake.py"]),
         3: _paths_exist(root, ["memory/README.md", "zeref/memory/core.py", "zeref/guards/write_gate.py"]),
         11: {"passed": {"active", "stale", "superseded", "disputed", "archived"}.issubset(STATUS_VALUES), "detail": sorted(STATUS_VALUES)},
         12: _paths_exist(root, [".gitignore", "zeref/lineage/importer.py"]),
         14: _graph_gate(),
         15: {"passed": {"source", "evidence", "provenance"}.issubset(REQUIRED_FIELDS), "detail": "source/evidence/provenance required"},
         22: _paths_exist(root, ["zeref/memory/render.py", "zeref/memory/atom_store.py"]),
-        39: _paths_exist(root, [".github/workflows/test.yml", ".github/workflows/privacy-audit.yml", ".github/workflows/version-consistency.yml"]),
+        39: _paths_exist(root, [".github/workflows/zrf-verify.yml"]),
         40: _paths_exist(root, ["zeref/privacy.py", "zeref/guards/fact_guard.py", "zeref/guards/evidence_guard.py", "zeref/guards/write_gate.py"]),
         47: _paths_exist(root, ["benchmarks/run-all.py", "zeref/benchmark/failure_analysis.py"]),
     }
