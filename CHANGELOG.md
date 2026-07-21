@@ -129,7 +129,8 @@ batch lands.
 ## [1.1.0] — 2026-07-10
 
 Audit remediation release — closes the Repository-Wide Consistency Audit
-(`docs/audits/ZEREF_CONSISTENCY_AUDIT.md`) at baseline commit `b82c641`.
+(`ZEREF_CONSISTENCY_AUDIT.md`, moved to the private `zeref-operator-records`
+repo per the 2026-07-13 audit) at baseline commit `b82c641`.
 
 ### Added
 
