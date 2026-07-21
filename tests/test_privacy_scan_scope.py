@@ -90,3 +90,41 @@ def test_dependency_and_worktree_trees_are_skipped(tmp_path: Path) -> None:
 
     result = audit(tmp_path, strict=True)
     assert result["credential_files"] == {}
+
+
+def test_skip_rules_match_path_components_not_substrings(tmp_path: Path) -> None:
+    """A filename that merely CONTAINS a skip token is still scanned.
+
+    The skip list names directories (`docs/`, `tests/`, `dist/`) and a few
+    exact paths. Matching those as substrings of the joined relative path
+    silently exempted any file whose own name embedded a skip token, so a
+    tracked file called `notdocs.md` or `distribution.md` could carry a
+    credential past the release gate purely because of what it was named.
+    """
+    decoys = ["notdocs.md", "distribution.md", "team-notes.md", "buildlog.md"]
+    for name in decoys:
+        (tmp_path / name).write_text(f"token {_fx()}\n")
+
+    results = audit(directory=tmp_path, redact_md_path=Path("REDACT.md"), strict=True)
+
+    scanned_names = {Path(p).name for p in results["by_file"]}
+    assert scanned_names == set(decoys), (
+        f"files exempted by substring match: {set(decoys) - scanned_names}"
+    )
+    assert results["hits_by_class"].get("credentials", 0) >= len(decoys)
+    assert len(results["credential_files"]) == len(decoys)
+
+
+def test_real_skip_directories_are_still_skipped(tmp_path: Path) -> None:
+    """Component matching must not weaken the intended directory skips."""
+    for rel in ("docs/note.md", "tests/fx.md", "dist/pkg.md", "proj.egg-info/meta.md"):
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(f"token {_fx()}\n")
+    # Exact-path skips.
+    (tmp_path / "CHANGELOG.md").write_text(f"token {_fx()}\n")
+
+    results = audit(directory=tmp_path, redact_md_path=Path("REDACT.md"), strict=True)
+
+    assert results["by_file"] == {}
+    assert results["credential_files"] == {}

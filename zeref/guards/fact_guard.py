@@ -113,6 +113,15 @@ def suggest_rewrite(claim: str) -> str:
     return "Rewrite as a sourced, bounded claim."
 
 
+def matched_claim_category(claim: str) -> str:
+    """Public entry point: the BLOCKED_PATTERNS category `claim` trips, or "".
+
+    Callers that need "does FactGuard reject this text?" must use this rather
+    than restating phrases, so every guard shares one pattern table.
+    """
+    return _matched_category(claim.lower())
+
+
 def _matched_category(lowered: str) -> str:
     for category, phrases in BLOCKED_PATTERNS.items():
         if any(phrase in lowered for phrase in phrases):

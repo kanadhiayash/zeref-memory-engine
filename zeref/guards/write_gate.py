@@ -11,6 +11,7 @@ from zeref.audit.logger import AuditLogger
 from zeref.core.errors import GuardRejection, ValidationError
 from zeref.core.schema import SOURCE_OPTIONAL_TYPES
 from zeref.guards.contradiction_guard import detect_incoming_conflicts, write_conflicts
+from zeref.guards.fact_guard import matched_claim_category
 from zeref.guards.privacy_guard import classify_text
 from zeref.memory_state import MemoryStore
 
@@ -155,8 +156,10 @@ def _validate_gate(proposal: dict[str, Any], store: MemoryStore) -> None:
         )
 
     claim = str(proposal.get("claim", ""))
-    lowered = claim.lower()
-    if any(phrase in lowered for phrase in ("best memory engine", "beats every", "production-proven", "10/10 on all benchmarks")):
+    # Delegate to FactGuard's own pattern table rather than restating a subset
+    # of it here. An inline copy drifts: phrases added to BLOCKED_PATTERNS were
+    # rejected by `zeref fact check` but still accepted by the write gate.
+    if matched_claim_category(claim):
         raise GuardRejection(
             "FactGuard",
             "The memory claim uses unsupported success language.",
