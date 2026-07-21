@@ -30,6 +30,10 @@ def run_release_check(root: Path) -> list[ReleaseFinding]:
     memory_root = MemoryRoot.from_path(root)
     store = MemoryStore(memory_root)
     findings: list[ReleaseFinding] = []
+    # WS4 (issue #122): the gate must prove which commit it graded. Fail closed
+    # when the tree is not a git repo or HEAD cannot be resolved.
+    findings.append(_check_commit_provenance(root))
+    findings.append(_check_test_suite(root))
     findings.append(_check_version_file(root))
     findings.append(_check_memory_layout(root))
     findings.append(_check_audit_logs(memory_root))
@@ -204,20 +208,81 @@ def _check_soul_present(root: Path) -> ReleaseFinding:
     return _fail("soul_present", "SOUL.md missing — boot step 0 broken")
 
 
+def _resolve_head_sha(root: Path) -> str | None:
+    """Return the full 40-hex HEAD SHA, or None when it cannot be proven.
+
+    Fail-closed: no `.git`, a git error, or a malformed answer all yield None.
+    """
+    import re
+    import subprocess
+    if not (root / ".git").exists():  # dir in a repo, file in a worktree
+        return None
+    try:
+        sha = subprocess.check_output(
+            ["git", "-C", str(root), "rev-parse", "HEAD"],
+            text=True, stderr=subprocess.DEVNULL, timeout=15,
+        ).strip()
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired):
+        return None
+    if not re.fullmatch(r"[0-9a-f]{40}", sha):
+        return None
+    return sha
+
+
+def _check_commit_provenance(root: Path) -> ReleaseFinding:
+    sha = _resolve_head_sha(root)
+    if sha is None:
+        return _fail(
+            "commit_provenance",
+            "cannot resolve a real HEAD commit SHA (not a git repository, or "
+            "git failed) — release evidence without provenance is refused",
+        )
+    return _pass("commit_provenance", f"HEAD resolved: {sha[:12]}")
+
+
+def _check_test_suite(root: Path) -> ReleaseFinding:
+    """Execute the test suite live instead of trusting any stored artifact.
+
+    When the gate itself is invoked from within an active pytest run
+    (PYTEST_CURRENT_TEST set), the surrounding run is already executing the
+    suite; re-spawning it would recurse.
+    """
+    import subprocess
+    import sys
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return _pass(
+            "test_suite",
+            "gate invoked from within an active pytest run — the surrounding "
+            "run executes the suite",
+        )
+    if not (root / "tests").is_dir():
+        return _fail("test_suite", "tests/ directory missing — suite cannot be executed")
+    try:
+        result = subprocess.run(
+            [sys.executable, "-m", "pytest", "-q", "-x", str(root / "tests")],
+            cwd=str(root), capture_output=True, text=True, timeout=1800,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return _fail("test_suite", f"pytest execution failed: {exc}")
+    if result.returncode == 0:
+        summary = result.stdout.strip().splitlines()[-1:] or ["passed"]
+        return _pass("test_suite", f"pytest executed live: {summary[0][:160]}")
+    tail = (result.stdout + result.stderr).strip().splitlines()[-1:] or ["no output"]
+    return _fail("test_suite", f"pytest exit {result.returncode} ({tail[0][:160]})")
+
+
 def _emit_release_evidence(root: Path, findings: list) -> None:
     """Write a SHA-bound evidence blob under docs/audits/release-evidence/.
 
     The release gate consumers can trust a stored PASS only when this blob
     matches the current HEAD SHA (see ZRF-AUDIT-013 pattern for freshness).
+    Refuses to emit evidence without a resolvable HEAD SHA — an `unknown`
+    provenance blob is worse than no blob.
     """
-    import subprocess
     from datetime import datetime, timezone
-    try:
-        head_sha = subprocess.check_output(
-            ["git", "-C", str(root), "rev-parse", "HEAD"], text=True
-        ).strip()
-    except (OSError, subprocess.CalledProcessError):
-        head_sha = "unknown"
+    head_sha = _resolve_head_sha(root)
+    if head_sha is None:
+        return
     out_dir = root / "docs" / "audits" / "release-evidence"
     try:
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -228,7 +293,7 @@ def _emit_release_evidence(root: Path, findings: list) -> None:
         "sha": head_sha,
         "ts": ts,
         "findings": [f.to_dict() for f in findings],
-        "passed": all(f.status == "pass" for f in findings),
+        "passed": release_passed(findings),
     }
     try:
         (out_dir / f"{head_sha[:12]}_{ts}.json").write_text(
@@ -251,7 +316,13 @@ def format_release(findings: list[ReleaseFinding], *, format: str = "text") -> s
 
 
 def release_passed(findings: list[ReleaseFinding]) -> bool:
-    return all(finding.status == "pass" for finding in findings)
+    """True when no finding failed.
+
+    `skip` findings (e.g. benchmark suite blocked on a local-only fixture)
+    do not block the gate, but they are never reported as PASS and the
+    formatted output surfaces them loudly.
+    """
+    return all(finding.status != "fail" for finding in findings)
 
 
 def _check_version_file(root: Path) -> ReleaseFinding:
@@ -284,13 +355,50 @@ def _check_audit_logs(memory_root: MemoryRoot) -> ReleaseFinding:
 
 
 def _check_benchmarks(root: Path) -> ReleaseFinding:
-    results = root / "benchmarks" / "results.json"
-    if not results.exists():
-        return _fail("benchmarks", "benchmarks/results.json missing")
-    data = json.loads(results.read_text(encoding="utf-8"))
-    if data.get("passed") is True or str(data.get("verdict", "")).upper() == "PASS":
-        return _pass("benchmarks", "local benchmark report is present and passing")
-    return _fail("benchmarks", "local benchmark verdict is not PASS")
+    """Execute the benchmark runner; never trust a stored results.json.
+
+    WS4 (issue #122): a checked-in `benchmarks/results.json` with
+    `passed: true` is not evidence — the gate re-runs the suite and grades
+    the live exit code. When the local lineage intake fixture is absent
+    (intentionally uncommitted; see WS5) the runner cannot complete, so the
+    finding is a loud SKIP that is never reported as PASS.
+    """
+    import subprocess
+    import sys
+    import tempfile
+    runner = root / "benchmarks" / "run-all.py"
+    if not runner.exists():
+        return _fail(
+            "benchmarks",
+            "benchmarks/run-all.py missing — cannot execute the suite "
+            "(stored results.json is not accepted as evidence)",
+        )
+    from zeref.lineage.importer import default_csv_path
+    fixture = default_csv_path(root)
+    if not fixture.exists():
+        return _skip(
+            "benchmarks",
+            f"suite NOT executed: required lineage intake fixture "
+            f"{fixture.name} is absent (local-only input; WS5). "
+            f"Stored benchmarks/results.json is not accepted as evidence.",
+        )
+    with tempfile.TemporaryDirectory() as tmp:
+        try:
+            result = subprocess.run(
+                [sys.executable, str(runner),
+                 "--out-report", str(Path(tmp) / "BENCHMARK_REPORT.md"),
+                 "--out-json", str(Path(tmp) / "results.json")],
+                cwd=str(root), capture_output=True, text=True, timeout=1800,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            return _fail("benchmarks", f"suite execution failed: {exc}")
+    if result.returncode == 0:
+        return _pass("benchmarks", "benchmark suite executed live: verdict PASS")
+    tail = (result.stdout + result.stderr).strip().splitlines()[-1:] or ["no output"]
+    return _fail(
+        "benchmarks",
+        f"benchmark suite executed live: exit {result.returncode} ({tail[0][:160]})",
+    )
 
 
 def _check_factguard(root: Path) -> ReleaseFinding:
@@ -315,6 +423,11 @@ def _pass(name: str, reason: str) -> ReleaseFinding:
 
 def _fail(name: str, reason: str) -> ReleaseFinding:
     return ReleaseFinding(name=name, status="fail", reason=reason)
+
+
+def _skip(name: str, reason: str) -> ReleaseFinding:
+    """Explicitly-not-run: surfaced loudly, never counted as pass."""
+    return ReleaseFinding(name=name, status="skip", reason=reason)
 
 
 def _tracked_memory_scaffold_present(root: Path) -> bool:
