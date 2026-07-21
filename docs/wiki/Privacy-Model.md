@@ -1,18 +1,18 @@
 # Privacy Model
 
-> Imagine writing every project note straight into a private notebook. Zeref OS is that notebook for AI sessions — and the notebook ships with locks on every drawer.
+Privacy in Zeref is deterministic and code-enforced. The `zeref/privacy.py` runtime applies redaction rules before any write, and `zeref/guards/privacy_guard.py` sits on the write path. Nothing depends on a model remembering to be careful.
 
-Privacy in Zeref OS is **deterministic and code-enforced**. The `zeref/privacy.py` runtime applies REDACT rules before any write; nothing relies on the model "remembering" to filter.
+That distinction is the whole design. A model asked to redact is a model that can be talked out of redacting. A regex cannot be persuaded.
 
-## Three modes (root `PRIVACY.md`)
+## Three modes
+
+Set in the root `PRIVACY.md`.
 
 | Mode | Default | Behavior |
 |---|---|---|
 | `exact` | — | Write verbatim. No abstraction. |
-| `abstract` | **YES** | Strip PII / internal paths / credentials before write. Default for every fresh project. |
-| `local-only` | — | Block all external transmission (parent sync, MCP connectors, handoff push). |
-
-Set in root `PRIVACY.md` frontmatter:
+| `abstract` | **yes** | Strip PII, internal paths, and credentials before write. |
+| `local-only` | — | Block all external transmission — outbound sync, connectors, handoff push. |
 
 ```yaml
 mode: abstract                  # exact | abstract | local-only
@@ -28,101 +28,77 @@ connectors_default: off
 external_transmission: off
 ```
 
-## REDACT.md — concrete sensitive classes
+Defaults are conservative on purpose: sharing is off until you turn it on, and a fresh project starts in `abstract`.
 
-`REDACT.md` defines what `privacy-abstraction` (and `zeref/privacy.py`) actually strip:
+## Redaction classes
 
-```yaml
-classes:
-  credentials:
-    enabled: true
-    patterns: [api_keys, oauth_tokens, ssh_private_keys, database_connection_strings, .env values]
-  pii:
-    enabled: true
-    patterns: [email_addresses, phone_numbers, physical_addresses, government_ids, dates_of_birth]
-  email:
-    enabled: true
-    patterns: [email_addresses_standalone]
-  internal_paths:
-    enabled: true
-  client_data: ...
-  financial: ...
-  proprietary_code: ...
-```
+`REDACT.md` declares what gets stripped. Classes cover credentials (API keys, OAuth tokens, SSH private keys, database connection strings, environment values), personal data (email addresses, phone numbers, physical addresses, government IDs, dates of birth), internal filesystem paths, client data, financial data, and proprietary code.
 
-## SHARING_POLICY.md — connector allowlist
+Each class is independently switchable, so you can loosen one without loosening all of them.
 
-```yaml
-connectors:
-  github:   off
-  linear:   off
-  notion:   off
-  jira:     off
-  duckduckgo: off
-  # ... all OFF by default per AGENTS.md
-```
+## Why encoding tricks do not work
 
-Every connector OFF until explicit enable. `sync-coordinator` reads this on `/start`; refuses to mount disabled tools.
+Pattern matching alone is weak — a credential can evade a regex by changing shape rather than content. Redaction therefore normalizes before it matches:
 
-## R6 Zero Context Loss
+| Stage | Handles |
+|---|---|
+| NFKC normalization | Fullwidth and compatibility variants of ASCII characters. |
+| Homoglyph folding | Look-alike characters from other scripts standing in for ASCII. |
+| Base64 decoding | Credentials wrapped in an encoding layer. |
+| Pattern match | The normalized, decoded text. |
 
-Shared rule in `_shared/rules.md#R6`. Every fact / named entity / file path / repo / URL / edge case from the raw user prompt must survive into:
+Matching normalized text rather than raw input means a secret has to be a secret in substance, not merely in spelling, to slip through.
 
-- restructured briefs (`prompt-context-engine`)
-- routing decisions (`skill-router`)
-- handoff packages (`handoff-compiler` → `caveman-handoff`)
-- parent-sync outbound staging
-- memory-import-export archives
-- pattern-to-skill draft synthesis
+This is defense-in-depth. It reduces the blast radius of a mistake. It is not a reason to paste production credentials into a prompt.
 
-R6 is referenced in nine SKILL.md Safety sections across the pack.
+## Export is fail-closed
 
-## Privacy chain (single direction)
+Handoff artifacts are compiled from stored atoms and filtered by privacy class on the way out.
 
-```
-skill output
-    ↓
-memory-keeper (R1 single-writer)
-    ↓
-privacy-guardian (mode check)
-    ├── exact → write verbatim
-    ├── abstract → privacy-abstraction rewrites payload per REDACT.md
-    └── local-only → block external transmission
-    ↓
-disk OR external connector (per SHARING_POLICY.md)
-```
+| Class | Default export | Private export requested |
+|---|---|---|
+| `public-safe` | Exported | Exported |
+| `private` | Withheld | Exported |
+| `unknown` | Withheld | Exported |
+| `local-only` | **Never** | **Never** |
 
-External output **always** passes through `privacy-guardian` (R3).
+Two properties are worth stating explicitly.
 
-## Code enforcement (`zeref/privacy.py`)
+**`unknown` is treated exactly like `private`.** An atom whose privacy class was never asserted must not leak simply because nobody got around to classifying it. The default for unclassified content is withhold, not share.
 
-- `scrub(text)` → returns `(scrubbed_text, ScrubReport)` with hit count + classes
-- Unicode normalization (NFKC)
-- Base64 nested decode + re-scan (depth limit)
-- Homoglyph table for confusable detection
-- Regex patterns per REDACT class (deterministic, not LLM-judged)
+**`local-only` never leaves the machine.** Not with a flag, not with private export enabled. That is the contract of the class; if a flag could override it, the class would mean nothing.
 
-`caveman-handoff` also applies NFKC + lookalike-glyph scan to all path strings — Cyrillic а / Greek ο / fullwidth Latin flagged and confirmed before any handoff write.
+## Sharing policy
 
-## What Zeref OS does NOT do
+`SHARING_POLICY.md` governs connectors and external destinations. Connectors are off by default and require explicit per-action approval. Adding a destination is a deliberate act, not a side effect of using a feature.
 
-- Encrypt at rest (markdown is plaintext by design)
-- Validate via LLM (privacy enforcement is deterministic; the LLM is not a privacy enforcer)
-- Auto-publish to any connector (every push requires explicit user approval)
-- Send telemetry (no analytics / no usage stats / no remote logging)
+## Staged sync
 
-## Verify
+Nothing syncs automatically. Content is filtered by evidence grade, redacted, and staged with a manifest. You see a preview of exactly what would leave before anything moves, and approval is explicit.
+
+Under `local-only`, the path is blocked entirely and staging does not proceed.
+
+## Configuration files
+
+| File | Purpose |
+|---|---|
+| [`PRIVACY.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/PRIVACY.md) | Active mode and abstraction rules. |
+| [`REDACT.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/REDACT.md) | Sensitive classes and patterns. |
+| [`SHARING_POLICY.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/SHARING_POLICY.md) | Connector and destination allowlist. |
+| [`SECURITY.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/SECURITY.md) | Vulnerability reporting. |
+
+## Verify it yourself
 
 ```bash
-python3 scripts/zeref-validate.py | grep "Root privacy"
-# Root privacy:     3/3 (PRIVACY, REDACT, SHARING_POLICY)
-
-python3 -c 'from zeref.privacy import scrub; t,r=scrub("Hire John Smith at john@example.com"); print(r.classes_hit, r.tokens_redacted)'
+python3 -m zeref audit      # structural validation and privacy audit
+python3 -m pytest -q        # includes redaction and export tests
 ```
+
+Report vulnerabilities privately per [`SECURITY.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/SECURITY.md). Do not open public issues for them.
 
 ## Related
 
-- [[Memory-Model]] — flat layout, single-writer chain
-- [[Architecture]] — privacy-guardian + privacy-abstraction agents
-- [[Glossary]] — R6, abstract mode, NFKC, homoglyph
-- [`_shared/rules.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/_shared/rules.md) — R1-R6
+- [[Memory-Model]] — where writes land
+- [[Architecture]] — the guard chain
+- [[Installation]] — configure privacy before first write
+- [[FAQ]] — common questions

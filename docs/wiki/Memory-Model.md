@@ -1,162 +1,141 @@
 # Memory Model
 
-> Imagine handing a six-month-old project to a brand-new collaborator. Where do they read first? What do they read second? When do they stop? Zeref OS answers those three questions with files on disk.
+> Hand a six-month-old project to a new collaborator. Where do they read first? What do they read second? When do they stop? Zeref answers those three questions with files on disk.
 
-Zeref OS stores everything in plain markdown under `memory/`, with append-only event logs and snapshots. Single-writer enforced via `memory-keeper` agent (per shared rule R1). PATTERNS.jsonl event schema is validator-checked.
+## The store invariant
 
-_Placeholder: `assets/poc-memory-tree.png` — real per-project memory tree on disk._
+"What is the source of truth?" has one answer. Everything else is derived.
 
-## Flat layout
+| Layer | Role |
+|---|---|
+| SQLite | Canonical current state. |
+| JSONL | Canonical append-only history. Appended, never rewritten. |
+| Markdown | Generated human-readable view. Carries a do-not-edit header. |
+| TOON | Optional generated model-input view. |
+
+The Markdown you read in `memory/` is a view, not the record. Editing it by hand edits the projection rather than the source; regeneration overwrites your change. Write through the CLI or a session so the write passes the guards.
+
+Recorded in [`docs/adr/ADR-0001-canonical-store.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/docs/adr/ADR-0001-canonical-store.md).
+
+## Layout
 
 ```
 memory/
-├── hot.md                   ← last 3 sessions, ≤500 words (read FIRST per AGENTS.md §0)
-├── index.md                 ← domain index (read if hot insufficient)
-├── MEMORY.md                ← agent-written session notes (NOT human-edited)
-├── DECISIONS.md             ← confirmed decisions w/ provenance + evidence grade
-├── OPEN_QUESTIONS.md        ← unresolved questions w/ owner
-├── RISKS.md                 ← identified risks w/ severity
-├── CONFLICTS.md             ← contradiction queue (user arbitrates)
-├── glossary.md              ← project-specific term definitions
-├── projects/                ← per-sub-project context (if multi-project repo)
-├── patterns/
-│   └── PATTERNS.jsonl       ← append-only event log; schema-validated
-├── snapshots/<iso>/         ← point-in-time wiki state + manifest
-├── archive/                 ← superseded snapshots (never deleted per R2)
-├── raw/                     ← untouched source material
+├── hot.md                   read FIRST — current context, kept short
+├── index.md                 domain index — read when hot is insufficient
+├── MEMORY.md                session notes
+├── DECISIONS.md             confirmed decisions with provenance + evidence grade
+├── OPEN_QUESTIONS.md        unresolved questions with owners
+├── RISKS.md                 identified risks with severity
+├── CONFLICTS.md             contradiction queue awaiting arbitration
+├── glossary.md              project-specific terms
+├── state/                   canonical structured state
+├── views/                   generated views
+├── audit/                   append-only traces
+├── patterns/                append-only event log
+├── snapshots/               point-in-time state with manifests
+├── archive/                 superseded content — archived, not deleted
+├── raw/                     untouched source material
 └── sync/
-    ├── outbound/            ← staged parent updates
-    └── parent/              ← received parent updates
+    ├── outbound/            staged updates awaiting approval
+    └── parent/              received updates
 ```
 
 ## Boundary-first reading
 
-The "boundary file" pattern prevents unbounded reads:
+This is the property that keeps context bounded as a project grows.
 
-1. **First**: read `memory/hot.md` (≤500 words, current context)
-2. **Second**: read `memory/index.md` if hot is insufficient — find the relevant domain row
-3. **Third**: read only the named section of the named page
-4. **Never**: load a full page just to scan it
+1. **First** — read `memory/hot.md`. Current context, deliberately short.
+2. **Second** — read `memory/index.md` only if hot is insufficient. Locate the relevant domain row.
+3. **Third** — read only the named section of the named page.
+4. **Never** — load a full page just to scan it.
 
-This caps always-on context to ~3-4k tokens regardless of project age.
+The cost of a read tracks the question being asked, not the age or size of the project. A two-year-old project and a two-week-old one cost the same to resume.
 
-## Single-writer (R1) + privacy gate (R3)
+The discipline matters more than it looks. Once an agent is allowed to "just load everything," context spend grows with project age, relevance drops as unrelated material crowds the window, and the failure mode is silent — the agent still answers, just worse.
 
-All writes flow:
+## The guarded write path
+
+Every write flows through the same sequence. No skill writes to `memory/` directly.
 
 ```
-skill output
-    ↓
-memory-keeper (conflict detect, advisory lock via zeref/lock.py)
-    ↓
-privacy-guardian (PRIVACY.md mode + REDACT.md classes + SHARING_POLICY.md allowlist)
-    ↓
-disk (with PII scrub)
+claim
+  ↓ fact_guard            unsupported superlatives, unsourced absolutes
+  ↓ evidence_guard        missing or under-graded evidence
+  ↓ privacy_guard         redaction per active mode
+  ↓ contradiction_guard   conflicts with stored state
+  ↓ write_gate            admits only what cleared the above
+disk
 ```
 
-No skill writes to `memory/` directly. Concurrent writes blocked by `zeref/lock.py::MemoryLock`. Atomic write semantics via `atomic_write` / `atomic_append`.
+Concurrency is handled by an advisory lock in `zeref/lock.py`. A second concurrent writer aborts with a clear error rather than interleaving, and writes are atomic, so an interrupted write does not leave a half-written file.
 
 ## Contradiction handling
 
-When `memory-keeper` detects a conflict:
+When a new claim conflicts with a stored one:
 
-1. Halt write
-2. Subject/predicate/value fingerprint match against DECISIONS / OPEN_QUESTIONS / RISKS
-3. Append both sides to `memory/CONFLICTS.md`
-4. Surface to user immediately OR snooze until `/done` (user choice)
-5. User arbitrates (via `contradiction-resolution` skill) — never silent
-6. Resolved entry moves to `memory/DECISIONS.md` with both-sides provenance
+1. Halt the write.
+2. Fingerprint the claim against stored decisions, open questions, and risks.
+3. Append both sides, with provenance, to `memory/CONFLICTS.md`.
+4. Surface to the user — immediately, or at session end, by their choice.
+5. Wait. The user arbitrates.
+6. On resolution, record the outcome with both sides' provenance preserved.
 
-**4 anti-patterns refused**: recency-wins · grade-wins · silent-drop · indefinite-snooze.
+Nothing is auto-resolved. Four shortcuts are refused:
 
-## PATTERNS.jsonl event schema
+| Refused | Why |
+|---|---|
+| Recency-wins | Newer is not truer. |
+| Grade-wins | Better-sourced is not automatically right for this project. |
+| Silent-drop | Discards information without a decision being made. |
+| Indefinite-snooze | Defers forever, which is a decision in disguise. |
 
-Append-only event log. Every event is a single JSON line:
+The stored conflict keeps both sides intact, so arbitrating later loses nothing.
 
-```jsonl
-{"ts":"2026-06-08T14:00:00Z","agent":"memory-keeper","event":"wiki-write","target":"memory/DECISIONS.md","payload":{"summary":"..."},"hash":"sha256:...","evidence_grade":"high"}
-```
+## Evidence grading
 
-**Allowlisted event types** (validated by `scripts/zeref-validate.py::lint_patterns_log()`):
+Two scores, stored separately, never collapsed.
 
-| Event | Required payload | Optional payload |
-|---|---|---|
-| `wiki-write` | summary | — |
-| `session-start` | — | trigger, scope, budget_ceiling_usd, team, force_multipliers |
-| `memory-drift-detected` | finding | — |
-| `budget-gate` | weight, tier, match | est_cost_usd, budget_remaining_usd, override_reason |
-| `skill-route` | domain, lead, support, qa | ext |
-| `tool-probe` | tool, reachable | path, fallback, marker_verified |
-| `prompt-gate` | classification | restructured, brief_tokens, stripped_context_tokens, injection_detected |
-| `handoff-compress` | original_tokens, compressed_tokens, ratio | model_from, model_to, harness_from, harness_to |
-| `tier-change` | from, to | — |
-| `grep-with-context` | — | action |
-| `log-cutover` | — | from, to, note |
+**Evidence quality** grades the source: provenance, directness, recency, authority, corroboration, reproducibility, and known contradictions.
 
-**Value enums** (enforced):
-- `weight` ∈ {CRITICAL, HIGH, MEDIUM, LOW}
-- `tier` ∈ {OPUS, SONNET, HAIKU, OPUS-equivalent, SONNET-equivalent, HAIKU-equivalent}
+**Review robustness** grades the deliberation: method diversity, independent agreement, recorded dissent, counterarguments considered.
 
-**Hard constraints**:
-- `skill-route` with stack > 5 → lint error
-- `budget-gate` with `(CRITICAL, HAIKU)` or `(LOW, OPUS)` unless `match=OVERRIDE` → lint error
+Agreement among reviewers never upgrades weak source evidence to a strong grade. Confidence in a process is not evidence about the world, and merging the two would let the second quietly launder the first.
 
-## Pattern detection (per `pattern-observer`)
+## The append-only event log
 
-Background scan of `PATTERNS.jsonl` over rolling 48–80h window:
+`memory/patterns/` holds an append-only JSONL event log. Each event is a single JSON line carrying a timestamp, the actor, the event type, a target, a payload, and an integrity hash.
 
-- Task signature: verb + subject + 3-gram qualifiers
-- Jaccard similarity ≥ 0.8 over qualifier 3-gram sets
-- Union-find clustering; discard clusters < 3 members
-- Scoring: `frequency × (1 / recency_span_hours)`
-- Top-3 by score per scan; rest logged as suppressed
-- Emits candidates → `pattern-to-skill` (review-first)
+The log is never edited in place. Entries are appended; replay reconstructs state. Pattern detection reads it as a stream.
 
-Activation: `/done`, `/stop`, `/status`, manual. Background only — never blocks active work.
+Event types are allowlisted and each carries a required payload shape, validated by `scripts/zeref-validate.py`. The validator is the source of truth for which events and values are legal — it enforces the allowlist, per-event schema, and value enums, and reports findings rather than silently accepting unknown types.
 
-## Snapshots
+## Snapshots and archival
 
-On `/done`, full `memory/` state copied to `memory/snapshots/<iso>/` with `manifest.json`. Never deleted (R2 non-deletion). Used by `parent-sync` for rollback + by `memory-import-export` for backup.
+Session close copies the memory state to a timestamped snapshot directory with a manifest. Superseded content moves to `archive/` rather than being deleted, so a bad consolidation is recoverable and provenance chains stay intact.
 
-## Parent sync (multi-project rollup)
+## Sync
 
-Per `parent-sync` skill:
+For projects that roll up into a parent, the sequence is staged and gated rather than automatic:
 
-1. **STAGE**: filter via `evidence-curator` (≥medium); pass through `privacy-guardian`; write to `memory/sync/outbound/<iso>/` with `manifest.json`
-2. **APPROVE**: explicit user confirmation with preview
-3. **PUSH**: copy to `<parent_path>/memory/sync/parent/<child_id>/<iso>/`; chmod 444; log PUSHED
-4. **PARENT INGEST**: parent's `/start` runs conflict detection on incoming entries
-5. **ROLLBACK**: via provenance pointers
-6. **R6**: every staged entity must survive verbatim into parent; re-diff after privacy-abstraction
+1. **Stage** — filter by evidence grade, pass through privacy redaction, write to `sync/outbound/` with a manifest.
+2. **Approve** — explicit user confirmation, with a preview of exactly what would leave.
+3. **Push** — copy to the parent's inbound directory and log the push.
+4. **Ingest** — the parent runs contradiction detection on arriving entries.
 
-`local-only` privacy mode blocks all parent sync.
-
-## Always-on context budget
-
-Per `budget-governor`:
-
-| Tier | Per-skill cap | Behavior |
-|---|---|---|
-| HAIKU | 4 000 tok | Aggressive compaction, minimal wiki writes |
-| SONNET | 8 000 tok | Normal operation, full wiki writes |
-| OPUS | 16 000 tok | Full parent-child sync, deep conflict analysis |
-
-`warn_at_tokens` (default 50000) → consolidation suggested. `hard_cap_tokens` → blocks writes; forces `/done`.
+`local-only` privacy mode blocks the whole path. Staged content that has not been approved does not move.
 
 ## Validation
 
 ```bash
 python3 scripts/zeref-validate.py
-# Skills:           14/14 (from zeref-registry.json)
-# Memory layout:    flat
-# PATTERNS lint:    0 finding(s)
-# ✔ Validation passed
 ```
+
+Checks that registered surfaces resolve on disk, that root privacy files are present, that the memory layout is well-formed, and that the event log passes schema lint. Exits non-zero on any finding.
 
 ## Related
 
-- [[Privacy-Model]] — modes + classes + connectors
-- [[Pattern-Detection]] — Two-Strikes Rule + drafting
-- [[Architecture]] — agents + skills + 4-gate chain
-- [[Glossary]] — boundary file, evidence grade, R6, gate event types
-- [`_shared/rules.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/_shared/rules.md) — R1-R6
+- [[Architecture]] — guards, adapters, routing
+- [[Privacy-Model]] — modes, classes, export policy
+- [[Pattern-Detection]] — how the event log becomes a proposal
+- [[Glossary]] — canonical terms

@@ -1,104 +1,75 @@
 # Pattern Detection
 
-> Imagine your editor noticed you running the same five-step ritual every week and offered — but never imposed — a macro. That is `pattern-observer`.
+> Imagine your editor noticing you run the same five-step ritual every week, and offering — but never imposing — a macro. That is what pattern detection does.
 
-Zeref OS extends itself **only via review-first drafts**. The loop:
+Zeref extends itself only through review-first drafts. Repeated work is surfaced as a candidate, drafted into a skill, and held for your approval. Nothing self-installs.
+
+## The loop
 
 ```
-session events → PATTERNS.jsonl → pattern-observer (background scan)
-    → 48-80h rolling window, Jaccard ≥0.8, ≥3 occurrences
-    → cluster + score → top-3 surfaced per scan
-    → pattern-to-skill drafts SKILL.md to skills/drafts/
-    → user reviews via /review-skill (approve/edit/reject/defer)
-    → approved drafts promoted to skills/<name>/ via git mv (preserves history)
+session events → append-only event log
+    → pattern-observer scans a rolling window
+    → cluster similar task signatures
+    → score and surface top candidates
+    → pattern-to-skill drafts a SKILL.md into skills/drafts/
+    → user reviews via /review-skill (approve / edit / reject / defer)
+    → approved drafts are promoted, preserving history
 ```
 
-Never auto-activated. Per Core Principle 10 (Review-First Extension).
+The observer runs in the background and never blocks active work.
 
-## Two-Strikes Rule (Core Principle 11)
+## Why drafts are never auto-activated
+
+A system that writes its own skills and then runs them can change its behavior without anyone deciding that it should. The review step is where a person decides whether a repeated pattern is a workflow worth codifying or a bad habit worth breaking.
+
+Automation that proposes is useful. Automation that installs is a governance problem.
+
+## The Two-Strikes Rule
 
 **Do not codify a rule on the first occurrence of an error.** Wait for the second.
 
 | Occurrence | Action |
 |---|---|
-| First | Log to `memory/MEMORY.md` as a trap noticed |
-| Second | Promote to a rule — codify in `_shared/rules.md`, agent prompt, or new skill |
+| First | Log it as a trap noticed. |
+| Second | Promote it to a rule. |
 
-**Why**: Premature codification creates brittle rules that don't generalize. Two occurrences = pattern; one = noise.
+One occurrence is noise. Two is a pattern. Codifying on the first produces brittle rules that encode a coincidence and then have to be maintained forever.
 
-See [`references/two-strikes-rule.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/references/two-strikes-rule.md) for full doctrine.
+See [`references/two-strikes-rule.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/references/two-strikes-rule.md).
 
-## `pattern-observer` algorithm
+## How candidates are found
 
-Per AGENTS.md + skill spec:
+The observer scans the append-only event log over a rolling window and looks for repeated task shapes:
 
-1. **Window**: rolling 48-80h scan of `memory/patterns/PATTERNS.jsonl`
-2. **Task signature**: verb + subject + 3-gram qualifiers (stop-words stripped)
-3. **Similarity**: Jaccard 3-gram ≥ 0.8 over qualifier sets
-4. **Clustering**: union-find; discard clusters < 3 members
-5. **Scoring**: `frequency × (1 / recency_span_hours)` (favors dense recent repetition)
-6. **Output**: top-3 by score per scan → `memory/sync/outbound/patterns/<cluster-id>.json`
-7. **Dedupe**: by `cluster_id`; update existing candidates with new members
-8. **Quiet hours**: rest logged as suppressed (no overflow)
-9. **Activation**: `/done`, `/stop`, `/status`, manual
-10. **Background only**: never blocks active work
+1. **Signature** — each task is reduced to a verb, a subject, and qualifier n-grams, with stop-words stripped.
+2. **Similarity** — signatures are compared by n-gram overlap against a similarity threshold.
+3. **Clustering** — similar signatures are grouped; clusters below the minimum member count are discarded.
+4. **Scoring** — clusters are ranked by frequency weighted against how tightly they are spaced in time, so dense recent repetition outranks a slow trickle.
+5. **Surfacing** — the top-ranked candidates are emitted; the rest are logged as suppressed rather than dropped, so nothing disappears silently.
+6. **Deduplication** — an existing candidate is updated with new members rather than duplicated.
 
-User can disable via `config/BUDGET.md` `pattern_detection: false`.
+The thresholds are what keep this from being noise: a cluster has to recur enough times, closely enough together, and similarly enough in shape to count.
 
-## `pattern-to-skill` workflow
-
-When a candidate cluster surfaces:
-
-1. **DRAFT** operation:
-   - Load candidate JSON
-   - Synthesize metadata: `name`, `description`, `trigger`, `model`, `max_turns`
-   - Synthesize body: mission, when-to-use, operations, safety
-   - Write `skills/drafts/<name>/SKILL.md`
-   - Write immutable `skills/drafts/<name>/PROVENANCE.md` (cites every source event by hash)
-   - **R6**: PROVENANCE.md must preserve every entity that contributed to the pattern (tool names, file paths, repeated arguments)
-2. **REVIEW QUEUE** (`/review-skill`):
-   - Lists pending drafts with score + event count + description
-3. **Per-draft prompt**:
-   - Show frontmatter + body + provenance summary
-   - Four actions:
-     - **approve** → `git mv skills/drafts/<name>/ skills/<name>/`; strip draft markers; log to DECISIONS.md
-     - **edit** → open file in editor; re-prompt after save
-     - **reject** → prompt reason; `rm -rf` draft dir; mark candidate JSON `rejected_at`
-     - **defer** → leave in place; increment counter; auto-prompt again after 3 defers
-
-PROVENANCE.md is **immutable** — never edited after creation. Approval doesn't touch it.
-
-## Validator integration
-
-`scripts/zeref-validate.py` surfaces drafts as warnings:
+## Review
 
 ```
-Warnings:
-  ! skills/drafts/ contains 1 pending draft(s) — run /review-skill
+/review-skill
 ```
 
-Validator does NOT block on drafts. Drafts are read-only artifacts until promoted.
+Each draft can be approved, edited, rejected, or deferred. Approved drafts are promoted from `skills/drafts/` into the active skill directory in a way that preserves their history.
 
-## What triggers a candidate?
+A rejected draft stays rejected — the observer does not re-propose it on the next scan simply because the underlying work recurred again.
 
-Examples of patterns the system would surface:
+## Disabling it
 
-- Repeated `grep -r --include` over `skills/` (3+ in 24h) → draft `skill-search` skill
-- Repeated PII regex addition to `REDACT.md` (4 distinct patterns added) → draft `redact-helper` skill
-- Repeated tier-override (5 instances of `CRITICAL on HAIKU`) → suggest reclassifying CRITICAL or accepting Haiku for that workload
-- Repeated `wiki-maintenance` skip on ship cycles → trigger memory-drift remediation
+Pattern detection can be turned off in `config/BUDGET.md`:
 
-## Safety + anti-patterns
-
-- **Never auto-activate**: review-first per Core Principle 10
-- **Never overwrite PROVENANCE**: immutable per `pattern-to-skill` spec
-- **Never delete rejected candidates**: mark `rejected_at` in JSON for future revisit (R2 non-deletion)
-- **Never surface candidates that share signature with a user-rejected one** within retention window
-- **R6**: draft must preserve every entity from PATTERNS source events
+```yaml
+pattern_detection: false
+```
 
 ## Related
 
-- [[Memory-Model]] — PATTERNS.jsonl schema + event types
-- [[Architecture]] — `pattern-observer` agent + `pattern-to-skill` skill
-- [[Glossary]] — Two-Strikes Rule, pattern signature, cluster_id
-- [`references/two-strikes-rule.md`](https://github.com/kanadhiayash/zeref-memory-engine/blob/main/references/two-strikes-rule.md)
+- [[Memory-Model]] — the event log pattern detection reads
+- [[Architecture]] — where skills sit in the system
+- [[Glossary]] — Two-Strikes Rule, review-first extension

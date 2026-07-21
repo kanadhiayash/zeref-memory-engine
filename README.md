@@ -1,110 +1,198 @@
-<!-- privacy-audit: allow-file "Public hero doc. Names author + character reference (Fairy Tail) + documents install commands with example env-var names. No user memory." -->
+<!-- privacy-audit: allow-file "Public hero doc. Documents install commands with example env-var names. No user memory." -->
 
 # Zeref Memory Engine
 
 <p align="center">
-  <a href="https://github.com/kanadhiayash/zeref-memory-engine/releases/tag/v2.0.0-alpha.2"><img src="https://img.shields.io/badge/version-2.0.0--alpha.2-blueviolet" alt="v2.0.0-alpha.2"></a>
-  <img src="assets/zeref-os-hero.png" alt="Zeref Memory Engine thumbnail" width="720">
-</p>
-
-<p align="center">
-  <strong>Local-first memory for AI-assisted work.</strong><br>
-  Harness-agnostic · Model-agnostic · Privacy-first · Evidence-disciplined · Benchmark-gated
+  <img src="https://img.shields.io/badge/version-2.0.0--alpha.2-blueviolet" alt="version 2.0.0-alpha.2">
+  <img src="assets/zeref-os-hero.png" alt="Zeref Memory Engine" width="720">
 </p>
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license"></a>
   <a href="AGENTS.md"><img src="https://img.shields.io/badge/AGENTS.md-canonical-blue" alt="AGENTS.md canonical spec"></a>
-  <a href="docs/BENCHMARK_REPORT.md"><img src="https://img.shields.io/badge/benchmarks-local%20gated-success" alt="local benchmark gated"></a>
   <a href="SECURITY.md"><img src="https://img.shields.io/badge/security-private%20reporting-critical" alt="private vulnerability reporting"></a>
-  <a href="https://github.com/kanadhiayash/zeref-memory-engine/actions/workflows/ci.yml"><img src="https://github.com/kanadhiayash/zeref-memory-engine/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/kanadhiayash/zeref-memory-engine/actions/workflows/zrf-verify.yml"><img src="https://github.com/kanadhiayash/zeref-memory-engine/actions/workflows/zrf-verify.yml/badge.svg" alt="verify"></a>
 </p>
 
 <p align="center">
-  <a href="#what-zeref-does">What it does</a> ·
+  <a href="#what-it-is">What it is</a> ·
   <a href="#quickstart">Quickstart</a> ·
   <a href="#architecture">Architecture</a> ·
-  <a href="#privacy-and-security">Security</a> ·
-  <a href="#benchmarks">Benchmarks</a> ·
+  <a href="#guarantees-and-how-they-are-enforced">Guarantees</a> ·
+  <a href="#limitations">Limitations</a> ·
   <a href="#documentation">Docs</a>
 </p>
 
 ---
 
-## What Zeref does
+## What it is
 
-Zeref gives AI tools a project memory they can read first, write to safely, and hand off cleanly.
+Zeref is a local-first memory engine that gives AI coding agents a persistent, reviewable project memory stored as plain files in your repository. It is for engineers who work across more than one AI tool and are tired of re-explaining the same decisions, constraints, and dead ends at the start of every session.
 
-It prevents every new AI session from starting blind. Instead of re-explaining the same project context, decisions, constraints, risks, and open questions, Zeref keeps that context inside the project.
+Memory lives in your project, in Markdown and SQLite you can read and diff. Sessions read it before they act, write to it through a guarded path, and hand it to the next session in a scrubbed, portable form.
 
-Zeref is:
+Current release: **v2.0.0-alpha.2**. Alpha software — interfaces may change. See [Limitations](#limitations).
 
-- **Local-first**: memory lives with the project.
-- **Harness-agnostic**: multiple AI tools can point to the same memory source.
-- **Privacy-first**: external sharing is off unless explicitly allowed.
-- **Evidence-disciplined**: facts, assumptions, unknowns, and risks stay separate.
-- **Guarded**: memory writes can pass through fact, evidence, privacy, and contradiction checks.
-- **Auditable**: important events write local append-only traces.
-- **Benchmark-gated**: release readiness depends on deterministic local checks.
+**Zeref is:**
 
-Zeref is not:
+- **Local-first** — canonical state is files on your disk, inside your repo.
+- **Boundary-first on reads** — a session reads a small hot file, then an index, then one named page section. Context stays bounded as the project grows.
+- **Human-arbitrated on conflicts** — when a new claim contradicts a stored one, the write halts and both sides are queued for you. Nothing auto-resolves.
+- **Deterministic on privacy** — redaction is regex and Unicode normalization in code, not a model asked to be careful.
+- **Guarded on writes** — writes pass fact, evidence, privacy, and contradiction checks before a write gate admits them.
+- **Provider-neutral by construction** — core code names reasoning classes, never vendor model IDs.
+
+**Zeref is not:**
 
 - an operating system,
 - a hosted service,
-- a model provider,
+- an inference layer or model provider,
 - a vector database,
 - a replacement for human review,
-- or a public benchmark report claim.
-
-<p align="center">
-  <img src="assets/poc-stateless-vs-zeref.png" alt="Stateless AI sessions compared with Zeref-backed sessions" width="720">
-</p>
+- or a source of published benchmark scores.
 
 ---
 
-## Why it exists
+## How do I give an AI agent persistent project memory?
 
-AI work breaks down when context resets.
+Point every AI tool you use at the same `AGENTS.md` in your project root, and let Zeref own the files underneath it. `AGENTS.md` is the behavior contract: it tells a session what to read first, what it may write, and what it must stop and ask about. Because the contract and the memory both live in the repo, any harness that can read a Markdown instruction file participates without per-tool syncing.
 
-A project usually has decisions, constraints, user preferences, risks, contradictions, source material, active tasks, abandoned paths, release gates, privacy rules, and handoff notes.
+The practical effect is that a session starts with your project's decisions, open questions, risks, and conflicts already loaded, and ends by writing what it learned back to the same place.
 
-Most AI sessions forget those boundaries unless you manually reload them.
+## What is local-first LLM memory?
 
-Zeref makes project memory explicit, local, and reviewable.
+Local-first LLM memory keeps the canonical copy of an agent's memory on your machine, in your version control, rather than in a vendor's account. Zeref stores current state in SQLite, append-only history in JSONL, and human-readable views in Markdown, all inside the project.
 
+Nothing leaves the machine unless you turn sharing on. External transmission is off by default, and `local-only` privacy mode blocks it outright.
 
-## Name and inspiration
+## How do I stop an AI assistant from forgetting project decisions?
 
-The name Zeref nods to a fictional scholar associated with long-lived knowledge. The memory-engine idea is the practical version of that: durable local context, explicit decisions, guarded writes, and clean handoffs so project memory survives beyond any single AI chat.
+Write decisions to a durable store the assistant reads at the start of every session, and make contradicting one of them an event that requires your judgment. Zeref records decisions with provenance and an evidence grade, and detects when a later claim conflicts with an earlier one.
+
+A detected conflict does not overwrite and does not silently pick a winner. It halts the write, records both sides with their provenance, and waits for you to arbitrate.
+
+## How do I share context between Claude Code, Cursor, and Codex?
+
+Compile a handoff artifact and open it in the next tool. Zeref's handoff compiler targets five destinations — `codex`, `claude`, `cursor`, `github`, and `human` — and scrubs the payload against your privacy policy on the way out.
+
+Handoffs fail closed: only atoms explicitly classed public-safe are exported by default. Anything unclassified is treated as private and withheld, and anything marked local-only never leaves the machine regardless of flags.
+
+## What is agent memory that survives context loss?
+
+It is memory that gets re-read rather than re-explained. Because it lives on disk instead of in a context window, ending a session, switching models, or exhausting a context limit does not destroy accumulated project knowledge.
+
+The next session performs a boundary-first read and resumes from stored state.
 
 ---
 
-## What Zeref ships
+## Architecture
 
-| Surface | Purpose |
+Zeref sits between the AI harness and your project's memory files. The harness supplies the model and the editor; Zeref supplies the memory, the guards, and the policy.
+
+```mermaid
+flowchart TB
+  User["Engineer"] --> Harness["AI harness"]
+  Harness --> Contract["AGENTS.md — behavior contract"]
+  Contract --> Read["Boundary-first read<br/>hot → index → page section"]
+  Read --> Work["Session work"]
+  Work --> Guards
+
+  subgraph Guards["Guarded write path"]
+    FG[fact_guard] --> EG[evidence_guard] --> PG[privacy_guard] --> CG[contradiction_guard] --> WG[write_gate]
+  end
+
+  Guards --> Store
+  CG -.->|conflict| Conflicts["CONFLICTS.md — human arbitration"]
+
+  subgraph Store["Project memory"]
+    SQL["SQLite — canonical current state"]
+    JSONL["JSONL — append-only history"]
+    MD["Markdown — generated views"]
+  end
+
+  Store --> Handoff["Handoff compiler<br/>scrubbed, fail-closed"]
+  Handoff --> Next["Next session / next tool"]
+```
+
+### The store invariant
+
+One question — "what is the source of truth?" — has one answer, and every surface derives from it:
+
+| Layer | Role |
 |---|---|
-| `AGENTS.md` | Canonical behavior contract for AI harnesses. |
-| `memory/` | Project memory, decisions, risks, conflicts, raw sources, and generated views. |
-| `zeref/` | Python reference runtime and CLI. |
-| `skills/` | Task-specific operating skills. |
-| `agents/` | Background agent role definitions. |
-| `commands/` | User-facing command contracts. |
-| `benchmarks/` | Deterministic local benchmark suite and adapters. |
-| `docs/` | Architecture, hardening, security, risk, benchmark, and release docs. |
+| SQLite | Canonical current state. |
+| JSONL | Canonical append-only history. Never edited in place. |
+| Markdown | Generated human-readable view. Carries a do-not-edit header. |
+| TOON | Optional generated model-input view. |
 
-Core capabilities:
+See [`docs/adr/ADR-0001-canonical-store.md`](docs/adr/ADR-0001-canonical-store.md).
 
-- Structured Memory Core.
-- Guarded memory writes.
-- FactGuard.
-- EvidenceGuard.
-- PrivacyGuard.
-- ContradictionGuard.
-- Append-only audit logs.
-- Deterministic routing and cost policy.
-- Cross-harness handoffs.
-- Local release checks.
-- Fixture-first benchmark adapters.
+### Reading is bounded
+
+A session does not load the project to answer a question about the project. It reads `memory/hot.md` first, consults `memory/index.md` only if hot is insufficient, then loads one named section of one named page. The cost of a read is a function of the question, not of how long the project has been running.
+
+### Harness adapters
+
+Adapters detect a harness, report its health honestly, and project context into the file that harness reads. Registered adapters cover Claude Code, Codex, Gemini CLI, Hermes, Kimi Code, Odysseus, and Grok.
+
+Each adapter declares an enforcement level rather than implying uniform control:
+
+| Level | Meaning |
+|---|---|
+| Embedded | Zeref authorizes operations through native hooks or controlled subprocesses. |
+| Sidecar / proxy | Zeref enforces only work routed through its own CLI, MCP server, or proxy. |
+| Context-only | Zeref can supply context and instructions but cannot guarantee enforcement. |
+
+An adapter whose module is absent reports `detected=false` with a stated reason rather than failing on import.
+
+### Model routing is by reasoning class
+
+Core code and schemas never name a vendor model. A task carries a criticality; criticality resolves to a reasoning class; a provider descriptor maps that class to a concrete model ID at the edge.
+
+| Criticality | Reasoning class |
+|---|---|
+| LOW | `fast` |
+| MEDIUM | `balanced` |
+| HIGH | `deep` |
+| CRITICAL | `frontier` |
+
+`local` and `private` are placement constraints rather than cost tiers and are permitted at any criticality. The entitlement rule is enforced in code, not prose: a request may always downgrade to a cheaper class and never upgrade, and `frontier` requires CRITICAL. Violations raise `ReasoningPolicyError`.
+
+Provider descriptors are declarative JSON files in `zeref/adapters/providers/`, one per provider, shipped for `anthropic` and `openai`. Adding a provider means adding a JSON file, not writing code. **Zeref does not call model APIs.** It resolves which class of model a task is entitled to; your harness does the inference.
+
+---
+
+## Guarantees and how they are enforced
+
+Each row states a property, the code that enforces it, and how you can check it yourself.
+
+| Guarantee | Enforced by | Verify |
+|---|---|---|
+| No write bypasses the guards | `zeref/guards/write_gate.py` | `python3 -m pytest -q` |
+| Overclaiming is blocked | `zeref/guards/fact_guard.py` | Superlatives, benchmark boasts, and maturity assertions fail the scan — including in this README. |
+| Claims carry graded evidence | `zeref/guards/evidence_guard.py` | Source quality is graded separately from deliberation quality. |
+| Secrets are redacted deterministically | `zeref/privacy.py`, `zeref/guards/privacy_guard.py` | Regex plus NFKC normalization, homoglyph folding, and base64 decoding. |
+| Contradictions reach a human | `zeref/guards/contradiction_guard.py` | Conflicts land in `memory/CONFLICTS.md`; no automatic resolution. |
+| One writer per resource | `zeref/lock.py` (`MemoryLock`, `atomic_write`) | A second concurrent writer aborts with a clear error. |
+| History is append-only | JSONL event log | Events are appended, never rewritten. |
+| Exports fail closed | `zeref/handoff/compiler.py` | Unclassified atoms are withheld; local-only atoms never export. |
+| Cost tiers are entitlements | `zeref/core/reasoning.py` | `frontier` outside CRITICAL raises rather than warns. |
+
+### The write path
+
+```
+claim → fact_guard → evidence_guard → privacy_guard → contradiction_guard → write_gate → store
+```
+
+A claim that fails any guard does not reach the store. A claim that trips the contradiction guard does not reach the store *and* does not overwrite what it contradicts — it queues for arbitration.
+
+### Contradiction handling refuses four shortcuts
+
+Zeref will not resolve a conflict by recency, by evidence grade, by silently dropping one side, or by deferring indefinitely. Each of those is a way of making a judgment call while appearing not to. The conflict stays open, with both sides and their provenance recorded, until you decide.
+
+### The release gate executes
+
+Release checks run the test suite and the internal benchmark suite live rather than reading a stored verdict, and the trust axis will only accept an independent re-grade that names the commit it graded. If the recorded commit does not match `HEAD`, the deterministic draft publishes instead and the override is refused.
 
 ---
 
@@ -122,8 +210,6 @@ Point your AI harness at:
 .zeref/AGENTS.md
 ```
 
-For Claude Code plugin compatibility, the legacy `zeref-os` identifier may still appear in install paths. The product name is **Zeref Memory Engine**.
-
 Verify locally:
 
 ```bash
@@ -134,170 +220,93 @@ python3 -m pytest -q
 python3 benchmarks/run-all.py
 ```
 
-Read the full setup guide:
+Setup guides:
 
 - [`INSTALL.md`](INSTALL.md)
 - [`docs/GETTING_STARTED.md`](docs/GETTING_STARTED.md)
 - [`docs/HARNESS_MATRIX.md`](docs/HARNESS_MATRIX.md)
 
-<p align="center">
-  <img src="assets/poc-install.png" alt="Zeref install flow" width="720">
-</p>
-
 ---
 
-## Architecture
-
-Zeref uses one canonical spec and multiple harness stubs.
-
-```mermaid
-flowchart TB
-  User["User / project owner"] --> Harness["AI harness"]
-  Harness --> Agents["AGENTS.md"]
-  Agents --> Gates["Activation gates"]
-  Gates --> Guards["Fact · Evidence · Privacy · Contradiction guards"]
-  Guards --> Memory["memory/"]
-  Memory --> State["Local structured state"]
-  Memory --> Audit["Append-only audit logs"]
-  Memory --> Handoff["Cross-harness handoff"]
-  Handoff --> Harness2["Next AI session"]
-
-  subgraph Repo["Project repository"]
-    Agents
-    Memory
-    State
-    Audit
-  end
-```
-
-Memory layout:
+## Memory layout
 
 ```text
 memory/
-  hot.md
-  index.md
-  MEMORY.md
-  DECISIONS.md
-  OPEN_QUESTIONS.md
-  RISKS.md
-  CONFLICTS.md
-  state/
-  views/
-  audit/
-  archive/
-  patterns/
-  snapshots/
-  sync/
-  raw/
+  hot.md              read first — current context, kept short
+  index.md            domain index — read when hot is insufficient
+  MEMORY.md           session notes
+  DECISIONS.md        confirmed decisions with provenance and grade
+  OPEN_QUESTIONS.md   unresolved questions with owners
+  RISKS.md            identified risks with severity
+  CONFLICTS.md        contradiction queue awaiting arbitration
+  state/              canonical structured state
+  views/              generated views
+  audit/              append-only traces
+  patterns/           append-only event log
+  snapshots/          point-in-time state
+  archive/            superseded content
+  sync/               staged inbound and outbound updates
+  raw/                untouched source material
 ```
-
-<p align="center">
-  <img src="assets/poc-memory-tree.png" alt="Zeref memory tree" width="720">
-</p>
 
 ---
 
-## Cross-harness handoff
+## What ships
 
-Zeref is built for projects that move across tools.
-
-| Harness | Activation file |
+| Surface | Purpose |
 |---|---|
-| Claude Code | `AGENTS.md` |
-| Codex | `AGENTS.md` |
-| Cursor | `.cursor/rules/zeref.mdc` |
-| Gemini CLI / Antigravity | `GEMINI.md` |
-| Windsurf | `.windsurfrules` |
-| Aider | `.aider.conf.yml.example` |
-| Llama-family tools | `LLAMA.md` |
-
-<p align="center">
-  <img src="assets/poc-handoff.png" alt="Cross-harness handoff" width="720">
-</p>
+| `AGENTS.md` | Canonical behavior contract for AI harnesses. |
+| `memory/` | Project memory, decisions, risks, conflicts, sources, generated views. |
+| `zeref/` | Python runtime, guards, adapters, and CLI. |
+| `skills/` | On-trigger procedures — routing, contradiction resolution, evidence grading, handoff compilation, privacy abstraction, and skill drafting. |
+| `agents/` | Background roles — memory writer, privacy guardian, evidence curator, pattern observer, sync coordinator, handoff orchestrator. |
+| `commands/` | User-facing command contracts. |
+| `team-packs/` | On-demand multi-agent configurations. |
+| `benchmarks/` | Internal quality suite and external loader scaffolding. |
+| `docs/` | Architecture, security, release, and reference documentation. |
 
 ---
 
 ## Privacy and security
 
-Zeref defaults to conservative privacy behavior.
+External sharing is off unless you turn it on. Privacy mode defaults to `abstract`.
 
 | File | Purpose |
 |---|---|
-| [`PRIVACY.md`](PRIVACY.md) | Privacy mode. Default is `abstract`. |
+| [`PRIVACY.md`](PRIVACY.md) | Privacy mode. Default `abstract`. |
 | [`REDACT.md`](REDACT.md) | Sensitive classes and redaction rules. |
 | [`SHARING_POLICY.md`](SHARING_POLICY.md) | Connector and external sharing policy. |
 | [`SECURITY.md`](SECURITY.md) | Vulnerability reporting policy. |
 
-Security issues should be reported privately. Do not open public issues for vulnerabilities.
+Redaction is deterministic. Input is NFKC-normalized, homoglyphs are folded to ASCII, and base64 payloads are decoded before pattern matching, so a credential does not evade a rule by changing its encoding.
 
-Security and governance docs:
-
-- [`SECURITY.md`](SECURITY.md)
-- [`docs/PUBLIC_SAFE_COPY.md`](docs/PUBLIC_SAFE_COPY.md)
-- [`docs/RELEASE_GATES.md`](docs/RELEASE_GATES.md)
+Report vulnerabilities privately. Do not open public issues for them.
 
 ---
 
 ## Benchmarks
 
-Zeref includes deterministic local benchmark gates and fixture-first adapters for external memory benchmark formats.
+Two separate things live under `benchmarks/`, and conflating them would misrepresent both.
 
-Current benchmark reports are local and repo-scoped. They are **not** public benchmark report claims.
+**Internal quality axes.** A deterministic suite scores the repo against its own rubric on axes such as portability, adaptivity, scalability, retrieval, and trust. These are internal quality axes used as release gates. They are not benchmark rankings and are not comparable to any other system's numbers.
 
-Read:
+**External benchmark scaffolding.** Loaders exist for five public suites — LoCoMo, LongMemEval, PersonaMem, RULER, and HELMET — in `benchmarks/external/loaders/`. **No dataset runs have been performed and no scores exist.** The loaders and baselines are scaffolding; nothing is published, and no comparison or ranking should be inferred from their presence.
 
-- [`benchmarks/RUBRIC.md`](benchmarks/RUBRIC.md)
-- [`docs/BENCHMARK_REPORT.md`](docs/BENCHMARK_REPORT.md)
-- [`docs/BENCHMARK_ADAPTERS.md`](docs/BENCHMARK_ADAPTERS.md)
-- [`docs/RELEASE_GATES.md`](docs/RELEASE_GATES.md)
-
-Benchmark posture:
-
-| Status | Meaning |
-|---|---|
-| Local deterministic | Runs inside this repo with fixed fixtures. |
-| Fixture adapter | External benchmark format is represented by local fixtures. |
-| External verified | Only valid after a named external dataset run with reproducible commands. |
-| Comparative claim | Only valid with dated methodology and named comparison targets. |
+Benchmarks that were considered and are not supported, each with a stated reason, are listed in [`benchmarks/external/UNSUPPORTED.md`](benchmarks/external/UNSUPPORTED.md). Nothing is silently omitted.
 
 ---
 
-## Project topics
+## Limitations
 
-Recommended GitHub topics:
+Stated plainly, because the alternative is letting you discover them later.
 
-```text
-ai-memory
-agent-memory
-local-first
-privacy-first
-ai-agents
-agentic-workflows
-llm-tools
-developer-tools
-python
-benchmarking
-evidence
-knowledge-management
-```
-
-Set them with GitHub CLI:
-
-```bash
-gh repo edit kanadhiayash/zeref-memory-engine \
-  --add-topic ai-memory \
-  --add-topic agent-memory \
-  --add-topic local-first \
-  --add-topic privacy-first \
-  --add-topic ai-agents \
-  --add-topic agentic-workflows \
-  --add-topic llm-tools \
-  --add-topic developer-tools \
-  --add-topic python \
-  --add-topic benchmarking \
-  --add-topic evidence \
-  --add-topic knowledge-management
-```
+- **No published benchmark results.** External loaders are scaffolded; no runs, no scores, no rankings.
+- **Zeref performs no inference.** It routes and governs; your harness calls the model.
+- **Enforcement varies by harness.** Context-only integrations can be given instructions but cannot be compelled. Each adapter states its own level.
+- **Privacy redaction is defense-in-depth.** It reduces the blast radius of a mistake. It is not a reason to paste production credentials into a prompt.
+- **Alpha software.** Interfaces may change. MIT licensed, no warranty.
+- **Single-machine memory.** There is no shared multi-device memory story yet.
+- **Pattern detection proposes, never installs.** Drafts land for review and are not auto-activated.
 
 ---
 
@@ -308,21 +317,20 @@ gh repo edit kanadhiayash/zeref-memory-engine \
 | [`AGENTS.md`](AGENTS.md) | Canonical agent and harness behavior. |
 | [`INSTALL.md`](INSTALL.md) | Install instructions. |
 | [`docs/GETTING_STARTED.md`](docs/GETTING_STARTED.md) | Local setup and verification. |
-| [`docs/PUBLIC_SAFE_COPY.md`](docs/PUBLIC_SAFE_COPY.md) | Public claim rules. |
+| [`docs/MEMORY_MODEL.md`](docs/MEMORY_MODEL.md) | Memory layout and read discipline. |
+| [`docs/ROUTING.md`](docs/ROUTING.md) | Reasoning classes and cost policy. |
 | [`docs/RELEASE_GATES.md`](docs/RELEASE_GATES.md) | Release readiness checks. |
-| [`docs/TRUST_AUDIT.md`](docs/TRUST_AUDIT.md) | Trust posture notes. |
+| [`docs/PUBLIC_SAFE_COPY.md`](docs/PUBLIC_SAFE_COPY.md) | Public claim rules. |
+| [`docs/TRUST_AUDIT.md`](docs/TRUST_AUDIT.md) | Trust axis posture and re-grade binding. |
+| [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | Canonical term definitions. |
 
-<p align="center">
-  <img src="assets/poc-wiki.png" alt="Zeref documentation and wiki" width="720">
-</p>
+Wiki pages live under [`docs/wiki/`](docs/wiki/).
 
 ---
 
 ## Contributing
 
-Open an issue before large changes. Keep PRs focused. Security issues must be reported privately.
-
-Read:
+Open an issue before large changes. Keep pull requests focused. Report security issues privately.
 
 - [`CONTRIBUTING.md`](CONTRIBUTING.md)
 - [`SECURITY.md`](SECURITY.md)
