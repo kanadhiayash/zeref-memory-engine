@@ -51,6 +51,10 @@ __pycache__/
 .env
 .venv/
 venv/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
 
 # Node
 node_modules/
@@ -81,6 +85,11 @@ memory/state/
 memory/views/
 memory/snapshots/
 memory/sync/
+
+# Release-check evidence blobs are generated locally by zeref/release/checks.py.
+# Raw evidence dumps are operator records (private zeref-operator-records repo)
+# and must not re-enter the public tree (2026-07-13 audit, WS6).
+docs/audits/release-evidence/
 
 # Local lineage sandbox imports. Foreign repository clones and inventories are
 # generated evidence only and must not enter Zeref core.
