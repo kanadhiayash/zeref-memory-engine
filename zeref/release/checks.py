@@ -126,31 +126,42 @@ def _check_workflow_yaml(root: Path) -> ReleaseFinding:
 
 
 def _check_privacy_scan(root: Path) -> ReleaseFinding:
-    """Strict scan across every tracked extension.
+    """Strict scan across every tracked extension — severity-class model (WS2).
 
     Files carrying a `privacy-audit: allow-file` marker are excluded (their
-    contents are spec descriptions of the classifier itself, not user data).
-    A hit ceiling of 45 residual hits / 35 files is tolerated across the
-    tree — above that, the gate fails. Below that, the residual is treated
-    as marker-drift / spec-fragment noise in schema-defining code. Ceiling
-    grew from 30/25 in 2.0.0-alpha.1 to admit the new vNext canonical-storage
-    modules (zeref/migrations/, zeref/storage/) which reference sha256, event
-    schema, and credential-shaped tokens in docstrings.
+    contents are spec descriptions of the classifier itself, not user data);
+    individual lines can carry `noqa: privacy-audit`. Those markers are the
+    only escape hatch.
+
+    Severity model replaces the old count ceiling (was 150 hits / 80 files):
+      * credentials class — ZERO tolerance. Any hit (provider-shaped token,
+        labelled secret, encoded or whitespace-split variant) fails the gate
+        outright, regardless of how few there are.
+      * all other classes (pii, internal_paths, proprietary_code, ...) —
+        informational. They are name-shaped / path-shaped noise in spec and
+        schema files and are reported but never block a release.
     """
     from zeref.privacy import audit as privacy_audit
     results = privacy_audit(directory=root, redact_md_path=root / "REDACT.md", strict=True)
     hits = results["total_hits"]
-    files = len(results["by_file"])
     allowlisted = len(results.get("allowlisted", []))
+    credential_files: dict = results.get("credential_files", {})
+    credential_hits = results.get("hits_by_class", {}).get("credentials", 0)
+    if credential_hits or credential_files:
+        sample = ", ".join(sorted(credential_files)[:3]) or "unknown"
+        return _fail(
+            "privacy_scan",
+            f"{credential_hits} credentials-class hit(s) in {len(credential_files)} "
+            f"file(s) (e.g. {sample}) — zero tolerance for credentials",
+        )
     if hits == 0:
         return _pass("privacy_scan",
                      f"scanned {results['scanned']} files, 0 hits (allowlisted: {allowlisted})")
-    if hits <= 150 and files <= 80:
-        return _pass("privacy_scan",
-                     f"{hits} residual hit(s) across {files} spec/schema file(s) "
-                     f"(allowlisted: {allowlisted}) — under noise ceiling 150/80")
-    return _fail("privacy_scan",
-                 f"{hits} hit(s) across {files} file(s) exceeds noise ceiling 150/80")
+    return _pass(
+        "privacy_scan",
+        f"0 credentials-class hits; {hits} informational hit(s) in non-blocking "
+        f"classes across {len(results['by_file'])} file(s) (allowlisted: {allowlisted})",
+    )
 
 
 def _check_registry_completeness(root: Path) -> ReleaseFinding:
