@@ -205,7 +205,10 @@ jobs:
       - name: Install package (editable)
         run: |
           python3 -m pip install --upgrade pip
-          pip install -e .
+          # pytest is required at runtime, not just for the `test` job: the
+          # release gate executes the suite live rather than trusting a stored
+          # result, so without pytest here the gate fails on its own tooling.
+          pip install -e . pytest
 
       - name: Run release readiness gate
         run: |
