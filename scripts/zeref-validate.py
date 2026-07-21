@@ -332,7 +332,7 @@ def main():
     def _declared(label, actual):
         return f"{actual}/{declared_counts[label]}" if label in declared_counts else str(actual)
 
-    print(f"Zeref OS validator — {ROOT}")
+    print(f"Zeref validator — {ROOT}")
     print(f"Skills:           {skill_count_actual}/{skill_count_expected} (from zeref-registry.json)")
     print(f"Agents:           {_declared('agents', len(agent_files))} (filesystem vs registry)")
     print(f"Commands:         {_declared('commands', len(command_files))} (filesystem vs registry)")

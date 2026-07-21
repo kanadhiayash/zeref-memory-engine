@@ -3,9 +3,8 @@
 # AGENTS.md - Zeref Memory Engine Canonical Spec
 
 > **Naming note.** The product is **Zeref Memory Engine** (short form: **Zeref**).
-> The legacy name was "Zeref OS" — preserved throughout this document for
-> historical continuity and because the repo / Claude plugin identifier
-> (`zeref-os`) is retained for install-URL backward compatibility.
+> The plugin and install identifier is `zeref-os`; the name does not imply an
+> operating system.
 > **Zeref is not an operating system.** It is a persistent memory and
 > context layer that plugs into your existing AI harness. See
 > [`README.md`](README.md) for the full disclaimer set.
@@ -234,7 +233,7 @@ Max 4 agents per pack. Outputs land in `team/`. Activate via `/team [type]`. Def
 
 ## Connector Advisory (per ZEREF_OS §9)
 
-Zeref OS ships with **zero** bundled MCP tools. Recommendation-only after `pattern-observer` detects repeated manual behavior. All connectors OFF by default in `SHARING_POLICY.md`. Recommended free stack documented in `references/connector-advisory.md`.
+Zeref ships with **zero** bundled MCP tools. Recommendation-only after `pattern-observer` detects repeated manual behavior. All connectors OFF by default in `SHARING_POLICY.md`. Recommended free stack documented in `references/connector-advisory.md`.
 
 ## Harness Translation Map (per ZEREF_OS §10)
 
@@ -250,17 +249,12 @@ Zeref OS ships with **zero** bundled MCP tools. Recommendation-only after `patte
 
 Full table + adding-a-harness procedure: `references/harness-translation-map.md`.
 
-## Migration
+## What Zeref is NOT (and what those mean)
 
-- v3 → v4: `scripts/migrate-v3-to-v4.py`
-- v4.2 → v4.3 (this version): `scripts/migrate-v4.2-to-v4.3.py` (flat memory layout, root privacy templates, PATTERNS.jsonl cutover)
-
-## What Zeref OS is NOT (and what those mean)
-
-- **Not itself a harness.** Zeref OS plugs *into* the user's harness (Claude Code, Cursor, Codex, Gemini, Windsurf, Aider). It is the memory layer they read — not a replacement for the harness.
-- **Not a hosted service.** No Zeref OS server. Memory lives in local markdown in the project repo. Optional MCP connectors talk to hosted services only after explicit enable in `SHARING_POLICY.md`.
+- **Not itself a harness.** Zeref plugs *into* the user's harness. It is the memory layer they read — not a replacement for the harness.
+- **Not a hosted service.** No Zeref server. Memory lives in local markdown in the project repo. Optional MCP connectors talk to hosted services only after explicit enable in `SHARING_POLICY.md`.
 - **Not bundled with any MCP tools.** Recommendation-only. Never installs a connector on the user's behalf.
-- **Not a sprawling skill catalog.** 10 disciplined skills with strict triggers — not the historical v1.x "fleet of 109 specialist skills".
-- **Not an always-on multi-agent council.** Team packs are on-demand only and capped at 4 agents.
-- **Not a CEO persona.** Context + memory engine, not a leader. (Historical rejection of v3.x framing.)
+- **Not a sprawling skill catalog.** A small set of skills with strict triggers, not a large catalogue of specialists.
+- **Not an always-on multi-agent panel.** Team packs are on-demand only and capped at 4 agents.
+- **Not a persona.** Context + memory engine, not a simulated role.
 - **Not dedicated to any single user or organization.** Free to install; use any model the user brings.
