@@ -17,7 +17,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 # Version consistency across all surfaces
 # ---------------------------------------------------------------------------
 
-EXPECTED_VERSION = "2.0.0-alpha.1"
+EXPECTED_VERSION = "2.0.0-alpha.2"
 
 
 def _read(path: Path) -> str:

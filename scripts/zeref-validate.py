@@ -9,10 +9,11 @@ Checks:
 - Root privacy templates (PRIVACY.md, REDACT.md, SHARING_POLICY.md)
 - config/ has required files
 - memory/ scaffold complete (flat layout)
-- skills/ — count read from zeref-registry.json (no more hardcoded /10) [L1]
-- agents/ has 6 agents with valid frontmatter
-- commands/ has 8 commands
-- team-packs/ has 6 packs
+- skills/ — count read from zeref-registry.json (no more hardcoded /10) [L1];
+  skill dirs on disk are cross-checked against the registry (drift = error)
+- agents/, commands/, team-packs/ — discovered from the filesystem and
+  cross-checked against the counts declared in zeref-registry.json
+  (agents/commands/team_packs); mismatch in either direction = error
 - references/v4x-canon/ has 6 design docs (historical reference)
 - harness stubs present
 - plugin.json + marketplace.json present and valid JSON
@@ -36,15 +37,6 @@ EXPECTED = {
     "config": ["PROJECT.md", "PERMISSIONS.md", "PARENT_SYNC.md", "BUDGET.md", "claude-overrides.md"],
     "memory_dirs": ["raw", "snapshots", "sync/outbound", "sync/parent", "archive", "patterns"],
     "memory_flat": ["hot.md", "index.md", "MEMORY.md", "DECISIONS.md", "OPEN_QUESTIONS.md", "RISKS.md", "CONFLICTS.md"],
-    "agents": [
-        "memory-keeper.md", "privacy-guardian.md", "sync-coordinator.md",
-        "evidence-curator.md", "pattern-observer.md", "handoff-orchestrator.md",
-    ],
-    "commands": [
-        "start.md", "done.md", "stop.md", "status.md",
-        "sync-parent.md", "reset-permissions.md", "review-skill.md", "team.md",
-    ],
-    "team_packs": ["solo.md", "build.md", "research.md", "red.md", "audit.md", "ship.md"],
     "v4x_canon": [
         "ZEREF_OS.md", "DECISION_LOG.md", "MODEL_DEBATE.md",
         "USE_CASES.md", "RESEARCH_RESOURCES.md", "PACKAGE_INDEX.md",
@@ -108,27 +100,48 @@ def check_yaml_frontmatter(path, required_keys):
             errors.append(f"{path}: missing frontmatter key '{k}'")
 
 
-def load_skill_inventory():
-    """Load skill list from zeref-registry.json (dynamic skill count)."""
+def load_registry():
+    """Load zeref-registry.json: skill list + declared structure counts."""
     reg_path = ROOT / "zeref-registry.json"
     if not reg_path.is_file():
         errors.append("missing zeref-registry.json (required for dynamic skill count)")
-        return []
+        return [], {}
     try:
         reg = json.loads(reg_path.read_text())
-        return [s["skill"] for s in reg.get("skills", [])]
+        skills = [s["skill"] for s in reg.get("skills", [])]
+        declared = {}
+        for k in ("agents", "commands", "team_packs"):
+            v = reg.get(k)
+            if isinstance(v, int):
+                declared[k] = v
+            elif isinstance(v, list):
+                declared[k] = len(v)
+        return skills, declared
     except (json.JSONDecodeError, KeyError, TypeError) as e:
         errors.append(f"zeref-registry.json: invalid structure ({e})")
+        return [], {}
+
+
+def discover_md(dirname):
+    """Sorted .md files actually present in a top-level dir (filesystem-derived)."""
+    d = ROOT / dirname
+    if not d.is_dir():
+        errors.append(f"missing dir: {dirname}/")
         return []
+    return sorted(p.name for p in d.iterdir() if p.is_file() and p.suffix == ".md")
 
 
-def lint_patterns_log(skill_inventory):
+# Non-registry skill dirs that are allowed on disk.
+SKILL_DIR_EXEMPT = {"imported", "drafts", "_drafts"}
+
+
+def lint_patterns_log(skill_inventory, agent_files):
     """Validate PATTERNS.jsonl event schema + stack-length cap.
     Advisory: warn if no recent gate events.
     skill-route lead/support may be either skill names OR agent names (memory-keeper / privacy-guardian etc.).
     """
     # Extend inventory with agent names (skill-router lead can be an agent — e.g. memory-keeper)
-    agent_names = [a.replace(".md", "") for a in EXPECTED["agents"]]
+    agent_names = [a.replace(".md", "") for a in agent_files]
     valid_actors = set(skill_inventory) | set(agent_names)
     p = ROOT / "memory" / "patterns" / "PATTERNS.jsonl"
     if not p.is_file():
@@ -185,10 +198,25 @@ def lint_patterns_log(skill_inventory):
 
 
 def main():
-    # L1: load skill inventory from registry
-    skill_inventory = load_skill_inventory()
+    # L1: load skill inventory + declared counts from registry
+    skill_inventory, declared_counts = load_registry()
     skill_count_expected = len(skill_inventory)
     skill_count_actual = sum((ROOT / "skills" / s).is_dir() for s in skill_inventory)
+
+    # Filesystem-derived inventories (no hardcoded lists — drift shows up here)
+    agent_files = discover_md("agents")
+    command_files = discover_md("commands")
+    team_pack_files = discover_md("team-packs")
+
+    # Cross-check filesystem counts against the counts the registry declares.
+    for label, actual in (("agents", len(agent_files)),
+                          ("commands", len(command_files)),
+                          ("team_packs", len(team_pack_files))):
+        if label in declared_counts and declared_counts[label] != actual:
+            errors.append(
+                f"{label}: zeref-registry.json declares {declared_counts[label]} "
+                f"but {actual} found on disk — update the registry or the tree"
+            )
 
     # Root manifests
     for f in EXPECTED["root_manifests"]:
@@ -235,6 +263,12 @@ def main():
     for s in skill_inventory:
         check_dir(f"skills/{s}", "skill")
         check_yaml_frontmatter(f"skills/{s}/SKILL.md", ["name", "description"])
+    # Reverse check: skill dirs on disk that the registry doesn't know about (drift)
+    skills_root = ROOT / "skills"
+    if skills_root.is_dir():
+        for d in sorted(skills_root.iterdir()):
+            if d.is_dir() and d.name not in skill_inventory and d.name not in SKILL_DIR_EXEMPT:
+                errors.append(f"skills/{d.name}/ on disk but not in zeref-registry.json")
     # drafts/ is intentional — pattern-to-skill writes here; not active skills
     drafts_dir = ROOT / "skills" / "drafts"
     if drafts_dir.is_dir():
@@ -244,17 +278,34 @@ def main():
     if (ROOT / "skills" / "_drafts").exists():
         warnings.append("skills/_drafts/ present — v4.3 uses skills/drafts/ (rename or migrate)")
 
-    # agents/
-    for a in EXPECTED["agents"]:
+    # agents/ — every agent file found on disk must have valid frontmatter
+    for a in agent_files:
         check_yaml_frontmatter(f"agents/{a}", ["name", "description"])
+    if not agent_files:
+        errors.append("agents/ has no agent .md files")
 
-    # commands/
-    for c in EXPECTED["commands"]:
+    # commands/ — every command file found on disk must have valid frontmatter
+    for c in command_files:
         check_yaml_frontmatter(f"commands/{c}", ["description"])
+    if not command_files:
+        errors.append("commands/ has no command .md files")
 
-    # team-packs/ (per ZEREF_OS §8)
-    for t in EXPECTED["team_packs"]:
-        check_yaml_frontmatter(f"team-packs/{t}", ["name", "description"])
+    # team-packs/ (per ZEREF_OS §8) — every pack found on disk needs an identity
+    # key: 'name' (canonical packs) or legacy 'pack' (deprecated tier aliases).
+    for t in team_pack_files:
+        p = ROOT / "team-packs" / t
+        text = p.read_text()
+        if not text.startswith("---"):
+            errors.append(f"team-packs/{t}: no YAML frontmatter")
+            continue
+        end = text.find("\n---", 4)
+        fm = text[4:end] if end != -1 else ""
+        if end == -1:
+            errors.append(f"team-packs/{t}: frontmatter not closed")
+        elif "name:" not in fm and "pack:" not in fm:
+            errors.append(f"team-packs/{t}: missing frontmatter key 'name' (or legacy 'pack')")
+    if not team_pack_files:
+        errors.append("team-packs/ has no pack .md files")
 
     # references/v4x-canon/
     check_dir("references/v4x-canon", "canon")
@@ -274,14 +325,18 @@ def main():
             errors.append(f"{m}: invalid JSON ({e})")
 
     # PATTERNS.jsonl validation (schema + stack-cap)
-    lint_patterns_log(skill_inventory)
+    lint_patterns_log(skill_inventory, agent_files)
 
-    # Output
+    # Output — actual counts derived from the filesystem; declared counts from
+    # zeref-registry.json where the registry declares them.
+    def _declared(label, actual):
+        return f"{actual}/{declared_counts[label]}" if label in declared_counts else str(actual)
+
     print(f"Zeref OS validator — {ROOT}")
     print(f"Skills:           {skill_count_actual}/{skill_count_expected} (from zeref-registry.json)")
-    print(f"Agents:           {sum((ROOT / 'agents' / a).is_file() for a in EXPECTED['agents'])}/6")
-    print(f"Commands:         {sum((ROOT / 'commands' / c).is_file() for c in EXPECTED['commands'])}/8")
-    print(f"Team packs:       {sum((ROOT / 'team-packs' / t).is_file() for t in EXPECTED['team_packs'])}/6")
+    print(f"Agents:           {_declared('agents', len(agent_files))} (filesystem vs registry)")
+    print(f"Commands:         {_declared('commands', len(command_files))} (filesystem vs registry)")
+    print(f"Team packs:       {_declared('team_packs', len(team_pack_files))} (filesystem vs registry)")
     print(f"Config:           {sum((ROOT / 'config' / c).is_file() for c in EXPECTED['config'])}/5")
     print(f"Root privacy:     {sum((ROOT / f).is_file() for f in EXPECTED['root_privacy'])}/3 (PRIVACY, REDACT, SHARING_POLICY)")
     print(f"v4x canon:        {sum((ROOT / 'references/v4x-canon' / c).is_file() for c in EXPECTED['v4x_canon'])}/6")
