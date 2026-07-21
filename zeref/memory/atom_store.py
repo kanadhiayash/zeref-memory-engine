@@ -31,6 +31,11 @@ class AtomStore:
         self.root = Path(root)
         self.memory_dir = self.root / "memory"
         self.atom_dir = self.memory_dir / "l1_atoms"
+        # Incremental dedup index: known atom ids + per-file byte offsets
+        # already scanned. Appending atom N must not re-read the N-1 prior
+        # atoms, so we only parse the bytes written since the last scan.
+        self._known_ids: set[str] = set()
+        self._scan_offsets: dict[Path, int] = {}
 
     def ensure_layout(self) -> None:
         """Create atom directory and empty type files."""
@@ -45,10 +50,13 @@ class AtomStore:
         validate_atom(atom)
         self.ensure_layout()
         with MemoryLock(self.memory_dir):
-            if self.get(atom["id"]) is not None:
+            path = self._path_for_type(atom["type"])
+            if atom["id"] in self._refresh_known_ids():
                 raise AtomValidationError([f"duplicate atom id: {atom['id']}"])
             line = json.dumps(atom, sort_keys=True, separators=(",", ":")) + "\n"
-            atomic_append(self._path_for_type(atom["type"]), line)
+            atomic_append(path, line)
+            self._known_ids.add(atom["id"])
+            self._scan_offsets[path] = self._scan_offsets.get(path, 0) + len(line.encode("utf-8"))
         return atom
 
     def load(
@@ -101,8 +109,54 @@ class AtomStore:
                         for item in atoms
                     )
                     atomic_write(path, content)
+                    # Rewrite invalidates the incremental scan offset. Ids are
+                    # unchanged by patch and all of this file's atoms were just
+                    # read, so record them and mark the file fully scanned.
+                    self._known_ids.update(str(item["id"]) for item in atoms)
+                    self._scan_offsets[path] = path.stat().st_size
                     return patched
         raise KeyError(atom_id)
+
+    def _refresh_known_ids(self) -> set[str]:
+        """Incrementally refresh the dedup id set. Call while holding the lock.
+
+        Only bytes appended since the previous scan are parsed, so a run of
+        N appends costs O(N) total instead of O(N^2). If a file changed in a
+        non-append way (e.g. `patch` rewrote it), the tail parse fails or the
+        file shrank; both trigger a full rescan of that file. Patches never
+        change atom ids, so the id set itself stays correct either way.
+        """
+        for path in self._atom_paths():
+            if not path.exists():
+                self._scan_offsets.pop(path, None)
+                continue
+            size = path.stat().st_size
+            offset = self._scan_offsets.get(path, 0)
+            if size < offset:
+                offset = 0
+            if size == offset:
+                continue
+            with path.open("rb") as handle:
+                handle.seek(offset)
+                tail = handle.read()
+            try:
+                self._known_ids.update(self._ids_from_bytes(tail))
+            except ValueError:
+                # Mid-line offset after an out-of-band rewrite: rescan file.
+                self._known_ids.update(self._ids_from_bytes(path.read_bytes()))
+            self._scan_offsets[path] = size
+        return self._known_ids
+
+    @staticmethod
+    def _ids_from_bytes(payload: bytes) -> list[str]:
+        ids: list[str] = []
+        for line in payload.decode("utf-8").splitlines():
+            if not line.strip():
+                continue
+            atom = json.loads(line)
+            if isinstance(atom, dict) and "id" in atom:
+                ids.append(str(atom["id"]))
+        return ids
 
     def _path_for_type(self, atom_type: str) -> Path:
         if atom_type not in ATOM_FILES:

@@ -760,6 +760,34 @@ def cmd_memory(args: argparse.Namespace) -> int:
             return 0
 
         if args.memory_command == "search":
+            # Canonical path: search the append-only atom store (same store
+            # `memory add --claim` writes), so add -> search always round-trips.
+            from zeref.memory.search import search_atoms
+
+            atom_kind = args.kind if args.kind in ATOM_TYPES else None
+            atom_result = search_atoms(
+                root,
+                args.query or "",
+                limit=args.limit,
+                atom_type=atom_kind,
+            )
+            atom_matches = atom_result["matches"]
+            if args.entity:
+                wanted = args.entity.strip().lower()
+                atom_matches = [
+                    match for match in atom_matches
+                    if any(
+                        wanted in str(e.get("name", "") if isinstance(e, dict) else e).lower()
+                        for e in match["atom"].get("entities", [])
+                    )
+                ]
+            atom_rows = [
+                {**match["atom"], "score": match["score"], "why_returned": match["why"]}
+                for match in atom_matches
+            ]
+
+            # Legacy item store (memory/state) — deprecated, kept for
+            # compatibility until callers migrate to atoms.
             items = store.search(
                 args.query or "",
                 entity=args.entity or "",
@@ -767,12 +795,23 @@ def cmd_memory(args: argparse.Namespace) -> int:
                 layer=args.layer or "",
                 limit=args.limit,
             )
+            if items:
+                print(
+                    "⚠ deprecated: results include legacy memory items (memory/state). "
+                    "The canonical store is the atom store — use `memory add --type/--claim/--source`.",
+                    file=sys.stderr,
+                )
+
             if args.json:
-                print(json.dumps([item_to_dict(item) for item in items], indent=2, sort_keys=True))
+                rows = [item_to_dict(item) for item in items] + atom_rows
+                print(json.dumps(rows, indent=2, sort_keys=True))
             else:
                 for item in items:
                     _print_memory_item(item)
-                if not items:
+                for row in atom_rows:
+                    print(f"{row['id']} [{row['type']}/{row['status']}] {row['claim']}")
+                    print(f"  why: {row['why_returned']}")
+                if not items and not atom_rows:
                     print("No memory items found.")
             return 0
 
