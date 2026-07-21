@@ -194,3 +194,63 @@ def test_memory_archive_and_supersede_cli(repo_root: Path, tmp_path: Path) -> No
     result = json.loads(superseded.stdout)
     assert result["superseded"]["superseded_by"] == second_card["id"]
     assert first_card["id"] in result["replacement"]["supersedes"]
+
+
+def test_write_gate_rejects_every_factguard_blocked_phrase(tmp_path: Path) -> None:
+    """The write gate must reject exactly what FactGuard rejects.
+
+    The gate used to restate a four-phrase subset of BLOCKED_PATTERNS inline.
+    Phrases added to FactGuard afterwards ("production-ready", "all gates
+    pass", "fully verified", ...) were refused by `zeref fact check` but still
+    accepted into memory. This pins the two to one shared table.
+    """
+    from zeref.core.errors import GuardRejection
+    from zeref.guards.fact_guard import BLOCKED_PATTERNS
+    from zeref.guards.write_gate import _validate_gate
+    from zeref.memory.core import scaffold_project
+    from zeref.memory_state import MemoryStore
+
+    (tmp_path / "AGENTS.md").write_text("# AGENTS.md\n", encoding="utf-8")
+    scaffold_project(tmp_path, name="factguard-parity", privacy="abstract",
+                     tier="auto", parent="")
+    store = MemoryStore.from_root(tmp_path)
+
+    phrases = [p for group in BLOCKED_PATTERNS.values() for p in group]
+    assert len(phrases) >= 12, "BLOCKED_PATTERNS unexpectedly small"
+
+    for phrase in phrases:
+        proposal = {
+            "type": "fact",
+            "title": f"claim {phrase}",
+            "claim": f"Zeref {phrase} today.",
+            "privacy_class": "internal",
+            "evidence_grade": "B",
+            "source_refs": ["README.md"],
+        }
+        try:
+            _validate_gate(proposal, store)
+        except GuardRejection as exc:
+            assert exc.guard == "FactGuard", (
+                f"{phrase!r} rejected by {exc.guard}, expected FactGuard"
+            )
+            continue
+        raise AssertionError(f"write gate accepted FactGuard-blocked phrase: {phrase!r}")
+
+
+def test_memory_write_cli_rejects_previously_missed_phrase(repo_root: Path, tmp_path: Path) -> None:
+    """End-to-end: a phrase outside the old inline subset is now blocked."""
+    _init(repo_root, tmp_path)
+    proposal = {
+        "type": "fact",
+        "title": "readiness",
+        "claim": "Zeref is production-ready for all workloads.",
+        "privacy_class": "internal",
+        "evidence_grade": "B",
+        "source_refs": ["README.md"],
+    }
+    (tmp_path / "proposal.json").write_text(json.dumps(proposal), encoding="utf-8")
+
+    result = _run(repo_root, tmp_path, ["memory", "write", "--from", "proposal.json"])
+    assert result.returncode == 1
+    assert "FactGuard" in result.stdout
+    assert any(event["event"] == "memory-write-rejected" for event in _events(tmp_path))

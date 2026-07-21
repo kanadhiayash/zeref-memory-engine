@@ -684,23 +684,40 @@ def audit(
     #   skipped in strict:  docs/, references/, skills/, team-packs/, tests/,
     #                       CHANGELOG.md (release history), and self-referential
     #                       modules whose docstrings document detection patterns.
-    _SKIP_PARTS = {
+    # Skip rules match whole path COMPONENTS (or an exact repo-relative path),
+    # never a substring of the joined path. A substring test silently exempts
+    # any file whose name merely contains a skip token — "notdocs.md" matching
+    # "docs", "distribution.md" matching "dist" — which is a fail-open hole in
+    # a scan whose entire job is to catch accidental egress.
+    _SKIP_DIRS = {
         "docs", "references", "skills", "team-packs", "team",
         "tests", ".git", "__pycache__", "node_modules", "assets",
-        "CHANGELOG.md",
         # Third-party and generated trees. These are not authored surfaces:
         # dependency source legitimately contains credential-shaped example
         # strings, and scanning them made the release gate fail purely because
         # a local virtualenv existed. Agent worktrees hold full repo copies,
         # so scanning them double-counts every finding.
         ".venv", "venv", "site-packages", ".tox", ".nox",
-        "build", "dist", ".egg-info", ".claude",
+        "build", "dist", ".claude",
         ".pytest_cache", ".mypy_cache", ".ruff_cache",
+    }
+    # Exact repo-relative paths (POSIX separators).
+    _SKIP_PATHS = {
+        "CHANGELOG.md",
         # detection modules whose own docstrings show pattern examples
         "zeref/privacy.py", "zeref/security/policy.py",
         # generated benchmark report
         "benchmarks/BENCHMARK_REPORT.md",
     }
+
+    def _skipped(rel_path: Path) -> bool:
+        if rel_path.as_posix() in _SKIP_PATHS:
+            return True
+        parts = rel_path.parts
+        if any(part in _SKIP_DIRS for part in parts):
+            return True
+        # Packaging metadata directories are named "<project>.egg-info".
+        return any(part.endswith(".egg-info") for part in parts)
     exts = {".md"} if not strict else {".md", ".py", ".json", ".yml", ".yaml", ".toml", ".jsonl"}
     results: dict = {
         "scanned": 0, "total_hits": 0, "by_file": {}, "by_class": {},
@@ -729,8 +746,7 @@ def audit(
         if tracked is not None and path.resolve() not in tracked:
             continue
         rel = path.relative_to(directory) if path.is_absolute() else path
-        rel_str = str(rel)
-        if any(part in rel_str for part in _SKIP_PARTS):
+        if _skipped(Path(rel)):
             continue
         if _is_macos_dataless_placeholder(path):
             continue
